@@ -1,23 +1,29 @@
-package frc.robot.Subsystems.Elevator;
+package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.util.Motorlog;
+import frc.robot.util.ElevatorUtil;
 import dev.doglog.DogLog;
 
-public class ElevatorIOTalonFX implements ElevatorIO {
+
+public class ElevatorIOTalonFX extends ElevatorIO {
     private final TalonFX leaderMotor;
     private final TalonFX followerMotor;
-    private final DigitalInput hallEffect;
-    
+    private final DigitalInput limitSwitch;
+    private ElevatorConstants.ElevatorStates currentState;
     private final MotionMagicVoltage motionMagicRequest;
-    
+    private int motionSlot;
     public ElevatorIOTalonFX() {
         leaderMotor = new TalonFX(ElevatorConstants.leaderMotorID, ElevatorConstants.leaderMotorCANbus);
         followerMotor = new TalonFX(ElevatorConstants.followerMotorID, ElevatorConstants.followerMotorCANbus);
         /*  This tells the motor encoder where 0 inches is*/
-        hallEffect = new DigitalInput(ElevatorConstants.hallEffectDioPort);
+        limitSwitch = new DigitalInput(ElevatorConstants.limitSwitchDioPort);
         
         //followerMotor.setInverted(ElevatorConstants.FOLLOWER_INVERTED);
         followerMotor.setControl(new com.ctre.phoenix6.controls.Follower(ElevatorConstants.leaderMotorID, true));
@@ -48,47 +54,74 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
     
     @Override
-    public void updateInputs(ElevatorInputs inputs) {
-        inputs.positionInches = leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerCount;
-        inputs.velocityInchesPerSec = leaderMotor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerCount;
-        inputs.appliedVolts = leaderMotor.getMotorVoltage().getValueAsDouble();
-        inputs.currentAmps = leaderMotor.getSupplyCurrent().getValueAsDouble();
-        inputs.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerCount;
-        inputs.hallEffectTriggered = !hallEffect.get();
-        inputs.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
-        
+    public void updateInputs() {
+        super.positionInches = leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerCount;
+        super.velocityInchesPerSec = leaderMotor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerCount;
+        super.appliedVolts = leaderMotor.getMotorVoltage().getValueAsDouble();
+        super.currentAmps = leaderMotor.getSupplyCurrent().getValueAsDouble();
+        super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerCount;
+        super.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
+        super.state = currentState;
         /* Determines if the elevator is at a setpoint */
-        double positionError = Math.abs(inputs.targetPositionInches - inputs.positionInches);
-        double velocityError = Math.abs(inputs.velocityInchesPerSec);
-        inputs.atSetpoint = positionError < ElevatorConstants.PositionToleranceInches && 
+        double positionError = Math.abs(super.targetPositionInches - super.positionInches);
+        double velocityError = Math.abs(super.velocityInchesPerSec);
+        super.atSetpoint = positionError < ElevatorConstants.PositionToleranceInches && 
                            velocityError < ElevatorConstants.velocityToleranceInchesPerSec;
+                           
+        super.limitSwitchValue = limitSwitch.get();
+        /* Log all super */
+        Motorlog.log("leaderMotor", leaderMotor);
+        Motorlog.log("followerMotor", followerMotor);
+    
+        DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
+        DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
+        DogLog.log("Elevator/State", super.state.toString());
+        DogLog.log("Elevator/LimitSwitchValue", super.limitSwitchValue);
+    }
+
+    @Override
+    public void setState(ElevatorConstants.ElevatorStates state) {
+        currentState = state;
+        double position = MathUtil.clamp(ElevatorUtil.stateToHeight(state), ElevatorConstants.elevatorLowerLimit, ElevatorConstants.elevatorUpperLimit);
         
-        // Determine state
-        if (leaderMotor.getControlMode().getValueAsDouble() == 0) {
-            /* Elevator is off */
-            inputs.state = ElevatorState.DISABLED;
-        } else if (leaderMotor.getFault_Hardware().getValue()) {
-            /* Elevator is not working lol */
-            inputs.state = ElevatorState.ERROR;
-        } else if (Math.abs(velocityError) > ElevatorConstants.velocityToleranceInchesPerSec) {
-            /* Elevator is moving setpoints */
-            inputs.state = ElevatorState.MOVING;
-        } else if (inputs.hallEffectTriggered) {
-            /* Elevator is being reset back to 0 inches */
-            inputs.state = ElevatorState.HOMING;
+        if (position > getPosition()){
+            motionSlot = ElevatorConstants.movingUpSlot;
         } else {
-            /* Elevator is currently staying in the same position*/
-            inputs.state = ElevatorState.HOLDING;
+            motionSlot = ElevatorConstants.movingDownSlot;
         }
 
-        /* Log all inputs */
-        DogLog.log("Elevator/PositionInches", inputs.positionInches);
-        DogLog.log("Elevator/VelocityInchesPerSec", inputs.velocityInchesPerSec);
-        DogLog.log("Elevator/TargetPositionInches", inputs.targetPositionInches);
-        DogLog.log("Elevator/AppliedVolts", inputs.appliedVolts);
-        DogLog.log("Elevator/CurrentAmps", inputs.currentAmps);
-        DogLog.log("Elevator/AtSetpoint", inputs.atSetpoint);
-        DogLog.log("Elevator/State", inputs.state.toString());
-        DogLog.log("Elevator/HallEffect", inputs.hallEffectTriggered);
+        motionMagicRequest.withSlot(motionSlot);
+        motionMagicRequest.Position = position;
+        leaderMotor.setControl(motionMagicRequest);
+    }
+
+    @Override
+    public void stop() {
+        leaderMotor.stopMotor();
+    }
+
+    @Override
+    public void enableBrakeMode(boolean enable) {
+        leaderMotor.setNeutralMode(enable ? 
+            com.ctre.phoenix6.signals.NeutralModeValue.Brake : 
+            com.ctre.phoenix6.signals.NeutralModeValue.Coast);
+        followerMotor.setNeutralMode(enable ? 
+            com.ctre.phoenix6.signals.NeutralModeValue.Brake : 
+            com.ctre.phoenix6.signals.NeutralModeValue.Coast);
+    }
+
+    @Override
+    public void setVoltage(double voltage){
+        leaderMotor.setControl(new VoltageOut(voltage));
+    }
+
+    @Override
+    public void zeroEncoder(){
+        leaderMotor.setPosition(0);
+    }
+
+    @Override
+    public double getPosition(){
+        return leaderMotor.getPosition().getValueAsDouble();
     }
 }

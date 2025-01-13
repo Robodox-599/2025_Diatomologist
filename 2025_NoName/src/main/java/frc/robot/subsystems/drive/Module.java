@@ -1,8 +1,6 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -41,26 +39,26 @@ public class Module {
     io.updateInputs(index);
 
     // Calculate positions for odometry
-    double[] timestamps = io.getOdometryTimestamps();
+    double[] timestamps = io.odometryTimestamps;
     int sampleCount = timestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
-      double positionMeters = io.getOdometryDrivePositionsRad()[i] * constants.WheelRadius;
-      Rotation2d angle = io.getOdometryTurnPositions()[i];
+      double positionMeters = io.odometryDrivePositionsRad[i] * constants.WheelRadius;
+      Rotation2d angle = io.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
 
     // Update alerts
-    driveDisconnectedAlert.set(!io.getDriveConnected());
-    turnDisconnectedAlert.set(!io.getTurnConnected());
-    turnEncoderDisconnectedAlert.set(!io.getEncoderConnected());
+    driveDisconnectedAlert.set(!io.driveConnected);
+    turnDisconnectedAlert.set(!io.turnConnected);
+    turnEncoderDisconnectedAlert.set(!io.encoderConnected);
   }
 
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
   public void runSetpoint(SwerveModuleState state) {
     // Optimize velocity setpoint
     state.optimize(getAngle());
-    state.cosineScale(io.getTurnPosition());
+    state.cosineScale(io.turnPosition);
 
     // Apply setpoints
     io.setDriveVelocity(state.speedMetersPerSecond / constants.WheelRadius);
@@ -81,17 +79,17 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return io.getTurnPosition();
+    return io.turnPosition;
   }
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return io.getDrivePositionRad() * constants.WheelRadius;
+    return io.drivePositionRad * constants.WheelRadius;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
-    return io.getDriveVelocityRadPerSec() * constants.WheelRadius;
+    return io.driveVelocityRadPerSec * constants.WheelRadius;
   }
 
   /** Returns the module position (turn angle and drive position). */
@@ -111,16 +109,16 @@ public class Module {
 
   /** Returns the timestamps of the samples received this cycle. */
   public double[] getOdometryTimestamps() {
-    return io.getOdometryTimestamps();
+    return io.odometryTimestamps;
   }
 
   /** Returns the module position in radians. */
   public double getWheelRadiusCharacterizationPosition() {
-    return io.getDrivePositionRad();
+    return io.drivePositionRad;
   }
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
-    return Units.radiansToRotations(io.getDriveVelocityRadPerSec());
+    return Units.radiansToRotations(io.driveVelocityRadPerSec);
   }
 }

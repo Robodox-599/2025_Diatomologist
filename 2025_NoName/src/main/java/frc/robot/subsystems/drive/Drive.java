@@ -15,9 +15,8 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.CANBus;
-
 import choreo.trajectory.SwerveSample;
+import com.ctre.phoenix6.CANBus;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -47,7 +46,6 @@ import frc.robot.subsystems.drive.constants.generated.TunerConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
@@ -61,7 +59,6 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
-  
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
@@ -83,8 +80,6 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathXController = new PIDController(10, 0, 0);
   private final PIDController choreoPathYController = new PIDController(10, 0, 0);
   private final PIDController choreoPathAngleController = new PIDController(7, 0, 0);
-
-
 
   public Drive(
       GyroIO gyroIO,
@@ -108,15 +103,10 @@ public class Drive extends SubsystemBase {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> DogLog.log("Drive/SysIdState", state.toString())),
+                null, null, null, (state) -> DogLog.log("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
     choreoPathAngleController.enableContinuousInput(-Math.PI, Math.PI);
-
-        
   }
 
   @Override
@@ -160,9 +150,9 @@ public class Drive extends SubsystemBase {
       }
 
       // Update gyro angle
-      if (gyroIO.getConnected()) {
+      if (gyroIO.connected) {
         // Use the real gyro angle
-        rawGyroRotation = gyroIO.getOdometryYawPositions()[i];
+        rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {
         // Use the angle delta from the kinematics and module deltas
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
@@ -174,7 +164,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroIO.getConnected() && Constants.currentMode != Mode.SIM);
+    gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
     DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
@@ -209,30 +199,30 @@ public class Drive extends SubsystemBase {
     DogLog.log("SwerveStates/SetpointsOptimized", setpointStates);
   }
 
-
-  public void followChoreoPath(SwerveSample sample){
+  public void followChoreoPath(SwerveSample sample) {
     Pose2d pose = getPose();
     ChassisSpeeds speeds = getChassisSpeeds();
     DogLog.log("Choreo/RobotPose2d", pose);
     DogLog.log("Choreo/SwerveSample", sample);
-  
+
     DogLog.log("Choreo/SwerveSample/ChoreoVelocity/XMetersPerSecond", sample.vx);
     DogLog.log("Choreo/SwerveSample/ChoreoVelocity/YMetersPerSecond", sample.vy);
     DogLog.log("Choreo/SwerveSample/ChoreoVelocity/ThetaRadsPerSecond", sample.omega);
-  
+
     DogLog.log("Choreo/RobotMeasuredVelocity/XMetersPerSecond", speeds.vxMetersPerSecond);
     DogLog.log("Choreo/RobotMeasuredVelocity/YMetersPerSecond", speeds.vyMetersPerSecond);
     DogLog.log("Choreo/RobotMeasuredVelocity/AngleMetersPerSecond", speeds.omegaRadiansPerSecond);
-  
+
     var pathTargetSpeeds = sample.getChassisSpeeds();
-    pathTargetSpeeds.vxMetersPerSecond += choreoPathXController.calculate(pose.getX(), sample.x );
-    
+    pathTargetSpeeds.vxMetersPerSecond += choreoPathXController.calculate(pose.getX(), sample.x);
+
     pathTargetSpeeds.vyMetersPerSecond += choreoPathYController.calculate(pose.getY(), sample.y);
-    pathTargetSpeeds.omegaRadiansPerSecond += choreoPathAngleController.calculate(pose.getRotation().getRadians(), sample.heading);
-  
+    pathTargetSpeeds.omegaRadiansPerSecond +=
+        choreoPathAngleController.calculate(pose.getRotation().getRadians(), sample.heading);
+
     runVelocity(pathTargetSpeeds);
-    }
-    
+  }
+
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
     for (int i = 0; i < 4; i++) {
@@ -355,4 +345,3 @@ public class Drive extends SubsystemBase {
     };
   }
 }
-

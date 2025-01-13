@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -15,7 +14,7 @@ import frc.robot.subsystems.drive.constants.generated.TunerConstants;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
-public class GyroIOPigeon2 implements GyroIO {
+public class GyroIOPigeon2 extends GyroIO {
   private final Pigeon2 pigeon =
       new Pigeon2(
           TunerConstants.DrivetrainConstants.Pigeon2Id,
@@ -36,53 +35,26 @@ public class GyroIOPigeon2 implements GyroIO {
   }
 
   @Override
-  public boolean getConnected() {
-    boolean connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK);
-    DogLog.log("Drive/Gyro/Connected", connected);
-    return connected;
-  }
+  public void updateInputs() {
+    super.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK);
+    super.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
+    super.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
 
-  @Override
-  public Rotation2d getYawPosition() {
-    Rotation2d position = Rotation2d.fromDegrees(yaw.getValueAsDouble());
-    DogLog.log("Drive/Gyro/YawPosition", position.getDegrees());
-    return position;
-  }
+    super.odometryYawTimestamps =
+        yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    super.odometryYawPositions =
+        yawPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromDegrees(value))
+            .toArray(Rotation2d[]::new);
 
-  @Override
-  public double getYawVelocityRadPerSec() {
-    double velocity = Units.degreesToRadians(yawVelocity.getValueAsDouble());
-    DogLog.log("Drive/Gyro/YawVelocity", velocity);
-    return velocity;
-  }
-
-  @Override
-  public double[] getOdometryYawTimestamps() {
-    double[] timestamps = yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
-    DogLog.log("Drive/Gyro/OdometryTimestamps", timestamps);
-    return timestamps;
-  }
-
-  @Override
-  public Rotation2d[] getOdometryYawPositions() {
-    Rotation2d[] positions = yawPositionQueue.stream()
-        .map((Double value) -> Rotation2d.fromDegrees(value))
-        .toArray(Rotation2d[]::new);
-        DogLog.log("Drive/Gyro/OdometryPositions", positions);
-    return positions;
-  }
-
-  @Override
-  public void updateInputs() { 
-    DogLog.log("Drive/Gyro/Connected", getConnected());
-    DogLog.log("Drive/Gyro/YawPosition", getYawPosition().getDegrees());
-    DogLog.log("Drive/Gyro/YawVelocity", getYawVelocityRadPerSec());
-    DogLog.log("Drive/Gyro/OdometryTimestamps", getOdometryYawTimestamps());
-    DogLog.log("Drive/Gyro/OdometryPositions", getOdometryYawPositions());
+    DogLog.log("Drive/Gyro/Connected", super.connected);
+    DogLog.log("Drive/Gyro/YawPosition", super.yawPosition);
+    DogLog.log("Drive/Gyro/YawVelocity", super.yawVelocityRadPerSec);
+    DogLog.log("Drive/Gyro/OdometryTimestamps", super.odometryYawTimestamps);
+    DogLog.log("Drive/Gyro/OdometryPositions", super.odometryYawPositions);
 
     // Clear queues after logging
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }
-
 }

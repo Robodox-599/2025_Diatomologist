@@ -33,7 +33,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,7 +43,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.drive.constants.generated.TunerConstants;
 import frc.robot.util.MotorLog;
-
 import java.util.Queue;
 
 /**
@@ -53,7 +51,7 @@ import java.util.Queue;
  *
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
-public class ModuleIOReal implements ModuleIO {
+public class ModuleIOReal extends ModuleIO {
   private final SwerveModuleConstants constants;
 
   // Hardware objects
@@ -73,30 +71,32 @@ public class ModuleIOReal implements ModuleIO {
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest =
       new VelocityTorqueCurrentFOC(0.0);
 
-// Timestamp inputs from Phoenix thread
-private final Queue<Double> timestampQueue;
+  // Timestamp inputs from Phoenix thread
+  private final Queue<Double> timestampQueue;
 
-// Inputs from drive motor
-private final StatusSignal<Angle> drivePosition;
-private final Queue<Double> drivePositionQueue;
-private final StatusSignal<AngularVelocity> driveVelocity;
-private final StatusSignal<Voltage> driveAppliedVolts;
-private final StatusSignal<Current> driveCurrent;
+  // Inputs from drive motor
+  private final StatusSignal<Angle> drivePosition;
+  private final Queue<Double> drivePositionQueue;
+  private final StatusSignal<AngularVelocity> driveVelocity;
+  private final StatusSignal<Voltage> driveAppliedVolts;
+  private final StatusSignal<Current> driveCurrent;
 
-// Inputs from turn motor
-private final StatusSignal<Angle> turnAbsolutePosition;
-private final StatusSignal<Angle> turnPosition;
-private final Queue<Double> turnPositionQueue;
-private final StatusSignal<AngularVelocity> turnVelocity;
-private final StatusSignal<Voltage> turnAppliedVolts;
-private final StatusSignal<Current> turnCurrent;
+  // Inputs from turn motor
+  private final StatusSignal<Angle> turnAbsolutePosition;
+  private final StatusSignal<Angle> turnPosition;
+  private final Queue<Double> turnPositionQueue;
+  private final StatusSignal<AngularVelocity> turnVelocity;
+  private final StatusSignal<Voltage> turnAppliedVolts;
+  private final StatusSignal<Current> turnCurrent;
 
   // Connection debouncers
   private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-public ModuleIOReal(SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>constants) {
+  public ModuleIOReal(
+      SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+          constants) {
     this.constants = constants;
     driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
     turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
@@ -186,92 +186,55 @@ public ModuleIOReal(SwerveModuleConstants<TalonFXConfiguration, TalonFXConfigura
   }
 
   @Override
-  public boolean getDriveConnected() {
-    var driveStatus = BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
-    return driveConnectedDebounce.calculate(driveStatus.isOK());
-  }
-
-  @Override
-  public double getDrivePositionRad() {
-    return Units.rotationsToRadians(drivePosition.getValueAsDouble());
-  }
-
-  @Override
-  public double getDriveVelocityRadPerSec() {
-    return Units.rotationsToRadians(driveVelocity.getValueAsDouble());
-  }
-
-  // Turn motor getters
-  @Override
-  public boolean getTurnConnected() {
-    return turnConnectedDebounce.calculate(BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent).isOK());
-  }
-
-  @Override
-  public double getTurnPositionRad() {
-    return Units.rotationsToRadians(turnPosition.getValueAsDouble());
-  }
-
-  @Override
-  public Rotation2d getTurnPosition() {
-    return Rotation2d.fromRotations(turnPosition.getValueAsDouble());
-  }
-
-  @Override
-  public double getTurnVelocityRadPerSec() {
-    return Units.rotationsToRadians(turnVelocity.getValueAsDouble());
-  }
-
-  // Encoder getters
-  @Override
-  public boolean getEncoderConnected() {
-    return turnEncoderConnectedDebounce.calculate(BaseStatusSignal.refreshAll(turnAbsolutePosition).isOK());
-  }
-
-  @Override
-  public Rotation2d getAbsolutePosition() {
-    return Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
-  }
-
-  // Odometry getters
-  @Override
-  public double[] getOdometryTimestamps() {
-    return timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
-  }
-
-  @Override
-  public double[] getOdometryDrivePositionsRad() {
-    return drivePositionQueue.stream()
-        .mapToDouble((Double value) -> Units.rotationsToRadians(value))
-        .toArray();
-  }
-
-  @Override
-  public Rotation2d[] getOdometryTurnPositions() {
-    return turnPositionQueue.stream()
-        .map((Double value) -> Rotation2d.fromRotations(value))
-        .toArray(Rotation2d[]::new);
-  }
-
-  @Override
   public void updateInputs(int index) {
-    BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, 
-    turnPosition, turnVelocity, turnAppliedVolts, turnCurrent, turnAbsolutePosition);
+    // Refresh all signals
+    var driveStatus =
+        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+    var turnStatus =
+        BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
+    var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
+
+    // Update drive inputs
+    super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
+    super.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
+    super.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
+    super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
+    super.driveCurrentAmps = driveCurrent.getValueAsDouble();
+
+    // Update turn inputs
+    super.turnConnected = turnConnectedDebounce.calculate(turnStatus.isOK());
+    super.encoderConnected = turnEncoderConnectedDebounce.calculate(turnEncoderStatus.isOK());
+    super.absolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
+    super.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
+    super.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
+    super.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
+    super.turnCurrentAmps = turnCurrent.getValueAsDouble();
+
+    // Update odometry inputs
+    super.odometryTimestamps =
+        timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    super.odometryDrivePositionsRad =
+        drivePositionQueue.stream()
+            .mapToDouble((Double value) -> Units.rotationsToRadians(value))
+            .toArray();
+    super.odometryTurnPositions =
+        turnPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromRotations(value))
+            .toArray(Rotation2d[]::new);
 
     MotorLog.log("Drive/Module " + index + "/DriveMotor", driveTalon);
-    DogLog.log("Drive/Module " + index + "/DriveMotor/DriveConnected", getDriveConnected());
-    
-    // Update turn inputs
-    MotorLog.log("Drive/Module " + index + "/TurnMotor", turnTalon);
-    DogLog.log("Drive/Module " + index + "/TurnMotor/Connected", getTurnConnected());
-    DogLog.log("Drive/Module " + index + "/Encoder/Connected", getEncoderConnected());
-    DogLog.log("Drive/Module " + index + "/Encoder/AbsolutePosition", getAbsolutePosition());
-    
-    // Update odometry inputs
-    DogLog.log("Drive/Module " + index + "/Odometry/Timestamps", getOdometryTimestamps());
-    DogLog.log("Drive/Module " + index + "/Odometry/DrivePositionsRad", getOdometryDrivePositionsRad());
-    DogLog.log("Drive/Module " + index + "/Odometry/TurnPositions", getOdometryTurnPositions());
+    DogLog.log("Drive/Module " + index + "/DriveMotor/Connected", super.driveConnected);
 
+    MotorLog.log("Drive/Module " + index + "/TurnMotor", turnTalon);
+    DogLog.log("Drive/Module " + index + "/TurnMotor/Connected", super.turnConnected);
+
+    DogLog.log("Drive/Module " + index + "/Encoder/Connected", super.encoderConnected);
+    DogLog.log("Drive/Module " + index + "/Encoder/AbsolutePosition", super.absolutePosition);
+
+    DogLog.log("Drive/Module " + index + "/Odometry/Timestamps", super.odometryTimestamps);
+    DogLog.log(
+        "Drive/Module " + index + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsRad);
+    DogLog.log("Drive/Module " + index + "/Odometry/TurnPositions", super.odometryTurnPositions);
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
@@ -310,11 +273,8 @@ public ModuleIOReal(SwerveModuleConstants<TalonFXConfiguration, TalonFXConfigura
     turnTalon.setControl(
         switch (constants.SteerMotorClosedLoopOutput) {
           case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
-          case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
-              rotation.getRotations());
+          case TorqueCurrentFOC ->
+              positionTorqueCurrentRequest.withPosition(rotation.getRotations());
         });
   }
-
-
-
 }

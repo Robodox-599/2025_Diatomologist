@@ -11,14 +11,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.subsystems.drive.DriveCommands;
-import frc.robot.subsystems.drive.constants.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveCommands;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOReal;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.constants.generated.TunerConstants;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -32,10 +33,10 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
-    /* Path follower */
-    private final AutoRoutines autoRoutines;
-    private final AutoFactory autoFactory;
-    public final AutoChooser autoChooser = new AutoChooser();
+  /* Path follower */
+  private final AutoRoutines autoRoutines;
+  private final AutoFactory autoFactory;
+  public final AutoChooser autoChooser = new AutoChooser();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -49,13 +50,13 @@ public class RobotContainer {
                 new ModuleIOReal(TunerConstants.FrontRight),
                 new ModuleIOReal(TunerConstants.BackLeft),
                 new ModuleIOReal(TunerConstants.BackRight));
-        autoFactory = new AutoFactory(
-            drive::getPose, // A function that returns the current robot pose
-            drive::setPose, // The drive subsystem
-            drive::followChoreoPath, // The controller for the drive subsystem
-            true,
-            drive
-            );
+        autoFactory =
+            new AutoFactory(
+                drive::getPose, // A function that returns the current robot pose
+                drive::setPose, // The drive subsystem
+                drive::followChoreoPath, // The controller for the drive subsystem
+                true,
+                drive);
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       case SIM:
@@ -67,13 +68,13 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        autoFactory = new AutoFactory(
-            drive::getPose, // A function that returns the current robot pose
-            drive::setPose, // The drive subsystem
-            drive::followChoreoPath, // The controller for the drive subsystem
-            true,
-            drive
-            );
+        autoFactory =
+            new AutoFactory(
+                drive::getPose, // A function that returns the current robot pose
+                drive::setPose, // The drive subsystem
+                drive::followChoreoPath, // The controller for the drive subsystem
+                true,
+                drive);
         autoRoutines = new AutoRoutines(autoFactory);
         break;
 
@@ -86,14 +87,14 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        autoFactory = new AutoFactory(
-            drive::getPose, // A function that returns the current robot pose
-            drive::setPose, // The drive subsystem
-            drive::followChoreoPath, // The controller for the drive subsystem
-            true,
-            drive
-            );
-          autoRoutines = new AutoRoutines(autoFactory);
+        autoFactory =
+            new AutoFactory(
+                drive::getPose, // A function that returns the current robot pose
+                drive::setPose, // The drive subsystem
+                drive::followChoreoPath, // The controller for the drive subsystem
+                true,
+                drive);
+        autoRoutines = new AutoRoutines(autoFactory);
         break;
     }
 
@@ -105,7 +106,7 @@ public class RobotContainer {
 
     // Schedule the selected auto during the autonomous period
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
-    
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -158,5 +159,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommandScheduler();
   }
-
 }

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.drive.constants;
+package frc.robot.subsystems.commands;
 
 public class CommandConstants {
   public static final double deadband = 0.1;

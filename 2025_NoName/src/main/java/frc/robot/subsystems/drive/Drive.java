@@ -80,6 +80,7 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathXController = new PIDController(10, 0, 0);
   private final PIDController choreoPathYController = new PIDController(10, 0, 0);
   private final PIDController choreoPathAngleController = new PIDController(7, 0, 0);
+  private Twist2d fieldVelocity = new Twist2d();
 
   public Drive(
       GyroIO gyroIO,
@@ -162,6 +163,21 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+
+    // Update field velocity
+    SwerveModuleState[] measuredStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      measuredStates[i] = modules[i].getState();
+    }
+    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(measuredStates);
+    Translation2d linearFieldVelocity =
+        new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
+            .rotateBy(getRotation());
+    fieldVelocity =
+        new Twist2d(
+            linearFieldVelocity.getX(),
+            linearFieldVelocity.getY(),
+            gyroIO.connected ? gyroIO.yawVelocityRadPerSec : chassisSpeeds.omegaRadiansPerSecond);
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
@@ -333,6 +349,14 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return getMaxLinearSpeedMetersPerSec() / DRIVE_BASE_RADIUS;
+  }
+
+  public Twist2d getFieldVelocity() {
+    return fieldVelocity;
+  }
+
+  public double getYawVelocity() {
+    return gyroIO.yawVelocityRadPerSec;
   }
 
   /** Returns an array of module translations. */

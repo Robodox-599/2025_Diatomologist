@@ -107,7 +107,7 @@ public class RobotContainer {
     SmartDashboard.putData(autoChooser);
     DogLog.setOptions(
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
-
+    // Example: To get the Pose3d for branch #5 at height L2
     // Schedule the selected auto during the autonomous period
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 

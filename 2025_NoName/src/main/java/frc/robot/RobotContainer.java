@@ -2,6 +2,8 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -103,6 +105,8 @@ public class RobotContainer {
 
     // Put the auto chooser on the dashboard
     SmartDashboard.putData(autoChooser);
+    DogLog.setOptions(
+        new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
 
     // Schedule the selected auto during the autonomous period
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());

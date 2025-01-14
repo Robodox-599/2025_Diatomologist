@@ -162,6 +162,7 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      DogLog.log("Odometry/Pose", poseEstimator.getEstimatedPosition());
     }
 
     // Update field velocity
@@ -182,7 +183,7 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
-    DogLog.log("Odometry/Robot", getPose());
+    // DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
     DogLog.log("SwerveStates/Measured", getModuleStates());
   }

@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.drive.constants.SimConstants; // Ensure this import is added
 import frc.robot.util.SimLog;
@@ -80,6 +81,11 @@ public class ModuleIOSim extends ModuleIO {
     super.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
     super.turnAppliedVolts = turnAppliedVolts;
     super.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
+
+    // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
+    super.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    super.odometryDrivePositionsRad = new double[] {super.drivePositionRad};
+    super.odometryTurnPositions = new Rotation2d[] {super.turnPosition};
 
     SimLog.log("Drive/Module " + index + "/DriveMotor", driveSim);
     DogLog.log("Drive/Module " + index + "/DriveMotor/Connected", super.driveConnected);

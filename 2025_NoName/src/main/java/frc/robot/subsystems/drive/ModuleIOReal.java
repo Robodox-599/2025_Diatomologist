@@ -235,6 +235,7 @@ public class ModuleIOReal extends ModuleIO {
     DogLog.log(
         "Drive/Module " + index + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsRad);
     DogLog.log("Drive/Module " + index + "/Odometry/TurnPositions", super.odometryTurnPositions);
+
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();

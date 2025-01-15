@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.AlgaeGroundIntake.Wrist;
+package frc.robot.subsystems.algaegroundintake.wrist;
 
 public class WristIOTalonFX {
     

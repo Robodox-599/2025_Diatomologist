@@ -7,12 +7,10 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.jni.TrajectoryUtilJNI;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.Motorlog;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.ElevatorUtil;
-import frc.robot.util.PhoenixUtil.*;
 import dev.doglog.DogLog;
 
 public class ElevatorIOTalonFX extends ElevatorIO {
@@ -51,7 +49,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyCurrentLimitAmps;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        // leaderMotor.getConfigurator().apply(config, 0.25);
         PhoenixUtil.tryUntilOk(5, () ->leaderMotor.getConfigurator().apply(config, 0.25));
         PhoenixUtil.tryUntilOk(5, () ->leaderMotor.setPosition(0.0, 0.25));
         enableBrakeMode(true);
@@ -75,10 +72,11 @@ public class ElevatorIOTalonFX extends ElevatorIO {
                            velocityError < ElevatorConstants.velocityToleranceInchesPerSec;
                            
         super.limitSwitchValue = limitSwitch.get();
-        /* Log all super */
+        /*Log basic motor inputs */
         Motorlog.log("leaderMotor", leaderMotor);
         Motorlog.log("followerMotor", followerMotor);
-    
+        
+        /* Log all super */
         DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
         DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
         DogLog.log("Elevator/State", super.state.toString());

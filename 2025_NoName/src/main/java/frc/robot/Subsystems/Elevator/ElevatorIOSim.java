@@ -13,7 +13,7 @@ public class ElevatorIOSim extends ElevatorIO {
     private final DCMotorSim elevatorSim;
     private final PIDController positionController;
     private double targetPositionInches = 0.0;
-    private boolean brakeMode = true;
+    //private boolean brakeMode = true;
     private final PIDController simPidController = 
         new PIDController(ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
 
@@ -76,10 +76,10 @@ public class ElevatorIOSim extends ElevatorIO {
         elevatorSim.setInputVoltage(0);
     }
 
-    @Override
-    public void enableBrakeMode(boolean enable) {
-        brakeMode = enable;
-    }
+    // @Override
+    // public void enableBrakeMode(boolean enable) {
+    //     brakeMode = enable;
+    // }
 
     @Override
     public void setVoltage(double voltage){

@@ -32,7 +32,11 @@ public class Elevator extends SubsystemBase {
             Commands.waitUntil(this::isAtTargetPosition)
         );
     }
-    
+
+    public Command move(double volt){
+        return Commands.run(()->{
+            io.setVoltage(volt);});
+    }
     /*Homes elevator with limit switch, could be rewritten to home with current but hopefully nah*/
 
     public Command homeElevator() {

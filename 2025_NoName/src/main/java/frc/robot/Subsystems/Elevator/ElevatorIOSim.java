@@ -17,9 +17,6 @@ public class ElevatorIOSim extends ElevatorIO {
     private final PIDController simPidController = 
         new PIDController(ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
 
-
-    // private ElevatorState currentState = ElevatorState.HOMING;
-    
     private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
     
     public ElevatorIOSim() {
@@ -61,7 +58,7 @@ public class ElevatorIOSim extends ElevatorIO {
         super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
         super.currentAmps = elevatorSim.getCurrentDrawAmps();
         super.targetPositionInches = targetPositionInches;
-        super.tempCelsius = 25.0;
+        super.tempCelsius = 25.0; // setting 
         
         /* Checks if elevator is at setpoint */
         super.atSetpoint = positionController.atSetpoint();

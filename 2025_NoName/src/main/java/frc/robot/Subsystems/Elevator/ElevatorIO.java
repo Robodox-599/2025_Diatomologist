@@ -10,6 +10,7 @@ public abstract class ElevatorIO {
     protected boolean limitSwitchValue = false;
     protected boolean atSetpoint = false;
     protected ElevatorConstants.ElevatorStates state = ElevatorConstants.ElevatorStates.STOW;
+
     /** Updates the set of loggable inputs */
     public void updateInputs() {}
 

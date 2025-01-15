@@ -16,7 +16,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     private final TalonFX leaderMotor;
     private final TalonFX followerMotor;
     private final DigitalInput limitSwitch;
-    private ElevatorConstants.ElevatorStates currentState;
+    private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
     private final MotionMagicVoltage motionMagicRequest;
     private int motionSlot;
     public ElevatorIOTalonFX() {
@@ -25,7 +25,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         /*  This tells the motor encoder where 0 inches is*/
         limitSwitch = new DigitalInput(ElevatorConstants.limitSwitchDioPort);
         
-        //followerMotor.setInverted(ElevatorConstants.FOLLOWER_INVERTED);
         followerMotor.setControl(new com.ctre.phoenix6.controls.Follower(ElevatorConstants.leaderMotorID, true));
         
         motionMagicRequest = new MotionMagicVoltage(0);
@@ -49,8 +48,9 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         leaderMotor.getConfigurator().apply(config);
-        
-        enableBrakeMode(true);
+        leaderMotor.optimizeBusUtilization();
+        followerMotor.optimizeBusUtilization();
+        // enableBrakeMode(true);
     }
     
     @Override

@@ -38,9 +38,9 @@ public final class ElevatorConstants {
     };
 
     public static final int leaderMotorID = 20;
-    public static final String leaderMotorCANbus = "temp";
-    public static final int followerMotorID = 69;
-    public static final String followerMotorCANbus = "changelater";
+    public static final String leaderMotorCANbus = "rio";
+    public static final int followerMotorID = 17;
+    public static final String followerMotorCANbus = "rio";
     public static final boolean followerInverted = true;
 
     public static final int limitSwitchDioPort = 0;
@@ -66,7 +66,7 @@ public final class ElevatorConstants {
     public static final double endEffectorIntakeHeight = 0;
     public static final double groundIntakeHeight = 0;
     
-    public static final double kP = 0.1;
+    public static final double kP = 1;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double kF = 0.0;

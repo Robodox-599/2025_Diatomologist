@@ -40,21 +40,11 @@ public class ElevatorIOSim extends ElevatorIO {
     
     @Override
     public void updateInputs() {
-        /* Calculate position control output */
-        double currentPositionInches = elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerCount;
-        double voltageOutput = positionController.calculate(currentPositionInches, targetPositionInches);
-        voltageOutput = Math.max(-12.0, Math.min(12.0, voltageOutput));
-        
-        /* Apply voltage if moving or in brake mode */
-        if (brakeMode || Math.abs(elevatorSim.getAngularAccelerationRadPerSecSq() * ElevatorConstants.inchesPerCount) > ElevatorConstants.velocityToleranceInchesPerSec) {
-            elevatorSim.setInputVoltage(voltageOutput);
-        }
-        
         elevatorSim.update(0.02);
         
         // Update inputs structure
-        super.positionInches = elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerCount;
-        super.velocityInchesPerSec = elevatorSim.getAngularAccelerationRadPerSecSq() * ElevatorConstants.inchesPerCount;
+        super.positionInches = elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev;
+        super.velocityInchesPerSec = elevatorSim.getAngularAccelerationRadPerSecSq() * ElevatorConstants.inchesPerRev;
         super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
         super.currentAmps = elevatorSim.getCurrentDrawAmps();
         super.targetPositionInches = targetPositionInches;
@@ -98,11 +88,11 @@ public class ElevatorIOSim extends ElevatorIO {
 
     @Override
     public void zeroEncoder(){
-        
+        elevatorSim.setAngle(0);
     }
 
     @Override
     public double getPosition(){
-        return elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerCount;
+        return elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev;
     }
 }

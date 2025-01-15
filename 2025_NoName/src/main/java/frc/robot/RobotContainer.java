@@ -46,7 +46,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // controller.a().onTrue(Commands.sequence(elevator.moveToState(ElevatorConstants.ElevatorStates.L4)));
-    controller.a().whileTrue(Commands.sequence(elevator.move(2)));
+    controller.a().whileTrue(elevator.move(2));
 
   }
 

@@ -5,7 +5,7 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 public class ElevatorUtil{
 
     public static double convertToTicks(double height){
-        return height / ElevatorConstants.inchesPerCount;
+        return height / ElevatorConstants.inchesPerRev;
     }
 
     public static double stateToHeight(ElevatorConstants.ElevatorStates state){

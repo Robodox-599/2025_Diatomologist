@@ -1,16 +1,19 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.jni.TrajectoryUtilJNI;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.Motorlog;
+import frc.robot.util.PhoenixUtil;
 import frc.robot.util.ElevatorUtil;
+import frc.robot.util.PhoenixUtil.*;
 import dev.doglog.DogLog;
-
 
 public class ElevatorIOTalonFX extends ElevatorIO {
     private final TalonFX leaderMotor;
@@ -25,41 +28,44 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         /*  This tells the motor encoder where 0 inches is*/
         limitSwitch = new DigitalInput(ElevatorConstants.limitSwitchDioPort);
         
-        followerMotor.setControl(new com.ctre.phoenix6.controls.Follower(ElevatorConstants.leaderMotorID, true));
+        followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
         
         motionMagicRequest = new MotionMagicVoltage(0);
         
         TalonFXConfiguration config = new TalonFXConfiguration();
-        
+
         config.MotionMagic.MotionMagicCruiseVelocity = 
-            ElevatorConstants.maxVelocityInchesPerSec / ElevatorConstants.inchesPerCount;
+            ElevatorConstants.maxVelocityInchesPerSec / ElevatorConstants.inchesPerRev;
         config.MotionMagic.MotionMagicAcceleration = 
-            ElevatorConstants.maxAccelerationInchesPerSecSQ / ElevatorConstants.inchesPerCount;
+            ElevatorConstants.maxAccelerationInchesPerSecSQ / ElevatorConstants.inchesPerRev;
         
         config.Slot0.kP = ElevatorConstants.kP;
         config.Slot0.kI = ElevatorConstants.kI;
         config.Slot0.kD = ElevatorConstants.kD;
-        config.Slot0.kV = ElevatorConstants.kF;
-        
+        config.Slot0.kV = ElevatorConstants.kV;
+        config.Slot0.kS = ElevatorConstants.kS;
+
         config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorCurrentLimitAmps;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         /* Helps prevent brown outs by limiting current spikes from the battery */
         config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyCurrentLimitAmps;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        leaderMotor.getConfigurator().apply(config);
+        // leaderMotor.getConfigurator().apply(config, 0.25);
+        PhoenixUtil.tryUntilOk(5, () ->leaderMotor.getConfigurator().apply(config, 0.25));
+        PhoenixUtil.tryUntilOk(5, () ->leaderMotor.setPosition(0.0, 0.25));
+        enableBrakeMode(true);
         leaderMotor.optimizeBusUtilization();
         followerMotor.optimizeBusUtilization();
-        // enableBrakeMode(true);
     }
     
     @Override
     public void updateInputs() {
-        super.positionInches = leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerCount;
-        super.velocityInchesPerSec = leaderMotor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerCount;
+        super.positionInches = leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerRev;
+        super.velocityInchesPerSec = leaderMotor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerRev;
         super.appliedVolts = leaderMotor.getMotorVoltage().getValueAsDouble();
         super.currentAmps = leaderMotor.getSupplyCurrent().getValueAsDouble();
-        super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerCount;
+        super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerRev;
         super.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
         super.state = currentState;
         /* Determines if the elevator is at a setpoint */
@@ -102,12 +108,9 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     @Override
     public void enableBrakeMode(boolean enable) {
-        leaderMotor.setNeutralMode(enable ? 
+        PhoenixUtil.tryUntilOk(5,()->leaderMotor.setNeutralMode(enable ? 
             com.ctre.phoenix6.signals.NeutralModeValue.Brake : 
-            com.ctre.phoenix6.signals.NeutralModeValue.Coast);
-        followerMotor.setNeutralMode(enable ? 
-            com.ctre.phoenix6.signals.NeutralModeValue.Brake : 
-            com.ctre.phoenix6.signals.NeutralModeValue.Coast);
+            com.ctre.phoenix6.signals.NeutralModeValue.Coast));
     }
 
     @Override

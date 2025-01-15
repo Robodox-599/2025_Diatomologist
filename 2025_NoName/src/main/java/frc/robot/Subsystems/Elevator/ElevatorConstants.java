@@ -46,8 +46,7 @@ public final class ElevatorConstants {
     public static final int limitSwitchDioPort = 0;
     public static final double gearRatio = 10.0;
     public static final double drumCircumferenceInches = 1.8;
-    public static final double countsPerRevolution = 2048.0;
-    public static final double inchesPerCount = (drumCircumferenceInches) / (countsPerRevolution * gearRatio);
+    public static final double inchesPerRev = 10; //idk prolly wrong
     public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
     
     public static final double maxVelocityInchesPerSec = 60.0;
@@ -69,9 +68,10 @@ public final class ElevatorConstants {
     public static final double kP = 1;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-    public static final double kF = 0.0;
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
 
-    public static final double simkP = 0.1;
+    public static final double simkP = 1;
     public static final double simkI = 0.0;
     public static final double simkD = 0.0;
     public static final double simkF = 0.0;
@@ -82,7 +82,7 @@ public final class ElevatorConstants {
     public static final double PositionToleranceInches = 0.5;
     public static final double velocityToleranceInchesPerSec = 0.5;
 
-    public static final double elevatorMOI = 0.025;
+    public static final double elevatorMOI = 0.15;
     public static final double nominal_voltage = 12.0;
 
     public static final int movingUpSlot = 1;

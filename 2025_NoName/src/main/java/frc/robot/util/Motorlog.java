@@ -11,8 +11,8 @@ public class Motorlog extends DogLog {
     log(key + "/VelocityRotsPerSec", motor.getVelocity().getValueAsDouble());
     log(key + "/AppliedVoltage", motor.getSupplyVoltage().getValueAsDouble());
     log(key+ "/TempCelcius", motor.getDeviceTemp().getValueAsDouble());
-    log(key + "/PositionInches", motor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerCount);
-    log(key + "/VelocityInchesPerSec", motor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerCount);
+    log(key + "/PositionInches", motor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerRev);
+    log(key + "/VelocityInchesPerSec", motor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerRev);
     log(key + "/CurrentAmps", motor.getSupplyCurrent().getValueAsDouble());
   }
 }

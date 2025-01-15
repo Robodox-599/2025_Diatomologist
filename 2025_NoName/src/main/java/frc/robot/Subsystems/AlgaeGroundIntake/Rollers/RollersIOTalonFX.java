@@ -9,11 +9,13 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.algaegroundintake.utils.MotorLog;
 
 public class RollersIOTalonFX extends RollersIO {
     private TalonFX rollersMotor;
@@ -46,7 +48,6 @@ public class RollersIOTalonFX extends RollersIO {
         rollersMotor.getConfigurator().apply(rollersConfig);
     }
 
-    MotorLog.log("RollersMotor", RollersMotor);
 
     @Override
     public void updateInputs() {
@@ -57,6 +58,8 @@ public class RollersIOTalonFX extends RollersIO {
         super.tempCelcius = tempCelcius.getValueAsDouble();
         super.currentAmps = currentAmps.getValueAsDouble();
         super.velocityRadsPerSec = velocityRadsPerSec.getValueAsDouble();
+
+       MotorLog.log("rollersMotor", rollersMotor);
     }
     @Override
     public void setVoltage(double voltage){

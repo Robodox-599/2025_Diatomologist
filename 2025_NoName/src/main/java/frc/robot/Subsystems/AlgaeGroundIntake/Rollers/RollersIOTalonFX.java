@@ -1,4 +1,6 @@
-package frc.robot.subsystems.intake.rollers;
+package frc.robot.subsystems.algaegroundintake.rollers;
+
+import static frc.robot.subsystems.algaegroundintake.rollers.RollersConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -13,26 +15,25 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
-
 public class RollersIOTalonFX extends RollersIO {
-     private TalonFX rollersMotor;
+    private TalonFX rollersMotor;
     TalonFXConfiguration rollersConfig;
 
-    private final StatusSignal<Voltage> velocityRadsPerSec;
-    private final StatusSignal<AngularVelocity> appliedVoltage;
+    private final StatusSignal<AngularVelocity> velocityRadsPerSec;
+    private final StatusSignal<Voltage> appliedVoltage;
     private double desiredvelocitySetpoint;
     private final StatusSignal<Current> currentAmps;
-    private final StatusSignal<Tempurature> tempCelcius;
+    private final StatusSignal<Temperature> tempCelcius;
 
     private final VelocityVoltage rollersVelocityVoltage = new VelocityVoltage(0).withSlot(1);
 
     public RollersIOTalonFX() {
-        rollerMotor = new TalonFX(rollerMotorID, rollersMotorCANBus);
+        rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
 
-        RollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
-        RollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
-        RollersConfig.CurrentLimits.SupplyCurrentThreshold = PeakCurrentLimit;
-        RollersConfig.CurrentLimits.SupplyTimeThreshold = PeakCurrentDuration;
+        rollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
+        rollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
+        rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
+        rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
         appliedVoltage = rollersMotor.getSupplyVoltage();
         velocityRadsPerSec = rollersMotor.getVelocity();
@@ -42,18 +43,20 @@ public class RollersIOTalonFX extends RollersIO {
         BaseStatusSignal.setUpdateFrequencyForAll(50, appliedVoltage, velocityRadsPerSec, tempCelcius, currentAmps);
 
         rollersMotor.optimizeBusUtilization();
-        rollersMotor.getConfigurator().apply(RollersConfig);
+        rollersMotor.getConfigurator().apply(rollersConfig);
     }
 
+    MotorLog.log("RollersMotor", RollersMotor);
+
     @Override
-    public void updateInputs(RollersIOInputs inputs) {
+    public void updateInputs() {
         BaseStatusSignal.refreshAll(appliedVoltage, velocityRadsPerSec, tempCelcius, currentAmps);
 
-        inputs.velocitySetpoint = desiredvelocitySetpoint;
-        inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
-        inputs.tempCelcius = tempCelcius.getValueAsDouble();
-        inputs.currentAmps = currentAmps.getValueAsDouble();
-        inputs.velocityRadsPerSec = velocityRadsPerSec.getValueAsDouble();
+        super.velocitySetpoint = desiredvelocitySetpoint;
+        super.appliedVoltage = appliedVoltage.getValueAsDouble();
+        super.tempCelcius = tempCelcius.getValueAsDouble();
+        super.currentAmps = currentAmps.getValueAsDouble();
+        super.velocityRadsPerSec = velocityRadsPerSec.getValueAsDouble();
     }
     @Override
     public void setVoltage(double voltage){

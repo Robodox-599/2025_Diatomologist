@@ -31,10 +31,9 @@ public abstract class ModuleIO {
   protected double[] odometryTimestamps = new double[] {};
   protected double[] odometryDrivePositionsRad = new double[] {};
   protected Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
-  protected int index = 0;
 
   /** Updates the set of loggable inputs. */
-  public void updateInputs(int index) {}
+  public void updateInputs() {}
 
   /** Run the drive motor at the specified open loop value. */
   public void setDriveOpenLoop(double output) {}

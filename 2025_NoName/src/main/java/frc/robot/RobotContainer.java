@@ -20,7 +20,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOReal;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.constants.generated.TunerConstants;
+import frc.robot.subsystems.drive.constants.RealConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,10 +48,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOReal(TunerConstants.FrontLeft),
-                new ModuleIOReal(TunerConstants.FrontRight),
-                new ModuleIOReal(TunerConstants.BackLeft),
-                new ModuleIOReal(TunerConstants.BackRight));
+                new ModuleIOReal(RealConstants.frontLeft),
+                new ModuleIOReal(RealConstants.frontRight),
+                new ModuleIOReal(RealConstants.backLeft),
+                new ModuleIOReal(RealConstants.backRight));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -66,10 +66,10 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new ModuleIOSim(RealConstants.frontLeft),
+                new ModuleIOSim(RealConstants.frontRight),
+                new ModuleIOSim(RealConstants.backLeft),
+                new ModuleIOSim(RealConstants.backRight));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose

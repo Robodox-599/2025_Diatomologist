@@ -32,7 +32,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,7 +40,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.drive.constants.generated.TunerConstants;
+import frc.robot.subsystems.drive.Module.ModuleConstants;
 import frc.robot.util.MotorLog;
 import java.util.Queue;
 
@@ -52,7 +51,7 @@ import java.util.Queue;
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
 public class ModuleIOReal extends ModuleIO {
-  private final SwerveModuleConstants constants;
+  private final ModuleConstants constants;
 
   // Hardware objects
   private final TalonFX driveTalon;
@@ -94,61 +93,48 @@ public class ModuleIOReal extends ModuleIO {
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-  public ModuleIOReal(
-      SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
-          constants) {
+  public ModuleIOReal(ModuleConstants constants) {
     this.constants = constants;
-    driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
-    turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
-    cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
+    driveTalon = new TalonFX(constants.driveID(), constants.CANBusName());
+    turnTalon = new TalonFX(constants.steerID(), constants.CANBusName());
+    cancoder = new CANcoder(constants.cancoderID(), constants.CANBusName());
 
     // Configure drive motor
-    var driveConfig = constants.DriveMotorInitialConfigs;
+    var driveConfig = new TalonFXConfiguration();
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    driveConfig.Slot0 = constants.DriveMotorGains;
-    driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
-    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent;
-    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -constants.SlipCurrent;
-    driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
+    driveConfig.Slot0 = constants.driveConfig();
+    driveConfig.Feedback.SensorToMechanismRatio = 5.357142857142857;
+    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = 120;
+    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -120;
+    driveConfig.CurrentLimits.StatorCurrentLimit = 120;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.Inverted =
-        constants.DriveMotorInverted
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
+    driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
     tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
     // Configure turn motor
     var turnConfig = new TalonFXConfiguration();
+
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    turnConfig.Slot0 = constants.SteerMotorGains;
-    turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
-    turnConfig.Feedback.FeedbackSensorSource =
-        switch (constants.FeedbackSource) {
-          case RemoteCANcoder -> FeedbackSensorSourceValue.RemoteCANcoder;
-          case FusedCANcoder -> FeedbackSensorSourceValue.FusedCANcoder;
-          case SyncCANcoder -> FeedbackSensorSourceValue.SyncCANcoder;
-        };
-    turnConfig.Feedback.RotorToSensorRatio = constants.SteerMotorGearRatio;
-    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
+    turnConfig.Slot0 = constants.steerConfig();
+    turnConfig.Feedback.FeedbackRemoteSensorID = constants.cancoderID();
+    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    turnConfig.Feedback.RotorToSensorRatio = 21.428571428571427;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / 21.428571428571427;
     turnConfig.MotionMagic.MotionMagicAcceleration =
         turnConfig.MotionMagic.MotionMagicCruiseVelocity / 0.100;
-    turnConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * constants.SteerMotorGearRatio;
+    turnConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * 21.428571428571427;
     turnConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.MotorOutput.Inverted =
-        constants.SteerMotorInverted
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
+
     tryUntilOk(5, () -> turnTalon.getConfigurator().apply(turnConfig, 0.25));
 
     // Configure CANCoder
-    CANcoderConfiguration cancoderConfig = constants.EncoderInitialConfigs;
-    cancoderConfig.MagnetSensor.MagnetOffset = constants.EncoderOffset;
-    cancoderConfig.MagnetSensor.SensorDirection =
-        constants.EncoderInverted
-            ? SensorDirectionValue.Clockwise_Positive
-            : SensorDirectionValue.CounterClockwise_Positive;
+    CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
+    cancoderConfig.MagnetSensor.MagnetOffset = constants.cancoderOffset().getRotations();
+    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+
     cancoder.getConfigurator().apply(cancoderConfig);
 
     // Create timestamp queue
@@ -186,7 +172,7 @@ public class ModuleIOReal extends ModuleIO {
   }
 
   @Override
-  public void updateInputs(int index) {
+  public void updateInputs() {
     // Refresh all signals
     var driveStatus =
         BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
@@ -222,19 +208,25 @@ public class ModuleIOReal extends ModuleIO {
             .map((Double value) -> Rotation2d.fromRotations(value))
             .toArray(Rotation2d[]::new);
 
-    MotorLog.log("Drive/Module " + index + "/DriveMotor", driveTalon);
-    DogLog.log("Drive/Module " + index + "/DriveMotor/Connected", super.driveConnected);
-
-    MotorLog.log("Drive/Module " + index + "/TurnMotor", turnTalon);
-    DogLog.log("Drive/Module " + index + "/TurnMotor/Connected", super.turnConnected);
-
-    DogLog.log("Drive/Module " + index + "/Encoder/Connected", super.encoderConnected);
-    DogLog.log("Drive/Module " + index + "/Encoder/AbsolutePosition", super.absolutePosition);
-
-    DogLog.log("Drive/Module " + index + "/Odometry/Timestamps", super.odometryTimestamps);
+    MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
     DogLog.log(
-        "Drive/Module " + index + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsRad);
-    DogLog.log("Drive/Module " + index + "/Odometry/TurnPositions", super.odometryTurnPositions);
+        "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+
+    MotorLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnTalon);
+    DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
+
+    DogLog.log("Drive/Module " + constants.prefix() + "/Encoder/Connected", super.encoderConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition", super.absolutePosition);
+
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsRad",
+        super.odometryDrivePositionsRad);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
+        super.odometryTurnPositions);
 
     timestampQueue.clear();
     drivePositionQueue.clear();
@@ -243,39 +235,22 @@ public class ModuleIOReal extends ModuleIO {
 
   @Override
   public void setDriveOpenLoop(double output) {
-    driveTalon.setControl(
-        switch (constants.DriveMotorClosedLoopOutput) {
-          case Voltage -> voltageRequest.withOutput(output);
-          case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
-        });
+    driveTalon.setControl(torqueCurrentRequest.withOutput(output));
   }
 
   @Override
   public void setTurnOpenLoop(double output) {
-    turnTalon.setControl(
-        switch (constants.SteerMotorClosedLoopOutput) {
-          case Voltage -> voltageRequest.withOutput(output);
-          case TorqueCurrentFOC -> torqueCurrentRequest.withOutput(output);
-        });
+    turnTalon.setControl(torqueCurrentRequest.withOutput(output));
   }
 
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
     double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
-    driveTalon.setControl(
-        switch (constants.DriveMotorClosedLoopOutput) {
-          case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
-          case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
-        });
+    driveTalon.setControl(velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec));
   }
 
   @Override
   public void setTurnPosition(Rotation2d rotation) {
-    turnTalon.setControl(
-        switch (constants.SteerMotorClosedLoopOutput) {
-          case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
-          case TorqueCurrentFOC ->
-              positionTorqueCurrentRequest.withPosition(rotation.getRotations());
-        });
+    turnTalon.setControl(positionTorqueCurrentRequest.withPosition(rotation.getRotations()));
   }
 }

@@ -1,21 +1,24 @@
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.subsystems.drive.Module.ModuleConstants;
 import frc.robot.subsystems.drive.constants.SimConstants; // Ensure this import is added
 import frc.robot.util.SimLog;
 
 public class ModuleIOSim extends ModuleIO {
   private final DCMotorSim driveSim;
   private final DCMotorSim turnSim;
-
+  private final ModuleConstants constants;
   private boolean driveClosedLoop = false;
   private boolean turnClosedLoop = false;
   private PIDController driveController =
@@ -25,24 +28,33 @@ public class ModuleIOSim extends ModuleIO {
   private double driveFFVolts = 0.0;
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
+  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
+  private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.01);
 
-  public ModuleIOSim(SwerveModuleConstants constants) {
+  public ModuleIOSim(ModuleConstants constants) {
+    this.constants = constants;
     driveSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                SimConstants.drive_gearbox, constants.DriveInertia, constants.DriveMotorGearRatio),
+                SimConstants.drive_gearbox,
+                kDriveInertia.magnitude()
+                    * kDriveInertia.copySign(kDriveInertia, KilogramSquareMeters),
+                5.357142857142857),
             SimConstants.drive_gearbox);
     turnSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                SimConstants.turn_gearbox, constants.SteerInertia, constants.SteerMotorGearRatio),
+                SimConstants.turn_gearbox,
+                kSteerInertia.magnitude()
+                    * kSteerInertia.copySign(kSteerInertia, KilogramSquareMeters),
+                21.428571428571427),
             SimConstants.turn_gearbox);
 
     turnController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
-  public void updateInputs(int index) {
+  public void updateInputs() {
     if (driveClosedLoop) {
       driveAppliedVolts = driveFFVolts + driveController.calculate(super.driveVelocityRadPerSec);
     } else {
@@ -87,19 +99,25 @@ public class ModuleIOSim extends ModuleIO {
     super.odometryDrivePositionsRad = new double[] {super.drivePositionRad};
     super.odometryTurnPositions = new Rotation2d[] {super.turnPosition};
 
-    SimLog.log("Drive/Module " + index + "/DriveMotor", driveSim);
-    DogLog.log("Drive/Module " + index + "/DriveMotor/Connected", super.driveConnected);
-
-    SimLog.log("Drive/Module " + index + "/TurnMotor", turnSim);
-    DogLog.log("Drive/Module " + index + "/TurnMotor/Connected", super.turnConnected);
-
-    DogLog.log("Drive/Module " + index + "/Encoder/Connected", super.encoderConnected);
-    DogLog.log("Drive/Module " + index + "/Encoder/AbsolutePosition", super.absolutePosition);
-
-    DogLog.log("Drive/Module " + index + "/Odometry/Timestamps", super.odometryTimestamps);
+    SimLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveSim);
     DogLog.log(
-        "Drive/Module " + index + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsRad);
-    DogLog.log("Drive/Module " + index + "/Odometry/TurnPositions", super.odometryTurnPositions);
+        "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+
+    SimLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnSim);
+    DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
+
+    DogLog.log("Drive/Module " + constants.prefix() + "/Encoder/Connected", super.encoderConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition", super.absolutePosition);
+
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsRad",
+        super.odometryDrivePositionsRad);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
+        super.odometryTurnPositions);
   }
 
   @Override

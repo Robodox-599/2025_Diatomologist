@@ -1,6 +1,6 @@
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -10,40 +10,47 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class Module {
   private final ModuleIO io;
-  private final int index;
-  private final SwerveModuleConstants constants;
+  private final ModuleConstants constants;
 
   private final Alert driveDisconnectedAlert;
   private final Alert turnDisconnectedAlert;
   private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
-  public Module(ModuleIO io, int index, SwerveModuleConstants constants) {
+  public record ModuleConstants(
+      String prefix,
+      int driveID,
+      int steerID,
+      int cancoderID,
+      String CANBusName,
+      Rotation2d cancoderOffset,
+      Slot0Configs steerConfig,
+      Slot0Configs driveConfig,
+      double WheelRadius) {}
+
+  public Module(ModuleIO io, ModuleConstants constants) {
     this.io = io;
-    this.index = index;
     this.constants = constants;
     driveDisconnectedAlert =
         new Alert(
-            "Disconnected drive motor on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+            "Disconnected drive motor on module " + constants.prefix() + ".", AlertType.kError);
     turnDisconnectedAlert =
         new Alert(
-            "Disconnected turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
+            "Disconnected turn motor on module " + constants.prefix() + ".", AlertType.kError);
     turnEncoderDisconnectedAlert =
         new Alert(
-            "Disconnected turn encoder on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+            "Disconnected turn encoder on module " + constants.prefix() + ".", AlertType.kError);
   }
 
   public void periodic() {
-    io.updateInputs(index);
+    io.updateInputs();
 
     // Calculate positions for odometry
     double[] timestamps = io.odometryTimestamps;
     int sampleCount = timestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
-      double positionMeters = io.odometryDrivePositionsRad[i] * constants.WheelRadius;
+      double positionMeters = io.odometryDrivePositionsRad[i] * 2;
       Rotation2d angle = io.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }

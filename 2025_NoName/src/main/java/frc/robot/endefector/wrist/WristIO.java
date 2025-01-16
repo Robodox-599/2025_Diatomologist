@@ -1,16 +1,16 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.endefector.wrist;
 
 public abstract class WristIO {
-   public static class WristIOInputs {
-  //  protected double targetPosition = 0.0;
-  //  protected double currentPosition = 0.0;
-    }
+  //  public static class WristIOInputs {
+  // //  protected double targetPosition = 0.0;
+  // //  protected double currentPosition = 0.0;
+  //   }
 
-  public void updateInputs(WristIOInputs inputs){}
+  public void updateInputs(){}
   
   public void setVoltage(double voltage){}
 
-  public void goToPose(){}
+  public void goToPose(double position){}
 
   public double getPose() {
     return 0.0;

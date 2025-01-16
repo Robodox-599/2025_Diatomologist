@@ -7,13 +7,14 @@ public class MotorLog extends DogLog{
     public static void log(String key, TalonFX motor){
 
         //Rollers
-        log(key + "/velocityRadsPerSec", motor.getVelocity().getValueAsDouble());
+        log(key + "Rollers", motor.getVelocity().getValueAsDouble());
         
-        log(key + "/appliedVoltage", motor.getSupplyVoltage().getValueAsDouble());
+        log(key + "Rollers", motor.getSupplyVoltage().getValueAsDouble());
         
-        log(key + "/currentAmps", motor.getStatorCurrent().getValueAsDouble());
+        log(key + "Rollers", motor.getStatorCurrent().getValueAsDouble());
 
-        log(key + "/tempCelcius", motor.getDeviceTemp().getValueAsDouble());
+        log(key + "Rollers", motor.getDeviceTemp().getValueAsDouble());
+
 
         //Wrist velocityRadsPerSec
         log(key + "Wrist", motor.getVelocity().getValueAsDouble());
@@ -25,9 +26,24 @@ public class MotorLog extends DogLog{
         log(key + "Wrist", motor.getStatorCurrent().getValueAsDouble());
 
         //Wrist tempCelcius
-        log(key + "Rollers", motor.getDeviceTemp().getValueAsDouble());
+        log(key + "Wrist", motor.getDeviceTemp().getValueAsDouble());
 
         //Wrist setpointAngle
         log(key + "Wrist", motor.getPosition().getValueAsDouble());
+
+
+        log(key + "Claw", motor.getVelocity().getValueAsDouble());
+
+        //Claw appliedVoltage
+        log(key + "Claw", motor.getSupplyVoltage().getValueAsDouble());
+
+        //Claw currentAmps
+        log(key + "Claw", motor.getStatorCurrent().getValueAsDouble());
+
+        //Claw tempCelcius
+        log(key + "Claw", motor.getDeviceTemp().getValueAsDouble());
+
+        //Claw setpointAngle
+        log(key + "Claw", motor.getPosition().getValueAsDouble());
     }
 }

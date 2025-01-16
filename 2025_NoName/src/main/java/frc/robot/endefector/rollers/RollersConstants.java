@@ -1,4 +1,4 @@
-package frc.robot.subsystems.endefector.rollers;
+package frc.robot.endefector.rollers;
 
 public class RollersConstants {
     public static final int rollersMotorID = 0;
@@ -12,15 +12,15 @@ public class RollersConstants {
     public static final double gearRatio = 0.0;
     public static final double rollersMOI = 0.04;
 
-    // public static final double simkP = 0.0;
-    // public static final double simkI = 0.0;
-    // public static final double simkD = 0.0;
-    // public static final double simkS = 0.0;
-    // public static final double simkV = 0.0;
+    public static final double simkP = 0.0;
+    public static final double simkI = 0.0;
+    public static final double simkD = 0.0;
+    public static final double simkS = 0.0;
+    public static final double simkV = 0.0;
 
-    // public static final double realP = 0.0;
-    // public static final double realI = 0.0;
-    // public static final double realD = 0.0;
-    // public static final double realS = 0.0;
-    // public static final double realV = 0.0;
+    public static final double realP = 0.0;
+    public static final double realI = 0.0;
+    public static final double realD = 0.0;
+    public static final double realS = 0.0;
+    public static final double realV = 0.0;
 }

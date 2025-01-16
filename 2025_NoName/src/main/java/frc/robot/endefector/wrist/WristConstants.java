@@ -1,4 +1,4 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.endefector.wrist;
 
 public class WristConstants {
     public static final int wristMotorID = 0;
@@ -24,11 +24,11 @@ public class WristConstants {
     public static final double realRetractkS = 0.0;
     public static final double realRetractkV = 0.0;
 
-    public static final double simP = 0.0;
-    public static final double simI = 0.0;
-    public static final double simD = 0.0;
-    public static final double simV = 0.0;
-    public static final double simS = 0.0;
+    public static final double simkP = 0.0;
+    public static final double simkI = 0.0;
+    public static final double simkD = 0.0;
+    public static final double simkV = 0.0;
+    public static final double simkS = 0.0;
   
     public static final double simVelocityConstant = 0.2;
 

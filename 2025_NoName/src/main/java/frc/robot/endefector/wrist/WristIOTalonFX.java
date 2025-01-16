@@ -1,15 +1,14 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.endefector.wrist;
 import frc.robot.util.MotorLog;
-import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
+import static frc.robot.endefector.wrist.WristConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import dev.doglog.DogLog;
 
-import edu.wpi.first.math.MathUtil;
+// import edu.wpi.first.math.MathUtil;
 
 public class WristIOTalonFX extends WristIO{
     
@@ -26,8 +25,12 @@ public class WristIOTalonFX extends WristIO{
         wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
         wristConfig = new TalonFXConfiguration();
         m_request = new MotionMagicVoltage(0);
-        currentPosition = getPose();
-    
+
+        var motionMagicConfigs = wristConfig.MotionMagic;
+        //I don't really know what values to put here :(
+        motionMagicConfigs.MotionMagicCruiseVelocity = 0.0;
+        motionMagicConfigs.MotionMagicAcceleration = 0.0;
+
         wristConfig.Slot0.kP = realExtendkP;
         wristConfig.Slot0.kI = realExtendkI;
         wristConfig.Slot0.kD = realExtendkD;
@@ -42,12 +45,6 @@ public class WristIOTalonFX extends WristIO{
         wristConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
         wristConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
         wristConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
-
-    if (passedInPosition > currentPosition) {
-        wristSlot = 0;
-    } else {
-        wristSlot = 1;
-    }
     
     wristMotor.optimizeBusUtilization();
 
@@ -55,8 +52,7 @@ public class WristIOTalonFX extends WristIO{
     }
 
     @Override
-    public void updateInputs(WristIOInputs inputs) {
-
+    public void updateInputs() {
       MotorLog.log("Wrist", wristMotor);
       DogLog.log("Wrist/TargetPosition", passedInPosition);
       DogLog.log("Wrist/CurrentPosition", currentPosition);
@@ -68,9 +64,23 @@ public class WristIOTalonFX extends WristIO{
   }
 
     @Override
-    public void goToPose(){
-      wristMotor.setControl(m_request.withPosition(passedInPosition));
-  }
+    public void goToPose(double position){
+      passedInPosition = position;
+      
+      if (passedInPosition > currentPosition) {
+        wristSlot = 0;
+      } else {
+        wristSlot = 1;
+      }
+      
+      m_request.withSlot(wristSlot);
+      wristMotor.setControl(m_request);
+   }
+
+    @Override
+    public double getPose(){
+      return wristMotor.getPosition().getValueAsDouble();
+    }
 
   @Override
   public void stop() {

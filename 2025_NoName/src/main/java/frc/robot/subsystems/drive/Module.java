@@ -1,37 +1,26 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-
-import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.constants.RealConstants;
 
 // import static frc.robot.subsystems.drive.constants.RealConstants;
 
 public class Module {
-  public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
-  static final double ODOMETRY_FREQUENCY = 250.0;
-  private final ModuleConstants constants;
-  private final ModuleIO io;
-  // private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
-  private Rotation2d angleSetpoint = null; // Setpoint for closed loop control, null for open loop
-  private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
-  private double lastSpeedSetpoint = 0.0;
-
+  private ModuleIO io;
+  private String name;
   private SwerveModuleState lastSetpoint = new SwerveModuleState();
   private Alert driveDisconnectedAlert;
   private Alert turnDisconnectedAlert;
   private Alert turnEncoderDisconnectedAlert;
-  
+
   public record ModuleConstants(
       String prefix,
       int driveID,
@@ -43,27 +32,22 @@ public class Module {
       Slot0Configs driveConfig,
       double WheelRadius) {}
 
-  public Module(ModuleIO io, ModuleConstants constants) {
+  public Module(ModuleIO io) {
     this.io = io;
-    this.constants = constants;
+    this.name = io.getModuleName();
     driveDisconnectedAlert =
-        new Alert(
-            "Disconnected drive motor on module " + constants.prefix() + ".", AlertType.kError);
+        new Alert("Disconnected drive motor on module " + name + ".", AlertType.kError);
     turnDisconnectedAlert =
-        new Alert(
-            "Disconnected turn motor on module " + constants.prefix() + ".", AlertType.kError);
+        new Alert("Disconnected turn motor on module " + name + ".", AlertType.kError);
     turnEncoderDisconnectedAlert =
-        new Alert(
-            "Disconnected turn encoder on module " + constants.prefix() + ".", AlertType.kError);
+        new Alert("Disconnected turn encoder on module " + name + ".", AlertType.kError);
+  }
+
+  public void updateInputs() {
+    io.updateInputs();
   }
 
   public void periodic() {
-    // Logger.processInputs(String.format("Drive/%s Module", io.getModuleName()), inputs);
-
-    // Logger.recordOutput(
-    //     String.format("Drive/%s Module/Voltage Available", io.getModuleName()),
-    //     Math.abs(inputs.driveAppliedVolts - RoboRioDataJNI.getVInVoltage()));
-    // // Calculate positions for odometry
     io.updateInputs();
 
     int sampleCount = io.odometryTimestamps.length; // All signals are sampled together
@@ -75,27 +59,25 @@ public class Module {
               turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
-        // Update alerts
-        driveDisconnectedAlert.set(!io.driveConnected);
-        turnDisconnectedAlert.set(!io.turnConnected);
-        turnEncoderDisconnectedAlert.set(!io.encoderConnected);
+    // Update alerts
+    driveDisconnectedAlert.set(!io.driveConnected);
+    turnDisconnectedAlert.set(!io.turnConnected);
+    turnEncoderDisconnectedAlert.set(!io.encoderConnected);
   }
 
   /** Runs the module closed loop with the specified setpoint state. Returns the optimized state. */
-  public void runSetpoint(SwerveModuleState state, boolean focEnabled) {
+  public void runSetpoint(SwerveModuleState state) {
     // Optimize state based on current angle
     state.optimize(getAngle());
-
+    // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
+    // Apply cosine scaled state velocity to Drive Setpoint with FOC
     io.setDriveSetpoint(
-      state.speedMetersPerSecond
-            * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
+        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
         (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
 
     lastSetpoint = state;
-    // return states;
   }
-
 
   /** Runs the module with the specified output while controlling to zero degrees. */
   public void runCharacterization(double output) {
@@ -105,36 +87,31 @@ public class Module {
 
   /** Returns the module position in radians. */
   public double getWheelRadiusCharacterizationPosition() {
-    return io.drivePositionMeters;
+    return io.drivePositionMeters / RealConstants.WHEEL_RADIUS;
   }
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
-    return Units.radiansToRotations(io.driveVelocityRadPerSec);
+    return Units.radiansToRotations(io.driveVelocityMetersPerSec / RealConstants.WHEEL_RADIUS);
   }
 
-  
   /**
    * Runs the module open loop with the specified setpoint state, velocity in volts. Returns the
    * optimized state.
    */
-  public SwerveModuleState runVoltageSetpoint(SwerveModuleState state) {
-    return runVoltageSetpoint(state, true);
+  public void runVoltageSetpoint(SwerveModuleState state) {
+    runVoltageSetpoint(state, true);
   }
 
-  /** Runs the module with the specified voltage while controlling to zero degrees. */
-  public void runDriveCharacterization(double volts) {
-    // Closed loop turn control
-    io.setTurnSetpoint(Rotation2d.fromRotations(0.0));
-
-    // Open loop drive control
-    io.setDriveVoltage(volts);
-  }
-
-  /** Runs the module angle with the specified voltage while not moving the drive motor */
-  public void runSteerCharacterization(double volts) {
-    io.setTurnVoltage(volts);
-    io.setDriveVoltage(0.0);
+  public void runVoltageSetpoint(SwerveModuleState state, boolean focEnabled) {
+    // Optimize state based on current angle
+    state.optimize(getAngle());
+    // Apply Optimized State angle to Turn Setpoint
+    io.setTurnSetpoint(state.angle);
+    // Apply cosine scaled state velocity to Drive Voltage Setpoint with FOC
+    io.setDriveVoltage(
+        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
+        focEnabled);
   }
 
   /** Disables all outputs to motors. */
@@ -148,12 +125,6 @@ public class Module {
     return io.turnPosition;
   }
 
-  public Command setDaBrake() {
-    return Commands.run(
-        () -> {
-          io.setBrake();
-        });
-  }
   /** Returns the current drive position of the module in meters at normal sampling frequency. */
   public double getPositionMeters() {
     return io.drivePositionMeters;
@@ -175,11 +146,6 @@ public class Module {
   /** Returns the module state (turn angle and drive velocity) at normal sampling frequency. */
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
-  }
-
-  /** Returns the drive velocity in meters/sec. */
-  public double getCharacterizationVelocity() {
-    return io.driveVelocityMetersPerSec;
   }
 
   /** Returns the timestamps of the samples received this cycle from PhoenixOdometryThread. */

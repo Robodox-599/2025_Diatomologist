@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static frc.robot.subsystems.drive.constants.RealConstants.WHEEL_RADIUS;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -11,35 +12,35 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.subsystems.drive.Module.ModuleConstants;
-import frc.robot.subsystems.drive.constants.SimConstants; // Ensure this import is added
+import frc.robot.subsystems.drive.constants.RealConstants;
+import frc.robot.subsystems.drive.constants.SimConstants;
 import frc.robot.util.SimLog;
 
 public class ModuleIOSim extends ModuleIO {
   private final DCMotorSim driveSim;
   private final DCMotorSim turnSim;
-  private final ModuleConstants constants;
   private boolean driveClosedLoop = false;
   private boolean turnClosedLoop = false;
   private PIDController driveController =
       new PIDController(SimConstants.drive_kp, 0, SimConstants.drive_kd);
   private PIDController turnController =
       new PIDController(SimConstants.turn_kp, 0, SimConstants.turn_kd);
-  private double driveFFVolts = 0.0;
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
-  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);
-  private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.01);
+  private static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.004);
+  private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
+  private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
+  private String name;
 
-  public ModuleIOSim(ModuleConstants constants) {
-    this.constants = constants;
+  public ModuleIOSim(final String name) {
+    this.name = name;
     driveSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 SimConstants.drive_gearbox,
                 kDriveInertia.magnitude()
                     * kDriveInertia.copySign(kDriveInertia, KilogramSquareMeters),
-                5.357142857142857),
+                RealConstants.DRIVE_GEAR_RATIO),
             SimConstants.drive_gearbox);
     turnSim =
         new DCMotorSim(
@@ -47,7 +48,7 @@ public class ModuleIOSim extends ModuleIO {
                 SimConstants.turn_gearbox,
                 kSteerInertia.magnitude()
                     * kSteerInertia.copySign(kSteerInertia, KilogramSquareMeters),
-                21.428571428571427),
+                RealConstants.TURN_GEAR_RATIO),
             SimConstants.turn_gearbox);
 
     turnController.enableContinuousInput(-Math.PI, Math.PI);
@@ -56,7 +57,7 @@ public class ModuleIOSim extends ModuleIO {
   @Override
   public void updateInputs() {
     if (driveClosedLoop) {
-      driveAppliedVolts = driveFFVolts + driveController.calculate(super.driveVelocityRadPerSec);
+      driveAppliedVolts = driveController.calculate(super.driveVelocityMetersPerSec / WHEEL_RADIUS);
     } else {
       driveController.reset();
     }
@@ -72,78 +73,71 @@ public class ModuleIOSim extends ModuleIO {
     driveSim.update(0.02);
     turnSim.update(0.02);
 
-    // Update simulation state
-    driveSim.setInputVoltage(MathUtil.clamp(driveAppliedVolts, -12.0, 12.0));
-    turnSim.setInputVoltage(MathUtil.clamp(turnAppliedVolts, -12.0, 12.0));
-    driveSim.update(0.02);
-    turnSim.update(0.02);
-
-    // Update drive inputs
     super.driveConnected = true;
-    super.drivePositionRad = driveSim.getAngularPositionRad();
-    super.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+    super.turnConnected = true;
+    super.encoderConnected = true;
+
+    super.drivePositionMeters = driveSim.getAngularPositionRad() * RealConstants.WHEEL_RADIUS;
+    super.driveVelocityMetersPerSec =
+        driveSim.getAngularVelocityRadPerSec() * RealConstants.WHEEL_RADIUS;
     super.driveAppliedVolts = driveAppliedVolts;
     super.driveCurrentAmps = Math.abs(driveSim.getCurrentDrawAmps());
 
-    // Update turn inputs
-    super.turnConnected = true;
-    super.encoderConnected = true;
-    super.absolutePosition = new Rotation2d(turnSim.getAngularPositionRad());
     super.turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
+    super.turnAbsolutePosition =
+        new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
     super.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
     super.turnAppliedVolts = turnAppliedVolts;
     super.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
 
     // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
     super.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
-    super.odometryDrivePositionsRad = new double[] {super.drivePositionRad};
+    super.odometryDrivePositionsMeters = new double[] {super.drivePositionMeters};
     super.odometryTurnPositions = new Rotation2d[] {super.turnPosition};
 
-    SimLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveSim);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+    SimLog.log("Drive/Module " + name + "/DriveMotor", driveSim);
+    DogLog.log("Drive/Module " + name + "/DriveMotor/Connected", super.driveConnected);
 
-    SimLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnSim);
-    DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
+    SimLog.log("Drive/Module " + name + "/TurnMotor", turnSim);
+    DogLog.log("Drive/Module " + name + "/TurnMotor/Connected", super.turnConnected);
 
-    DogLog.log("Drive/Module " + constants.prefix() + "/Encoder/Connected", super.encoderConnected);
+    DogLog.log("Drive/Module " + name + "/Encoder/Connected", super.encoderConnected);
+    DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
-        "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition", super.absolutePosition);
-
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsRad",
-        super.odometryDrivePositionsRad);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
-        super.odometryTurnPositions);
+        "Drive/Module " + name + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsMeters);
+    DogLog.log("Drive/Module " + name + "/Odometry/TurnPositions", super.odometryTurnPositions);
   }
 
   @Override
-  public void setDriveOpenLoop(double output) {
+  public void setDriveVoltage(final double volts, final boolean focEnabled) {
     driveClosedLoop = false;
-    driveAppliedVolts = output;
+    driveAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    driveSim.setInputVoltage(driveAppliedVolts);
   }
 
   @Override
-  public void setTurnOpenLoop(double output) {
+  public void setTurnVoltage(final double volts) {
     turnClosedLoop = false;
-    turnAppliedVolts = output;
+    turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    turnSim.setInputVoltage(turnAppliedVolts);
   }
 
   @Override
-  public void setDriveVelocity(double velocityRadPerSec) {
+  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {
     driveClosedLoop = true;
-    driveFFVolts =
-        SimConstants.drive_ks * Math.signum(velocityRadPerSec)
-            + SimConstants.drive_kv * velocityRadPerSec;
-    driveController.setSetpoint(velocityRadPerSec);
+    setDriveVoltage(
+        driveController.calculate(
+            driveSim.getAngularVelocityRadPerSec() * RealConstants.WHEEL_RADIUS, metersPerSecond));
   }
 
   @Override
-  public void setTurnPosition(Rotation2d rotation) {
+  public void setTurnSetpoint(final Rotation2d rotation) {
     turnClosedLoop = true;
-    turnController.setSetpoint(rotation.getRadians());
+    setTurnVoltage(
+        turnController.calculate(turnSim.getAngularPositionRotations(), rotation.getRotations()));
+  }
+
+  public String getModuleName() {
+    return name;
   }
 }

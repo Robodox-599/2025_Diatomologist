@@ -4,22 +4,18 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.subsystems.commands.DriveCommands;
+import frc.robot.subsystems.commands.CharacterizationCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOReal;
-import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.constants.RealConstants;
 
 /**
@@ -45,13 +41,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOReal(RealConstants.frontLeft),
-                new ModuleIOReal(RealConstants.frontRight),
-                new ModuleIOReal(RealConstants.backLeft),
-                new ModuleIOReal(RealConstants.backRight));
+        drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -63,13 +53,7 @@ public class RobotContainer {
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(RealConstants.frontLeft),
-                new ModuleIOSim(RealConstants.frontRight),
-                new ModuleIOSim(RealConstants.backLeft),
-                new ModuleIOSim(RealConstants.backRight));
+        drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -79,16 +63,8 @@ public class RobotContainer {
                 drive);
         autoRoutines = new AutoRoutines(autoFactory);
         break;
-
       default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+        drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -124,35 +100,41 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+        drive.runVoltageTeleopFieldRelative(
+            () ->
+                new ChassisSpeeds(
+                    -joystickDeadbandApply(controller.getLeftY())
+                        * RealConstants.MAX_LINEAR_SPEED
+                        * 0.85,
+                    -joystickDeadbandApply(controller.getLeftX())
+                        * RealConstants.MAX_LINEAR_SPEED
+                        * 0.85,
+                    -joystickDeadbandApply(controller.getRightX())
+                        * RealConstants.MAX_ANGULAR_SPEED)));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(drive.stopWithXCmd());
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
   }
 
   /**
@@ -161,6 +143,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.selectedCommandScheduler();
+    return CharacterizationCommands.feedforwardCharacterization(drive).withTimeout(7.5);
+    // return autoChooser.selectedCommandScheduler();
+  }
+
+  private static double joystickDeadbandApply(double x) {
+    // return MathUtil.applyDeadband(Math.abs(Math.pow(x, 3) * Math.signum(x)), 0.02);
+    return MathUtil.applyDeadband(
+        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 }

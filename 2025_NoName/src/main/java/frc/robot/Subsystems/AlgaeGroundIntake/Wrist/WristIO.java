@@ -14,6 +14,11 @@ public interface WristIO {
 
     public default void setVoltage(double volts) {}
 
+    public default void goToPose(double position) {}
+
+    public default double getPose() {
+        return 0.0;
+    }
     public default void setSpeed(double speed) {}
 
     public default void setBrake(double brake) {}

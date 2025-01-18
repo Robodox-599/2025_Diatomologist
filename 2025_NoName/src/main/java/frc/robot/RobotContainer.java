@@ -4,15 +4,47 @@
 
 package frc.robot;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.algaegroundintake.rollers.Rollers;
+import frc.robot.subsystems.algaegroundintake.rollers.RollersIOTalonFX;
+import frc.robot.subsystems.algaegroundintake.wrist.Wrist;
+import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
 
 public class RobotContainer {
+  private Rollers rollers;
+  private Wrist wrist;
+
+  private final CommandXboxController controller =
+  new CommandXboxController(Constants.driverControllerPort);  
+  
   public RobotContainer() {
+    switch (Constants.currentMode) {
+      case REAL:
+      rollers = new Rollers(new RollersIOTalonFX());
+      wrist = new Wrist(new WristIOTalonFX());
+
+      break;
+    }
+
+    DogLog.setOptions
+      (new DogLogOptions().withCaptureNt(true).withNtPublish(null));
+
     configureBindings();
+
+
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    controller.x().onFalse(wrist.stop());
+    controller.x().onFalse(rollers.stop());
+
+    controller.x().whileTrue(wrist.goToPose(0));
+    controller.a().whileTrue(rollers.setVelocity(0));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

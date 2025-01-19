@@ -19,8 +19,8 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -75,10 +75,9 @@ public class ModuleIOReal extends ModuleIO {
 
   private final VoltageOut driveVoltage = new VoltageOut(0.0);
   private final VoltageOut turnVoltage = new VoltageOut(0.0);
-  private final VelocityTorqueCurrentFOC driveCurrentFOC =
-      new VelocityTorqueCurrentFOC(0).withSlot(0);
-  private final PositionTorqueCurrentFOC turnCurrentFOC =
-      new PositionTorqueCurrentFOC(0).withSlot(0);
+  private final VelocityVoltage drivePID = new VelocityVoltage(0).withSlot(0);
+  // private final PositionVoltage turnPID = new PositionVoltage(0).withSlot(0);
+  private final MotionMagicVoltage turnPID = new MotionMagicVoltage(0).withSlot(0);
   private final ModuleConstants constants;
 
   // Offset angle for the CANcoder to calibrate to zero
@@ -112,23 +111,14 @@ public class ModuleIOReal extends ModuleIO {
 
     driveConfig.Slot0.kV = 0;
     driveConfig.Slot0.kS = 0;
-    driveConfig.Slot0.kP = 0.5;
+    driveConfig.Slot0.kP = 0.0;
     driveConfig.Slot0.kD = 0.0;
-
-    /* ************ DRIVE TORQUE-CURRENT-FOC-PID CONFIGS ************ */
-
-    driveConfig.Slot1.kV = 0.0;
-    driveConfig.Slot1.kA = 0;
-    driveConfig.Slot1.kS = 0;
-    driveConfig.Slot1.kP = 0.5;
-    driveConfig.Slot1.kD = 0.0;
-    driveConfig.TorqueCurrent.TorqueNeutralDeadband = 10.0;
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
 
     turnConfig.Slot0.kV = 0.0;
     turnConfig.Slot0.kS = 0.0;
-    turnConfig.Slot0.kP = 10;
+    turnConfig.Slot0.kP = 0;
     turnConfig.Slot0.kD = 0;
 
     /* ************ MOTION MAGIC CONFIGS ************ */
@@ -164,7 +154,8 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
+    turnConfig.MotionMagic.MotionMagicAcceleration = 20;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -298,13 +289,13 @@ public class ModuleIOReal extends ModuleIO {
       setDriveVoltage(0.0);
     } else {
       driveTalon.setControl(
-          driveCurrentFOC.withVelocity(metersPerSecond).withAcceleration(metersPerSecondSquared));
+          drivePID.withVelocity(metersPerSecond).withAcceleration(metersPerSecondSquared));
     }
   }
 
   @Override
   public void setTurnSetpoint(Rotation2d rotation) {
-    turnTalon.setControl(turnCurrentFOC.withPosition(rotation.getRotations()));
+    turnTalon.setControl(turnPID.withPosition(rotation.getRotations()));
   }
 
   public String getModuleName() {

@@ -93,9 +93,9 @@ public class Drive extends SubsystemBase {
   public static ModuleIO[] createTalonFXModules() {
     return new ModuleIO[] {
       new ModuleIOReal(RealConstants.frontLeft),
-      new ModuleIOReal(RealConstants.frontRight),
-      new ModuleIOReal(RealConstants.backLeft),
-      new ModuleIOReal(RealConstants.backRight)
+      // new ModuleIOReal(RealConstants.frontRight),
+      // new ModuleIOReal(RealConstants.backLeft),
+      // new ModuleIOReal(RealConstants.backRight)
     };
   }
 
@@ -184,12 +184,11 @@ public class Drive extends SubsystemBase {
     // Update odometry // This updates based on sensor data and kinematics
     double[] sampleTimestamps =
         modules[0].getOdometryTimestamps(); // All signals are sampled together
-    int sampleCount = sampleTimestamps.length;
-    for (int i = 0; i < sampleCount; i++) {
+    for (int i = 0; i < sampleTimestamps.length; i++) {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+      for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(

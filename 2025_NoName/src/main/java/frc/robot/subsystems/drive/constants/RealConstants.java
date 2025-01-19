@@ -7,10 +7,10 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.drive.Module.ModuleConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = 0.395751953125; // 0.106934; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.02197265625; // 0.472168; // FR
-  public static final double Module2AbsoluteEncoderOffset = -0.39013671875; // -0.105225; // BL
-  public static final double Module3AbsoluteEncoderOffset = 0.26708984375; // 0.220703; // BR
+  public static final double Module0AbsoluteEncoderOffset = -0.150634765625; // FL
+  public static final double Module1AbsoluteEncoderOffset = 0.466796875; // FR
+  public static final double Module2AbsoluteEncoderOffset = 0.234130859375; // BL
+  public static final double Module3AbsoluteEncoderOffset = 0.46533203125; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 
@@ -58,7 +58,7 @@ public class RealConstants {
           0,
           1,
           2,
-          "LunaDriveCANivore",
+          "BarryDriveCANivore",
           Rotation2d.fromRotations(Module0AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -69,7 +69,7 @@ public class RealConstants {
           3,
           4,
           5,
-          "LunaDriveCANivore",
+          "BarryDriveCANivore",
           Rotation2d.fromRotations(Module1AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -80,7 +80,7 @@ public class RealConstants {
           6,
           7,
           8,
-          "LunaDriveCANivore",
+          "BarryDriveCANivore",
           Rotation2d.fromRotations(Module2AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -91,7 +91,7 @@ public class RealConstants {
           9,
           10,
           11,
-          "LunaDriveCANivore",
+          "BarryDriveCANivore",
           Rotation2d.fromRotations(Module3AbsoluteEncoderOffset),
           steerGains,
           driveGains,

@@ -30,7 +30,9 @@ public class Module {
       Rotation2d cancoderOffset,
       Slot0Configs steerConfig,
       Slot0Configs driveConfig,
-      double WheelRadius) {}
+      double WheelRadius,
+      boolean invertMotor,
+      boolean invertCANcoder) {}
 
   public Module(ModuleIO io) {
     this.io = io;
@@ -72,10 +74,9 @@ public class Module {
     // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Setpoint with FOC
-    io.setDriveSetpoint(
-        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
-        (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
-
+    // io.setDriveSetpoint(
+    //     state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
+    //     (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
     lastSetpoint = state;
   }
 
@@ -109,9 +110,9 @@ public class Module {
     // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Voltage Setpoint with FOC
-    io.setDriveVoltage(
-        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
-        focEnabled);
+    // io.setDriveVoltage(
+    //     state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
+    //     focEnabled);
   }
 
   /** Disables all outputs to motors. */

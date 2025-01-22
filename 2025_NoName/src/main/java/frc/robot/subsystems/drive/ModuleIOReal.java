@@ -117,14 +117,14 @@ public class ModuleIOReal extends ModuleIO {
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
 
     turnConfig.Slot0.kV = 0.0;
-    turnConfig.Slot0.kS = 0.0;
-    turnConfig.Slot0.kP = 0;
+    turnConfig.Slot0.kS = 0.24;
+    turnConfig.Slot0.kP = 100;
     turnConfig.Slot0.kD = 0;
 
     /* ************ MOTION MAGIC CONFIGS ************ */
 
-    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 6000 / TURN_GEAR_RATIO;
-    // turnConfig.MotionMagic.MotionMagicAcceleration = (6000 * 0.1) / TURN_GEAR_RATIO;
+    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;
+    // turnConfig.MotionMagic.MotionMagicAcceleration = (5800 * 0.1) / TURN_GEAR_RATIO;
     // driveConfig.MotionMagic.MotionMagicCruiseVelocity = MAX_LINEAR_SPEED;
     // driveConfig.MotionMagic.MotionMagicAcceleration = MAX_LINEAR_ACCELERATION;
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
@@ -133,11 +133,11 @@ public class ModuleIOReal extends ModuleIO {
 
     driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.Inverted =
-        IS_TURN_MOTOR_INVERTED
+        constants.invertMotor()
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
     cancoderConfig.MagnetSensor.SensorDirection =
-        IS_TURN_MOTOR_INVERTED
+        constants.invertCANcoder()
             ? SensorDirectionValue.Clockwise_Positive
             : SensorDirectionValue.CounterClockwise_Positive;
 
@@ -154,12 +154,12 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.MotionMagic.MotionMagicAcceleration = 20;
+    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     /* ************ APPLY CANCODER OFFSETS *************/
 

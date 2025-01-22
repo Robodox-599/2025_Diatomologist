@@ -62,7 +62,9 @@ public class RealConstants {
           Rotation2d.fromRotations(Module0AbsoluteEncoderOffset),
           steerGains,
           driveGains,
-          WHEEL_RADIUS);
+          WHEEL_RADIUS,
+          true,
+          true);
   public static final ModuleConstants frontRight =
       new ModuleConstants(
           "Front Right",
@@ -73,7 +75,9 @@ public class RealConstants {
           Rotation2d.fromRotations(Module1AbsoluteEncoderOffset),
           steerGains,
           driveGains,
-          WHEEL_RADIUS);
+          WHEEL_RADIUS,
+          false,
+          false);
   public static final ModuleConstants backLeft =
       new ModuleConstants(
           "Back Left",
@@ -84,7 +88,9 @@ public class RealConstants {
           Rotation2d.fromRotations(Module2AbsoluteEncoderOffset),
           steerGains,
           driveGains,
-          WHEEL_RADIUS);
+          WHEEL_RADIUS,
+          true,
+          true);
   public static final ModuleConstants backRight =
       new ModuleConstants(
           "Back Right",
@@ -95,5 +101,7 @@ public class RealConstants {
           Rotation2d.fromRotations(Module3AbsoluteEncoderOffset),
           steerGains,
           driveGains,
-          WHEEL_RADIUS);
+          WHEEL_RADIUS,
+          false,
+          false);
 }

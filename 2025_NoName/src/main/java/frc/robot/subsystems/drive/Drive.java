@@ -93,9 +93,9 @@ public class Drive extends SubsystemBase {
   public static ModuleIO[] createTalonFXModules() {
     return new ModuleIO[] {
       new ModuleIOReal(RealConstants.frontLeft),
-      // new ModuleIOReal(RealConstants.frontRight),
-      // new ModuleIOReal(RealConstants.backLeft),
-      // new ModuleIOReal(RealConstants.backRight)
+      new ModuleIOReal(RealConstants.frontRight),
+      new ModuleIOReal(RealConstants.backLeft),
+      new ModuleIOReal(RealConstants.backRight)
     };
   }
 
@@ -158,8 +158,8 @@ public class Drive extends SubsystemBase {
 
   private void updateFieldVelo() {
     // Update field velocity
-    SwerveModuleState[] measuredStates = new SwerveModuleState[4];
-    for (int i = 0; i < 4; i++) {
+    SwerveModuleState[] measuredStates = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
       measuredStates[i] = modules[i].getState();
     }
     ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(measuredStates);
@@ -186,8 +186,8 @@ public class Drive extends SubsystemBase {
         modules[0].getOdometryTimestamps(); // All signals are sampled together
     for (int i = 0; i < sampleTimestamps.length; i++) {
       // Read wheel positions and deltas from each module
-      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[modules.length];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[modules.length];
       for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
@@ -208,7 +208,7 @@ public class Drive extends SubsystemBase {
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
 
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      // poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/Velocity", getVelocity());
     }
@@ -230,7 +230,7 @@ public class Drive extends SubsystemBase {
     DogLog.log(
         "Swerve/Target Chassis Speeds Field Relative",
         ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < modules.length; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
   }
@@ -257,9 +257,28 @@ public class Drive extends SubsystemBase {
 
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < modules.length; i++) {
       modules[i].runCharacterization(output);
     }
+  }
+
+  public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
+    return this.run(() -> runVelocity(speeds.get()));
+  }
+
+  public Command runVelocityFieldRelative(Supplier<ChassisSpeeds> speeds) {
+    return this.runVelocityCmd(
+        () -> ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation()));
+  }
+
+  public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
+    return this.runVelocityCmd(
+        () ->
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds.get(),
+                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                    ? getPose().getRotation()
+                    : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
   }
 
   public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
@@ -289,7 +308,8 @@ public class Drive extends SubsystemBase {
                   < RealConstants.MAX_LINEAR_SPEED * 0.9;
 
           // Send setpoints to modules
-          for (int i = 0; i < 4; i++) {
+          for (int i = 0; i < modules.length; i++) {
+            setpointStates[i].optimize(modules[i].getAngle());
             modules[i].runVoltageSetpoint(
                 new SwerveModuleState(
                     setpointStates[i].speedMetersPerSecond * 12.0 / RealConstants.MAX_LINEAR_SPEED,
@@ -297,7 +317,7 @@ public class Drive extends SubsystemBase {
                 focEnable);
           }
           // Log setpoint states
-          DogLog.log("SwerveStates/Setpoints", setpointStates);
+          DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
         });
   }
 
@@ -308,7 +328,7 @@ public class Drive extends SubsystemBase {
   public Command stopWithXCmd() {
     return this.run(
         () -> {
-          Rotation2d[] headings = new Rotation2d[4];
+          Rotation2d[] headings = new Rotation2d[modules.length];
           for (int i = 0; i < modules.length; i++) {
             headings[i] = getModuleTranslations()[i].getAngle();
           }
@@ -321,8 +341,8 @@ public class Drive extends SubsystemBase {
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   private SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
-    for (int i = 0; i < 4; i++) {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
       states[i] = modules[i].getState();
     }
     return states;
@@ -330,8 +350,8 @@ public class Drive extends SubsystemBase {
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
   private SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] states = new SwerveModulePosition[4];
-    for (int i = 0; i < 4; i++) {
+    SwerveModulePosition[] states = new SwerveModulePosition[modules.length];
+    for (int i = 0; i < modules.length; i++) {
       states[i] = modules[i].getPosition();
     }
     return states;
@@ -344,8 +364,8 @@ public class Drive extends SubsystemBase {
 
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
-    double[] values = new double[4];
-    for (int i = 0; i < 4; i++) {
+    double[] values = new double[modules.length];
+    for (int i = 0; i < modules.length; i++) {
       values[i] = modules[i].getWheelRadiusCharacterizationPosition();
     }
     return values;
@@ -354,8 +374,8 @@ public class Drive extends SubsystemBase {
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
-    for (int i = 0; i < 4; i++) {
-      output += modules[i].getFFCharacterizationVelocity() / 4.0;
+    for (int i = 0; i < modules.length; i++) {
+      output += modules[i].getFFCharacterizationVelocity() / modules.length;
     }
     return output;
   }

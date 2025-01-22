@@ -4,7 +4,7 @@ import edu.wpi.first.math.util.Units;
 
 public class WristConstants {
     
-    public static final int wristMotorID = 18; 
+    public static final int wristMotorID = 2; 
     public static final String wristMotorCANBus = "rio"; //change later
     
     public static final double intakeWristPositionTolerance =

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.algaegroundintake.rollers;
 
 import static frc.robot.subsystems.algaegroundintake.rollers.RollersConstants.*;
-import dev.doglog.*;
 
 
 import edu.wpi.first.math.controller.PIDController;

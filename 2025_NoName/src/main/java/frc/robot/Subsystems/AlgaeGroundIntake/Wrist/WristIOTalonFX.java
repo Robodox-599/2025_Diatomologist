@@ -1,20 +1,14 @@
 package frc.robot.subsystems.algaegroundintake.wrist;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
+// import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.algaegroundintake.utils.MotorLog;
-import frc.robot.subsystems.algaegroundintake.wrist.WristConstants.IntakeWristSimConstants;
+import frc.robot.subsystems.algaegroundintake.utils.PhoenixUtil;
 
 public class WristIOTalonFX implements WristIO {
     
@@ -24,11 +18,6 @@ public class WristIOTalonFX implements WristIO {
     private double motorEncoder;
     private int m_WristSlot = 0;
 
-    private final StatusSignal<Voltage> appliedVolts;
-    private final StatusSignal<AngularVelocity> angleVelocityRadsPerSec;
-    private final StatusSignal<Temperature> tempCelcius;
-    private final StatusSignal<Current> currentAmps;
-    private final StatusSignal<Angle> angleRads;
 
     public WristIOTalonFX() {
         var config = new TalonFXConfiguration();
@@ -36,6 +25,11 @@ public class WristIOTalonFX implements WristIO {
         config.CurrentLimits.SupplyCurrentLimit = 30.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        var MotionMagicConfigs = config.MotionMagic;
+
+        MotionMagicConfigs.MotionMagicCruiseVelocity = 0.0;
+        MotionMagicConfigs.MotionMagicAcceleration = 0.0;
 
         config.Slot0.kP = WristConstants.wristExtendKP;
         config.Slot0.kI = WristConstants.wristExtendKI;
@@ -55,23 +49,12 @@ public class WristIOTalonFX implements WristIO {
         setBrake(true);
 
         motorEncoder = intakeWristMotor.getPosition().getValueAsDouble();
-        appliedVolts =intakeWristMotor.getSupplyVoltage();
-        angleVelocityRadsPerSec = intakeWristMotor.getVelocity();
-        tempCelcius = intakeWristMotor.getDeviceTemp();
-        angleRads = intakeWristMotor.getPosition();
-        currentAmps = intakeWristMotor.getSupplyCurrent();
-        BaseStatusSignal.setUpdateFrequencyForAll(50, appliedVolts, tempCelcius, angleRads, currentAmps);
-        intakeWristMotor.optimizeBusUtilization();
+        // intakeWristMotor.optimizeBusUtilization();
+         PhoenixUtil.tryUntilOk(5, ()-> intakeWristMotor.getConfigurator().apply(config));
     }
 
     @Override
     public void updateInputs(WristIOInputs inputs) {
-        BaseStatusSignal.refreshAll(appliedVolts, tempCelcius, angleRads, currentAmps);
-        inputs.setpointAngleRads = setPoint;
-        inputs.appliedVoltage = appliedVolts.getValueAsDouble();
-        inputs.tempCelcius = tempCelcius.getValueAsDouble();
-        inputs.angularRads = angleRads.getValueAsDouble();
-        inputs.currentAmps = currentAmps.getValueAsDouble();
 
         MotorLog.log("IntakeWristMotor", intakeWristMotor);
     }
@@ -94,11 +77,13 @@ public class WristIOTalonFX implements WristIO {
         setPoint = passedInPosition;
         MotionMagicVoltage m_request = 
             new MotionMagicVoltage(setPoint).withSlot(m_WristSlot).withFeedForward(WristConstants.kWristFeedForward);
+            intakeWristMotor.setControl(m_request);
     }
 
     @Override 
     public void goToSetpoint(double setPoint) {
         desiredWristSetPos(setPoint);
+
     }
 
     @Override

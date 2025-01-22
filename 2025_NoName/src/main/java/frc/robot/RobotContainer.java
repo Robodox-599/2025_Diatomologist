@@ -17,7 +17,7 @@ import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
 
 
 public class RobotContainer {
-     private Rollers rollers;
+    // private Rollers rollers;
      private Wrist wrist;
    
      private final CommandXboxController controller =
@@ -26,12 +26,12 @@ public class RobotContainer {
      public RobotContainer() {
        switch (Constants.currentMode) {
          case REAL:
-        rollers = new Rollers(new RollersIOTalonFX());
+        // rollers = new Rollers(new RollersIOTalonFX());
         wrist = new Wrist(new WristIOTalonFX());
 
         break;
       case SIM:
-        rollers = new Rollers(new RollersIOSim());
+        // rollers = new Rollers(new RollersIOSim());
         wrist = new Wrist(new WristIOSim());
        
         break;
@@ -45,11 +45,12 @@ public class RobotContainer {
   
 
   private void configureBindings() {
-    controller.x().onFalse(wrist.stop());
-    controller.a().onFalse(rollers.stop());
+    // controller.x().onFalse(wrist.stop());
+    // controller.a().onFalse(rollers.stop());
 
-    controller.x().whileTrue(wrist.goToPose(0));
-    controller.a().whileTrue(rollers.setVelocity(0));
+    controller.x().whileTrue(wrist.setVoltage(2)).onFalse(wrist.stop());
+    // controller.a().whileTrue(rollers.setVoltage(2));
+
   }
 
   public Command getAutonomousCommand() {

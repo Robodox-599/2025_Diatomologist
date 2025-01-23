@@ -47,11 +47,11 @@ public class WristIOSim implements WristIO {
         @Override 
         public void updateInputs(WristIOInputs inputs) {
             sim.update(0.02);
-            inputs.angularRads = getAngle();
-            inputs.getAngularVelocityRadPerSec = sim.getVelocityRadPerSec();
-            inputs.currentAmps = sim.getCurrentDrawAmps();
-            inputs.setpointAngleRads = m_controller.getSetpoint().position;
-        }
+            // super.angularRads = getAngle();
+            // super.getAngularVelocityRadPerSec = sim.getVelocityRadPerSec();
+            // super.currentAmps = sim.getCurrentDrawAmps();
+            // super.setpointAngleRads = m_controller.getSetpoint().position;
+        } 
 
         @Override 
         public void setVoltage(double volts) {

@@ -24,11 +24,11 @@ public class RollersIOSim extends RollersIO {
     @Override
     public void updateInputs() {
         rollersMotorSim.update(0.02);
-        super.velocityRadsPerSec = rollersMotorSim.getAngularPositionRad();
-        super.appliedVoltage = appliedVoltage;
-        super.currentAmps = rollersMotorSim.getCurrentDrawAmps();
-        super.tempCelcius = 60;
-        super.velocitySetpoint = desiredSpeed;
+        // super.velocityRadsPerSec = rollersMotorSim.getAngularPositionRad();
+        // super.appliedVoltage = appliedVoltage;
+        // super.currentAmps = rollersMotorSim.getCurrentDrawAmps();
+        // super.tempCelcius = 60;
+        // super.velocitySetpoint = desiredSpeed;
 
         
     }

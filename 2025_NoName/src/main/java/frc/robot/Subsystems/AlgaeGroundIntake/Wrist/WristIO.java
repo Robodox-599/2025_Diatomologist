@@ -2,12 +2,12 @@ package frc.robot.subsystems.algaegroundintake.wrist;
 
 public interface WristIO {
     public abstract class WristIOInputs {
-        protected double angularRads = 0.0;
-        protected double getAngularVelocityRadPerSec = 0.0;
-        protected double appliedVoltage = 0.0;
-        protected double setpointAngleRads = 0.0;
-        protected double currentAmps = 0.0;
-        protected double tempCelcius = 0.0;
+        // protected double angularRads = 0.0;
+        // protected double getAngularVelocityRadPerSec = 0.0;
+        // protected double appliedVoltage = 0.0;
+        // protected double setpointAngleRads = 0.0;
+        // protected double currentAmps = 0.0;
+        // protected double tempCelcius = 0.0;
     }
 
     public default void updateInputs(WristIOInputs inputs) {}

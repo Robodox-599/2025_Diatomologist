@@ -1,4 +1,4 @@
-package frc.robot.subsystems.util;
+package frc.robot.util;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;

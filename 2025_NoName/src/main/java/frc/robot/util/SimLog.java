@@ -1,4 +1,4 @@
-package frc.robot.subsystems.util;
+package frc.robot.util;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;

@@ -8,9 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.subsystems.util.MotorLog;
-import frc.robot.subsystems.util.ClimbUtil;
-import frc.robot.subsystems.util.PhoenixUtil;
+import frc.robot.util.ClimbUtil;
+import frc.robot.util.MotorLog;
+import frc.robot.util.PhoenixUtil;
 import dev.doglog.DogLog;
 
 public class ClimbIOTalonFX extends ClimbIO {
@@ -19,8 +19,8 @@ public class ClimbIOTalonFX extends ClimbIO {
     private final TalonFX followerMotor;
     private final DigitalInput limitSwitch;
     private ClimbConstants.ClimbStates currentState = ClimbConstants.ClimbStates.CLIMBREADY;
-    private final MotionMagicVoltage motionMagicRequest;
-    private int motionSlot;
+    //private final MotionMagicVoltage motionMagicRequest;
+    //private int motionSlot;
 
     public ClimbIOTalonFX() {
         leaderMotor = new TalonFX(ClimbConstants.leaderMotorID, ClimbConstants.leaderMotorCANbus);
@@ -30,7 +30,7 @@ public class ClimbIOTalonFX extends ClimbIO {
         
         followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
         
-        motionMagicRequest = new MotionMagicVoltage(0);
+        //motionMagicRequest = new MotionMagicVoltage(0);
         
         TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -50,10 +50,9 @@ public class ClimbIOTalonFX extends ClimbIO {
         /* Helps prevent brown outs by limiting current spikes from the battery */
         config.CurrentLimits.SupplyCurrentLimit = ClimbConstants.supplyCurrentLimitAmps;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        
+        // enableBrakeMode(true);
         PhoenixUtil.tryUntilOk(5, () ->leaderMotor.getConfigurator().apply(config, 0.25));
         PhoenixUtil.tryUntilOk(5, () ->leaderMotor.setPosition(0.0, 0.25));
-        enableBrakeMode(true);
         leaderMotor.optimizeBusUtilization();
         followerMotor.optimizeBusUtilization();
     }
@@ -64,7 +63,7 @@ public class ClimbIOTalonFX extends ClimbIO {
         super.velocityInchesPerSec = leaderMotor.getVelocity().getValueAsDouble() * ClimbConstants.inchesPerRev;
         super.appliedVolts = leaderMotor.getMotorVoltage().getValueAsDouble();
         super.currentAmps = leaderMotor.getSupplyCurrent().getValueAsDouble();
-        super.targetPositionInches = motionMagicRequest.Position * ClimbConstants.inchesPerRev;
+        //super.targetPositionInches = motionMagicRequest.Position * ClimbConstants.inchesPerRev;
         super.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
         super.state = currentState;
         /* Determines if the elevator is at a setpoint */
@@ -88,17 +87,17 @@ public class ClimbIOTalonFX extends ClimbIO {
     @Override
     public void setState(ClimbConstants.ClimbStates state) {
         currentState = state;
-        double position = MathUtil.clamp(ClimbUtil.stateToHeight(state), ClimbConstants.climbLowerLimit, ClimbConstants.climbUpperLimit);
+        // double position = MathUtil.clamp(ClimbUtil.stateToHeight(state), ClimbConstants.climbLowerLimit, ClimbConstants.climbUpperLimit);
         
-        if (position > getPosition()){
-            motionSlot = ClimbConstants.movingUpSlot;
-        } else {
-            motionSlot = ClimbConstants.movingDownSlot;
-        }
+        // if (position > getPosition()){
+        //     motionSlot = ClimbConstants.movingUpSlot;
+        // } else {
+        //     motionSlot = ClimbConstants.movingDownSlot;
+        // }
 
-        motionMagicRequest.withSlot(motionSlot);
-        motionMagicRequest.Position = position;
-        leaderMotor.setControl(motionMagicRequest);
+        // motionMagicRequest.withSlot(motionSlot);
+        // motionMagicRequest.Position = position;
+        // leaderMotor.setControl(motionMagicRequest);
     }
 
     @Override

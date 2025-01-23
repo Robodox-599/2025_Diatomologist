@@ -26,9 +26,9 @@ public class ClimbConstants {
         69.0, // climb
     };
 
-    public static final int leaderMotorID = 20;
+    public static final int leaderMotorID = 2;
     public static final String leaderMotorCANbus = "rio";
-    public static final int followerMotorID = 17;
+    public static final int followerMotorID = 1;
     public static final String followerMotorCANbus = "rio";
     public static final boolean followerInverted = true;
 

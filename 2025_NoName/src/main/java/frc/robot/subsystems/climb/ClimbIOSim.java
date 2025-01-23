@@ -10,8 +10,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.subsystems.util.ClimbUtil;
-import frc.robot.subsystems.util.SimLog;
+import frc.robot.util.ClimbUtil;
+import frc.robot.util.SimLog;
 
 public class ClimbIOSim extends ClimbIO {
       private final DCMotorSim climbSim;

@@ -37,6 +37,11 @@ public class Climb extends SubsystemBase {
             io.setVoltage(volt);});
     }
     
+    public Command stop(){
+        return Commands.run(()->{
+            io.setVoltage(0);});
+    }
+
     /*Homes elevator with limit switch, could be rewritten to home with current but hopefully nah*/
 
     public Command homeClimb() {

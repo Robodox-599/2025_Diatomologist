@@ -39,7 +39,11 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    controller.b().whileTrue(climb.move(2));
+    //controller.a().onTrue(climb.move(2));
+
+    controller.a().whileTrue(climb.move(2));
+
+    //controller.x().whileTrue(climb.move(2).onFalse(climb.stop());
 
   }
 

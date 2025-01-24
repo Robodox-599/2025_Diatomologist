@@ -9,7 +9,7 @@ public class WristConstants {
     public static final int PeakCurrentLimit = 50;
     public static final double PeakCurrentDuration = 0.1;
   
-    public static final double gearRatio = 0.0;
+    public static final double gearRatio = 58.78;
     public static final double wristMOI = 0.04;
 
     public static final double realExtendkP = 0.0;
@@ -34,4 +34,7 @@ public class WristConstants {
 
     public static final double wristExtendsSlot = 0.0;
     public static final double wristRetractSlot = 1.0;
+
+    public static final int cancoderID = 0;
+    public static final double cancoderOffset = 0.0;
 }

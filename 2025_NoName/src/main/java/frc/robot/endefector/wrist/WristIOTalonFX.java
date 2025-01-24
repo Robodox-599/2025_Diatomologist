@@ -1,11 +1,16 @@
 package frc.robot.endefector.wrist;
 import frc.robot.util.MotorLog;
+import frc.robot.util.PhoenixUtil;
+
 import static frc.robot.endefector.wrist.WristConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import dev.doglog.DogLog;
 
 // import edu.wpi.first.math.MathUtil;
@@ -14,6 +19,7 @@ public class WristIOTalonFX extends WristIO{
     
   private final TalonFX wristMotor;
   TalonFXConfiguration wristConfig;
+  private final CANcoder cancoder;
   private final MotionMagicVoltage m_request;
 
   private double passedInPosition;
@@ -25,6 +31,9 @@ public class WristIOTalonFX extends WristIO{
         wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
         wristConfig = new TalonFXConfiguration();
         m_request = new MotionMagicVoltage(0);
+        cancoder = new CANcoder(cancoderID, wristMotorCANBus);
+        CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
+        
 
         var motionMagicConfigs = wristConfig.MotionMagic;
         //I don't really know what values to put here :(
@@ -45,10 +54,18 @@ public class WristIOTalonFX extends WristIO{
         wristConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
         wristConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
         wristConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
-    
-    wristMotor.optimizeBusUtilization();
 
-    wristMotor.getConfigurator().apply(wristConfig);
+        wristConfig.Feedback.FeedbackRemoteSensorID = cancoderID;
+        wristConfig.Feedback.FeedbackSensorSource =
+          FeedbackSensorSourceValue
+            .FusedCANcoder;
+        wristConfig.Feedback.RotorToSensorRatio = gearRatio;
+
+        cancoderConfig.MagnetSensor.MagnetOffset = cancoderOffset;
+    
+        wristMotor.optimizeBusUtilization();
+        PhoenixUtil.tryUntilOk(5, ()-> wristMotor.getConfigurator().apply(wristConfig));
+        PhoenixUtil.tryUntilOk(5, () -> cancoder.getConfigurator().apply(cancoderConfig, 0.25));
     }
 
     @Override

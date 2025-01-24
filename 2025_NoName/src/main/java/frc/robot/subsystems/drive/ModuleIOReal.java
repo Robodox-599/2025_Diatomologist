@@ -130,8 +130,10 @@ public class ModuleIOReal extends ModuleIO {
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
 
     /* ************ INVERTS ************ */
-
-    driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    driveConfig.MotorOutput.Inverted =
+        constants.invertDrive()
+            ? InvertedValue.CounterClockwise_Positive
+            : InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.Inverted =
         constants.invertMotor()
             ? InvertedValue.Clockwise_Positive
@@ -158,7 +160,7 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     /* ************ APPLY BRAKE MODES *************/
 
-    driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     /* ************ APPLY CANCODER OFFSETS *************/

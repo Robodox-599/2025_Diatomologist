@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,11 +12,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.VisionLog;
-
 import java.util.LinkedList;
 import java.util.List;
-
-import dev.doglog.DogLog;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
@@ -29,9 +27,7 @@ public class Vision extends SubsystemBase {
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < io.length; i++) {
-      disconnectedAlerts[i] =
-          new Alert(
-              io[i].getName() + " is disconnected.", AlertType.kWarning);
+      disconnectedAlerts[i] = new Alert(io[i].getName() + " is disconnected.", AlertType.kWarning);
     }
   }
 
@@ -83,14 +79,21 @@ public class Vision extends SubsystemBase {
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
-                    && observation.ambiguity() > io[cameraIndex].getVisionConstants().maxAmbiguity() ) // Cannot be high ambiguity
+                    && observation.ambiguity()
+                        > io[cameraIndex]
+                            .getVisionConstants()
+                            .maxAmbiguity()) // Cannot be high ambiguity
                 || Math.abs(observation.observedPose().getZ())
-                    > io[cameraIndex].getVisionConstants().maxZError() // Must have realistic Z coordinate
+                    > io[cameraIndex]
+                        .getVisionConstants()
+                        .maxZError() // Must have realistic Z coordinate
                 // Must be within the field boundaries
                 || observation.observedPose().getX() < 0.0
-                || observation.observedPose().getX() > VisionConstants.aprilTagLayout.getFieldLength()
+                || observation.observedPose().getX()
+                    > VisionConstants.aprilTagLayout.getFieldLength()
                 || observation.observedPose().getY() < 0.0
-                || observation.observedPose().getY() > VisionConstants.aprilTagLayout.getFieldWidth();
+                || observation.observedPose().getY()
+                    > VisionConstants.aprilTagLayout.getFieldWidth();
 
         // Add pose to log
         robotPoses.add(observation.observedPose());
@@ -108,12 +111,13 @@ public class Vision extends SubsystemBase {
         // Calculate standard deviations
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev = io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
-        double angularStdDev = io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
+        double linearStdDev =
+            io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
+        double angularStdDev =
+            io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
 
         linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
         angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
-
 
         // Send vision observation
         consumer.accept(
@@ -142,8 +146,7 @@ public class Vision extends SubsystemBase {
     }
 
     // Log summary data
-    DogLog.log(
-        "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+    DogLog.log("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
     DogLog.log(
         "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
     DogLog.log(

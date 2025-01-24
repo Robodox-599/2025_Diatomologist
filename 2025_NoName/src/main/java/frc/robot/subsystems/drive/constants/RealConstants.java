@@ -3,14 +3,18 @@ package frc.robot.subsystems.drive.constants;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.drive.Module.ModuleConstants;
+import frc.robot.subsystems.vision.VisionConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = -0.150634765625; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.466796875; // FR
-  public static final double Module2AbsoluteEncoderOffset = 0.234130859375; // BL
-  public static final double Module3AbsoluteEncoderOffset = 0.46533203125; // BR
+  public static final double Module0AbsoluteEncoderOffset = 0.15087890625; // FL
+  public static final double Module1AbsoluteEncoderOffset = -0.463623046875; // FR
+  public static final double Module2AbsoluteEncoderOffset = 0.23388671875; // BL
+  public static final double Module3AbsoluteEncoderOffset = -0.467529296875; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 
@@ -63,8 +67,9 @@ public class RealConstants {
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          true,
-          true);
+          false,
+          false,
+          false);
   public static final ModuleConstants frontRight =
       new ModuleConstants(
           "Front Right",
@@ -76,6 +81,7 @@ public class RealConstants {
           steerGains,
           driveGains,
           WHEEL_RADIUS,
+          false,
           false,
           false);
   public static final ModuleConstants backLeft =
@@ -89,7 +95,8 @@ public class RealConstants {
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          true,
+          false,
+          false,
           true);
   public static final ModuleConstants backRight =
       new ModuleConstants(
@@ -103,5 +110,34 @@ public class RealConstants {
           driveGains,
           WHEEL_RADIUS,
           false,
+          false,
           false);
+
+  public static final String cameraName = "FR Camera";
+
+  // CAMERA 3 POSE (X)
+  public static final double cameraPoseX = Units.inchesToMeters(0);
+
+  // CAMERA 3 POSE (Y)
+  public static final double cameraPoseY = Units.inchesToMeters(1);
+
+  // CAMERA 3 POSE (Z)
+  public static final double cameraPoseZ = Units.inchesToMeters(21);
+
+  // CAMERA 3 POSE (ROLL)
+  public static final double cameraPoseRoll = Units.degreesToRadians(0);
+
+  // CAMERA 3 POSE (PITCH)
+  public static final double cameraPosePitch = Units.degreesToRadians(-28);
+
+  // CAMERA 3 POSE (YAW)
+  public static final double cameraPoseYaw = Units.degreesToRadians(0);
+
+  public static final VisionConstants camConstants =
+      new VisionConstants(
+          cameraName,
+          new Transform3d(
+              new Translation3d(cameraPoseX, cameraPoseY, cameraPoseZ),
+              new Rotation3d(cameraPoseRoll, cameraPosePitch, cameraPoseYaw)),
+          1.0);
 }

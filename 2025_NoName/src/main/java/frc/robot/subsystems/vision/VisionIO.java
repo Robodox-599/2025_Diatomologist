@@ -17,6 +17,15 @@ public abstract class VisionIO {
   /** Indicates whether the camera is currently connected. */
   protected boolean cameraConnected = false;
 
+  /** Indicates whether camera has targets. */
+  protected boolean hasTargets = false;
+
+  /** The number of targets currently detected by the vision system. */
+  protected double numTargets = 0;
+
+  /** An array of IDs corresponding to the AprilTags detected by the vision system. */
+  protected int[] tagIds = new int[0];
+
   /** Stores the latest observed angles of a target as a pair of 2D rotations. */
   protected ObservedTargetRotations latestTargetAngle =
       new ObservedTargetRotations(new Rotation2d(), new Rotation2d());
@@ -26,12 +35,6 @@ public abstract class VisionIO {
    * such as timestamp, observed pose, ambiguity, and tag information.
    */
   protected PoseObservation[] poseObservations = new PoseObservation[0];
-
-  /** The number of targets currently detected by the vision system. */
-  protected double numTargets = 0;
-
-  /** An array of IDs corresponding to the AprilTags detected by the vision system. */
-  protected int[] aprilTagIds = new int[0];
 
   /**
    * Represents an observed pose of a target as a pair of 2D rotations (targetX, targetY). This is
@@ -98,31 +101,7 @@ public abstract class VisionIO {
   /** Updates Inputs to the given values from the IO layers */
   public void updateInputs() {}
 
-  /**
-   * @return Return VisionConstants of Camera.
-   */
   public VisionConstants getVisionConstants() {
-    return new VisionConstants(getName(), null, numTargets);
-  }
-  ;
-
-  public int[] getAprilTagIds() {
-    return aprilTagIds;
-  }
-
-  public PoseObservation[] getPoseObservation() {
-    return poseObservations;
-  }
-
-  public ObservedTargetRotations getLatestTargetAngle() {
-    return latestTargetAngle;
-  }
-
-  public double getNumTargets() {
-    return numTargets;
-  }
-
-  public boolean getConnected() {
-    return cameraConnected;
+    return constants;
   }
 }

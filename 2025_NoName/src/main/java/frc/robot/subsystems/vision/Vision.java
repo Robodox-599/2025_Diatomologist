@@ -11,7 +11,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.VisionLog;
+import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs();
-      VisionLog.log(io[i]);
+      // VisionLog.log(io[i]);
       // Logger.processInputs("Vision/" + io[i].getName(), inputs[i]);
     }
 
@@ -66,7 +66,7 @@ public class Vision extends SubsystemBase {
       List<Pose3d> robotPosesRejected = new LinkedList<>();
 
       // Add tag poses
-      for (int tagId : io[cameraIndex].aprilTagIds) {
+      for (int tagId : io[cameraIndex].tagIds) {
         var tagPose = VisionConstants.aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
@@ -76,25 +76,7 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : io[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        boolean rejectPose =
-            observation.tagCount() == 0 // Must have at least one tag
-                || (observation.tagCount() == 1
-                    && observation.ambiguity()
-                        > io[cameraIndex]
-                            .getVisionConstants()
-                            .maxAmbiguity()) // Cannot be high ambiguity
-                || Math.abs(observation.observedPose().getZ())
-                    > io[cameraIndex]
-                        .getVisionConstants()
-                        .maxZError() // Must have realistic Z coordinate
-                // Must be within the field boundaries
-                || observation.observedPose().getX() < 0.0
-                || observation.observedPose().getX()
-                    > VisionConstants.aprilTagLayout.getFieldLength()
-                || observation.observedPose().getY() < 0.0
-                || observation.observedPose().getY()
-                    > VisionConstants.aprilTagLayout.getFieldWidth();
-
+        boolean rejectPose = checkPose(observation, cameraIndex);
         // Add pose to log
         robotPoses.add(observation.observedPose());
         if (rejectPose) {
@@ -102,7 +84,6 @@ public class Vision extends SubsystemBase {
         } else {
           robotPosesAccepted.add(observation.observedPose());
         }
-
         // Skip if rejected
         if (rejectPose) {
           continue;
@@ -120,6 +101,7 @@ public class Vision extends SubsystemBase {
         angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
 
         // Send vision observation
+        var obseredPose3d = selectClosestPose(observation);
         consumer.accept(
             observation.observedPose().toPose2d(),
             observation.timestamp(),
@@ -163,5 +145,43 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  private Pose3d selectClosestPose(Pose3d[] observations, Pose2d actualRobotPose) {
+    // Get the distance closest to the current robot pose if multiple poses are determined for a
+    // camera
+    double minDistance = Double.POSITIVE_INFINITY;
+    Pose3d selectedPose = null;
+    Pose3d actualRobotPose3d = new Pose3d(actualRobotPose);
+
+    for (Pose3d pose : observations) {
+      double distance = pose.getTranslation().getDistance(actualRobotPose3d.getTranslation());
+      if (distance < minDistance) {
+        minDistance = distance;
+        selectedPose = pose;
+      }
+    }
+    return selectedPose;
+  }
+
+  private boolean checkPose(PoseObservation observation, int cameraIndex) {
+    boolean rejectPose =
+        observation.tagCount() == 0 // Must have at least one tag
+            || (observation.tagCount() == 1
+                && observation.ambiguity()
+                    > io[cameraIndex]
+                        .getVisionConstants()
+                        .maxAmbiguity()) // Cannot be high ambiguity
+            || Math.abs(observation.observedPose().getZ())
+                > io[cameraIndex]
+                    .getVisionConstants()
+                    .maxZError() // Must have realistic Z coordinate
+            // Must be within the field boundaries
+            || observation.observedPose().getX() < 0.0
+            || observation.observedPose().getX() > VisionConstants.aprilTagLayout.getFieldLength()
+            || observation.observedPose().getY() < 0.0
+            || observation.observedPose().getY() > VisionConstants.aprilTagLayout.getFieldWidth()
+            || !io[cameraIndex].hasTargets;
+    return rejectPose;
   }
 }

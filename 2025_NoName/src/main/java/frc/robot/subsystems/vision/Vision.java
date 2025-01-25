@@ -90,7 +90,7 @@ public class Vision extends SubsystemBase {
       PoseObservation selectedPose =
           selectClosestPose(io[cameraIndex].poseObservations, poseSupplier.get());
 
-      // Calculate standard deviations
+      // Calculate standard deviations for selected pose
       double stdDevFactor =
           Math.pow(selectedPose.averageTagDistance(), 2.0) / selectedPose.tagCount();
       double linearStdDev =
@@ -113,11 +113,16 @@ public class Vision extends SubsystemBase {
           "Vision/" + io[cameraIndex].getName() + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
       DogLog.log(
-          "Vision/" + Integer.toString(cameraIndex) + "/AcceptedRobotPoses",
+          "Vision/" + io[cameraIndex].getName() + "/InitialAcceptedRobotPoses",
           robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       DogLog.log(
-          "Vision/" + Integer.toString(cameraIndex) + "/RejectedRobotPoses",
+          "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPoses",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+
+      DogLog.log(
+          "Vision/" + io[cameraIndex].getName() + "/FinalAcceptedPose",
+          selectedPose.getObservedPose());
+
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);

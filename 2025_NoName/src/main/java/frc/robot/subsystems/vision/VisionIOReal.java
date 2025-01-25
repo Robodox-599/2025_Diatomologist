@@ -1,16 +1,19 @@
 package frc.robot.subsystems.vision;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.MultiTargetPNPResult;
@@ -36,14 +39,15 @@ public class VisionIOReal extends VisionIO {
    */
   public VisionIOReal(VisionConstants cameraConstants) {
     this.constants = cameraConstants;
+    super.constants = constants;
     camera = new PhotonCamera(cameraConstants.cameraName());
     this.robotToCamera = cameraConstants.robotToCameraTransform3d();
   }
 
   @Override
-  public void updateInputs() {
+  public void updateInputs(Supplier<Pose2d> poseSupplier) {
     super.cameraConnected = camera.isConnected();
-
+    setRobotRotation(poseSupplier.get().getRotation());
     List<PoseObservation> poseObservations = new LinkedList<>();
     List<PhotonPipelineResult> resultList = camera.getAllUnreadResults();
     if (camera == null
@@ -78,9 +82,9 @@ public class VisionIOReal extends VisionIO {
       }
       // Determine the possible robot pose results the camera has determined
       if (visibleTags.size() == 1) {
-        retrieveSingleTagEstimates(latestResult);
+        poseObservations = retrieveSingleTagEstimates(latestResult);
       } else {
-        retrieveMultiTagEstimates(latestResult);
+        poseObservations = retrieveMultiTagEstimates(latestResult);
       }
     }
     for (int i = 0; i < poseObservations.size(); i++) {
@@ -88,65 +92,10 @@ public class VisionIOReal extends VisionIO {
     }
   }
 
-  // // Read new camera observations
-  // Set<Short> tagIds = new HashSet<>();
-  // List<PoseObservation> poseObservations = new LinkedList<>();
-  // for (var result : camera.getAllUnreadResults()) {
-  //   // Update latest target observation
-  //   if (result.hasTargets()) {
-  //     super.latestTargetAngle =
-  //         new ObservedTargetRotations(
-  //             Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-  //             Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-  //   } else {
-  //     super.latestTargetAngle = new ObservedTargetRotations(new Rotation2d(), new Rotation2d());
-  //   }
-
-  //   // Add pose observation
-  //   if (result.multitagResult.isPresent()) {
-  //     var multitagResult = result.multitagResult.get();
-
-  //     // Calculate robot pose
-  //     Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-  //     Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-  //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-
-  //     // Calculate average tag distance
-  //     double totalTagDistance = 0.0;
-  //     for (var target : result.targets) {
-  //       totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-  //     }
-
-  //     // Add tag IDs
-  //     tagIds.addAll(multitagResult.fiducialIDsUsed);
-
-  //     // Add observation
-  // poseObservations.add(
-  //     new PoseObservation(
-  //         result.getTimestampSeconds(), // Timestamp
-  //         robotPose, // 3D pose estimate
-  //         multitagResult.estimatedPose.ambiguity, // Ambiguity
-  //         multitagResult.fiducialIDsUsed.size(), // Tag count
-  //         totalTagDistance / result.targets.size())); // Average tag distance
-
-  //     super.numTargets = result.targets.size();
-  //   }
-  // }
-
-  // // Save pose observations to inputs
-  // super.poseObservations = new PoseObservation[poseObservations.size()];
-  // for (int i = 0; i < poseObservations.size(); i++) {
-  //   super.poseObservations[i] = poseObservations.get(i);
-  // }
-
-  // // Save tag IDs to inputs
-  // super.aprilTagIds = new int[tagIds.size()];
-  // int i = 0;
-  // for (int id : tagIds) {
-  //   super.aprilTagIds[i++] = id;
-  // }
-  // }
-  //
+  private void setRobotRotation(Rotation2d robotRotation) {
+    // Put the rotation in a buffer
+    rotationBuffer.addSample(Timer.getFPGATimestamp(), robotRotation);
+  }
 
   private List<PoseObservation> retrieveSingleTagEstimates(PhotonPipelineResult latestResult) {
     List<PoseObservation> poseObservations = new ArrayList<>();
@@ -211,13 +160,10 @@ public class VisionIOReal extends VisionIO {
               robotPose, // 3D pose estimate
               multitagResult.estimatedPose.ambiguity, // Ambiguity
               multitagResult.fiducialIDsUsed.size(), // Tag count
-              getAverageTagDistance(
-                  latestResult) // You might want to calculate the average tag distance if needed
+              getAverageTagDistance(latestResult) // average tag distance
               ));
     }
-
     logDeltaRotation(new Pose3d().transformBy(multiPoseOptions[0]));
-
     return poseObservations;
   }
 
@@ -226,10 +172,10 @@ public class VisionIOReal extends VisionIO {
    * measured by the vision system. A positive error means that the camera rotation needs to be
    * reduced in constants.
    *
-   * @param fieldSpaceCameraPose The detected pose of the camera in field space
+   * @param cameraPose The detected pose of the camera in field space
    */
-  private void logDeltaRotation(Pose3d fieldSpaceCameraPose) {
-    Rotation3d rotation = fieldSpaceCameraPose.getRotation();
+  private void logDeltaRotation(Pose3d cameraPose) {
+    Rotation3d rotation = cameraPose.getRotation();
     Rotation3d cameraRotation = constants.robotToCameraTransform3d().getRotation().unaryMinus();
     DogLog.log(
         "Vision/" + constants.cameraName() + "/Camera Rotation Error/x (roll, deg)",

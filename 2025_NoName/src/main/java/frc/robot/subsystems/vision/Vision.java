@@ -14,16 +14,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final Alert[] disconnectedAlerts;
+  private final Supplier<Pose2d> poseSupplier;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, Supplier<Pose2d> poseSupplier, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-
+    this.poseSupplier = poseSupplier;
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < io.length; i++) {
@@ -43,9 +45,7 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
-      io[i].updateInputs();
-      // VisionLog.log(io[i]);
-      // Logger.processInputs("Vision/" + io[i].getName(), inputs[i]);
+      io[i].updateInputs(poseSupplier);
     }
 
     // Initialize logging values
@@ -81,33 +81,30 @@ public class Vision extends SubsystemBase {
         robotPoses.add(observation.observedPose());
         if (rejectPose) {
           robotPosesRejected.add(observation.observedPose());
+          continue;
         } else {
           robotPosesAccepted.add(observation.observedPose());
         }
-        // Skip if rejected
-        if (rejectPose) {
-          continue;
-        }
-
-        // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev =
-            io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
-        double angularStdDev =
-            io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
-
-        linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
-
-        // Send vision observation
-        var obseredPose3d = selectClosestPose(observation);
-        consumer.accept(
-            observation.observedPose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
+      PoseObservation selectedPose =
+          selectClosestPose(io[cameraIndex].poseObservations, poseSupplier.get());
+
+      // Calculate standard deviations
+      double stdDevFactor =
+          Math.pow(selectedPose.averageTagDistance(), 2.0) / selectedPose.tagCount();
+      double linearStdDev =
+          io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
+      double angularStdDev =
+          io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
+
+      linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
+      angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
+
+      consumer.accept(
+          selectedPose.getObservedPose().toPose2d(),
+          selectedPose.timestamp(),
+          VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       // Log camera datadata
       DogLog.log(
           "Vision/" + io[cameraIndex].getName() + "/TagPoses",
@@ -126,7 +123,6 @@ public class Vision extends SubsystemBase {
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
-
     // Log summary data
     DogLog.log("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
     DogLog.log(
@@ -147,15 +143,17 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
-  private Pose3d selectClosestPose(Pose3d[] observations, Pose2d actualRobotPose) {
+  private PoseObservation selectClosestPose(
+      PoseObservation[] observedPoses, Pose2d actualRobotPose) {
     // Get the distance closest to the current robot pose if multiple poses are determined for a
     // camera
     double minDistance = Double.POSITIVE_INFINITY;
-    Pose3d selectedPose = null;
+    PoseObservation selectedPose = null;
     Pose3d actualRobotPose3d = new Pose3d(actualRobotPose);
 
-    for (Pose3d pose : observations) {
-      double distance = pose.getTranslation().getDistance(actualRobotPose3d.getTranslation());
+    for (var pose : observedPoses) {
+      double distance =
+          pose.getObservedPose().getTranslation().getDistance(actualRobotPose3d.getTranslation());
       if (distance < minDistance) {
         minDistance = distance;
         selectedPose = pose;

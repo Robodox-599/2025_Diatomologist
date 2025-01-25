@@ -47,7 +47,10 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         vision =
-            new Vision(drive::addVisionMeasurement, new VisionIOReal(RealConstants.camConstants));
+            new Vision(
+                drive::addVisionMeasurement,
+                drive::getPose,
+                new VisionIOReal(RealConstants.camConstants));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -63,7 +66,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.camConstants, drive::getPose));
+                drive::getPose,
+                new VisionIOSim(RealConstants.camConstants));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -77,7 +81,10 @@ public class RobotContainer {
       default:
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         vision =
-            new Vision(drive::addVisionMeasurement, new VisionIOReal(RealConstants.camConstants));
+            new Vision(
+                drive::addVisionMeasurement,
+                drive::getPose,
+                new VisionIOReal(RealConstants.camConstants));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose

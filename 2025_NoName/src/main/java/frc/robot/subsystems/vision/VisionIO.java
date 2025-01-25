@@ -1,10 +1,12 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import java.util.function.Supplier;
 
 public abstract class VisionIO {
   /**
@@ -90,6 +92,8 @@ public abstract class VisionIO {
     }
   }
 
+  public void givePose(Supplier<Pose2d> poseSupplier) {}
+
   /**
    * @return Name of camera instance applied to the camera (grabbed from VisionConsants)
    */
@@ -99,7 +103,7 @@ public abstract class VisionIO {
   ;
 
   /** Updates Inputs to the given values from the IO layers */
-  public void updateInputs() {}
+  public void updateInputs(Supplier<Pose2d> poseSupplie) {}
 
   public VisionConstants getVisionConstants() {
     return constants;

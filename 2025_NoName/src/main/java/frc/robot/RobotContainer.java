@@ -17,9 +17,10 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOReal;
-import frc.robot.subsystems.vision.VisionIOSim;
+
+// import frc.robot.subsystems.vision.Vision;
+// import frc.robot.subsystems.vision.VisionIOReal;
+// import frc.robot.subsystems.vision.VisionIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,7 +31,7 @@ import frc.robot.subsystems.vision.VisionIOSim;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
+  // private final Vision vision;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -46,8 +47,9 @@ public class RobotContainer {
       case REAL:
         // Real robot, instantiate hardware IO implementations
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
-        vision =
-            new Vision(drive::addVisionMeasurement, new VisionIOReal(RealConstants.camConstants));
+        // vision =
+        //     new Vision(drive::addVisionMeasurement, new
+        // VisionIOReal(RealConstants.camConstants));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -60,10 +62,10 @@ public class RobotContainer {
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.camConstants, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -76,8 +78,9 @@ public class RobotContainer {
         break;
       default:
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
-        vision =
-            new Vision(drive::addVisionMeasurement, new VisionIOReal(RealConstants.camConstants));
+        // vision =
+        //     new Vision(drive::addVisionMeasurement, new
+        // VisionIOReal(RealConstants.camConstants));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -125,7 +128,7 @@ public class RobotContainer {
                         * 0.85,
                     -joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED)));
-
+    controller.y().onTrue(drive.zeroGyrCommand());
     // // Lock to 0° when A button is held
     // controller
     //     .a()

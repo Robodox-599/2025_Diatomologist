@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
@@ -208,7 +209,7 @@ public class Drive extends SubsystemBase {
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
 
-      // poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/Velocity", getVelocity());
     }
@@ -262,6 +263,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public Command zeroGyrCommand() {
+    return new InstantCommand(
+        () -> {
+          overrideGyroAngle(0);
+          gyroIO.setYaw(0);
+        });
+  }
+
+  void overrideGyroAngle(double angleDegrees) {
+    rawGyroRotation = Rotation2d.fromDegrees(angleDegrees);
+    setPose(new Pose2d(getPose().getTranslation(), rawGyroRotation));
+  }
+
   public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
     return this.run(() -> runVelocity(speeds.get()));
   }
@@ -285,7 +299,7 @@ public class Drive extends SubsystemBase {
     return this.run(
         () -> {
           var allianceSpeeds =
-              ChassisSpeeds.fromFieldRelativeSpeeds(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
                   speeds.get(),
                   DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                       ? getPose().getRotation()
@@ -301,11 +315,11 @@ public class Drive extends SubsystemBase {
           DogLog.log(
               "Swerve/Target Chassis Speeds Field Relative",
               ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
-          final boolean focEnable =
-              Math.sqrt(
-                      Math.pow(this.getVelocity().vxMetersPerSecond, 2)
-                          + Math.pow(this.getVelocity().vyMetersPerSecond, 2))
-                  < RealConstants.MAX_LINEAR_SPEED * 0.9;
+          // final boolean focEnable =
+          //     Math.sqrt(
+          //             Math.pow(this.getVelocity().vxMetersPerSecond, 2)
+          //                 + Math.pow(this.getVelocity().vyMetersPerSecond, 2))
+          //         < RealConstants.MAX_LINEAR_SPEED * 0.9;
 
           // Send setpoints to modules
           for (int i = 0; i < modules.length; i++) {
@@ -314,7 +328,7 @@ public class Drive extends SubsystemBase {
                 new SwerveModuleState(
                     setpointStates[i].speedMetersPerSecond * 12.0 / RealConstants.MAX_LINEAR_SPEED,
                     setpointStates[i].angle),
-                focEnable);
+                true);
           }
           // Log setpoint states
           DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);

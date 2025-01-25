@@ -11,4 +11,6 @@ public abstract class GyroIO {
   protected double yawVelocityRadPerSec = 0.0;
   protected double[] odometryYawTimestamps = new double[] {};
   protected Rotation2d[] odometryYawPositions = new Rotation2d[] {};
+
+  public void setYaw(double val) {}
 }

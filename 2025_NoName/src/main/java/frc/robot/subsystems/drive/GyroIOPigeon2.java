@@ -54,4 +54,9 @@ public class GyroIOPigeon2 extends GyroIO {
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }
+
+  @Override
+  public void setYaw(double val) {
+    pigeon.setYaw(val);
+  }
 }

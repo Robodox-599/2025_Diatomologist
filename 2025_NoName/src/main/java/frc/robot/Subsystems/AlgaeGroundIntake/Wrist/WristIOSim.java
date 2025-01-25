@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.algaegroundintake.utils.SimLog;
 
 public class WristIOSim implements WristIO {
     private final DCMotor wristGearbox = DCMotor.getKrakenX60Foc(1);
@@ -47,10 +48,7 @@ public class WristIOSim implements WristIO {
         @Override 
         public void updateInputs(WristIOInputs inputs) {
             sim.update(0.02);
-            // super.angularRads = getAngle();
-            // super.getAngularVelocityRadPerSec = sim.getVelocityRadPerSec();
-            // super.currentAmps = sim.getCurrentDrawAmps();
-            // super.setpointAngleRads = m_controller.getSetpoint().position;
+            SimLog.log("wrist", wristGearbox);
         } 
 
         @Override 

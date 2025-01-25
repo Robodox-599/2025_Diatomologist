@@ -8,6 +8,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.subsystems.algaegroundintake.utils.SimLog;
+
 
 public class RollersIOSim extends RollersIO {
         private final DCMotor rollerGearbox = DCMotor.getKrakenX60Foc(1);
@@ -23,12 +25,8 @@ public class RollersIOSim extends RollersIO {
         }
     @Override
     public void updateInputs() {
-        rollersMotorSim.update(0.02);
-        // super.velocityRadsPerSec = rollersMotorSim.getAngularPositionRad();
-        // super.appliedVoltage = appliedVoltage;
-        // super.currentAmps = rollersMotorSim.getCurrentDrawAmps();
-        // super.tempCelcius = 60;
-        // super.velocitySetpoint = desiredSpeed;
+        rollersMotorSim.update(0.2);
+        SimLog.log("rollers", rollerGearbox);
 
         
     }

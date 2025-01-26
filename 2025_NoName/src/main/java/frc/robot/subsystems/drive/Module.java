@@ -51,8 +51,6 @@ public class Module {
   }
 
   public void periodic() {
-    io.updateInputs();
-
     int sampleCount = io.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {

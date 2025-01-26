@@ -173,12 +173,7 @@ public class Drive extends SubsystemBase {
             linearFieldVelocity.getY(),
             gyroIO.connected ? gyroIO.yawVelocityRadPerSec : chassisSpeeds.omegaRadiansPerSecond);
 
-    // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
-
-    // DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
-    DogLog.log("SwerveStates/Measured", getModuleStates());
   }
 
   private void updateOdom() {
@@ -208,6 +203,9 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
+      
+    // Update gyro alert
+      gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       DogLog.log("Odometry/Pose", getPose());
@@ -331,7 +329,8 @@ public class Drive extends SubsystemBase {
                 true);
           }
           // Log setpoint states
-          DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
+          DogLog.log("SwerveStates/Measured", getModuleStates());
+          DogLog.log("SwerveStates/SetpointsOptimized", setpointStates);
         });
   }
 

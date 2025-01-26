@@ -22,7 +22,6 @@ public class RealConstants {
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
-
   public static final double MAX_LINEAR_SPEED = Units.feetToMeters(16.5);
   public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
   public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);

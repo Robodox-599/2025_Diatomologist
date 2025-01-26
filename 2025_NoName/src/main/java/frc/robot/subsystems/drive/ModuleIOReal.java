@@ -123,8 +123,8 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ MOTION MAGIC CONFIGS ************ */
 
-    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;
-    // turnConfig.MotionMagic.MotionMagicAcceleration = (5800 * 0.1) / TURN_GEAR_RATIO;
+    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     // driveConfig.MotionMagic.MotionMagicCruiseVelocity = MAX_LINEAR_SPEED;
     // driveConfig.MotionMagic.MotionMagicAcceleration = MAX_LINEAR_ACCELERATION;
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
@@ -152,12 +152,11 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.cancoderID();
     turnConfig.Feedback.FeedbackSensorSource =
         FeedbackSensorSourceValue
-            .FusedCANcoder; // change to FeedbackSensorSourceValue.FusedCANCoder;
+            .FusedCANcoder; 
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
-    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
+  
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -217,9 +216,9 @@ public class ModuleIOReal extends ModuleIO {
 
     super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
     super.drivePositionMeters =
-        drivePosition.getValueAsDouble() * Units.inchesToMeters(WHEEL_RADIUS * 2 * Math.PI);
+        drivePosition.getValueAsDouble();
     super.driveVelocityMetersPerSec =
-        driveVelocity.getValueAsDouble() * Units.inchesToMeters(WHEEL_RADIUS * 2 * Math.PI);
+        driveVelocity.getValueAsDouble();
     super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     super.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -245,12 +244,6 @@ public class ModuleIOReal extends ModuleIO {
     MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/DriveMotor/DrivePositionMeters",
-        super.drivePositionMeters);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/DriveMotor/DriveVelocityMetersPerSec",
-        super.driveVelocityMetersPerSec);
 
     MotorLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnTalon);
     DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
@@ -262,9 +255,7 @@ public class ModuleIOReal extends ModuleIO {
 
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsMeters",
-        super.odometryDrivePositionsMeters);
+
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
         super.odometryTurnPositions);

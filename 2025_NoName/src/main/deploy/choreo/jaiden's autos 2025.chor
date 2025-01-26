@@ -4,6 +4,13 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "xOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.2365375 m",
+     "val":0.2365375
+    }
+   },
    "fieldLength":{
     "dimension":"Length",
     "var":{
@@ -17,21 +24,42 @@
      "exp":"8.051 m",
      "val":8.051
     }
+   },
+   "straightOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.041275 m",
+     "val":0.041275
+    }
+   },
+   "yOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.40969496789 m",
+     "val":0.40969496789
+    }
+   },
+   "botRadius":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.4318 m",
+     "val":0.4318
+    }
    }
   },
   "poses":{
    "A":{
     "x":{
-     "exp":"meersux.x",
-     "val":3.0
+     "exp":"144.003 in",
+     "val":3.6576762
     },
     "y":{
-     "exp":"fieldwidth - meersux.y",
-     "val":3.051
+     "exp":"158.5 in",
+     "val":4.0259
     },
     "heading":{
-     "exp":"0 rad",
-     "val":0.0
+     "exp":"180 deg",
+     "val":3.141592653589793
     }
    }
   }

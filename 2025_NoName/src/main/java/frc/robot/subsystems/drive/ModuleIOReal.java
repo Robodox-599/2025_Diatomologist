@@ -150,13 +150,11 @@ public class ModuleIOReal extends ModuleIO {
     /*  ************ APPLY TURN CONFIG SENSOR FEEDBACK INFO ************ */
 
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.cancoderID();
-    turnConfig.Feedback.FeedbackSensorSource =
-        FeedbackSensorSourceValue
-            .FusedCANcoder; 
+    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-  
+
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -215,10 +213,8 @@ public class ModuleIOReal extends ModuleIO {
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-    super.drivePositionMeters =
-        drivePosition.getValueAsDouble();
-    super.driveVelocityMetersPerSec =
-        driveVelocity.getValueAsDouble();
+    super.drivePositionMeters = drivePosition.getValueAsDouble();
+    super.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble();
     super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     super.driveCurrentAmps = driveCurrent.getValueAsDouble();
 

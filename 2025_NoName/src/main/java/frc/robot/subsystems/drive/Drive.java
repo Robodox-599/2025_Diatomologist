@@ -203,8 +203,8 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
-      
-    // Update gyro alert
+
+      // Update gyro alert
       gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);

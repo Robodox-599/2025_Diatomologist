@@ -299,7 +299,7 @@ public class Drive extends SubsystemBase {
     return this.run(
         () -> {
           var allianceSpeeds =
-              ChassisSpeeds.fromRobotRelativeSpeeds(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds.get(),
                   DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                       ? getPose().getRotation()

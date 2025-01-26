@@ -216,8 +216,10 @@ public class ModuleIOReal extends ModuleIO {
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-    super.drivePositionMeters = drivePosition.getValueAsDouble() * WHEEL_RADIUS;
-    super.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble() * WHEEL_RADIUS;
+    super.drivePositionMeters =
+        drivePosition.getValueAsDouble() * Units.inchesToMeters(WHEEL_RADIUS * 2 * Math.PI);
+    super.driveVelocityMetersPerSec =
+        driveVelocity.getValueAsDouble() * Units.inchesToMeters(WHEEL_RADIUS * 2 * Math.PI);
     super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     super.driveCurrentAmps = driveCurrent.getValueAsDouble();
 

@@ -11,25 +11,11 @@
      "val":0.2365375
     }
    },
-   "fieldLength":{
-    "dimension":"Length",
-    "var":{
-     "exp":"17.528 m",
-     "val":17.528
-    }
-   },
-   "fieldWidth":{
-    "dimension":"Length",
-    "var":{
-     "exp":"8.051 m",
-     "val":8.051
-    }
-   },
    "straightOffset":{
     "dimension":"Length",
     "var":{
-     "exp":"0.041275 m",
-     "val":0.041275
+     "exp":"0.473075 m",
+     "val":0.473075
     }
    },
    "yOffset":{
@@ -44,6 +30,20 @@
     "var":{
      "exp":"0.4318 m",
      "val":0.4318
+    }
+   },
+   "fieldLength":{
+    "dimension":"Length",
+    "var":{
+     "exp":"17.528 m",
+     "val":17.528
+    }
+   },
+   "fieldWidth":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.051 m",
+     "val":8.051
     }
    }
   },

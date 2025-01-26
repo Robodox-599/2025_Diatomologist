@@ -6,6 +6,8 @@ import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -97,6 +99,8 @@ public class RobotContainer {
 
     // Put the auto chooser on the dashboard
     SmartDashboard.putData(autoChooser);
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
     // Example: To get the Pose3d for branch #5 at height L2
@@ -126,7 +130,7 @@ public class RobotContainer {
                     -joystickDeadbandApply(controller.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    -joystickDeadbandApply(controller.getRightX())
+                    joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED)));
     controller.y().onTrue(drive.zeroGyrCommand());
     // // Lock to 0° when A button is held

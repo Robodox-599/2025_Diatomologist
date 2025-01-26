@@ -3,8 +3,38 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
-  "poses":{}
+  "expressions":{
+   "fieldLength":{
+    "dimension":"Length",
+    "var":{
+     "exp":"17.528 m",
+     "val":17.528
+    }
+   },
+   "fieldWidth":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.051 m",
+     "val":8.051
+    }
+   }
+  },
+  "poses":{
+   "A":{
+    "x":{
+     "exp":"meersux.x",
+     "val":3.0
+    },
+    "y":{
+     "exp":"fieldwidth - meersux.y",
+     "val":3.051
+    },
+    "heading":{
+     "exp":"0 rad",
+     "val":0.0
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{

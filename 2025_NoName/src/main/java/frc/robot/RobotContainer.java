@@ -131,7 +131,8 @@ public class RobotContainer {
                         * 0.85,
                     joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED)));
-    controller.y().onTrue(drive.zeroGyrCommand());
+    controller.y().onTrue(drive.zeroGyroCommand());
+    controller.x().onTrue(drive.zeroPosition());
     // // Lock to 0° when A button is held
     // controller
     //     .a()

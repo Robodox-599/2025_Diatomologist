@@ -230,11 +230,12 @@ public class ModuleIOReal extends ModuleIO {
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     super.odometryDrivePositionsMeters =
         drivePositionQueue.stream()
-            .mapToDouble((Double value) -> Units.rotationsToRadians(value) / DRIVE_GEAR_RATIO)
+            .mapToDouble(
+                (Double value) -> Units.rotationsToRadians(value / RealConstants.DRIVE_GEAR_RATIO))
             .toArray();
     super.odometryTurnPositions =
         turnPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromRotations(value / TURN_GEAR_RATIO))
+            .map((Double value) -> Rotation2d.fromRotations(value))
             .toArray(Rotation2d[]::new);
 
     MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
@@ -251,7 +252,9 @@ public class ModuleIOReal extends ModuleIO {
 
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
-
+    DogLog.log(
+        "Drive/Module" + constants.prefix() + "/Odometry/DrivePositionsMeters",
+        super.odometryDrivePositionsMeters);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
         super.odometryTurnPositions);

@@ -18,7 +18,7 @@ public class RealConstants {
 
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static final double DRIVE_GEAR_RATIO = 5.36;
+  public static final double DRIVE_GEAR_RATIO = 5.9;
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
@@ -35,7 +35,7 @@ public class RealConstants {
   public static final boolean IS_TURN_MOTOR_INVERTED = true;
   public static final double TURN_STATOR_CURRENT_LIMIT = 40.0;
   public static final double DRIVE_ROTOR_TO_METERS =
-      (RealConstants.DRIVE_GEAR_RATIO) * (1.0 / (WHEEL_RADIUS * 2 * Math.PI));
+      (RealConstants.DRIVE_GEAR_RATIO) / (WHEEL_RADIUS * 2 * Math.PI);
 
   // Both sets of gains need to be tuned to our robot. make sure we tune this with torque control
   // foc for both modules.

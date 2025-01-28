@@ -12,7 +12,6 @@ import frc.robot.subsystems.drive.constants.RealConstants;
 // import static frc.robot.subsystems.drive.constants.RealConstants;
 
 public class Module {
-  private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
   private ModuleIO io;
   private String name;
@@ -55,9 +54,7 @@ public class Module {
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
       double positionMeters = io.odometryDrivePositionsMeters[i];
-      Rotation2d angle =
-          io.odometryTurnPositions[i].plus(
-              turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d());
+      Rotation2d angle = io.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
     // Update alerts

@@ -173,7 +173,12 @@ public class Drive extends SubsystemBase {
             linearFieldVelocity.getY(),
             gyroIO.connected ? gyroIO.yawVelocityRadPerSec : chassisSpeeds.omegaRadiansPerSecond);
 
+    // Update gyro alert
+    gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
+
+    // DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
+    DogLog.log("SwerveStates/Measured", getModuleStates());
   }
 
   private void updateOdom() {
@@ -203,9 +208,6 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
-
-      // Update gyro alert
-      gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       DogLog.log("Odometry/Pose", getPose());
@@ -261,7 +263,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public Command zeroGyrCommand() {
+  public Command zeroGyroCommand() {
     return new InstantCommand(
         () -> {
           overrideGyroAngle(0);
@@ -272,6 +274,17 @@ public class Drive extends SubsystemBase {
   void overrideGyroAngle(double angleDegrees) {
     rawGyroRotation = Rotation2d.fromDegrees(angleDegrees);
     setPose(new Pose2d(getPose().getTranslation(), rawGyroRotation));
+  }
+
+  public Command zeroPosition() {
+    return new InstantCommand(
+        () -> {
+          zeroPose();
+        });
+  }
+
+  void zeroPose() {
+    setPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
   }
 
   public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
@@ -297,7 +310,7 @@ public class Drive extends SubsystemBase {
     return this.run(
         () -> {
           var allianceSpeeds =
-              ChassisSpeeds.fromFieldRelativeSpeeds(
+              ChassisSpeeds.fromRobotRelativeSpeeds(
                   speeds.get(),
                   DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                       ? getPose().getRotation()
@@ -329,8 +342,7 @@ public class Drive extends SubsystemBase {
                 true);
           }
           // Log setpoint states
-          DogLog.log("SwerveStates/Measured", getModuleStates());
-          DogLog.log("SwerveStates/SetpointsOptimized", setpointStates);
+          DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
         });
   }
 

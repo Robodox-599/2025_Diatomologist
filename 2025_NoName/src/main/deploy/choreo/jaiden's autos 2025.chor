@@ -18,13 +18,6 @@
      "val":0.473075
     }
    },
-   "yOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.40969496789 m",
-     "val":0.40969496789
-    }
-   },
    "botRadius":{
     "dimension":"Length",
     "var":{
@@ -45,24 +38,16 @@
      "exp":"8.051 m",
      "val":8.051
     }
-   }
-  },
-  "poses":{
-   "A":{
-    "x":{
-     "exp":"144.003 in",
-     "val":3.6576762
-    },
-    "y":{
-     "exp":"158.5 in",
-     "val":4.0259
-    },
-    "heading":{
-     "exp":"180 deg",
-     "val":3.141592653589793
+   },
+   "yOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.40969496789 m",
+     "val":0.40969496789
     }
    }
-  }
+  },
+  "poses":{}
  },
  "config":{
   "frontLeft":{

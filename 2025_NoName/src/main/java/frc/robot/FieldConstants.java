@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +64,7 @@ public class FieldConstants {
 
     public static final Pose2d[] centerFaces =
         new Pose2d[6]; // Starting facing the driver station in clockwise order
-    public static final List<Map<ReefHeight, Pose3d>> branchPositions =
-        new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
+    public static final List<Map<ReefHeight, Pose3d>> branchPositions;
 
     static {
       // Initialize faces
@@ -100,9 +100,12 @@ public class FieldConstants {
               Rotation2d.fromDegrees(-120));
 
       // Initialize branch positions
+      branchPositions = new ArrayList<>(Collections.nCopies(12, null));
+
       for (int face = 0; face < 6; face++) {
         Map<ReefHeight, Pose3d> fillRight = new HashMap<>();
         Map<ReefHeight, Pose3d> fillLeft = new HashMap<>();
+
         for (var level : ReefHeight.values()) {
           Pose2d poseDirection = new Pose2d(center, Rotation2d.fromDegrees(180 - (60 * face)));
           double adjustX = Units.inchesToMeters(30.738);
@@ -123,6 +126,7 @@ public class FieldConstants {
                       0,
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
+
           fillLeft.put(
               level,
               new Pose3d(
@@ -139,8 +143,10 @@ public class FieldConstants {
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
         }
-        branchPositions.add((face * 2) + 1, fillRight);
-        branchPositions.add((face * 2) + 2, fillLeft);
+
+        // Now we use `set()` instead of `add()` since indices exist
+        branchPositions.set(face * 2, fillRight);
+        branchPositions.set((face * 2) + 1, fillLeft);
       }
     }
   }

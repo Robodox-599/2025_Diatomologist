@@ -5,6 +5,7 @@ import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,11 +15,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.subsystems.commands.CharacterizationCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
+import java.util.Map;
 
 // import frc.robot.subsystems.vision.Vision;
 // import frc.robot.subsystems.vision.VisionIOReal;
@@ -96,18 +97,20 @@ public class RobotContainer {
 
     // Add options to the chooser
     autoChooser.addRoutine("SimplePath", autoRoutines::simplePathAutoRoutine);
-
     // Put the auto chooser on the dashboard
     SmartDashboard.putData(autoChooser);
+    // Schedule the selected auto during the autonomous period
+    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+    // Logging starting here
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
-    // Schedule the selected auto during the autonomous period
-    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
     // Configure the button bindings
     configureButtonBindings();
+    // log all reef positions, useful for debugging.
+    logAllReefPositions();
   }
 
   /**
@@ -132,30 +135,6 @@ public class RobotContainer {
                     joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED)));
     controller.y().onTrue(drive.zeroGyroCommand());
-    controller.x().onTrue(drive.zeroPosition());
-    // // Lock to 0° when A button is held
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -controller.getLeftY(),
-    //             () -> -controller.getLeftX(),
-    //             () -> new Rotation2d()));
-
-    // // Switch to X pattern when X button is pressed
-    // controller.x().onTrue(drive.stopWithXCmd());
-
-    // // Reset gyro to 0° when B button is pressed
-    // controller
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-    //                 drive)
-    //             .ignoringDisable(true));
   }
 
   /**
@@ -164,13 +143,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return CharacterizationCommands.feedforwardCharacterization(drive).withTimeout(7.5);
-    // return autoChooser.selectedCommandScheduler();
+    return autoChooser.selectedCommandScheduler();
   }
 
   private static double joystickDeadbandApply(double x) {
-    // return MathUtil.applyDeadband(Math.abs(Math.pow(x, 3) * Math.signum(x)), 0.02);
     return MathUtil.applyDeadband(
         (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
+  }
+
+  public static void logAllReefPositions() {
+    for (int i = 0; i < FieldConstants.Reef.branchPositions.size(); i++) {
+      Map<FieldConstants.ReefHeight, Pose3d> branch = FieldConstants.Reef.branchPositions.get(i);
+      if (branch == null) {
+        continue; // Skip if no data for this branch
+      }
+
+      for (FieldConstants.ReefHeight height : FieldConstants.ReefHeight.values()) {
+        Pose3d position = branch.get(height);
+        if (position != null) {
+          String key = "Reef/Branch " + i + "/Pose/" + height.name();
+          DogLog.log(key, position);
+        }
+      }
+    }
   }
 }

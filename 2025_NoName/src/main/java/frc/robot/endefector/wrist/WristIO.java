@@ -20,5 +20,3 @@ public abstract class WristIO {
 
   public void setBrake(boolean brake) {}
 }
-
-

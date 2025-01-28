@@ -1,8 +1,12 @@
 package frc.robot.endefector.wrist;
+import frc.robot.endefector.wrist.WristConstants.WristStates;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
+import frc.robot.util.PhoenixUtil;
+
 import static frc.robot.endefector.wrist.WristConstants.*;
+import static frc.robot.util.WristUtil.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -10,13 +14,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import dev.doglog.DogLog;
 
-// import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.MathUtil;
 
 public class WristIOTalonFX extends WristIO{
     
   private final TalonFX wristMotor;
   TalonFXConfiguration wristConfig;
   private final MotionMagicVoltage m_request;
+  private WristStates currentState = WristStates.STOW;
 
   private double passedInPosition;
   private double currentPosition;
@@ -50,6 +55,9 @@ public class WristIOTalonFX extends WristIO{
     
     PhoenixUtil.tryUntilOk(5, ()-> wristMotor.getConfigurator().apply(wristConfig));
         // rollersMotor.getConfigurator().apply(rollersConfig);
+        wristMotor.optimizeBusUtilization();
+        PhoenixUtil.tryUntilOk(5, ()-> wristMotor.getConfigurator().apply(wristConfig));
+        // PhoenixUtil.tryUntilOk(5, () -> cancoder.getConfigurator().apply(cancoderConfig, 0.25));
     }
 
     @Override
@@ -92,4 +100,21 @@ public class WristIOTalonFX extends WristIO{
     public void setBrake(boolean brake) {
     wristMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
+
+    @Override
+    public void setState(WristStates state) {
+        currentState = state;
+        double position = MathUtil.clamp(stateToHeight(state), wristLowerLimit, wristUpperLimit);
+        
+        if (passedInPosition > currentPosition) {
+          wristSlot = 0;
+        } else {
+          wristSlot = 1;
+        }
+
+        m_request.withSlot(wristSlot);
+        wristMotor.setControl(m_request);
+        m_request.Position = position;
+    }
+
 }

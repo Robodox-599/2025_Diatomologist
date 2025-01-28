@@ -32,8 +32,9 @@ public class RollersIOTalonFX extends RollersIO{
         rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
         rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
-        // rollersMotor.getConfigurator().apply(rollersConfig);
+        PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
+        rollersMotor.optimizeBusUtilization();
+        PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
     }
 
     @Override

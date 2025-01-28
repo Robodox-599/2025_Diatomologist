@@ -37,11 +37,4 @@ public class Wrist extends SubsystemBase{
                 io.setVoltage(0);
             });
     }
-
-    public Command setVoltage(double voltage) {
-        return Commands.run(
-            () -> {
-                io.setVoltage(voltage);
-            });
-    }
 }

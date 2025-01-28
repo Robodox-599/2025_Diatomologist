@@ -9,7 +9,7 @@ public class WristConstants {
     public static final int PeakCurrentLimit = 50;
     public static final double PeakCurrentDuration = 0.1;
   
-    public static final double gearRatio = 0.0;
+    public static final double gearRatio = 58.78;
     public static final double wristMOI = 0.04;
 
     public static final double realExtendkP = 0.0;
@@ -29,27 +29,17 @@ public class WristConstants {
     public static final double simkD = 0.0;
     public static final double simkV = 0.0;
     public static final double simkS = 0.0;
+
+    public static final double wristLowerLimit = 0.0;
+    public static final double wristUpperLimit = 48.0;
+    public static final double homePositionOffset = 1.0;
+
   
     public static final double simVelocityConstant = 0.2;
 
     public static final double wristExtendsSlot = 0.0;
     public static final double wristRetractSlot = 1.0;
 
-    public static enum WristStates {
-        STOW(1),
-        SCORING(2), 
-        OVERRIDE(3), 
-        GROUNDINTAKE(4), 
-        STATIONINTAKE(5),
-        CLIMB(6);
-        private final int index;
-
-        WristStates(int index) {
-        this.index = index;
-        }
-
-        public int getIndex() {
-        return index;
-        }
-    }
+    public static final int cancoderID = 0;
+    public static final double cancoderOffset = 0.0;
 }

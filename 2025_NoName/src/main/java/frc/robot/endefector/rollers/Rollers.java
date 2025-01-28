@@ -15,7 +15,7 @@ public class Rollers extends SubsystemBase{
         io.updateInputs();
     }
 
-    public Command applyVoltage(double voltage) {
+    public Command setVoltage(double voltage) {
         return Commands.run(
             () -> {
                 io.setVoltage(voltage);

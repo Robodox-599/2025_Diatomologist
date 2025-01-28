@@ -49,11 +49,11 @@ public class RobotContainer {
   
 
   private void configureBindings() {
-    controller.x().onFalse(wrist.stop());
-    controller.a().onFalse(rollers.stop());
+    // controller.x().onFalse(wrist.stop());
+    // controller.a().onFalse(rollers.stop());
 
-    controller.x().whileTrue(wrist.goToPose(0));
-    controller.a().whileTrue(rollers.setVelocity(0));
+    controller.x().whileTrue(wrist.setVoltage(2));
+    controller.a().whileTrue(rollers.setVoltage(2));
   }
 
   public Command getAutonomousCommand() {

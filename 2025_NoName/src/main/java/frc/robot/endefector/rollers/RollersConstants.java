@@ -1,7 +1,7 @@
 package frc.robot.endefector.rollers;
 
 public class RollersConstants {
-    public static final int rollersMotorID = 0;
+    public static final int rollersMotorID = 2;
     public static final String rollersMotorCANBus = "rio";
 
     public static final boolean EnableCurrentLimit = true;

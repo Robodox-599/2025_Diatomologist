@@ -1,5 +1,7 @@
 package frc.robot.endefector.wrist;
 import frc.robot.util.MotorLog;
+import frc.robot.util.PhoenixUtil;
+
 import static frc.robot.endefector.wrist.WristConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -22,7 +24,7 @@ public class WristIOTalonFX extends WristIO{
 
     public WristIOTalonFX() {
     
-        wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
+        wristMotor = new TalonFX(2, wristMotorCANBus);
         wristConfig = new TalonFXConfiguration();
         m_request = new MotionMagicVoltage(0);
 
@@ -46,9 +48,8 @@ public class WristIOTalonFX extends WristIO{
         wristConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
         wristConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
     
-    wristMotor.optimizeBusUtilization();
-
-    wristMotor.getConfigurator().apply(wristConfig);
+    PhoenixUtil.tryUntilOk(5, ()-> wristMotor.getConfigurator().apply(wristConfig));
+        // rollersMotor.getConfigurator().apply(rollersConfig);
     }
 
     @Override

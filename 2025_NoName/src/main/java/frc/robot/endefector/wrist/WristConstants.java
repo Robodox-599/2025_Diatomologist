@@ -34,4 +34,22 @@ public class WristConstants {
 
     public static final double wristExtendsSlot = 0.0;
     public static final double wristRetractSlot = 1.0;
+
+    public static enum WristStates {
+        STOW(1),
+        SCORING(2), 
+        OVERRIDE(3), 
+        GROUNDINTAKE(4), 
+        STATIONINTAKE(5),
+        CLIMB(6);
+        private final int index;
+
+        WristStates(int index) {
+        this.index = index;
+        }
+
+        public int getIndex() {
+        return index;
+        }
+    }
 }

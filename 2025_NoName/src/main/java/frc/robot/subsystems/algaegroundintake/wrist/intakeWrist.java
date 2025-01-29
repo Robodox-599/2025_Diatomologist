@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-public class Wrist extends SubsystemBase {
+public class intakeWrist extends SubsystemBase {
     private final WristIO io;
 
-    public Wrist(WristIO io) {
+    public intakeWrist(WristIO io) {
         this.io = io;
     }
 

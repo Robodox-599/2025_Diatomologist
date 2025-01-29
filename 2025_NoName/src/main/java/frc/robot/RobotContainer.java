@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import frc.robot.subsystems.algaegroundintake.rollers.Rollers;
 // import frc.robot.subsystems.algaegroundintake.rollers.RollersIOSim;
 // import frc.robot.subsystems.algaegroundintake.rollers.RollersIOTalonFX;
-import frc.robot.subsystems.algaegroundintake.wrist.Wrist;
+import frc.robot.subsystems.algaegroundintake.wrist.intakeWrist;
 import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
 import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
 
 
 public class RobotContainer {
     // private Rollers rollers;
-     private Wrist wrist;
+     private intakeWrist wrist;
    
      private final CommandXboxController controller =
      new CommandXboxController(Constants.driverControllerPort);
@@ -27,12 +27,12 @@ public class RobotContainer {
        switch (Constants.currentMode) {
          case REAL:
         // rollers = new Rollers(new RollersIOTalonFX());
-        wrist = new Wrist(new WristIOTalonFX());
+        wrist = new intakeWrist(new WristIOTalonFX());
 
         break;
       case SIM:
         // rollers = new Rollers(new RollersIOSim());
-        wrist = new Wrist(new WristIOSim());
+        wrist = new intakeWrist(new WristIOSim());
        
         break;
     }

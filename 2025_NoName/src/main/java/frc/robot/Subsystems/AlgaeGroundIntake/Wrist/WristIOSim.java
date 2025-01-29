@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+// import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+// import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+// import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import frc.robot.subsystems.algaegroundintake.utils.SimLog;
 
 public class WristIOSim implements WristIO {

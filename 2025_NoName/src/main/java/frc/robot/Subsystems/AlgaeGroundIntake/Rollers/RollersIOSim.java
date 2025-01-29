@@ -1,7 +1,7 @@
 package frc.robot.subsystems.algaegroundintake.rollers;
 
 import static frc.robot.subsystems.algaegroundintake.rollers.RollersConstants.*;
-import static frc.robot.subsystems.algaegroundintake.wrist.WristIOSim.*;
+// import static frc.robot.subsystems.algaegroundintake.wrist.WristIOSim.*;
 
 
 import edu.wpi.first.math.controller.PIDController;
@@ -9,13 +9,13 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+// import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+// import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+// import edu.wpi.first.wpilibj.util.Color;
+// import edu.wpi.first.wpilibj.util.Color8Bit;
+// import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import frc.robot.subsystems.algaegroundintake.utils.SimLog;
-import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
+//import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
 
 
 public class RollersIOSim extends RollersIO {

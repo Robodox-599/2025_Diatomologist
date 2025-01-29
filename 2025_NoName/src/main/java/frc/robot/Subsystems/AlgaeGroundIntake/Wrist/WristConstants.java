@@ -14,7 +14,10 @@ public class WristConstants {
     public static final double intakeWristMaxAngle =
         Units.degreesToRadians(0.0);  
     public static final double intakeWristMinAngle =
-        Units.degreesToRadians(80);  
+        Units.degreesToRadians(80);
+        
+    public static final double gearRatio = 58.78;
+    public static final double wristMOI = 0.04;
     
     public static final double kWristRetractVal = 0.0;  
     public static final double kWristExtendVal = Units.degreesToRadians(75.0);  

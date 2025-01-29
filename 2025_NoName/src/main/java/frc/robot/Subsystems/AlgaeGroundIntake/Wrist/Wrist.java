@@ -1,6 +1,9 @@
 package frc.robot.subsystems.algaegroundintake.wrist;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,4 +49,9 @@ public class Wrist extends SubsystemBase {
                 io.setVoltage(getPose());
             });
     }
+
+    static Mechanism2d mech = new Mechanism2d(1, 2);
+        static MechanismRoot2d   root = mech.getRoot("wrist", 1, 2);
+
+        public static MechanismLigament2d m_wrist = root.append(new MechanismLigament2d("wrist", 6, 90));
 }

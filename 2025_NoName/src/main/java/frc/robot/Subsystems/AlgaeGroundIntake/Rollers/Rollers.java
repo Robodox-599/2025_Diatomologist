@@ -1,8 +1,13 @@
 package frc.robot.subsystems.algaegroundintake.rollers;
 
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.algaegroundintake.wrist.Wrist;
+import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
 
 public class Rollers extends SubsystemBase {
     private final RollersIO io;
@@ -46,4 +51,6 @@ public class Rollers extends SubsystemBase {
       public void setBrake(boolean brake){
         io.setBrake(brake);
       }
+      MechanismLigament2d m_rollers = 
+            Wrist.m_wrist.append(new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kPurple)));
 }

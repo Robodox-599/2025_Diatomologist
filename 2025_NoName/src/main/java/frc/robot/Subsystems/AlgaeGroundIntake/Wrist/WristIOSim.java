@@ -1,54 +1,76 @@
 package frc.robot.subsystems.algaegroundintake.wrist;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import frc.robot.subsystems.algaegroundintake.utils.SimLog;
 
 public class WristIOSim implements WristIO {
     private final DCMotor wristGearbox = DCMotor.getKrakenX60Foc(1);
+    private DCMotorSim wristSim;
+    
+        private double passedInPosition;
+        private double currentPosition;
 
-    private ProfiledPIDController m_controller;
-    private SimpleMotorFeedforward m_Feedforward = new  SimpleMotorFeedforward(0, 0);
-
-    private SingleJointedArmSim sim =
-        new SingleJointedArmSim(wristGearbox, WristConstants.IntakeWristSimConstants.kArmReduction, SingleJointedArmSim.estimateMOI(WristConstants.IntakeWristSimConstants.kArmLength,
-        WristConstants.IntakeWristSimConstants.kArmMass),
-        WristConstants.IntakeWristSimConstants.kArmLength,
-        WristConstants.IntakeWristSimConstants.kMinAngleRads,
-        WristConstants.IntakeWristSimConstants.kMaxAngleRads,
-        true,
-        0.1);
-
-        private EncoderSim m_encoderSim;
-
-        public void WristIOSim() {
-            m_encoderSim = 
-                new EncoderSim(new Encoder(WristConstants.IntakeWristSimConstants.kEncoderAChannel, 
-                WristConstants.IntakeWristSimConstants.kEncoderBChannel));
-
-        m_encoderSim.setDistancePerPulse(WristConstants.IntakeWristSimConstants.kArmEncoderDistPerPulse);
-
-        m_controller = 
-            new ProfiledPIDController(
-                WristConstants.IntakeWristSimConstants.kPivotSimPID[0], 
-                WristConstants.IntakeWristSimConstants.kPivotSimPID[1], 
-                WristConstants.IntakeWristSimConstants.kPivotSimPID[2],
-                new TrapezoidProfile.Constraints(2.45, 2.45)
-            );
-
-        m_controller.setTolerance(0.1, 0.05);
+    
+        private ProfiledPIDController m_controller;
+        private SimpleMotorFeedforward m_Feedforward = new  SimpleMotorFeedforward(0, 0);
+    
+        private SingleJointedArmSim sim =
+            new SingleJointedArmSim(wristGearbox, WristConstants.IntakeWristSimConstants.kArmReduction, SingleJointedArmSim.estimateMOI(WristConstants.IntakeWristSimConstants.kArmLength,
+            WristConstants.IntakeWristSimConstants.kArmMass),
+            WristConstants.IntakeWristSimConstants.kArmLength,
+            WristConstants.IntakeWristSimConstants.kMinAngleRads,
+            WristConstants.IntakeWristSimConstants.kMaxAngleRads,
+            true,
+            0.1);
+    
+            private EncoderSim m_encoderSim;
+    
+            public void WristIOSim() {
+                m_encoderSim = 
+                    new EncoderSim(new Encoder(WristConstants.IntakeWristSimConstants.kEncoderAChannel, 
+                    WristConstants.IntakeWristSimConstants.kEncoderBChannel));
+    
+            m_encoderSim.setDistancePerPulse(WristConstants.IntakeWristSimConstants.kArmEncoderDistPerPulse);
+    
+            m_controller = 
+                new ProfiledPIDController(
+                    WristConstants.IntakeWristSimConstants.kPivotSimPID[0], 
+                    WristConstants.IntakeWristSimConstants.kPivotSimPID[1], 
+                    WristConstants.IntakeWristSimConstants.kPivotSimPID[2],
+                    new TrapezoidProfile.Constraints(2.45, 2.45)
+                );
+    
+            m_controller.setTolerance(0.1, 0.05);
+    
+            wristSim = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                wristGearbox, WristConstants.wristMOI, WristConstants.gearRatio), wristGearbox);
+        
 
         }
 
         @Override 
         public void updateInputs(WristIOInputs inputs) {
             sim.update(0.02);
-            SimLog.log("wrist", wristGearbox);
+            SimLog.log("wrist", wristSim);
+
+            DogLog.log("wrist/targetPosition", passedInPosition);
+            DogLog.log("wrist/currentPostion", currentPosition);
+            DogLog.log("wrist/Position", wristSim.getAngularPositionRotations());
+
+            
         } 
 
         @Override 

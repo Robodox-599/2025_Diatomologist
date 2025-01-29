@@ -15,4 +15,4 @@ public class Constants {
         REAL,
         SIM
       }
-    }
+}

@@ -1,4 +1,5 @@
 package frc.robot.endefector.wrist;
+import static frc.robot.endefector.wrist.WristConstants.*;
 
 public abstract class WristIO {
   //  public static class WristIOInputs {
@@ -19,4 +20,6 @@ public abstract class WristIO {
   public void stop() {}
 
   public void setBrake(boolean brake) {}
+
+  public void setState(WristStates state) {}
 }

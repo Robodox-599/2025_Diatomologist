@@ -1,7 +1,5 @@
 package frc.robot.endefector.rollers;
 import frc.robot.util.MotorLog;
-import frc.robot.util.PhoenixUtil;
-
 import static frc.robot.endefector.rollers.RollersConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,7 +16,7 @@ public class RollersIOTalonFX extends RollersIO{
     private double desiredVelocity;
  
     {
-        rollersMotor = new TalonFX(1, rollersMotorCANBus);
+        rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
         rollersConfig = new TalonFXConfiguration();
 
         rollersConfig.Slot0.kP = realP;
@@ -32,9 +30,8 @@ public class RollersIOTalonFX extends RollersIO{
         rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
         rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-        PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
         rollersMotor.optimizeBusUtilization();
-        PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
+        rollersMotor.getConfigurator().apply(rollersConfig);
     }
 
     @Override
@@ -64,4 +61,3 @@ public class RollersIOTalonFX extends RollersIO{
     rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 }
-

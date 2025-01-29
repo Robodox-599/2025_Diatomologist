@@ -52,8 +52,8 @@ public class RobotContainer {
     // controller.x().onFalse(wrist.stop());
     // controller.a().onFalse(rollers.stop());
 
-    controller.x().whileTrue(wrist.setVoltage(2));
-    controller.a().whileTrue(rollers.setVoltage(2));
+    controller.x().whileTrue(wrist.goToPose(2));
+    controller.a().whileTrue(rollers.setVelocity(2));
   }
 
   public Command getAutonomousCommand() {

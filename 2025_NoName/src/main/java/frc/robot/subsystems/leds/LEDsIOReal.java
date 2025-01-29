@@ -6,12 +6,15 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+
+import dev.doglog.DogLog;
+
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
-public class LEDsIOReal implements LEDsIO {
+public class LEDsIOReal extends LEDsIO {
    private final CANdle candle;
    private int channel = 0; 
    private LEDAnim state = LEDAnim.NoState;
@@ -27,9 +30,12 @@ public class LEDsIOReal implements LEDsIO {
    }
 
    @Override
-   public void updateInputs(LEDsIOInputs inputs ){
-        inputs.connected = true;
-        inputs.anim = state;
+   public void updateInputs(){
+        super.connected = true;
+        super.anim = state;
+
+        DogLog.log("LEDs/Connected", super.connected);
+        DogLog.log("LEDs/Anim", super.anim);
    } 
    @Override
    public void updateAnim(LEDAnim anim){

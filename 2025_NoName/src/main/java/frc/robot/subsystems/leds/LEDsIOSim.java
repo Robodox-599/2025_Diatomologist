@@ -1,16 +1,20 @@
 package frc.robot.subsystems.leds;
 
+import dev.doglog.DogLog;
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
-public class LEDsIOSim implements LEDsIO {
+public class LEDsIOSim extends LEDsIO {
     private LEDAnim state = LEDAnim.NoState;
     public LEDsIOSim(){
     }
  
     @Override
-    public void updateInputs(LEDsIOInputs inputs ){
-         inputs.connected = true;
-         inputs.anim = state;
+    public void updateInputs(){
+         super.connected = true;
+         super.anim = state;
+
+         DogLog.log("LEDs/Connected", super.connected);
+         DogLog.log("LEDs/Anim", super.anim);
     } 
     @Override
     public void updateAnim(LEDAnim anim){

@@ -2,14 +2,8 @@
   "keyboardJoysticks": [
     {
       "axisConfig": [
-        {
-          "decKey": 65,
-          "incKey": 68
-        },
-        {
-          "decKey": 87,
-          "incKey": 83
-        },
+        {},
+        {},
         {
           "decKey": 69,
           "decayRate": 0.0,
@@ -20,10 +14,10 @@
       "axisCount": 3,
       "buttonCount": 4,
       "buttonKeys": [
-        90,
-        88,
-        67,
-        86
+        87,
+        65,
+        83,
+        68
       ],
       "povConfig": [
         {
@@ -93,6 +87,17 @@
     {
       "guid": "78696e70757401000000000000000000",
       "useGamepad": true
+    },
+    {
+      "useGamepad": true
+    },
+    {
+      "useGamepad": true
+    },
+    {},
+    {},
+    {
+      "guid": "Keyboard0"
     }
   ]
 }

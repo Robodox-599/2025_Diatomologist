@@ -31,11 +31,10 @@ public final class ElevatorConstants {
         0.0,    // L1
         20.0,   // L2
         40.0,   // L3
-        60.0,   // L4
-
-        25.0,   // 
-        45.0    // 
+        60.0,    // L4
+        0.3 // STOW
     };
+    
 
     public static final int leaderMotorID = 20;
     public static final String leaderMotorCANbus = "rio";
@@ -54,7 +53,7 @@ public final class ElevatorConstants {
     
     /* Position Setpoints (in inches) */
     public static final double elevatorLowerLimit = 0.0;
-    public static final double elevatorUpperLimit = 48.0;
+    public static final double elevatorUpperLimit = 61.0;
     public static final double homePositionOffset = 1.0;
     
     public static final double levelOneHeight = 0.0;
@@ -71,9 +70,10 @@ public final class ElevatorConstants {
     public static final double kV = 0.0;
     public static final double kS = 0.0;
 
-    public static final double simkP = 1;
-    public static final double simkI = 0.0;
-    public static final double simkD = 0.0;
+    // Add these for better PID tuning
+    public static final double simkP = 0.8;
+    public static final double simkI = 0.001;
+    public static final double simkD = 0.05;
     public static final double simkF = 0.0;
 
     public static final double supplyCurrentLimitAmps = 0.1;

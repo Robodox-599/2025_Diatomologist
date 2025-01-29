@@ -20,6 +20,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
     private final MotionMagicVoltage motionMagicRequest;
     private int motionSlot;
+    
     public ElevatorIOTalonFX() {
         leaderMotor = new TalonFX(ElevatorConstants.leaderMotorID, ElevatorConstants.leaderMotorCANbus);
         followerMotor = new TalonFX(ElevatorConstants.followerMotorID, ElevatorConstants.followerMotorCANbus);
@@ -88,6 +89,23 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         currentState = state;
         double position = MathUtil.clamp(ElevatorUtil.stateToHeight(state), ElevatorConstants.elevatorLowerLimit, ElevatorConstants.elevatorUpperLimit);
         
+        switch (state) {
+            case L1:
+                position = ElevatorConstants.heights[0];
+                break;
+            case L2:
+                position = ElevatorConstants.heights[1];
+                break;
+            case L3:
+                position = ElevatorConstants.heights[2];
+                break;
+            case L4:
+                position = ElevatorConstants.heights[3];
+                break;
+            default:
+                position = ElevatorConstants.heights[0]; // STOW
+                break;
+        }
         if (position > getPosition()){
             motionSlot = ElevatorConstants.movingUpSlot;
         } else {
@@ -97,6 +115,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         motionMagicRequest.withSlot(motionSlot);
         motionMagicRequest.Position = position;
         leaderMotor.setControl(motionMagicRequest);
+
     }
 
     @Override

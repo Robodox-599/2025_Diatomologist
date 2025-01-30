@@ -22,10 +22,10 @@ public class ElevatorIOSim extends ElevatorIO {
     private final PIDController positionController;
     private double targetPositionInches = 0.0;
 
-    private Mechanism2d mech;
-    private MechanismRoot2d root;
-    private MechanismLigament2d elevator;
-    private MechanismLigament2d wrist;
+    // private Mechanism2d mech = new Mechanism2d(60, 60);
+    // private MechanismRoot2d root = mech.getRoot("Root", 30, 5);
+    // private MechanismLigament2d elevator = root.append(new MechanismLigament2d("Elevator", ElevatorConstants.heights[4], 90, 6, new Color8Bit(Color.kBlue)));
+    // private MechanismLigament2d wrist = elevator.append(new MechanismLigament2d("wrist", 6, 90, 6, new Color8Bit(Color.kPurple)));
 
     // Add the arm connected to the base
    //
@@ -36,20 +36,8 @@ public class ElevatorIOSim extends ElevatorIO {
 
     private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
 
-    public ElevatorIOSim() {
-        
-        // Create a new Mechanism2D with a specified size
-        mech = new Mechanism2d(60, 60);
-        
-        // Create a root node at the bottom center of the mechanism
-        root = mech.getRoot("Root", 30, 5);
-        
-        // Create an elevator ligament attached to the root
-        elevator = root.append(new MechanismLigament2d("Elevator", ElevatorConstants.heights[4], 90, 6, new Color8Bit(Color.kBlue)));
-
-        wrist = elevator.append(new MechanismLigament2d("wrist", 6, 90, 6, new Color8Bit(Color.kPurple)));
-        
-        SmartDashboard.putData("elevatorMech2d", mech);
+    public ElevatorIOSim() {     
+        //SmartDashboard.putData("elevatorMech2d", mech);
         
         elevatorSim = new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
@@ -93,13 +81,6 @@ public class ElevatorIOSim extends ElevatorIO {
         DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
         DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
         DogLog.log("Elevator/State", super.state.toString());
-
-        // Move the elevator towards the setpoint
-        // if (super.positionInches != position) {
-        //     super.positionInches = position;
-        // }
-
-        // Update the elevator ligament's length
     }
 
     @Override
@@ -111,22 +92,22 @@ public class ElevatorIOSim extends ElevatorIO {
         switch (state) {
             case L1:
                 position = ElevatorConstants.heights[0];
-                elevator.setLength(position);
+                // elevator.setLength(position);
                 System.out.println(state);
                 break;
             case L2:
                 position = ElevatorConstants.heights[1];
-                elevator.setLength(position);
+                // elevator.setLength(position);
                 System.out.println(state);
                 break;
             case L3:
                 position = ElevatorConstants.heights[2];
-                elevator.setLength(position);
+                // elevator.setLength(position);
                 System.out.println(state);
                 break;
             case L4:
                 position = ElevatorConstants.heights[3];
-                elevator.setLength(position);
+                // elevator.setLength(position);
                 System.out.println(state);
                 break;
             case STOW:

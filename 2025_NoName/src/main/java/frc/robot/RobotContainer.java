@@ -5,7 +5,6 @@ import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.*;
 
 //Endefector stuff
 import frc.robot.subsystems.endefector.rollers.Rollers;
@@ -14,7 +13,7 @@ import frc.robot.subsystems.endefector.rollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.wrist.Wrist;
 import frc.robot.subsystems.endefector.wrist.WristIOSim;
 import frc.robot.subsystems.endefector.wrist.WristIOTalonFX;
-
+import frc.robot.subsystems.subsystemvisualizer.subsystemvisualizer;
 //Climb stuff
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
@@ -32,6 +31,7 @@ public class RobotContainer {
   private final CommandXboxController controller = 
     new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   
+  private subsystemvisualizer subsystemvisualizer;
   //Endefector
   private Rollers endefectorRollers;
   private Wrist endefectorWrist;
@@ -41,11 +41,13 @@ public class RobotContainer {
     public RobotContainer() {
       switch (Constants.currentMode) {
         case REAL:
+          subsystemvisualizer = new subsystemvisualizer();
           endefectorRollers = new Rollers(new RollersIOTalonFX());
           endefectorWrist = new Wrist(new WristIOTalonFX());
           climb = new Climb(new ClimbIOTalonFX());
             break;
         case SIM:
+          subsystemvisualizer = new subsystemvisualizer();
           endefectorRollers = new Rollers(new RollersIOSim());
           endefectorWrist = new Wrist(new WristIOSim());
           climb = new Climb(new ClimbIOSim());

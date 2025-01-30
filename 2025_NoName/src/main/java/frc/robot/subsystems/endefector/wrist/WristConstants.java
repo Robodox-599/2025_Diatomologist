@@ -4,7 +4,7 @@ public class WristConstants {
     //motor info
     public static final int wristMotorID = 0;
     public static final String wristMotorCANBus = "rio";
-    public static final double gearRatio = 0.0;
+    public static final double gearRatio = 1.0;
     public static final double wristMOI = 0.04;
 
     //current limit stuff

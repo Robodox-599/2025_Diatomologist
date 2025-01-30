@@ -7,8 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.algaegroundintake.utils.MotorLog;
-import frc.robot.subsystems.algaegroundintake.utils.PhoenixUtil;
+import frc.robot.util.MotorLog;
+import frc.robot.util.PhoenixUtil;
 
 public class WristIOTalonFX implements WristIO {
     

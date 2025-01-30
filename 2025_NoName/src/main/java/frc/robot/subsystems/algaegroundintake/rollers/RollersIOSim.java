@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 // import edu.wpi.first.wpilibj.util.Color;
 // import edu.wpi.first.wpilibj.util.Color8Bit;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import frc.robot.subsystems.algaegroundintake.utils.SimLog;
+import frc.robot.util.SimLog;
 //import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
 
 

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import frc.robot.subsystems.algaegroundintake.utils.SimLog;
+import frc.robot.util.SimLog;
 
 public class WristIOSim implements WristIO {
     private final DCMotor wristGearbox = DCMotor.getKrakenX60Foc(1);

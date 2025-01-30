@@ -1,0 +1,158 @@
+package frc.robot.subsystems.elevator;
+
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.util.ElevatorUtil;
+import frc.robot.util.SimLog;
+
+public class ElevatorIOSim extends ElevatorIO {
+    private final DCMotorSim elevatorSim;
+    private final PIDController positionController;
+    private double targetPositionInches = 0.0;
+
+    private Mechanism2d mech;
+    private MechanismRoot2d root;
+    private MechanismLigament2d elevator;
+    private MechanismLigament2d wrist;
+
+    // Add the arm connected to the base
+   //
+   // private MechanismLigament2d arm = elevBase.append(new MechanismLigament2d("Arm", 2, 45, 6, new Color8Bit(Color.kBlue))); // Blue diagonal arm
+
+    private final PIDController simPidController = 
+        new PIDController(ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
+
+    private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
+
+    public ElevatorIOSim() {
+        
+        // Create a new Mechanism2D with a specified size
+        mech = new Mechanism2d(60, 60);
+        
+        // Create a root node at the bottom center of the mechanism
+        root = mech.getRoot("Root", 30, 5);
+        
+        // Create an elevator ligament attached to the root
+        elevator = root.append(new MechanismLigament2d("Elevator", ElevatorConstants.heights[4], 90, 6, new Color8Bit(Color.kBlue)));
+
+        wrist = elevator.append(new MechanismLigament2d("wrist", 6, 90, 6, new Color8Bit(Color.kPurple)));
+        
+        SmartDashboard.putData("elevatorMech2d", mech);
+        
+        elevatorSim = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                ELEVATOR_GEARBOX,
+                ElevatorConstants.elevatorMOI,
+                ElevatorConstants.gearRatio),
+            ELEVATOR_GEARBOX);
+        
+        positionController = new PIDController(
+            ElevatorConstants.simkP,
+            ElevatorConstants.simkI,
+            ElevatorConstants.simkD
+        );
+        positionController.setTolerance(
+            ElevatorConstants.PositionToleranceInches,
+            ElevatorConstants.velocityToleranceInchesPerSec
+        );
+    }
+    
+    @Override
+    public void updateInputs() {
+        elevatorSim.update(0.02);
+        
+        // Update inputs structure
+        super.positionInches = (elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev)/39.37;
+        super.velocityInchesPerSec = elevatorSim.getAngularAccelerationRadPerSecSq() * ElevatorConstants.inchesPerRev;
+        super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
+        super.currentAmps = elevatorSim.getCurrentDrawAmps();
+        super.targetPositionInches = targetPositionInches;
+        super.tempCelsius = 25.0; // setting 
+        
+        /* Checks if elevator is at setpoint */
+        super.atSetpoint = positionController.atSetpoint();
+        
+        // Update state
+        SimLog.log("elevatorMotors", elevatorSim);
+
+        DogLog.log("Elevator/PositionInches", super.positionInches);
+        DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
+        DogLog.log("Elevator/AppliedVolts", super.appliedVolts);
+        DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
+        DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
+        DogLog.log("Elevator/State", super.state.toString());
+
+        // Move the elevator towards the setpoint
+        // if (super.positionInches != position) {
+        //     super.positionInches = position;
+        // }
+
+        // Update the elevator ligament's length
+    }
+
+    @Override
+    public void setState(ElevatorConstants.ElevatorStates state) {
+        double position = MathUtil.clamp(ElevatorUtil.stateToHeight(state), ElevatorConstants.elevatorLowerLimit, ElevatorConstants.elevatorUpperLimit);
+        System.out.println(super.state);
+        elevatorSim.setInputVoltage(simPidController.calculate(position));
+
+        switch (state) {
+            case L1:
+                position = ElevatorConstants.heights[0];
+                elevator.setLength(position);
+                System.out.println(state);
+                break;
+            case L2:
+                position = ElevatorConstants.heights[1];
+                elevator.setLength(position);
+                System.out.println(state);
+                break;
+            case L3:
+                position = ElevatorConstants.heights[2];
+                elevator.setLength(position);
+                System.out.println(state);
+                break;
+            case L4:
+                position = ElevatorConstants.heights[3];
+                elevator.setLength(position);
+                System.out.println(state);
+                break;
+            case STOW:
+                position = ElevatorConstants.heights[4]; // STOW
+                System.out.println(state);
+                break;
+        }
+    }
+
+    @Override
+    public void stop() {
+        elevatorSim.setInputVoltage(0);
+    }
+
+    @Override
+    public void setVoltage(double voltage){
+        elevatorSim.setInputVoltage(voltage);
+    }
+
+    @Override
+    public void zeroEncoder(){
+        elevatorSim.setAngle(0);
+    }
+
+    @Override
+    public double getPosition(){
+        return elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev;
+    }
+}

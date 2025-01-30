@@ -1,5 +1,5 @@
-package frc.robot.endefector.wrist;
-import static frc.robot.endefector.wrist.WristConstants.*;
+package frc.robot.subsystems.endefector.wrist;
+import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;

@@ -1,4 +1,4 @@
-package frc.robot.endefector.wrist;
+package frc.robot.subsystems.endefector.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;

@@ -1,6 +1,7 @@
-package frc.robot.endefector.rollers;
+package frc.robot.subsystems.endefector.rollers;
 import frc.robot.util.MotorLog;
-import static frc.robot.endefector.rollers.RollersConstants.*;
+
+import static frc.robot.subsystems.endefector.rollers.RollersConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;

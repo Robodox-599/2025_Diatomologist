@@ -1,4 +1,4 @@
-package frc.robot.endefector.wrist;
+package frc.robot.subsystems.endefector.wrist;
 
 public class WristConstants {
     //motor info

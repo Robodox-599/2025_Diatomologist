@@ -1,9 +1,9 @@
-package frc.robot.endefector.wrist;
-import frc.robot.endefector.wrist.WristConstants.WristStates;
+package frc.robot.subsystems.endefector.wrist;
+import frc.robot.subsystems.endefector.wrist.WristConstants.WristStates;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
-import static frc.robot.endefector.wrist.WristConstants.*;
+import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
 import static frc.robot.util.WristUtil.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;

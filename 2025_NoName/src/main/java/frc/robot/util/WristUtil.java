@@ -8,7 +8,6 @@ public class WristUtil{
         return height / inchesPerRev;
     }
 
-
     public static double stateToHeight(WristStates state){
         return convertToTicks(setpoints[state.getIndex()]);
     }

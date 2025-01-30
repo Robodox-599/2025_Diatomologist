@@ -29,8 +29,8 @@ import frc.robot.subsystems.climb.ClimbIOTalonFX;
 // import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
 
 public class RobotContainer {
-  private final CommandXboxController controller =
-  new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController controller = 
+    new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   
   //Endefector
   private Rollers endefectorRollers;

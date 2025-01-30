@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import dev.doglog.DogLog;
@@ -10,44 +6,70 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.*;
+
+//Endefector stuff
+import frc.robot.endefector.rollers.Rollers;
+import frc.robot.endefector.rollers.RollersIOSim;
+import frc.robot.endefector.rollers.RollersIOTalonFX;
+import frc.robot.endefector.wrist.Wrist;
+import frc.robot.endefector.wrist.WristIOSim;
+import frc.robot.endefector.wrist.WristIOTalonFX;
+
+//Climb stuff
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
 
+//Intake stuff
+//import frc.robot.subsystems.algaegroundintake.rollers.Rollers;
+// import frc.robot.subsystems.algaegroundintake.rollers.RollersIOSim;
+// import frc.robot.subsystems.algaegroundintake.rollers.RollersIOTalonFX;
+// import frc.robot.subsystems.algaegroundintake.wrist.Wrist;
+// import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
+// import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
+
 public class RobotContainer {
+  private final CommandXboxController controller =
+  new CommandXboxController(Constants.driverControllerPort);
+  
+  //Endefector
+  private Rollers rollers;
+  private Wrist wrist;
+  //Climb
   private Climb climb;
 
-  private final CommandXboxController controller =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
-
-  public RobotContainer(){
+  public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
+        rollers = new Rollers(new RollersIOTalonFX());
+        wrist = new Wrist(new WristIOTalonFX());
         climb = new Climb(new ClimbIOTalonFX());
-
-        break;
+          break;
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim());
         climb = new Climb(new ClimbIOSim());
         break;
+   
+        DogLog.setOptions(
+        new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
+
+        configureBindings();
     }
       DogLog.setOptions(
-        new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
+      new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
 
     configureBindings();
   }
-
-  private void configureBindings() {
-    //controller.a().onTrue(climb.move(2));
-
+    private void configureBindings() {
+    //climb
     controller.a().whileTrue(climb.move(2));
-
-    //controller.x().whileTrue(climb.move(2).onFalse(climb.stop());
-
-  }
-
+    //Endefector
+    controller.x().whileTrue(wrist.goToPose(2));
+    controller.b().whileTrue(rollers.setVelocity(2));
+      
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-  }
+   return Commands.print("No autonomous command configured");
 }
+
+

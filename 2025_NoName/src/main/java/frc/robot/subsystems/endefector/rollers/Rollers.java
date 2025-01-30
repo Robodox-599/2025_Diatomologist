@@ -39,4 +39,7 @@ public class Rollers extends SubsystemBase{
     public void setBrake(boolean brake) {
         io.setBrake(brake);
     }
+    public RollersIO getIO(){
+        return io;
+    }
 }

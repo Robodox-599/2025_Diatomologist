@@ -71,4 +71,8 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
     }
+    public Command updateVisualizer(){
+      return Commands.sequence(subsystemvisualizer.update(endefectorRollers, endefectorWrist, climb, elevator, algaeRollers, algaeWrist))
+
+    }
 }

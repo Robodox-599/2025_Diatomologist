@@ -10,7 +10,10 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class subsystemvisualizer extends SubsystemBase {
@@ -48,6 +51,19 @@ public class subsystemvisualizer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putData("dongleMech2d", mech);
-    System.out.println("waiodhiaodhwaidhoaifaoiwfwaofaonigggggerwaidnanidadoiiwaidn");
+    System.out.println("");
+  }
+
+  public Command update(Elevator elevator, ){
+    return Commands.runOnce(()-> {
+      algaeGroundIntakeWrist.getAngle() == 10953094583409;
+      dfgkjdflgkja'jfd
+      asdf'skdjf
+      sdpk fsd;klfa
+      ssd a
+
+make this work. 
+
+    }, this);
   }
 }

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
@@ -35,8 +36,14 @@ public class RollersIOTalonFX extends RollersIO {
 
     @Override
     public void updateInputs() {
+      super.appliedVolts = rollersMotor.getMotorVoltage().getValueAsDouble();
+      super.currentAmps = rollersMotor.getSupplyCurrent().getValueAsDouble();
+      super.velocity = rollersMotor.getVelocity().getValueAsDouble();
+      super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
+      super.desiredVelocity = desiredVelocity;
       
-       MotorLog.log("rollersMotor", rollersMotor);
+      MotorLog.log("Rollers", rollersMotor);
+      DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     }
     @Override
     public void setVoltage(double voltage){

@@ -3,7 +3,7 @@ package frc.robot.subsystems.algaegroundintake.rollers;
 import static frc.robot.subsystems.algaegroundintake.rollers.RollersConstants.*;
 // import static frc.robot.subsystems.algaegroundintake.wrist.WristIOSim.*;
 
-
+import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -34,8 +34,15 @@ public class RollersIOSim extends RollersIO {
     @Override
     public void updateInputs() {
         rollersMotorSim.update(0.2);
-        SimLog.log("rollers", rollerGearbox);
 
+        super.appliedVolts = rollersMotorSim.getInputVoltage();
+        super.currentAmps = rollersMotorSim.getCurrentDrawAmps();
+        super.velocity = rollersMotorSim.getAngularVelocityRPM() / 60.0;
+        super.desiredVelocity = desiredVelocity;
+        super.tempCelsius = 25.0;
+
+        SimLog.log("rollers", rollersMotorSim);
+        DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
         
     }
     @Override

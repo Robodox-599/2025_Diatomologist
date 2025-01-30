@@ -58,14 +58,14 @@ public class ClimbIOSim extends ClimbIO {
         super.atSetpoint = positionController.atSetpoint();
         
         // Update state
-        SimLog.log("elevatorMotors", climbSim);
+        SimLog.log("climbMotors", climbSim);
 
-        DogLog.log("Elevator/PositionInches", super.positionInches);
-        DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
-        DogLog.log("Elevator/AppliedVolts", super.appliedVolts);
-        DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
-        DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
-        DogLog.log("Elevator/State", super.state.toString());
+        DogLog.log("Climb/PositionInches", super.positionInches);
+        DogLog.log("Climb/VelocityInchesPerSec", super.velocityInchesPerSec);
+        DogLog.log("Climb/AppliedVolts", super.appliedVolts);
+        DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);
+        DogLog.log("Climb/AtSetpoint", super.atSetpoint);
+        DogLog.log("Climb/State", super.state.toString());
     }
     
     @Override

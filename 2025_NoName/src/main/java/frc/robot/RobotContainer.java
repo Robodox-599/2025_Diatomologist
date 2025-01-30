@@ -13,11 +13,15 @@ import frc.robot.subsystems.endefector.rollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.wrist.Wrist;
 import frc.robot.subsystems.endefector.wrist.WristIOSim;
 import frc.robot.subsystems.endefector.wrist.WristIOTalonFX;
-import frc.robot.subsystems.subsystemvisualizer.subsystemvisualizer;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
+import frc.robot.subsystems.algaegroundintake.rollers.IntakeRollers;
+import frc.robot.subsystems.algaegroundintake.wrist.IntakeWrist;
 //Climb stuff
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
 
 //Intake stuff
 //import frc.robot.subsystems.algaegroundintake.rollers.Rollers;
@@ -31,7 +35,14 @@ public class RobotContainer {
   private final CommandXboxController controller = 
     new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   
-  private subsystemvisualizer subsystemvisualizer;
+  // visual stuff
+  private LEDs LEDs;
+  private SubsystemVisualizer subsystemVisualizer;
+  // algae ground intake
+  private IntakeRollers algaeRollers;
+  private IntakeWrist algaeWrist;
+  // elevator
+  private Elevator elevator;
   //Endefector
   private Rollers endefectorRollers;
   private Wrist endefectorWrist;
@@ -41,13 +52,13 @@ public class RobotContainer {
     public RobotContainer() {
       switch (Constants.currentMode) {
         case REAL:
-          subsystemvisualizer = new subsystemvisualizer();
+          subsystemVisualizer = new SubsystemVisualizer();
           endefectorRollers = new Rollers(new RollersIOTalonFX());
           endefectorWrist = new Wrist(new WristIOTalonFX());
           climb = new Climb(new ClimbIOTalonFX());
             break;
         case SIM:
-          subsystemvisualizer = new subsystemvisualizer();
+          subsystemVisualizer = new SubsystemVisualizer();
           endefectorRollers = new Rollers(new RollersIOSim());
           endefectorWrist = new Wrist(new WristIOSim());
           climb = new Climb(new ClimbIOSim());
@@ -67,12 +78,10 @@ public class RobotContainer {
       controller.b().whileTrue(endefectorRollers.setVelocity(2));
     }
       
-      
     public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
     }
     public Command updateVisualizer(){
-      return Commands.sequence(subsystemvisualizer.update(endefectorRollers, endefectorWrist, climb, elevator, algaeRollers, algaeWrist))
-
+      return Commands.sequence(subsystemVisualizer.update(elevator, climb, LEDs, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers));
     }
 }

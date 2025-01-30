@@ -10,6 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.util.ElevatorUtil;
 import dev.doglog.DogLog;
 
@@ -66,6 +67,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerRev;
         super.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
         super.state = currentState;
+        
         /* Determines if the elevator is at a setpoint */
         double positionError = Math.abs(super.targetPositionInches - super.positionInches);
         double velocityError = Math.abs(super.velocityInchesPerSec);
@@ -82,6 +84,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
         DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
         DogLog.log("Elevator/State", super.state.toString());
         DogLog.log("Elevator/LimitSwitchValue", super.limitSwitchValue);
+        DogLog.log("Elevator/PositionInches", super.positionInches);
+        DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
     }
 
     @Override

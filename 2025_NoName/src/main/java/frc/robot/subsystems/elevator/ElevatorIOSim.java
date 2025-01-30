@@ -67,6 +67,7 @@ public class ElevatorIOSim extends ElevatorIO {
         super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
         super.currentAmps = elevatorSim.getCurrentDrawAmps();
         super.targetPositionInches = targetPositionInches;
+        // super.positionRotations = elevatorSim.getAngularPositionRotations(); // might not need
         super.tempCelsius = 25.0; // setting 
         
         /* Checks if elevator is at setpoint */
@@ -80,7 +81,10 @@ public class ElevatorIOSim extends ElevatorIO {
         DogLog.log("Elevator/AppliedVolts", super.appliedVolts);
         DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
         DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
+        //DogLog.log("Elevator/PositionRotations", super.positionRotations); // might not need
         DogLog.log("Elevator/State", super.state.toString());
+
+        //log(key + "/VelocityRotsPerSec", motor.getAngularVelocityRPM() / 60);
     }
 
     @Override

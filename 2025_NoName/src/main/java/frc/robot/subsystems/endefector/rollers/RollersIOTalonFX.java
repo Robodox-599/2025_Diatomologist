@@ -37,6 +37,12 @@ public class RollersIOTalonFX extends RollersIO{
 
     @Override
     public void updateInputs(){
+        super.appliedVolts = rollersMotor.getMotorVoltage().getValueAsDouble();
+        super.currentAmps = rollersMotor.getSupplyCurrent().getValueAsDouble();
+        super.velocity = rollersMotor.getVelocity().getValueAsDouble();
+        super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
+        super.desiredVelocity = desiredVelocity;
+
         MotorLog.log("Rollers", rollersMotor);
         DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     }

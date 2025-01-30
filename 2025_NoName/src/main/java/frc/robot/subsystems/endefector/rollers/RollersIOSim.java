@@ -41,6 +41,12 @@ public RollersIOSim(){
 
  @Override
  public void updateInputs() {
+   super.appliedVolts = rollersSim.getInputVoltage();
+   super.currentAmps = rollersSim.getCurrentDrawAmps();
+   super.velocity = rollersSim.getAngularVelocityRPM() / 60.0;
+   super.desiredVelocity = desiredVelocity;
+   super.tempCelsius = 25.0;
+
    SimLog.log("RollersSimMotor", rollersSim);
    DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
  }

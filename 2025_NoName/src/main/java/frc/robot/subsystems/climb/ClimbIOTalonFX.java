@@ -78,10 +78,12 @@ public class ClimbIOTalonFX extends ClimbIO {
         MotorLog.log("followerMotor", followerMotor);
         
         /* Log all super */
-        DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
-        DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
-        DogLog.log("Elevator/State", super.state.toString());
-        DogLog.log("Elevator/LimitSwitchValue", super.limitSwitchValue);
+        DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);
+        DogLog.log("Climb/AtSetpoint", super.atSetpoint);
+        DogLog.log("Climb/State", super.state.toString());
+        DogLog.log("Climb/LimitSwitchValue", super.limitSwitchValue);
+        DogLog.log("Climb/PositionInches", super.positionInches);
+        DogLog.log("Climb/VelocityInchesPerSec", super.velocityInchesPerSec);
     }
 
     @Override

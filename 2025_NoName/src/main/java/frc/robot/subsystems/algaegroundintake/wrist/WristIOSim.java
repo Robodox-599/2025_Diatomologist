@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import frc.robot.util.SimLog;
 
-public class WristIOSim implements WristIO {
+public class WristIOSim extends WristIO {
     private final DCMotor wristGearbox = DCMotor.getKrakenX60Foc(1);
     private DCMotorSim wristSim;
     
@@ -62,15 +62,22 @@ public class WristIOSim implements WristIO {
         }
 
         @Override 
-        public void updateInputs(WristIOInputs inputs) {
-            sim.update(0.02);
-            SimLog.log("wrist", wristSim);
+        public void updateInputs() {
+            wristSim.update(0.02);
 
-            DogLog.log("wrist/targetPosition", passedInPosition);
-            DogLog.log("wrist/currentPostion", currentPosition);
-            DogLog.log("wrist/Position", wristSim.getAngularPositionRotations());
+            super.appliedVolts = wristSim.getInputVoltage();
+            super.currentAmps = wristSim.getCurrentDrawAmps();
+            super.velocity = wristSim.getAngularVelocityRPM() / 60.0;
+            super.targetPosition = passedInPosition;
+            super.currentPosition = currentPosition;
+            super.position = wristSim.getAngularPositionRotations();
+            super.tempCelsius = 25.0;
 
+            SimLog.log("WristSimMotor", wristSim);
             
+            DogLog.log("Wrist/TargetPosition", passedInPosition);
+            DogLog.log("Wrist/CurrentPosition", currentPosition);
+            DogLog.log("Wrist/Position", super.position);       
         } 
 
         @Override 

@@ -9,16 +9,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-public class intakeWrist extends SubsystemBase {
+public class IntakeWrist extends SubsystemBase {
     private final WristIO io;
 
-    public intakeWrist(WristIO io) {
+    public IntakeWrist(WristIO io) {
         this.io = io;
     }
 
     @Override
     public void periodic() {
-        io.updateInputs(null);
+        io.updateInputs();
     }
 
     public Command goToPose(double pose) {

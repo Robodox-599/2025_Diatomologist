@@ -23,4 +23,6 @@ public class RollersConstants {
     public static final double realD = 0.0;
     public static final double realS = 0.0;
     public static final double realV = 0.0;
+
+    public static final double nominalVoltage = 12.0;
 }

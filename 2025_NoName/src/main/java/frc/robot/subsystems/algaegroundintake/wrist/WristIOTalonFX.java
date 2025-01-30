@@ -6,11 +6,12 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
-public class WristIOTalonFX implements WristIO {
+public class WristIOTalonFX extends WristIO {
     
     private final TalonFX intakeWristMotor = new TalonFX(WristConstants.wristMotorID, WristConstants.wristMotorCANBus);
 
@@ -54,9 +55,20 @@ public class WristIOTalonFX implements WristIO {
     }
 
     @Override
-    public void updateInputs(WristIOInputs inputs) {
+    public void updateInputs() {
+      super.appliedVolts = intakeWristMotor.getMotorVoltage().getValueAsDouble();
+      super.currentAmps = intakeWristMotor.getSupplyCurrent().getValueAsDouble();
+      super.velocity = intakeWristMotor.getVelocity().getValueAsDouble();
+      super.tempCelsius = intakeWristMotor.getDeviceTemp().getValueAsDouble();
+      super.position = intakeWristMotor.getPosition().getValueAsDouble();
+      super.targetPosition = targetPosition;
+      super.currentPosition = currentPosition;
 
-        MotorLog.log("IntakeWristMotor", intakeWristMotor);
+      MotorLog.log("Wrist", intakeWristMotor);
+    
+      DogLog.log("Wrist/TargetPosition", targetPosition);
+      DogLog.log("Wrist/CurrentPosition", currentPosition);
+      DogLog.log("Wrist/Position", intakeWristMotor.getPosition().getValueAsDouble());
     }
 
     @Override 

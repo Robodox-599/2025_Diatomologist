@@ -1,83 +1,88 @@
 package frc.robot.subsystems.algaegroundintake.wrist;
 
-public interface WristIO {
-    public abstract class WristIOInputs {
-    }
+public abstract class WristIO {
+    protected double tempCelsius = 0.0;
+  protected double currentAmps = 0.0;
+  protected double appliedVolts = 0.0;
+  protected double velocity = 0.0;
+  protected double targetPosition = 0.0;
+  protected double currentPosition = 0.0;
+  protected double position = 0.0;
 
-    public default void updateInputs(WristIOInputs inputs) {}
+    public   void updateInputs() {}
 
-    public default void setVoltage(double volts) {}
+    public   void setVoltage(double volts) {}
 
-    public default void goToPose(double position) {}
+    public   void goToPose(double position) {}
 
-    public default double getPose() {
+    public   double getPose() {
         return 0.0;
     }
-    public default void setSpeed(double speed) {}
+    public   void setSpeed(double speed) {}
 
-    public default void setBrake(double brake) {}
+    public   void setBrake(double brake) {}
 
-    public default double getAngle() {
+    public   double getAngle() {
         return 0.0;
     }
 
-    public default void stop() {}
+    public   void stop() {}
 
-    public default void goToSetpoint(double setpoint) {}
+    public   void goToSetpoint(double setpoint) {}
 
-    public default void holdToSetpoint(double setpoint) {}
+    public   void holdToSetpoint(double setpoint) {}
 
-    public default void setBrake(boolean brake) {}
+    public   void setBrake(boolean brake) {}
 
-    public default boolean atSetpoint() {
+    public   boolean atSetpoint() {
         return false;
     }
 
-    public default double getP() {
+    public   double getP() {
         return 0.0;
     }
 
-    public default double getI() {
+    public   double getI() {
         return 0.0;
     }
 
-    public default double getD() {
+    public   double getD() {
         return 0.0;
     }
 
-    public default double getFF() {
+    public   double getFF() {
         return 0.0;
     }
 
-    public default double getkS() {
+    public   double getkS() {
         return 0.0;
     }
 
-    public default double getkG() {
+    public   double getkG() {
         return 0.0;
     }
 
-    public default double getkV() {
+    public   double getkV() {
         return 0.0;
     }
 
-    public default double getkA() {
+    public   double getkA() {
         return 0.0;
     }
 
-    public default void setI(double i) {}
+    public   void setI(double i) {}
 
-    public default void setD(double d) {}
+    public   void setD(double d) {}
 
-    public default void setFF(double ff) {}
+    public   void setFF(double ff) {}
 
-    public default void setkS(double kS) {}
+    public   void setkS(double kS) {}
 
-    public default void setkV(double kV) {}
+    public   void setkV(double kV) {}
 
-    public default void setkG(double kG) {}
+    public   void setkG(double kG) {}
 
-    public default void setkA(double kA) {}
+    public   void setkA(double kA) {}
 
-    public default void setP(double p) {}
+    public   void setP(double p) {}
 }

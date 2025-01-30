@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.algaegroundintake.wrist.intakeWrist;
+import frc.robot.subsystems.algaegroundintake.wrist.IntakeWrist;
 
-public class intakeRollers extends SubsystemBase {
+public class IntakeRollers extends SubsystemBase {
     private final RollersIO io;
 
 
-    public intakeRollers(RollersIO io) {
+    public IntakeRollers(RollersIO io) {
         this.io = io;
     }
 
@@ -51,7 +51,7 @@ public class intakeRollers extends SubsystemBase {
         io.setBrake(brake);
       }
       MechanismLigament2d m_rollers = 
-            intakeWrist.m_wrist.append(new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kPurple)));
+            IntakeWrist.m_wrist.append(new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kPurple)));
 
 
 }

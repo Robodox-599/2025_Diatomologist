@@ -29,11 +29,21 @@ public class WristIOSim extends WristIO {
 
     @Override
     public void updateInputs() {
-    SimLog.log("WristSimMotor", wristSim);
-    
-    DogLog.log("Wrist/TargetPosition", passedInPositon);
-    DogLog.log("Wrist/CurrentPosition", currentPosition);
-    DogLog.log("Wrist/Position", wristSim.getAngularPositionRotations()); 
+        wristSim.update(0.02);
+
+        super.appliedVolts = wristSim.getInputVoltage();
+        super.currentAmps = wristSim.getCurrentDrawAmps();
+        super.velocity = wristSim.getAngularVelocityRPM() / 60.0;
+        super.targetPosition = targetPosition;
+        super.currentPosition = currentPosition;
+        super.position = wristSim.getAngularPositionRotations();
+        super.tempCelsius = 25.0;
+
+        SimLog.log("WristSimMotor", wristSim);
+        
+        DogLog.log("Wrist/TargetPosition", passedInPositon);
+        DogLog.log("Wrist/CurrentPosition", currentPosition);
+        DogLog.log("Wrist/Position", super.position);
     }
 
     @Override

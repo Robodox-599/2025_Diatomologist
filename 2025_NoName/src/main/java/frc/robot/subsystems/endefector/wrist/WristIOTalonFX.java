@@ -78,6 +78,14 @@ public class WristIOTalonFX extends WristIO{
 
     @Override
     public void updateInputs() {
+      super.appliedVolts = wristMotor.getMotorVoltage().getValueAsDouble();
+      super.currentAmps = wristMotor.getSupplyCurrent().getValueAsDouble();
+      super.velocity = wristMotor.getVelocity().getValueAsDouble();
+      super.tempCelsius = wristMotor.getDeviceTemp().getValueAsDouble();
+      super.position = wristMotor.getPosition().getValueAsDouble();
+      super.targetPosition = targetPosition;
+      super.currentPosition = currentPosition;
+
       MotorLog.log("Wrist", wristMotor);
     
       DogLog.log("Wrist/TargetPosition", passedInPosition);

@@ -48,5 +48,9 @@ public class Elevator extends SubsystemBase {
         .onlyIf(
             ()-> !io.limitSwitchValue);
     }
+
+    public ElevatorIO getIO(){
+        return io;
+    }
     
 }

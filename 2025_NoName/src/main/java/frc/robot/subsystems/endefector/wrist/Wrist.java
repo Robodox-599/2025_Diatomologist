@@ -37,4 +37,7 @@ public class Wrist extends SubsystemBase{
                 io.setVoltage(0);
             });
     }
+    public WristIO getIO(){
+        return io;
+    }
 }

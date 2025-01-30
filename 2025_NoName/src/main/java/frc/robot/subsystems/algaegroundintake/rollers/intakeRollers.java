@@ -50,8 +50,10 @@ public class IntakeRollers extends SubsystemBase {
       public void setBrake(boolean brake){
         io.setBrake(brake);
       }
-      MechanismLigament2d m_rollers = 
-            IntakeWrist.m_wrist.append(new MechanismLigament2d("wrist", 0.5, 90, 6, new Color8Bit(Color.kPurple)));
+      
+      public RollersIO getIO(){
+        return io;
+      }
 
 
 }

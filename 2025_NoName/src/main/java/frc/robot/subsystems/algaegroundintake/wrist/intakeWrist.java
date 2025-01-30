@@ -50,8 +50,7 @@ public class IntakeWrist extends SubsystemBase {
             });
     }
 
-    static Mechanism2d mech = new Mechanism2d(1, 2);
-        static MechanismRoot2d   root = mech.getRoot("wrist", 1, 2);
-
-        public static MechanismLigament2d m_wrist = root.append(new MechanismLigament2d("wrist", 6, 90));
+    public WristIO getIO(){
+        return io;
+    }
 }

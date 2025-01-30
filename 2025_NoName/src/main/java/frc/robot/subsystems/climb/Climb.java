@@ -53,4 +53,8 @@ public class Climb extends SubsystemBase {
         .onlyIf(
             ()-> !io.limitSwitchValue);
     }
+
+    public ClimbIO getIO(){
+        return io;
+    }
 }

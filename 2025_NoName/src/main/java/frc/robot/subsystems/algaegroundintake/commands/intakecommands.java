@@ -8,7 +8,7 @@ import frc.robot.subsystems.algaegroundintake.wrist.intakeWrist;
 public class intakecommands extends Command {
     public static Command intakeDeployAndIntake(intakeWrist wrist, intakeRollers rollers) {
         return Commands.parallel(
-            extendCommand(wrist),
+            (wrist),
             rollers.setVoltage(2));
 
 

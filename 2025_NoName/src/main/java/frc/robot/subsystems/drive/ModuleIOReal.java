@@ -109,10 +109,10 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ DRIVE VOLTAGE-PID CONFIGS ************ */
 
-    driveConfig.Slot0.kV = 0;
-    driveConfig.Slot0.kS = 0;
-    driveConfig.Slot0.kP = 0.0;
-    driveConfig.Slot0.kD = 0.0;
+    driveConfig.Slot0.kV = 0.14015;
+    driveConfig.Slot0.kS = 0.5;
+    driveConfig.Slot0.kP = 8;
+    driveConfig.Slot0.kD = 0;
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
 
@@ -249,7 +249,9 @@ public class ModuleIOReal extends ModuleIO {
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition",
         super.turnAbsolutePosition);
-
+    // DogLog.log(
+    //     "Drive/Module " + constants.prefix() + "/DriveMotor/VelocityRotsPerSec",
+    //     super.driveVelocityMetersPerSec * (WHEEL_RADIUS * 2 * Math.PI));
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(

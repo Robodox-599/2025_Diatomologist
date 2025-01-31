@@ -67,9 +67,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, pose);
 
-  private final PIDController choreoPathXController = new PIDController(10, 0, 0);
-  private final PIDController choreoPathYController = new PIDController(10, 0, 0);
-  private final PIDController choreoPathAngleController = new PIDController(7, 0, 0);
+  private final PIDController choreoPathXController = new PIDController(1, 0, 0);
+  private final PIDController choreoPathYController = new PIDController(1, 0, 0);
+  private final PIDController choreoPathAngleController = new PIDController(0, 0, 0);
   private Twist2d fieldVelocity = new Twist2d();
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
@@ -227,7 +227,7 @@ public class Drive extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
 
     DogLog.log("Swerve/Target Speeds", discreteSpeeds);
-    DogLog.log("Swerve/Speed Error", discreteSpeeds.minus(getVelocity()));
+    DogLog.log("Swerve/Speed Error", (discreteSpeeds.minus(getVelocity())));
     DogLog.log(
         "Swerve/Target Chassis Speeds Field Relative",
         ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));

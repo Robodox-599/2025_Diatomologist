@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -61,6 +62,9 @@ public class Module {
     driveDisconnectedAlert.set(!io.driveConnected);
     turnDisconnectedAlert.set(!io.turnConnected);
     turnEncoderDisconnectedAlert.set(!io.encoderConnected);
+    DogLog.log(
+        "Drive/Module " + io.getModuleName() + "/DriveMotor/VelocityRotsPerSec",
+        getFFCharacterizationVelocity());
   }
 
   /** Runs the module closed loop with the specified setpoint state. Returns the optimized state. */
@@ -70,9 +74,9 @@ public class Module {
     // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Setpoint with FOC
-    // io.setDriveSetpoint(
-    //     state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
-    //     (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
+    io.setDriveSetpoint(
+        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
+        (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
     lastSetpoint = state;
   }
 
@@ -106,6 +110,7 @@ public class Module {
     // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Voltage Setpoint with FOC
+
     io.setDriveVoltage(
         state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
         focEnabled);

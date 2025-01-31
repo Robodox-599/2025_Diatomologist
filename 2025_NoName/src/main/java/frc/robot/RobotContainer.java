@@ -96,12 +96,20 @@ public class RobotContainer {
     }
 
     // Add options to the chooser
+<<<<<<< Updated upstream
     autoChooser.addRoutine("SimplePath", autoRoutines::simplePathAutoRoutine);
     // Put the auto chooser on the dashboard
     SmartDashboard.putData(autoChooser);
     // Schedule the selected auto during the autonomous period
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
     // Logging starting here
+=======
+    autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
+    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+
+    // Put the auto chooser on the dashboard
+    SmartDashboard.putData("AutoChooser", autoChooser);
+>>>>>>> Stashed changes
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(
@@ -123,7 +131,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        drive.runVoltageTeleopFieldRelative(
+        drive.runVelocityTeleopFieldRelative(
             () ->
                 new ChassisSpeeds(
                     -joystickDeadbandApply(controller.getLeftY())
@@ -135,6 +143,34 @@ public class RobotContainer {
                     joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED)));
     controller.y().onTrue(drive.zeroGyroCommand());
+<<<<<<< Updated upstream
+=======
+    controller.x().onTrue(drive.zeroPosition());
+    drive.zeroPosition().runsWhenDisabled();
+    // // Lock to 0° when A button is held
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
+
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(drive.stopWithXCmd());
+
+    // // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
+>>>>>>> Stashed changes
   }
 
   /**

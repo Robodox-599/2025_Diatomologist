@@ -12,15 +12,31 @@ public class AutoRoutines {
     this.autoFactory = autoFactory;
   }
 
-  // read up here bums: https://choreo.autos/choreolib/auto-factory/
-  public AutoRoutine simplePathAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("testAuto");
+  public AutoRoutine rightAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("rightAuto");
 
     // Load the routine's trajectories
-    AutoTrajectory simplePath = routine.trajectory("SimplePath");
+    AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
+    AutoTrajectory FtoHP = routine.trajectory("FtoHP");
 
     // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(simplePath.resetOdometry(), simplePath.cmd()));
+    routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
+
+    // When the trajectory is done, start the next trajectory
+    RIGHTtoF.done().onTrue(FtoHP.cmd());
+
+    return routine;
+  }
+
+  public AutoRoutine taxiAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("taxiAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory taxi = routine.trajectory("Taxi");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(taxi.resetOdometry(), taxi.cmd()));
+
     return routine;
   }
 }

@@ -9,7 +9,7 @@ public class RollersConstants {
     public static final int PeakCurrentLimit = 50;
     public static final double PeakCurrentDuration = 0.1;
   
-    public static final double gearRatio = 0.0;
+    public static final double gearRatio = 1.0;
     public static final double rollersMOI = 0.04;
 
     public static final double simkP = 0.0;
@@ -23,4 +23,10 @@ public class RollersConstants {
     public static final double realD = 0.0;
     public static final double realS = 0.0;
     public static final double realV = 0.0;
+
+    public static final double nominalVoltage = 12.0;
+
+    public static final int CANrangeId = 0;
+    public static final String CANrangeCANbus = "rio";
+    public static final double rangeTolerance = 0.0;
 }

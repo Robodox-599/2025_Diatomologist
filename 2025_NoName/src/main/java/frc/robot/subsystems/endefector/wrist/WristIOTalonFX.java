@@ -101,7 +101,7 @@ public class WristIOTalonFX extends WristIO{
       }
       
       m_request.withSlot(wristSlot);
-      wristMotor.setControl(m_request);
+      wristMotor.setControl(m_request.withPosition(position));
    }
 
     @Override

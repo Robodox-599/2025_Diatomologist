@@ -58,7 +58,7 @@ public class RobotContainer {
     controller.a().whileTrue(climb.move(2));
     //Endefector
     controller.x().whileTrue(wrist.goToPose(2));
-    controller.b().whileTrue(rollers.setVelocity(2));
+    // controller.b().whileTrue(rollers.setVelocity(2));
       
  }
  public Command getAutonomousCommand() {

@@ -4,6 +4,7 @@ import frc.robot.util.MotorLog;
 import static frc.robot.subsystems.endefector.rollers.RollersConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -13,7 +14,7 @@ public class RollersIOTalonFX extends RollersIO{
     
     private final TalonFX rollersMotor;
     TalonFXConfiguration rollersConfig;
-    
+    private  CANrange CANrange;
     private double desiredVelocity;
  
     {
@@ -61,4 +62,16 @@ public class RollersIOTalonFX extends RollersIO{
     public void setBrake(boolean brake) {
     rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
+
+    @Override
+    public boolean rangeDeviceDetected() {
+    double rangeSignal = 0.0;
+    rangeSignal = CANrange.getDistance().getValueAsDouble();
+
+    if (rangeSignal >= rangeTolerance) {
+        return true;
+    } else {
+        return false;
+    }
+ }
 }

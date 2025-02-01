@@ -10,49 +10,39 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeRollers extends SubsystemBase {
     private final IntakeRollersIO io;
 
-
     public IntakeRollers(IntakeRollersIO io) {
         this.io = io;
     }
 
     public void periodic() {
         io.updateInputs();
-
     }
 
-    //public double getVoltage() {
-    //    return io.appliedVoltage; 
-    //}
-
-    public Command setVoltage(double voltage) {
+    public Command applyVoltage(double voltage) {
         return Commands.run(
             () -> {
                 io.setVoltage(voltage);
             });
     }
 
+    public Command stop() {
+        return Commands.run(
+            () -> {
+                io.setVoltage(0);
+            });
+    }
+
     public Command setVelocity(double velocity) {
         return Commands.run(
             () -> {
-              io.setVelocity(velocity);
-            }
-            );
-      }
-
-      public Command stop() {
-        return Commands.run(
-            () -> {
-              io.setVoltage(0);
+                io.setVelocity(velocity);
             });
-      }
+    }
 
-      public void setBrake(boolean brake){
+    public void setBrake(boolean brake) {
         io.setBrake(brake);
-      }
-      
-      public IntakeRollersIO getIO(){
+    }
+    public IntakeRollersIO getIO(){
         return io;
-      }
-
-
+    }
 }

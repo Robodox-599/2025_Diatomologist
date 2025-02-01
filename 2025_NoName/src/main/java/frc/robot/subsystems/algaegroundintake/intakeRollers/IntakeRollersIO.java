@@ -6,6 +6,7 @@ public abstract class IntakeRollersIO {
     protected double appliedVolts = 0.0;
     protected double velocity = 0.0;
     protected double desiredVelocity = 0.0;
+    protected IntakeRollersConstants.States state = IntakeRollersConstants.States.STOW;
     
     public void updateInputs() {}
 
@@ -18,4 +19,8 @@ public abstract class IntakeRollersIO {
     public void stop() {
         setVoltage(0.0);
     }
+
+    public IntakeRollersConstants.States getCurrentState(){return state;}
+
+    public double GetCurrentVolts(){return appliedVolts;}
 }

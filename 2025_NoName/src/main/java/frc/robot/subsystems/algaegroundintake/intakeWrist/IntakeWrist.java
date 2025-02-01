@@ -1,12 +1,8 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
-// import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-// import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-// import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 
 public class IntakeWrist extends SubsystemBase {
     private final IntakeWristIO io;
@@ -31,22 +27,15 @@ public class IntakeWrist extends SubsystemBase {
         return io.getPose();
     }
 
-    public Command setVoltage(double voltage) {
+    public Command stop() {
         return Commands.run(
             () -> {
-                io.setVoltage(voltage);
+                io.setVoltage(0);
             });
     }
 
     public void setBrake(boolean brake) {
         io.setBrake(brake);
-    }
-
-    public Command stop() {
-        return Commands.run(
-            () -> {
-                io.setVoltage(getPose());
-            });
     }
 
     public IntakeWristIO getIO(){

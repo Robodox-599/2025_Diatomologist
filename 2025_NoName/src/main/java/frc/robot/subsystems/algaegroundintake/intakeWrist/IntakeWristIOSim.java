@@ -1,7 +1,8 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
-import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
+import static frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.*;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -17,141 +18,58 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.util.SimLog;
 
 public class IntakeWristIOSim extends IntakeWristIO {
-    private final DCMotor wristGearbox = DCMotor.getKrakenX60Foc(1);
-    private DCMotorSim wristSim;
-    
-        private double passedInPosition;
-        private double currentPosition;
+    private static final DCMotor WRIST_GEARBOX = DCMotor.getKrakenX60Foc(1);
+    private final DCMotorSim wristSim;
+ 
 
-    
-        private ProfiledPIDController m_controller;
-        private SimpleMotorFeedforward m_Feedforward = new  SimpleMotorFeedforward(0, 0);
-    
-        private SingleJointedArmSim sim =
-            new SingleJointedArmSim(wristGearbox, IntakeWristSimConstants.kArmReduction, SingleJointedArmSim.estimateMOI(IntakeWristSimConstants.kArmLength,
-            IntakeWristSimConstants.kArmMass),
-            IntakeWristSimConstants.kArmLength,
-            IntakeWristSimConstants.kMinAngleRads,
-            IntakeWristSimConstants.kMaxAngleRads,
-            true,
-            0.1);
-    
-            private EncoderSim m_encoderSim;
-    
-            public void WristIOSim() {
-                m_encoderSim = 
-                    new EncoderSim(new Encoder(IntakeWristSimConstants.kEncoderAChannel, 
-                    IntakeWristSimConstants.kEncoderBChannel));
-    
-            m_encoderSim.setDistancePerPulse(IntakeWristSimConstants.kArmEncoderDistPerPulse);
-    
-            m_controller = 
-                new ProfiledPIDController(
-                    IntakeWristSimConstants.kPivotSimPID[0], 
-                    IntakeWristSimConstants.kPivotSimPID[1], 
-                    IntakeWristSimConstants.kPivotSimPID[2],
-                    new TrapezoidProfile.Constraints(2.45, 2.45)
-                );
-    
-            m_controller.setTolerance(0.1, 0.05);
-    
-            wristSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                wristGearbox, wristMOI, gearRatio), wristGearbox);
+    private double passedInPositon;
+    private double currentPosition;
+
+    private final PIDController wristPID = 
+    new PIDController(IntakeWristConstants.simkP, IntakeWristConstants.simkI, IntakeWristConstants.simkD);
+
+    public IntakeWristIOSim() {
+        wristSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            WRIST_GEARBOX, wristMOI, gearRatio), WRIST_GEARBOX);
+    }
+
+    @Override
+    public void updateInputs() {
+        wristSim.update(0.02);
+
+        super.appliedVolts = wristSim.getInputVoltage();
+        super.currentAmps = wristSim.getCurrentDrawAmps();
+        super.velocity = wristSim.getAngularVelocityRPM() / 60.0;
+        super.targetPosition = targetPosition;
+        super.currentPosition = currentPosition;
+        super.position = wristSim.getAngularPositionRotations();
+        super.tempCelsius = 25.0;
+
+        SimLog.log("WristSimMotor", wristSim);
         
+        DogLog.log("Wrist/TargetPosition", passedInPositon);
+        DogLog.log("Wrist/CurrentPosition", currentPosition);
+        DogLog.log("Wrist/Position", super.position);
+    }
 
-        }
+    @Override
+    public void goToPose(double position) {
+        wristSim.setInputVoltage(wristPID.calculate(position));
+    }
 
-        @Override 
-        public void updateInputs() {
-            wristSim.update(0.02);
+    @Override
+    public void setVoltage(double voltage){
+        wristSim.setInputVoltage(voltage);
+    }
 
-            super.appliedVolts = wristSim.getInputVoltage();
-            super.currentAmps = wristSim.getCurrentDrawAmps();
-            super.velocity = wristSim.getAngularVelocityRPM() / 60.0;
-            super.targetPosition = passedInPosition;
-            super.currentPosition = currentPosition;
-            super.position = wristSim.getAngularPositionRotations();
-            super.tempCelsius = 25.0;
+    @Override
+    public double getPose(){
+        return wristSim.getAngularPositionRad();
+    }
 
-            SimLog.log("WristSimMotor", wristSim);
-            
-            DogLog.log("Wrist/TargetPosition", passedInPosition);
-            DogLog.log("Wrist/CurrentPosition", currentPosition);
-            DogLog.log("Wrist/Position", super.position);       
-        } 
-
-        @Override 
-        public void setVoltage(double volts) {
-            sim.setInputVoltage(volts);
-        }
-
-        @Override 
-        public void goToSetpoint(double setpoint) {
-            m_controller.setGoal(setpoint);
-            double pidOutput = m_controller.calculate(getAngle());
-            double feedfowardOutput = m_Feedforward.calculate(m_controller.getSetpoint().velocity);
-
-            sim.setInputVoltage(pidOutput + feedfowardOutput);
-        }
-
-        @Override 
-        public double getAngle() {
-                return sim.getAngleRads();
-        }
-
-        @Override
-        public boolean atSetpoint() {
-            return m_controller.atGoal();
-        }
-
-        @Override
-        public void setP(double p) {
-            m_controller.setP(p);
-        }
-
-        @Override
-        public void setI(double i) {
-            m_controller.setI(i);
-        }
-
-        @Override
-        public void setD(double d) {
-            m_controller.setD(d);
-        }
-
-        @Override 
-        public void setkS(double kS) {
-            m_Feedforward = new SimpleMotorFeedforward(kS, m_Feedforward.getKv());  
-        }
-
-        @Override 
-        public void setkV(double kV) {
-            m_Feedforward = new SimpleMotorFeedforward (m_Feedforward.getKs(), kV);
-        }
-
-        @Override 
-        public double getP() {
-            return m_controller.getP();
-        }
-
-        @Override
-        public double getI() {
-            return m_controller.getI();
-        }
-
-        @Override 
-        public double getD() {
-            return m_controller.getD();
-        }
-
-        @Override 
-        public double getkS() {
-            return m_Feedforward.getKs();
-        }
-
-        @Override
-        public double getkV() {
-            return m_Feedforward.getKv();
-        }
+    @Override
+    public void stop(){
+        wristSim.setAngularVelocity(0);
+    }
 }

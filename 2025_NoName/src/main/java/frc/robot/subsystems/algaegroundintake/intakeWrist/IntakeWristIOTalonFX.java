@@ -1,118 +1,137 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
-import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
-// import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import static frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.States;
+import frc.robot.util.AlgaeGroundIntakeUtil;
 
 public class IntakeWristIOTalonFX extends IntakeWristIO {
     
-    private final TalonFX intakeWristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
+  private final TalonFX wristMotor;
+  TalonFXConfiguration wristConfig;
+  private final MotionMagicVoltage m_request;
 
-    private double setPoint = 0.0;
-    private double motorEncoder;
-    private int m_WristSlot = 0;
-
+  private double passedInPosition;
+  private double currentPosition;
+  private int wristSlot;
 
     public IntakeWristIOTalonFX() {
-        var config = new TalonFXConfiguration();
+    
+        wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
+        wristConfig = new TalonFXConfiguration();
+        m_request = new MotionMagicVoltage(0);
 
-        config.CurrentLimits.SupplyCurrentLimit = 30.0;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        var motionMagicConfigs = wristConfig.MotionMagic;
+        //I don't really know what values to put here :(
+        motionMagicConfigs.MotionMagicCruiseVelocity = 0.0;
+        motionMagicConfigs.MotionMagicAcceleration = 0.0;
 
-        var MotionMagicConfigs = config.MotionMagic;
+        wristConfig.Slot0.kP = IntakeWristConstants.wristExtendKP;
+        wristConfig.Slot0.kI = IntakeWristConstants.wristExtendKI;
+        wristConfig.Slot0.kD = IntakeWristConstants.wristExtendKD;
+        wristConfig.Slot0.kV = IntakeWristConstants.wristExtendKV;
 
-        MotionMagicConfigs.MotionMagicCruiseVelocity = 0.0;
-        MotionMagicConfigs.MotionMagicAcceleration = 0.0;
+        wristConfig.Slot1.kP = IntakeWristConstants.wristRetractKP;
+        wristConfig.Slot1.kI = IntakeWristConstants.wristRetractKI;
+        wristConfig.Slot1.kD = IntakeWristConstants.wristRetractKD;
+        wristConfig.Slot1.kV = IntakeWristConstants.wristRetractKV;
+    
+        wristConfig.CurrentLimits.SupplyCurrentLimitEnable = IntakeWristConstants.EnableCurrentLimit;
+        wristConfig.CurrentLimits.SupplyCurrentLimit = IntakeWristConstants.ContinousCurrentLimit;
+        wristConfig.CurrentLimits.SupplyCurrentLowerLimit = IntakeWristConstants.PeakCurrentDuration;
+        wristConfig.CurrentLimits.SupplyCurrentLowerTime = IntakeWristConstants.PeakCurrentDuration;
 
-        config.Slot0.kP = wristExtendKP;
-        config.Slot0.kI = wristExtendKI;
-        config.Slot0.kD = wristExtendKD;
-        config.Slot0.kS = wristExtendKS;
+        wristConfig.Feedback.RotorToSensorRatio = gearRatio;
+    
+        wristMotor.optimizeBusUtilization();
+        wristMotor.getConfigurator().apply(wristConfig);
 
-        config.Slot1.kP = wristRetractKP;
-        config.Slot1.kI = wristRetractKI;
-        config.Slot1.kD = wristRetractKD;
-
-        var mmConfig = config.MotionMagic;
-        mmConfig.MotionMagicCruiseVelocity = maxWristVelocity;
-        mmConfig.MotionMagicAcceleration = maxWristAccel;
-
-        intakeWristMotor.getConfigurator().apply(config);
-        intakeWristMotor.setPosition(0);
-        setBrake(true);
-
-        motorEncoder = intakeWristMotor.getPosition().getValueAsDouble();
-        // intakeWristMotor.optimizeBusUtilization();
-         PhoenixUtil.tryUntilOk(5, ()-> intakeWristMotor.getConfigurator().apply(config));
+        PhoenixUtil.tryUntilOk(5, () ->wristMotor.getConfigurator().apply(wristConfig, 0.25));
     }
 
     @Override
     public void updateInputs() {
-      super.appliedVolts = intakeWristMotor.getMotorVoltage().getValueAsDouble();
-      super.currentAmps = intakeWristMotor.getSupplyCurrent().getValueAsDouble();
-      super.velocity = intakeWristMotor.getVelocity().getValueAsDouble();
-      super.tempCelsius = intakeWristMotor.getDeviceTemp().getValueAsDouble();
-      super.position = intakeWristMotor.getPosition().getValueAsDouble();
+      super.appliedVolts = wristMotor.getMotorVoltage().getValueAsDouble();
+      super.currentAmps = wristMotor.getSupplyCurrent().getValueAsDouble();
+      super.velocity = wristMotor.getVelocity().getValueAsDouble();
+      super.tempCelsius = wristMotor.getDeviceTemp().getValueAsDouble();
+      super.position = wristMotor.getPosition().getValueAsDouble();
       super.targetPosition = targetPosition;
       super.currentPosition = currentPosition;
 
-      MotorLog.log("Wrist", intakeWristMotor);
+      MotorLog.log("IntakeWrist", wristMotor);
     
-      DogLog.log("Wrist/TargetPosition", targetPosition);
-      DogLog.log("Wrist/CurrentPosition", currentPosition);
-      DogLog.log("Wrist/Position", intakeWristMotor.getPosition().getValueAsDouble());
-    }
-
-    @Override 
-    public void setVoltage(double motorVolts) {
-        intakeWristMotor.setVoltage(motorVolts);
+      DogLog.log("IntakeWrist/TargetPosition", passedInPosition);
+      DogLog.log("IntakeWrist/CurrentPosition", currentPosition);
+      DogLog.log("IntakeWrist/Position", wristMotor.getPosition().getValueAsDouble());
     }
 
     @Override
-    public double getAngle() {
-        return (Units.radiansToRotations(motorEncoder));
-    }
-
-    public void desiredWristSetPos(double passedInPosition) {
-        m_WristSlot = 
-            passedInPosition == kWristExtendVal
-            ? wristExtendSlot
-            : wristRetractSlot;
-        setPoint = passedInPosition;
-        MotionMagicVoltage m_request = 
-            new MotionMagicVoltage(setPoint).withSlot(m_WristSlot).withFeedForward(kWristFeedForward);
-            intakeWristMotor.setControl(m_request);
-    }
-
-    @Override 
-    public void goToSetpoint(double setPoint) {
-        desiredWristSetPos(setPoint);
-
-    }
+    public void setVoltage(double voltage) {
+    wristMotor.setVoltage(voltage);
+  }
 
     @Override
-    public void holdToSetpoint(double setPoint) {
-        goToSetpoint(setPoint);
-    }
+    public void goToPose(double position){
+      passedInPosition = position;
+      
+      if (passedInPosition > currentPosition) {
+        wristSlot = 0;
+      } else {
+        wristSlot = 1;
+      }
+      
+      m_request.withSlot(wristSlot);
+      wristMotor.setControl(m_request);
+   }
 
     @Override
+    public double getPose(){
+      return wristMotor.getPosition().getValueAsDouble();
+    }
+
+  @Override
+  public void stop() {
+      wristMotor.stopMotor();
+  }
+
+  @Override
     public void setBrake(boolean brake) {
-        if(brake) {
-            intakeWristMotor.setNeutralMode(NeutralModeValue.Brake);
-        }
-    }
+    wristMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  }
 
-    @Override 
-    public boolean atSetpoint() {
-        return Math.abs(getAngle() - setPoint) < intakeWristPositionTolerance;
+    @Override
+    public void setState(States state) {
+        double position = 
+            MathUtil.clamp(AlgaeGroundIntakeUtil.stateToSetpoint(state), IntakeWristConstants.intakeWristLowerLimit, IntakeWristConstants.intakeWristUpperLimit);
+        
+        switch (state) {
+            case DEPLOYED:
+                position = setpoints[2];
+                break;
+            case NOTDEPLOYED:
+                position = setpoints[0];
+            default:
+                position = setpoints[1]; // STOW
+                break;
+        }
+
+        if (passedInPosition > currentPosition) {
+          wristSlot = 0;
+        } else {
+          wristSlot = 1;
+        }
+
+        m_request.withSlot(0);
+        m_request.Position = position;
+        wristMotor.setControl(m_request);
+
     }
 }

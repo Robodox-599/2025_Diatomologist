@@ -51,7 +51,7 @@ public class WristConstants {
     public static final double stationIntakeHeight = 0;
     public static final double scoringHeight = 0;
 
-    public static final double inchesPerRev = 0;
+    public static final double inchesPerRev = 10;
     // public static final double climb = 0;
 
 

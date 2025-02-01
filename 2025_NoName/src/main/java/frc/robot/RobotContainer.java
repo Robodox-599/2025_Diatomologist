@@ -15,8 +15,8 @@ import frc.robot.subsystems.endefector.wrist.WristIOSim;
 import frc.robot.subsystems.endefector.wrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
-import frc.robot.subsystems.algaegroundintake.rollers.IntakeRollers;
-import frc.robot.subsystems.algaegroundintake.wrist.IntakeWrist;
+import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollers;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWrist;
 //Climb stuff
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbIOSim;
@@ -32,12 +32,13 @@ import frc.robot.subsystems.elevator.Elevator;
 // import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
 
 public class RobotContainer {
+
   private final CommandXboxController controller = 
     new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   
   // visual stuff
   private LEDs LEDs;
-  private SubsystemVisualizer subsystemVisualizer;
+  private SubsystemVisualizer subsystemVisualizer = new SubsystemVisualizer();
   // algae ground intake
   private IntakeRollers algaeRollers;
   private IntakeWrist algaeWrist;
@@ -52,36 +53,36 @@ public class RobotContainer {
     public RobotContainer() {
       switch (Constants.currentMode) {
         case REAL:
-          subsystemVisualizer = new SubsystemVisualizer();
           endefectorRollers = new Rollers(new RollersIOTalonFX());
           endefectorWrist = new Wrist(new WristIOTalonFX());
           climb = new Climb(new ClimbIOTalonFX());
             break;
         case SIM:
-          subsystemVisualizer = new SubsystemVisualizer();
           endefectorRollers = new Rollers(new RollersIOSim());
           endefectorWrist = new Wrist(new WristIOSim());
           climb = new Climb(new ClimbIOSim());
           break;
       }
-    
           DogLog.setOptions(
           new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
 
           configureBindings();
     }
+    
     private void configureBindings() {
       //climb
       controller.a().whileTrue(climb.move(2));
       //Endefector
       controller.x().whileTrue(endefectorWrist.goToPose(2));
       controller.b().whileTrue(endefectorRollers.setVelocity(2));
+      controller.y().toggleOnTrue(start());
     }
-      
+    
     public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
     }
-    public Command updateVisualizer(){
-      return Commands.sequence(subsystemVisualizer.update(elevator, climb, LEDs, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers));
+    
+    public Command start(){
+      return (subsystemVisualizer.update(elevator, climb, LEDs, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers));
     }
 }

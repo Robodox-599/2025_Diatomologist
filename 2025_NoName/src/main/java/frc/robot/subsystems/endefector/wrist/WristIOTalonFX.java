@@ -23,7 +23,6 @@ public class WristIOTalonFX extends WristIO{
   private final TalonFX wristMotor;
   TalonFXConfiguration wristConfig;
   private final MotionMagicVoltage m_request;
-  private WristStates currentState = WristStates.STOW;
   
   private final CANcoder cancoder;
 
@@ -127,9 +126,8 @@ public class WristIOTalonFX extends WristIO{
     wristMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
-      @Override
+    @Override
     public void setState(WristStates state) {
-        currentState = state;
         double position = MathUtil.clamp(stateToHeight(state), wristLowerLimit, wristUpperLimit);
         
         switch (state) {

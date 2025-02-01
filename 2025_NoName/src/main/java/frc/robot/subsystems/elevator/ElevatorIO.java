@@ -29,4 +29,10 @@ public abstract class ElevatorIO {
     public void setVoltage(double voltage){}
 
     public double getPosition(){return 0.0;}
+
+    public double getPositionInches(){return positionInches;}
+
+    public ElevatorConstants.ElevatorStates getCurrentState(){return state;}
+
+
 }

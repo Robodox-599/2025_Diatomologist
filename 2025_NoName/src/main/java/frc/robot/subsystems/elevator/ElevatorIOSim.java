@@ -21,6 +21,7 @@ public class ElevatorIOSim extends ElevatorIO {
     private final DCMotorSim elevatorSim;
     private final PIDController positionController;
     private double targetPositionInches = 0.0;
+    public double position;
 
     // private Mechanism2d mech = new Mechanism2d(60, 60);
     // private MechanismRoot2d root = mech.getRoot("Root", 30, 5);
@@ -83,13 +84,11 @@ public class ElevatorIOSim extends ElevatorIO {
         DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
         //DogLog.log("Elevator/PositionRotations", super.positionRotations); // might not need
         DogLog.log("Elevator/State", super.state.toString());
-
-        //log(key + "/VelocityRotsPerSec", motor.getAngularVelocityRPM() / 60);
     }
 
     @Override
     public void setState(ElevatorConstants.ElevatorStates state) {
-        double position = MathUtil.clamp(ElevatorUtil.stateToHeight(state), ElevatorConstants.elevatorLowerLimit, ElevatorConstants.elevatorUpperLimit);
+        position = MathUtil.clamp(ElevatorUtil.stateToHeight(state), ElevatorConstants.elevatorLowerLimit, ElevatorConstants.elevatorUpperLimit);
         System.out.println(super.state);
         elevatorSim.setInputVoltage(simPidController.calculate(position));
 

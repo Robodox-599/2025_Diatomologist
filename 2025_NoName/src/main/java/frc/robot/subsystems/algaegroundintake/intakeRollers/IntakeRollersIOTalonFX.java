@@ -3,67 +3,68 @@ package frc.robot.subsystems.algaegroundintake.intakeRollers;
 import static frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
-import frc.robot.util.PhoenixUtil;
 
 public class IntakeRollersIOTalonFX extends IntakeRollersIO {
-    private TalonFX rollersMotor;
-    TalonFXConfiguration rollersConfig;
+        
+  private final TalonFX rollersMotor;
+  TalonFXConfiguration rollersConfig;
+  
+  private double desiredVelocity;
 
+  {
+      rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
+      rollersConfig = new TalonFXConfiguration();
 
-    private final VelocityVoltage rollersVelocityVoltage = new VelocityVoltage(0).withSlot(1);
+      rollersConfig.Slot0.kP = IntakeRollersConstants.realP;
+      rollersConfig.Slot0.kI = IntakeRollersConstants.realI;
+      rollersConfig.Slot0.kD = IntakeRollersConstants.realD;
+      rollersConfig.Slot0.kS = IntakeRollersConstants.realS;
+      rollersConfig.Slot0.kV = IntakeRollersConstants.realV;
+      
+      rollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
+      rollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
+      rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
+      rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    public IntakeRollersIOTalonFX() {
-        rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
-        rollersConfig = new TalonFXConfiguration();
+      rollersMotor.optimizeBusUtilization();
+      rollersMotor.getConfigurator().apply(rollersConfig);
+  }
 
-        rollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
-        rollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
-        rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
-        rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
-
-
-        rollersMotor.optimizeBusUtilization();
-        PhoenixUtil.tryUntilOk(5, ()-> rollersMotor.getConfigurator().apply(rollersConfig));
-    }
-
-
-    @Override
-    public void updateInputs() {
+  @Override
+  public void updateInputs(){
       super.appliedVolts = rollersMotor.getMotorVoltage().getValueAsDouble();
       super.currentAmps = rollersMotor.getSupplyCurrent().getValueAsDouble();
       super.velocity = rollersMotor.getVelocity().getValueAsDouble();
       super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
       super.desiredVelocity = desiredVelocity;
-      
-      MotorLog.log("Rollers", rollersMotor);
-      DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
-    }
-    @Override
-    public void setVoltage(double voltage){
-      rollersMotor.setVoltage(voltage);
-    }
-    public void setBrake(boolean brake) {
-        if (brake) {
-            rollersMotor.setNeutralMode(NeutralModeValue.Brake);
-         } else {
-            rollersMotor.setNeutralMode(NeutralModeValue.Coast);
-        }
+
+      MotorLog.log("intakeRollers", rollersMotor);
+      DogLog.log("intakeRollers/VelocitySetpoint", desiredVelocity);
   }
 
   @Override
-  public void setVelocity(double velocity) {
-    rollersMotor.setControl(rollersVelocityVoltage.withVelocity(Units.radiansPerSecondToRotationsPerMinute(velocity)/60));
+  public void setVoltage(double voltage) {
+      rollersMotor.setVoltage(voltage);
   }
 
   @Override
   public void stop() {
-    rollersMotor.setVoltage(0);
+      rollersMotor.setVoltage(0);
   }
+
+  @Override
+  public void setVelocity(double velocity) {
+      desiredVelocity = velocity;
+      rollersMotor.set(velocity);
+  }
+
+  @Override
+  public void setBrake(boolean brake) {
+  rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+}
 }   

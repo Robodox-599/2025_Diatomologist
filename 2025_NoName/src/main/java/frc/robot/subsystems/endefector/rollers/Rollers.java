@@ -1,3 +1,5 @@
+package frc.robot.subsystems.endefector.rollers;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -39,7 +41,10 @@ public class Rollers extends SubsystemBase{
     }
 
     public Command applyVoltage(double voltage){
-        
+        return Commands.run(
+            () -> {
+                io.setVoltage(voltage);
+            });
     }
 
     public Command runIndexerBeamBreak() {

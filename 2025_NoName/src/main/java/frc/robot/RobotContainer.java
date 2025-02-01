@@ -202,9 +202,6 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.selectedCommandScheduler();
-  }
 
   private static double joystickDeadbandApply(double x) {
     return MathUtil.applyDeadband(
@@ -229,16 +226,10 @@ public class RobotContainer {
       DogLog.setOptions(
       new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
   }
-    private void configureBindings() {
-    //climb
-    controller.a().whileTrue(climb.move(2));
-    //Endefector
-    controller.x().whileTrue(wrist.goToPose(2));
-    // controller.b().whileTrue(rollers.setVelocity(2));
-      
  }
- public Command getAutonomousCommand() {
-  return Commands.print("No autonomous command configured");
+  public Command getAutonomousCommand(){
+  return autoChooser.selectedCommandScheduler();
+  } 
 }
-}
+
 

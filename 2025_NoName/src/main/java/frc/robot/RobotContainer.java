@@ -97,15 +97,13 @@ public class RobotContainer {
 
     // Add options to the chooser
     // Put the auto chooser on the dashboard
-    SmartDashboard.putData(autoChooser);
+    SmartDashboard.putData("AutoChooser", autoChooser);
     // Schedule the selected auto during the autonomous period
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
     // Logging starting here
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
 
-    // Put the auto chooser on the dashboard
-    SmartDashboard.putData("AutoChooser", autoChooser);
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(

@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.drive.constants.RealConstants;
@@ -52,6 +53,7 @@ public class ModuleIOSim extends ModuleIO {
             SimConstants.turn_gearbox);
 
     turnController.enableContinuousInput(-Math.PI, Math.PI);
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   @Override

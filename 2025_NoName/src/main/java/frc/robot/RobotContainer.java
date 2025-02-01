@@ -1,5 +1,30 @@
 package frc.robot;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.*;
+//Climb stuff
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
+import frc.robot.subsystems.endefector.rollers.Rollers;
+import frc.robot.subsystems.endefector.rollers.RollersIOSim;
+import frc.robot.subsystems.endefector.rollers.RollersIOTalonFX;
+import frc.robot.subsystems.endefector.wrist.Wrist;
+import frc.robot.subsystems.endefector.wrist.WristIOSim;
+import frc.robot.subsystems.endefector.wrist.WristIOTalonFX;
+
+//Intake stuff
+//import frc.robot.subsystems.algaegroundintake.rollers.Rollers;
+// import frc.robot.subsystems.algaegroundintake.rollers.RollersIOSim;
+// import frc.robot.subsystems.algaegroundintake.rollers.RollersIOTalonFX;
+// import frc.robot.subsystems.algaegroundintake.wrist.Wrist;
+// import frc.robot.subsystems.algaegroundintake.wrist.WristIOSim;
+// import frc.robot.subsystems.algaegroundintake.wrist.WristIOTalonFX;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
@@ -25,15 +50,15 @@ import java.util.Map;
 // import frc.robot.subsystems.vision.VisionIOReal;
 // import frc.robot.subsystems.vision.VisionIOSim;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
+
   // Subsystems
   private final Drive drive;
+   //Endefector
+  private Rollers rollers;
+  private Wrist wrist;
+  //Climb
+  private Climb climb;
   // private final Vision vision;
 
   // Controller
@@ -50,6 +75,9 @@ public class RobotContainer {
       case REAL:
         // Real robot, instantiate hardware IO implementations
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
+        rollers = new Rollers(new RollersIOTalonFX());
+        wrist = new Wrist(new WristIOTalonFX());
+        climb = new Climb(new ClimbIOTalonFX());
         // vision =
         //     new Vision(drive::addVisionMeasurement, new
         // VisionIOReal(RealConstants.camConstants));
@@ -65,6 +93,9 @@ public class RobotContainer {
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim());
+        climb = new Climb(new ClimbIOSim());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -194,6 +225,20 @@ public class RobotContainer {
           DogLog.log(key, position);
         }
       }
-    }
+      
+      DogLog.setOptions(
+      new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
   }
+    private void configureBindings() {
+    //climb
+    controller.a().whileTrue(climb.move(2));
+    //Endefector
+    controller.x().whileTrue(wrist.goToPose(2));
+    // controller.b().whileTrue(rollers.setVelocity(2));
+      
+ }
+ public Command getAutonomousCommand() {
+  return Commands.print("No autonomous command configured");
 }
+}
+

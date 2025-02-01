@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
+
 import frc.robot.subsystems.climb.ClimbConstants;
 
 public class MotorLog extends DogLog{
@@ -22,3 +23,4 @@ public class MotorLog extends DogLog{
         log(key + "/CurrentAmps", motor.getSupplyCurrent().getValueAsDouble());
     }
 }
+

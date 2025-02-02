@@ -11,6 +11,7 @@ import org.photonvision.simulation.VisionSystemSim;
 public class VisionIOSim extends VisionIOReal {
   private static VisionSystemSim visionSim;
   private final PhotonCameraSim simCamera;
+  private final Supplier<Pose2d> poseSupplier;
 
   /**
    * Creates a new VisionIOSim interfacing the VisionIOReal
@@ -18,8 +19,9 @@ public class VisionIOSim extends VisionIOReal {
    * @param The VisionConstants of the camera.
    * @param The Pose2d supplier for vision odometry.
    */
-  public VisionIOSim(VisionConstants constants) {
-    super(constants);
+  public VisionIOSim(VisionConstants constants, Supplier<Pose2d> poseSupplier) {
+    super(constants, poseSupplier);
+    this.poseSupplier = poseSupplier;
     // Initialize visionSim if still Null
     if (visionSim == null) {
       visionSim = new VisionSystemSim("main");
@@ -56,9 +58,9 @@ public class VisionIOSim extends VisionIOReal {
   // Updates the Inputs and Feeds back to VisionIOReal, while updating the visionSim pose Supplier
   // for Vision Odometry.
   @Override
-  public void updateInputs(Supplier<Pose2d> poseSupplier) {
+  public void updateInputs() {
     visionSim.update(poseSupplier.get());
-    super.updateInputs(poseSupplier);
+    super.updateInputs();
   }
 
   // Returns name of the Camera

@@ -10,9 +10,11 @@ import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -25,6 +27,7 @@ public class VisionIOReal extends VisionIO {
   protected final PhotonCamera camera;
   protected final VisionConstants constants;
   protected final Transform3d robotToCamera;
+  private final Supplier<Pose2d> poseSupplier;
 
   /**
    * Buffer which keeps track of the robot rotation over the past few seconds This allows us to
@@ -37,19 +40,22 @@ public class VisionIOReal extends VisionIO {
    *
    * @param The VisionConstants of the camera.
    */
-  public VisionIOReal(VisionConstants cameraConstants) {
+  public VisionIOReal(VisionConstants cameraConstants, Supplier<Pose2d> poseSupplier) {
+    this.poseSupplier = poseSupplier;
     this.constants = cameraConstants;
     super.constants = constants;
     camera = new PhotonCamera(cameraConstants.cameraName());
     this.robotToCamera = cameraConstants.robotToCameraTransform3d();
+    DogLog.log("Vision/" + camera.getName() + "/Camera Transform", robotToCamera);
   }
 
   @Override
-  public void updateInputs(Supplier<Pose2d> poseSupplier) {
+  public void updateInputs() {
     super.cameraConnected = camera.isConnected();
     setRobotRotation(poseSupplier.get().getRotation());
     List<PoseObservation> poseObservations = new LinkedList<>();
     List<PhotonPipelineResult> resultList = camera.getAllUnreadResults();
+    Set<Short> tagIds = new HashSet<>();
     if (camera == null
         || !camera.isConnected()
         || resultList == null
@@ -64,12 +70,6 @@ public class VisionIOReal extends VisionIO {
     PhotonPipelineResult latestResult = resultList.get(resultList.size() - 1);
     List<PhotonTrackedTarget> visibleTags = latestResult.getTargets();
 
-    // Fill in the tag area and visible ID arrays
-    int[] ID = new int[visibleTags.size()];
-    for (int i = 0; i < visibleTags.size(); i++) {
-      ID[i] = visibleTags.get(i).getFiducialId();
-    }
-    super.tagIds = ID;
     for (var result : resultList) {
       // Update latest target observation
       if (result.hasTargets()) {
@@ -80,13 +80,25 @@ public class VisionIOReal extends VisionIO {
       } else {
         super.latestTargetAngle = new ObservedTargetRotations(new Rotation2d(), new Rotation2d());
       }
-      // Determine the possible robot pose results the camera has determined
+
+      // if (result.multitagResult.isPresent()) {
+      //   var multitagResult = result.multitagResult.get();
+      //   tagIds.addAll(multitagResult.fiducialIDsUsed);
+      // }
       if (visibleTags.size() == 1) {
         poseObservations = retrieveSingleTagEstimates(latestResult);
       } else {
         poseObservations = retrieveMultiTagEstimates(latestResult);
       }
     }
+    super.tagIds = new int[visibleTags.size()];
+
+    for (int i = 0; i < visibleTags.size(); i++) {
+      super.tagIds[i] = visibleTags.get(i).getFiducialId();
+    }
+
+    // Determine the possible robot pose results the camera has determined
+    super.poseObservations = new PoseObservation[poseObservations.size()];
     for (int i = 0; i < poseObservations.size(); i++) {
       super.poseObservations[i] = poseObservations.get(i);
     }

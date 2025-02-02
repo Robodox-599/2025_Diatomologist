@@ -103,7 +103,7 @@ public abstract class VisionIO {
   ;
 
   /** Updates Inputs to the given values from the IO layers */
-  public void updateInputs(Supplier<Pose2d> poseSupplie) {}
+  public void updateInputs() {}
 
   public VisionConstants getVisionConstants() {
     return constants;

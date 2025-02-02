@@ -14,18 +14,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final Alert[] disconnectedAlerts;
-  private final Supplier<Pose2d> poseSupplier;
 
-  public Vision(VisionConsumer consumer, Supplier<Pose2d> poseSupplier, VisionIO... io) {
+  public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
-    this.poseSupplier = poseSupplier;
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < io.length; i++) {
@@ -45,7 +42,7 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
-      io[i].updateInputs(poseSupplier);
+      io[i].updateInputs();
     }
 
     // Initialize logging values

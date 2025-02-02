@@ -49,8 +49,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                drive::getPose,
-                new VisionIOReal(RealConstants.camConstants));
+                new VisionIOReal(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -66,8 +65,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                drive::getPose,
-                new VisionIOSim(RealConstants.camConstants));
+                new VisionIOSim(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
@@ -83,8 +81,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                drive::getPose,
-                new VisionIOReal(RealConstants.camConstants));
+                new VisionIOReal(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose

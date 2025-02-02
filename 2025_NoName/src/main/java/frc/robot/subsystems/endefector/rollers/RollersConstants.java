@@ -1,6 +1,24 @@
 package frc.robot.subsystems.endefector.rollers;
 
 public class RollersConstants {
+    public static enum States {
+        NOTDEPLOYED(0),
+        STOW(1), 
+        DEPLOYED(2),
+        REVERSED(3),
+        IDLE(4);
+
+        private final int index;
+
+        States(int index) {
+        this.index = index;
+        }
+
+        public int getIndex() {
+        return index;
+        }
+    }
+
     public static final int rollersMotorID = 0;
     public static final String rollersMotorCANBus = "rio";
 

@@ -28,6 +28,9 @@ public class SubsystemVisualizer extends SubsystemBase {
   private Elevator elev;
   private IntakeWrist intakeWrist;
   private IntakeRollers intakeRollers;
+  private Climb climb;
+  private Wrist endWrist;
+  private Rollers endRollers;
     
   //climb ligaments
   private MechanismLigament2d climbVis = 
@@ -56,7 +59,11 @@ public class SubsystemVisualizer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     elev.getIO().updateInputs();
-
+    climb.getIO().updateInputs();
+    intakeRollers.getIO().updateInputs();
+    intakeWrist.getIO().updateInputs();
+    endWrist.getIO().updateInputs();
+    endRollers.getIO().updateInputs();
 
     SmartDashboard.putData("dongleMech2d", mech);
     System.out.println("wadwa");
@@ -120,7 +127,7 @@ public class SubsystemVisualizer extends SubsystemBase {
           System.out.println(elev.getIO().getCurrentState());
           break;
       case REVERSED:
-          algaeGroundIntakeRollersVis.setAngle(intakeRollers.getIO().GetCurrentVolts());
+          algaeGroundIntakeRollersVis.setAngle((intakeRollers.getIO().GetCurrentVolts()) * -1);
           algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kPurple));
           System.out.println(elev.getIO().getCurrentState());
           break;
@@ -134,7 +141,92 @@ public class SubsystemVisualizer extends SubsystemBase {
           algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kYellow));
           System.out.println(elev.getIO().getCurrentState());
           break;
+      }
+
   }
 
+  public void updateClimb(){
+    switch (climb.getIO().getCurrentState()) {
+      case CLIMB:
+          climbVis.setAngle(climb.getIO().GetCurrentVolts());
+          algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kGreen));
+          System.out.println(climb.getIO().getCurrentState());
+          break;
+      case CLIMBREADY:
+          climbVis.setAngle(climb.getIO().GetCurrentVolts());
+          climbVis.setColor(new Color8Bit(Color.kYellow));
+          System.out.println(climb.getIO().getCurrentState());
+          break;
+      default:
+          climbVis.setAngle(climb.getIO().GetCurrentVolts());
+          climbVis.setColor(new Color8Bit(Color.kBlue));
+          System.out.println(climb.getIO().getCurrentState());
+          break;
+      }
+  }
+
+  public void updateEndefectorWrist(){
+    switch (endWrist.getIO().getCurrentState()) {
+      case SCORING:
+          endefectorWristVis.setAngle(endWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kRed));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case OVERRIDE:
+          endefectorWristVis.setAngle(intakeWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kGreen));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case GROUNDINTAKE:
+          endefectorWristVis.setAngle(intakeWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kRed));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case STATIONINTAKE:
+          endefectorWristVis.setAngle(intakeWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kGreen));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case CLIMB:
+          endefectorWristVis.setAngle(intakeWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kRed));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      default: // STOW
+          endefectorWristVis.setAngle(intakeWrist.getIO().getCurrentPosition());
+          endefectorWristVis.setColor(new Color8Bit(Color.kBlue));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+    }
+  }
+
+  public void UpdateEndefectorRollers(){
+    switch (endRollers.getIO().getCurrentState()) {
+      case DEPLOYED:
+          endefectorRollersVis.setAngle(endRollers.getIO().GetCurrentVolts());
+          endefectorRollersVis.setColor(new Color8Bit(Color.kGreen));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case NOTDEPLOYED:
+          endefectorRollersVis.setAngle(endRollers.getIO().GetCurrentVolts());
+          endefectorRollersVis.setColor(new Color8Bit(Color.kRed));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case REVERSED:
+          endefectorRollersVis.setAngle((endRollers.getIO().GetCurrentVolts()) * -1);
+          endefectorRollersVis.setColor(new Color8Bit(Color.kPurple));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      case IDLE:
+          endefectorRollersVis.setAngle(endRollers.getIO().GetCurrentVolts());
+          endefectorRollersVis.setColor(new Color8Bit(Color.kBlue));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      default:
+          endefectorRollersVis.setAngle(endRollers.getIO().GetCurrentVolts());
+          endefectorRollersVis.setColor(new Color8Bit(Color.kYellow));
+          System.out.println(elev.getIO().getCurrentState());
+          break;
+      }
   }
 }

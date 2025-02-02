@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endefector.wrist;
 
 import frc.robot.subsystems.endefector.wrist.WristConstants.WristStates;
+import frc.robot.util.EndefectorUtil;
 
 public abstract class WristIO {
   protected double tempCelsius = 0.0;
@@ -10,6 +11,7 @@ public abstract class WristIO {
   protected double targetPosition = 0.0;
   protected double currentPosition = 0.0;
   protected double position = 0.0;
+  protected WristConstants.WristStates state = WristConstants.WristStates.STOW;
 
 
   public void updateInputs(){}
@@ -27,4 +29,10 @@ public abstract class WristIO {
   public void setBrake(boolean brake) {}
 
   public void setState(WristStates state) {}
+
+  public WristConstants.WristStates getCurrentState(){return state;}
+
+  public double GetCurrentVolts(){return appliedVolts;}
+
+  public double getCurrentPosition(){return EndefectorUtil.convertToTicks(currentPosition);}
 }

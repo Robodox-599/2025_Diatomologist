@@ -39,9 +39,17 @@ public class IntakeRollers extends SubsystemBase {
             });
     }
 
+    public Command setReverse(double voltage) {
+        return Commands.run(
+            () -> {
+                io.setVoltage(voltage * -1);
+            });
+    }
+
     public void setBrake(boolean brake) {
         io.setBrake(brake);
     }
+
     public IntakeRollersIO getIO(){
         return io;
     }

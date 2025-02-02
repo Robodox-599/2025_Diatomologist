@@ -32,4 +32,8 @@ public abstract class ClimbIO {
     public void setVoltage(double voltage){}
 
     public double getPosition(){return 0.0;}
+
+    public ClimbConstants.ClimbStates getCurrentState(){return state;}
+
+    public double GetCurrentVolts(){return appliedVolts;}
 }

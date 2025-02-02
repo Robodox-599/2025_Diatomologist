@@ -6,6 +6,7 @@ public abstract class RollersIO {
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double desiredVelocity = 0.0;
+  protected RollersConstants.States state = RollersConstants.States.STOW;
 
   public void updateInputs() {}
   
@@ -16,4 +17,8 @@ public abstract class RollersIO {
   public void setVelocity(double velocity){}
 
   public void setBrake(boolean brake){}
+
+  public double GetCurrentVolts(){return appliedVolts;}
+
+  public RollersConstants.States getCurrentState(){return state;}
 }

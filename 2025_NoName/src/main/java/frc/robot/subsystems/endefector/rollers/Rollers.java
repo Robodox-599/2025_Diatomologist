@@ -22,6 +22,13 @@ public class Rollers extends SubsystemBase{
             });
     }
 
+    public Command setReverse(double voltage) {
+        return Commands.run(
+            () -> {
+                io.setVoltage(voltage * -1);
+            });
+    }
+
     public Command stop() {
         return Commands.run(
             () -> {

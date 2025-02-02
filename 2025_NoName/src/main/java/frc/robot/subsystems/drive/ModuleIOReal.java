@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.subsystems.drive.constants.RealConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -108,13 +110,13 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     /* ************ DRIVE VOLTAGE-PID CONFIGS ************ */
-
+    // kv = (12.0 / motorFreeSpeed) * GearRatio, we need to review this.
     driveConfig.Slot0.kV = 0.14015;
     driveConfig.Slot0.kS = 0.5;
     driveConfig.Slot0.kP = 8;
     driveConfig.Slot0.kD = 0;
 
-    /* ************ TURN VOLTAGE-PID CONFIGS ************ */
+    /* ************ TURN MOTION-MAGIC-VOLTAGE-PID CONFIGS ************ */
 
     turnConfig.Slot0.kV = 0.0;
     turnConfig.Slot0.kS = 0.24;
@@ -145,7 +147,7 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ CONVERTS FROM ENCODER POSITION TO METERS PER SECOND. ************ */
 
-    driveConfig.Feedback.SensorToMechanismRatio = RealConstants.DRIVE_ROTOR_TO_METERS;
+    driveConfig.Feedback.SensorToMechanismRatio = RealConstants.DRIVE_GEAR_RATIO;
 
     /*  ************ APPLY TURN CONFIG SENSOR FEEDBACK INFO ************ */
 
@@ -213,8 +215,12 @@ public class ModuleIOReal extends ModuleIO {
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-    super.drivePositionMeters = drivePosition.getValueAsDouble();
-    super.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble();
+
+    super.drivePositionMeters = drivePosition.getValue().in(Rotation) * WHEEL_CIRCUMFERENCE;
+
+    super.driveVelocityMetersPerSec =
+        driveVelocity.getValue().in(RotationsPerSecond) * WHEEL_CIRCUMFERENCE;
+
     super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     super.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -230,8 +236,7 @@ public class ModuleIOReal extends ModuleIO {
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     super.odometryDrivePositionsMeters =
         drivePositionQueue.stream()
-            .mapToDouble(
-                (Double value) -> Units.rotationsToRadians(value / RealConstants.DRIVE_GEAR_RATIO))
+            .mapToDouble((Double value) -> (value * WHEEL_CIRCUMFERENCE))
             .toArray();
     super.odometryTurnPositions =
         turnPositionQueue.stream()
@@ -249,9 +254,9 @@ public class ModuleIOReal extends ModuleIO {
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition",
         super.turnAbsolutePosition);
-    // DogLog.log(
-    //     "Drive/Module " + constants.prefix() + "/DriveMotor/VelocityRotsPerSec",
-    //     super.driveVelocityMetersPerSec * (WHEEL_RADIUS * 2 * Math.PI));
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/VelocityMetersPerSec",
+        super.driveVelocityMetersPerSec);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(

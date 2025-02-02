@@ -63,6 +63,7 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       case SIM:
+        DriverStation.silenceJoystickConnectionWarning(true);
         // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // vision =

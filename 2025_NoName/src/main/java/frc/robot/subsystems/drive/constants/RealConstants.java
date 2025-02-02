@@ -36,7 +36,7 @@ public class RealConstants {
   public static final double TURN_STATOR_CURRENT_LIMIT = 40.0;
   public static final double DRIVE_ROTOR_TO_METERS =
       (RealConstants.DRIVE_GEAR_RATIO) / (WHEEL_RADIUS * 2 * Math.PI);
-
+  public static final double WHEEL_CIRCUMFERENCE = 2 * Math.PI * WHEEL_RADIUS; // meters
   // Both sets of gains need to be tuned to our robot. make sure we tune this with torque control
   // foc for both modules.
   private static final Slot0Configs steerGains =

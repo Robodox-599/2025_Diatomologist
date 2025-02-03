@@ -9,5 +9,7 @@ public abstract class LEDsIO {
     public void updateInputs(){}
     
     public void updateAnim(LEDAnim anim){}
+
+    public LEDAnim getCurrentState(){return anim;}
     
 }

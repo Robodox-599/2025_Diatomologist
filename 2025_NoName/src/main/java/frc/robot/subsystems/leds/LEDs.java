@@ -16,4 +16,5 @@ public class LEDs extends SubsystemBase {
             ()-> io.updateAnim(anim));
     }
     
+    public LEDsIO getIO(){return io;}
 }

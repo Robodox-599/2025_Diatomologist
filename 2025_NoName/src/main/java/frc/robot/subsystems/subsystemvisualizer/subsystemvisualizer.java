@@ -31,6 +31,7 @@ public class SubsystemVisualizer extends SubsystemBase {
   private Climb climb;
   private Wrist endWrist;
   private Rollers endRollers;
+  private LEDs LEDs;
     
   //climb ligaments
   private MechanismLigament2d climbVis = 
@@ -64,6 +65,7 @@ public class SubsystemVisualizer extends SubsystemBase {
     intakeWrist.getIO().updateInputs();
     endWrist.getIO().updateInputs();
     endRollers.getIO().updateInputs();
+    LEDs.getIO().updateInputs();
 
     SmartDashboard.putData("dongleMech2d", mech);
     System.out.println("wadwa");
@@ -228,5 +230,19 @@ public class SubsystemVisualizer extends SubsystemBase {
           System.out.println(elev.getIO().getCurrentState());
           break;
       }
+  }
+
+  public void updateLEDs(){
+    switch (LEDs.getIO().getCurrentState()) {
+      case YesNote:
+          break;
+      case NoNote:
+          break;
+      case CanShoot:
+          break;
+      default: // NoState
+          break;
+      }
+    
   }
 }

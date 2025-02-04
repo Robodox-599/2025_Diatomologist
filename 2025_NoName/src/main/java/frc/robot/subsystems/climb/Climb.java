@@ -9,52 +9,55 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 public class Climb extends SubsystemBase {
   private final ClimbIO io;
 
-    public Climb(ClimbIO io) {
-        this.io = io;
-    }
+  public Climb(ClimbIO io) {
+    this.io = io;
+  }
 
-    @Override
-    public void periodic() {
-        io.updateInputs();
-    }
+  @Override
+  public void periodic() {
+    io.updateInputs();
+  }
 
-    public boolean isAtTargetPosition() {
-        return io.atSetpoint;
-    }
+  public boolean isAtTargetPosition() {
+    return io.atSetpoint;
+  }
 
-    /* Moves the elevator to one of the states */
-    public Command moveToState(ClimbConstants.ClimbStates state) {
-        return Commands.sequence(
-            Commands.runOnce(() -> {
-                io.setState(state);
-             }),
-            Commands.waitUntil(this::isAtTargetPosition)
-        );
-    }
+  /* Moves the elevator to one of the states */
+  public Command moveToState(ClimbConstants.ClimbStates state) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              io.setState(state);
+            }),
+        Commands.waitUntil(this::isAtTargetPosition));
+  }
 
-    public Command move(double volt){
-        return Commands.run(()->{
-            io.setVoltage(volt);});
-    }
-    
-    public Command stop(){
-        return Commands.run(()->{
-            io.setVoltage(0);});
-    }
+  public Command move(double volt) {
+    return Commands.run(
+        () -> {
+          io.setVoltage(volt);
+        });
+  }
 
-    /*Homes elevator with limit switch, could be rewritten to home with current but hopefully nah*/
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          io.setVoltage(0);
+        });
+  }
 
-    public Command homeClimb() {
-        return Commands.sequence(
-            new InstantCommand(()->io.setVoltage(2)),
-            new WaitUntilCommand(()-> io.limitSwitchValue),
-            new InstantCommand(()-> io.setVoltage(0)),
-            new InstantCommand(()-> io.zeroEncoder()))
-        .onlyIf(
-            ()-> !io.limitSwitchValue);
-    }
+  /*Homes elevator with limit switch, could be rewritten to home with current but hopefully nah*/
 
-    public ClimbIO getIO(){
-        return io;
-    }
+  public Command homeClimb() {
+    return Commands.sequence(
+            new InstantCommand(() -> io.setVoltage(2)),
+            new WaitUntilCommand(() -> io.limitSwitchValue),
+            new InstantCommand(() -> io.setVoltage(0)),
+            new InstantCommand(() -> io.zeroEncoder()))
+        .onlyIf(() -> !io.limitSwitchValue);
+  }
+
+  public ClimbIO getIO() {
+    return io;
+  }
 }

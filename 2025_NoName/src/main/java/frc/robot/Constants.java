@@ -3,8 +3,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Constants {
-  public static class OperatorConstants {
+  public static class ControllerConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static final Mode simMode = Mode.SIM;

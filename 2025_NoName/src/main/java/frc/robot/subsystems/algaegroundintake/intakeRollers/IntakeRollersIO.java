@@ -1,26 +1,35 @@
 package frc.robot.subsystems.algaegroundintake.intakeRollers;
 
 public abstract class IntakeRollersIO {
-    protected double tempCelsius = 0.0;
-    protected double currentAmps = 0.0;
-    protected double appliedVolts = 0.0;
-    protected double velocity = 0.0;
-    protected double desiredVelocity = 0.0;
-    protected IntakeRollersConstants.States state = IntakeRollersConstants.States.STOW;
-    
-    public void updateInputs() {}
+  protected double tempCelsius = 0.0;
+  protected double currentAmps = 0.0;
+  protected double appliedVolts = 0.0;
+  protected double velocity = 0.0;
+  protected double desiredVelocity = 0.0;
+  protected IntakeRollersConstants.AlageRollerStates currentState =
+      IntakeRollersConstants.AlageRollerStates.STOP;
 
-    public void setVoltage(double voltage) {}
+  public void updateInputs() {}
 
-    public void setVelocity(double velocity) {}
+  public void setVoltage(double voltage) {}
 
-    public void setBrake(boolean brake) {}
+  public void setVelocity(double velocity) {}
 
-    public void stop() {
-        setVoltage(0.0);
-    }
+  public void setBrake(boolean brake) {}
 
-    public IntakeRollersConstants.States getCurrentState(){return state;}
+  public void stop() {
+    setVoltage(0.0);
+  }
 
-    public double GetCurrentVolts(){return appliedVolts;}
+  public IntakeRollersConstants.AlageRollerStates getCurrentState() {
+    return currentState;
+  }
+
+  public void setState(IntakeRollersConstants.AlageRollerStates state) {
+    currentState = state;
+  }
+
+  public double GetCurrentVolts() {
+    return appliedVolts;
+  }
 }

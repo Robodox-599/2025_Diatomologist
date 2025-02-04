@@ -5,35 +5,41 @@
 package frc.robot.subsystems.climb;
 
 public abstract class ClimbIO {
-    protected double tempCelsius = 0.0;
-    protected double positionInches = 0.0;
-    protected double velocityInchesPerSec = 0.0;
-    protected double appliedVolts = 0.0;
-    protected double currentAmps = 0.0;
-    protected double targetPositionInches = 0.0;
-    protected boolean limitSwitchValue = false;
-    protected boolean atSetpoint = false;
-    protected ClimbConstants.ClimbStates state = ClimbConstants.ClimbStates.STOW;
+  protected double tempCelsius = 0.0;
+  protected double positionInches = 0.0;
+  protected double velocityInchesPerSec = 0.0;
+  protected double appliedVolts = 0.0;
+  protected double currentAmps = 0.0;
+  protected double targetPositionInches = 0.0;
+  protected boolean limitSwitchValue = false;
+  protected boolean atSetpoint = false;
+  protected ClimbConstants.ClimbStates state = ClimbConstants.ClimbStates.STOW;
 
-    /** Updates the set of loggable inputs */
-    public void updateInputs() {}
+  /** Updates the set of loggable inputs */
+  public void updateInputs() {}
 
-    /** Sets the target height of the elevator */
-    public void setState(ClimbConstants.ClimbStates state) {}
+  /** Sets the target height of the elevator */
+  public void setState(ClimbConstants.ClimbStates state) {}
 
-    /** Stops the elevator */
-    public void stop() {}
+  /** Stops the elevator */
+  public void stop() {}
 
-    /** Sets brake mode */
-    public void enableBrakeMode(boolean enable) {}
+  /** Sets brake mode */
+  public void enableBrakeMode(boolean enable) {}
 
-    public void zeroEncoder(){}
+  public void zeroEncoder() {}
 
-    public void setVoltage(double voltage){}
+  public void setVoltage(double voltage) {}
 
-    public double getPosition(){return 0.0;}
+  public double getPosition() {
+    return 0.0;
+  }
 
-    public ClimbConstants.ClimbStates getCurrentState(){return state;}
+  public ClimbConstants.ClimbStates getCurrentState() {
+    return state;
+  }
 
-    public double GetCurrentVolts(){return appliedVolts;}
+  public double GetCurrentVolts() {
+    return appliedVolts;
+  }
 }

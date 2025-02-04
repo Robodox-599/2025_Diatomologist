@@ -2,14 +2,13 @@ package frc.robot.util;
 
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
-public class ElevatorUtil{
+public class ElevatorUtil {
 
-    public static double convertToTicks(double height){
-        return height / ElevatorConstants.inchesPerRev;
-    }
+  public static double convertToTicks(double height) {
+    return height / ElevatorConstants.inchesPerRev;
+  }
 
-    public static double stateToHeight(ElevatorConstants.ElevatorStates state){
-        return convertToTicks(ElevatorConstants.heights[state.getIndex()]);
-    }
-    
+  public static double stateToHeight(ElevatorConstants.ElevatorStates state) {
+    return convertToTicks(ElevatorConstants.heights[state.getIndex()]);
+  }
 }

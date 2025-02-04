@@ -1,46 +1,46 @@
 package frc.robot.subsystems.endefector.rollers;
 
 public class RollersConstants {
-    public static enum States {
-        NOTDEPLOYED(0),
-        STOW(1), 
-        DEPLOYED(2),
-        REVERSED(3),
-        IDLE(4);
+  public static enum EndefectorRollerStates {
+    STOP(0),
+    SCORE(1),
+    INTAKE(2);
 
-        private final int index;
+    private final int index;
 
-        States(int index) {
-        this.index = index;
-        }
-
-        public int getIndex() {
-        return index;
-        }
+    EndefectorRollerStates(int index) {
+      this.index = index;
     }
 
-    public static final int rollersMotorID = 0;
-    public static final String rollersMotorCANBus = "rio";
+    public int getIndex() {
+      return index;
+    }
+  }
 
-    public static final boolean EnableCurrentLimit = true;
-    public static final int ContinousCurrentLimit = 50;
-    public static final int PeakCurrentLimit = 50;
-    public static final double PeakCurrentDuration = 0.1;
-  
-    public static final double gearRatio = 1.0;
-    public static final double rollersMOI = 0.04;
+  public static final int rollersMotorID = 0;
+  public static final String rollersMotorCANBus = "rio";
 
-    public static final double simkP = 0.0;
-    public static final double simkI = 0.0;
-    public static final double simkD = 0.0;
-    public static final double simkS = 0.0;
-    public static final double simkV = 0.0;
+  public static final boolean EnableCurrentLimit = true;
+  public static final int ContinousCurrentLimit = 50;
+  public static final int PeakCurrentLimit = 50;
+  public static final double PeakCurrentDuration = 0.1;
 
-    public static final double realP = 0.0;
-    public static final double realI = 0.0;
-    public static final double realD = 0.0;
-    public static final double realS = 0.0;
-    public static final double realV = 0.0;
+  public static final double gearRatio = 1.0;
+  public static final double rollersMOI = 0.04;
 
-    public static final double nominalVoltage = 12.0;
+  public static final double simkP = 0.0;
+  public static final double simkI = 0.0;
+  public static final double simkD = 0.0;
+  public static final double simkS = 0.0;
+  public static final double simkV = 0.0;
+
+  public static final double realP = 0.0;
+  public static final double realI = 0.0;
+  public static final double realD = 0.0;
+  public static final double realS = 0.0;
+  public static final double realV = 0.0;
+
+  public static final double nominalVoltage = 12.0;
+
+  public static final double rollersScoreVelocity = 0.2;
 }

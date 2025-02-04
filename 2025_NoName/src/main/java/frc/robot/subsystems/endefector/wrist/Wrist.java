@@ -4,40 +4,54 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Wrist extends SubsystemBase{
-    private final WristIO io;
+public class Wrist extends SubsystemBase {
+  private final WristIO io;
 
-    public Wrist(WristIO io) {
-        this.io = io;
-    }
+  public Wrist(WristIO io) {
+    this.io = io;
+  }
 
-    @Override
-    public void periodic() {
-        io.updateInputs();
-    }
+  @Override
+  public void periodic() {
+    io.updateInputs();
+  }
 
-    public Command goToPose(double pose) {
-        return Commands.run(
+  public Command goToPose(double pose) {
+    return Commands.run(
+        () -> {
+          io.goToPose(pose);
+        });
+  }
+
+  public Command moveToState(WristConstants.WristStates state) {
+    return Commands.sequence(
+        Commands.runOnce(
             () -> {
-                io.goToPose(pose);
-            });
-    }
+              io.setState(state);
+            }),
+        Commands.waitUntil(this::isAtTargetPosition));
+  }
 
-    public double getPose() {
-        return io.getPose();
-    }
+  public boolean isAtTargetPosition() {
+    return io.atSetpoint;
+  }
 
-    public void setBrake(boolean brake) {
-        io.setBrake(brake);
-    }
+  public double getPose() {
+    return io.getPose();
+  }
 
-    public Command stop() {
-        return Commands.run(
-            () -> {
-                io.setVoltage(0);
-            });
-    }
-    public WristIO getIO(){
-        return io;
-    }
+  public void setBrake(boolean brake) {
+    io.setBrake(brake);
+  }
+
+  public Command stop() {
+    return Commands.run(
+        () -> {
+          io.setVoltage(0);
+        });
+  }
+
+  public WristIO getIO() {
+    return io;
+  }
 }

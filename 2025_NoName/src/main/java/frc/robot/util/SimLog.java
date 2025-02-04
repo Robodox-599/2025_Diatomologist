@@ -11,4 +11,3 @@ public class SimLog extends DogLog {
     log(key + "/Temp", 60);
   }
 }
-

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -11,8 +10,10 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.subsystems.drive.constants.RealConstants;
 
 // import static frc.robot.subsystems.drive.constants.RealConstants;
+// Relative + Offset = Absolute
 
 public class Module {
+  private Rotation2d turnRelativeOffset = null;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
   private ModuleIO io;
   private String name;
@@ -51,6 +52,8 @@ public class Module {
   }
 
   public void periodic() {
+    io.updateInputs();
+
     int sampleCount = io.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
@@ -62,9 +65,6 @@ public class Module {
     driveDisconnectedAlert.set(!io.driveConnected);
     turnDisconnectedAlert.set(!io.turnConnected);
     turnEncoderDisconnectedAlert.set(!io.encoderConnected);
-    DogLog.log(
-        "Drive/Module " + io.getModuleName() + "/DriveMotor/VelocityRotsPerSec",
-        getFFCharacterizationVelocity());
   }
 
   /** Runs the module closed loop with the specified setpoint state. Returns the optimized state. */
@@ -110,7 +110,6 @@ public class Module {
     // Apply Optimized State angle to Turn Setpoint
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Voltage Setpoint with FOC
-
     io.setDriveVoltage(
         state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
         focEnabled);

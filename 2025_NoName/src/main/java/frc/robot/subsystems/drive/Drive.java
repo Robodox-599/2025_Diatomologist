@@ -42,7 +42,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.constants.RealConstants;
-import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -53,7 +52,7 @@ public class Drive extends SubsystemBase {
   private final Module[] modules; // FL, FR, BL, BR
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
-
+  private double prevVeloVX = 0.0;
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -195,7 +194,7 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
-    // DogLog.log("Odometry/Robot", getPose());
+    DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
     DogLog.log("SwerveStates/Measured", getModuleStates());
   }
@@ -250,7 +249,7 @@ public class Drive extends SubsystemBase {
     DogLog.log(
         "Swerve/Target Chassis Speeds Field Relative",
         ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
-    DogLog.log("SwerveStates/SetpointsOptimized", setpointStates);
+    DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
     for (int i = 0; i < modules.length; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
@@ -426,11 +425,12 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds getVelocity() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
     var speeds =
-        ChassisSpeeds.fromRobotRelativeSpeeds(
-            kinematics.toChassisSpeeds(
-                Arrays.stream(modules).map((m) -> m.getState()).toArray(SwerveModuleState[]::new)),
-            getRotation());
+        ChassisSpeeds.fromRobotRelativeSpeeds(kinematics.toChassisSpeeds(states), getRotation());
     return new ChassisSpeeds(
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }

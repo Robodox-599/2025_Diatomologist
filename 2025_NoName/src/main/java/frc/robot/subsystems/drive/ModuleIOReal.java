@@ -13,8 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.subsystems.drive.constants.RealConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -110,23 +108,27 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     /* ************ DRIVE VOLTAGE-PID CONFIGS ************ */
-    // kv = (12.0 / motorFreeSpeed) * GearRatio, we need to review this.
-    driveConfig.Slot0.kV = 0.14015;
-    driveConfig.Slot0.kS = 0.5;
-    driveConfig.Slot0.kP = 8;
-    driveConfig.Slot0.kD = 0;
+    // Motor_RPS=
+    // motor_free_speed / 60
+    // Wheel_RPS=
+    // Motor_RPS / Gear_Ratio
+    // Wheel_circumference=
+    // pi * wheel_diameter_inmeters
+    // Wheel_speed=
+    // Wheel_RPS * Wheel_circumference
+    // kV =
+    // Applied Volts (likely 12) / Wheel_speed
+    driveConfig.Slot0.kV = 2.29463140693;
+    driveConfig.Slot0.kS = 0.209;
+    driveConfig.Slot0.kP = 5;
 
-    /* ************ TURN MOTION-MAGIC-VOLTAGE-PID CONFIGS ************ */
-
-    turnConfig.Slot0.kV = 0.0;
+    /* ************ TURN VOLTAGE-PID CONFIGS ************ */
     turnConfig.Slot0.kS = 0.24;
     turnConfig.Slot0.kP = 100;
-    turnConfig.Slot0.kD = 0;
-
     /* ************ MOTION MAGIC CONFIGS ************ */
 
-    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
-    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
+    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;
+    // turnConfig.MotionMagic.MotionMagicAcceleration = (5800 * 0.1) / TURN_GEAR_RATIO;
     // driveConfig.MotionMagic.MotionMagicCruiseVelocity = MAX_LINEAR_SPEED;
     // driveConfig.MotionMagic.MotionMagicAcceleration = MAX_LINEAR_ACCELERATION;
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
@@ -147,16 +149,19 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ CONVERTS FROM ENCODER POSITION TO METERS PER SECOND. ************ */
 
-    driveConfig.Feedback.SensorToMechanismRatio = RealConstants.DRIVE_GEAR_RATIO;
+    driveConfig.Feedback.SensorToMechanismRatio = RealConstants.DRIVE_ROTOR_TO_METERS;
 
     /*  ************ APPLY TURN CONFIG SENSOR FEEDBACK INFO ************ */
 
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.cancoderID();
-    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    turnConfig.Feedback.FeedbackSensorSource =
+        FeedbackSensorSourceValue
+            .FusedCANcoder; // change to FeedbackSensorSourceValue.FusedCANCoder;
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
+    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -215,12 +220,8 @@ public class ModuleIOReal extends ModuleIO {
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     super.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-
-    super.drivePositionMeters = drivePosition.getValue().in(Rotation) * WHEEL_CIRCUMFERENCE;
-
-    super.driveVelocityMetersPerSec =
-        driveVelocity.getValue().in(RotationsPerSecond) * WHEEL_CIRCUMFERENCE;
-
+    super.drivePositionMeters = drivePosition.getValueAsDouble();
+    super.driveVelocityMetersPerSec = driveVelocity.getValueAsDouble();
     super.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
     super.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -236,7 +237,7 @@ public class ModuleIOReal extends ModuleIO {
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     super.odometryDrivePositionsMeters =
         drivePositionQueue.stream()
-            .mapToDouble((Double value) -> (value * WHEEL_CIRCUMFERENCE))
+            .mapToDouble((Double value) -> Units.rotationsToRadians(value) / DRIVE_GEAR_RATIO)
             .toArray();
     super.odometryTurnPositions =
         turnPositionQueue.stream()
@@ -246,6 +247,12 @@ public class ModuleIOReal extends ModuleIO {
     MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DrivePositionMeters",
+        super.drivePositionMeters);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DriveVelocityMetersPerSec",
+        super.driveVelocityMetersPerSec);
 
     MotorLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnTalon);
     DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
@@ -254,13 +261,11 @@ public class ModuleIOReal extends ModuleIO {
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition",
         super.turnAbsolutePosition);
-    DogLog.log(
-        "Drive/Module " + constants.prefix() + "/DriveMotor/VelocityMetersPerSec",
-        super.driveVelocityMetersPerSec);
+
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
-        "Drive/Module" + constants.prefix() + "/Odometry/DrivePositionsMeters",
+        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsMeters",
         super.odometryDrivePositionsMeters);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",

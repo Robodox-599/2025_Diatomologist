@@ -22,7 +22,8 @@ public class RealConstants {
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
-  public static final double MAX_LINEAR_SPEED = Units.feetToMeters(16.5);
+
+  public static final double MAX_LINEAR_SPEED = 4.55;
   public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
   public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);
   public static final double DRIVE_BASE_RADIUS =
@@ -36,7 +37,7 @@ public class RealConstants {
   public static final double TURN_STATOR_CURRENT_LIMIT = 40.0;
   public static final double DRIVE_ROTOR_TO_METERS =
       (RealConstants.DRIVE_GEAR_RATIO) / (WHEEL_RADIUS * 2 * Math.PI);
-  public static final double WHEEL_CIRCUMFERENCE = 2 * Math.PI * WHEEL_RADIUS; // meters
+
   // Both sets of gains need to be tuned to our robot. make sure we tune this with torque control
   // foc for both modules.
   private static final Slot0Configs steerGains =

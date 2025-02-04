@@ -131,12 +131,13 @@ public class RobotContainer {
                 new ChassisSpeeds(
                     -joystickDeadbandApply(controller.getLeftY())
                         * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
+                        * 0.9,
                     -joystickDeadbandApply(controller.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
+                        * 0.9,
                     joystickDeadbandApply(controller.getRightX())
-                        * RealConstants.MAX_ANGULAR_SPEED)));
+                        * RealConstants.MAX_ANGULAR_SPEED
+                        * 0.9)));
     controller.y().onTrue(drive.zeroGyroCommand());
     controller.x().onTrue(drive.zeroPosition());
     drive.zeroPosition().runsWhenDisabled();

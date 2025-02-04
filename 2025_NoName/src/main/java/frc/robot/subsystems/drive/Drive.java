@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.constants.RealConstants.TRACK_WIDTH_X;
 import static frc.robot.subsystems.drive.constants.RealConstants.TRACK_WIDTH_Y;
 
@@ -36,6 +35,8 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +53,6 @@ public class Drive extends SubsystemBase {
   private final Module[] modules; // FL, FR, BL, BR
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
-  private double prevVeloVX = 0.0;
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -65,14 +65,14 @@ public class Drive extends SubsystemBase {
   private Pose2d pose = new Pose2d();
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, pose);
-
+  private final Field2d field = new Field2d();
   private final PIDController choreoPathXController;
   private final PIDController choreoPathYController;
   private final PIDController choreoPathAngleController;
   private Twist2d fieldVelocity = new Twist2d();
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
-
+    SmartDashboard.putData("Field", field);
     switch (Constants.currentMode) {
       case REAL:
         choreoPathXController = new PIDController(1, 0, 0);
@@ -228,6 +228,7 @@ public class Drive extends SubsystemBase {
       }
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      field.setRobotPose(getPose());
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/Velocity", getVelocity());
     }

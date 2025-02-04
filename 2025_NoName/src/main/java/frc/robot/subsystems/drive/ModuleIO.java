@@ -51,12 +51,7 @@ public abstract class ModuleIO {
   ;
 
   /** Use onboard PID to run the drive motor at the specified speed */
-  public void setDriveSetpoint(final double metersPerSecond) {
-    setDriveSetpoint(metersPerSecond, 0.0);
-  }
-
-  /** Use onboard PID to run the drive motor at the specified speed */
-  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {}
+  public void setDriveSetpoint(final double metersPerSecond) {}
   ;
 
   /** Run the turn motor at the specified voltage. */

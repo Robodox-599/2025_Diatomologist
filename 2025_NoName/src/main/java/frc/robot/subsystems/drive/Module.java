@@ -13,11 +13,9 @@ import frc.robot.subsystems.drive.constants.RealConstants;
 // Relative + Offset = Absolute
 
 public class Module {
-  private Rotation2d turnRelativeOffset = null;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
   private ModuleIO io;
   private String name;
-  private SwerveModuleState lastSetpoint = new SwerveModuleState();
   private Alert driveDisconnectedAlert;
   private Alert turnDisconnectedAlert;
   private Alert turnEncoderDisconnectedAlert;
@@ -75,9 +73,7 @@ public class Module {
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Setpoint with FOC
     io.setDriveSetpoint(
-        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
-        (state.speedMetersPerSecond - lastSetpoint.speedMetersPerSecond) / 0.020);
-    lastSetpoint = state;
+        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()));
   }
 
   /** Runs the module with the specified output while controlling to zero degrees. */

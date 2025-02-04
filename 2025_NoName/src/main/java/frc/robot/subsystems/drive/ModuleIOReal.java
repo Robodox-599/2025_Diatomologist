@@ -287,15 +287,14 @@ public class ModuleIOReal extends ModuleIO {
   }
 
   @Override
-  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {
+  public void setDriveSetpoint(final double metersPerSecond) {
     // Doesnt actually refresh drive velocity signal, but should be cached
-    if (metersPerSecond == 0
-        && metersPerSecondSquared == 0
-        && MathUtil.isNear(0.0, driveVelocity.getValueAsDouble(), 0.1)) {
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/TargetVelocity", metersPerSecond);
+    if (metersPerSecond == 0 && MathUtil.isNear(0.0, driveVelocity.getValueAsDouble(), 0.1)) {
       setDriveVoltage(0.0);
     } else {
-      driveTalon.setControl(
-          drivePID.withVelocity(metersPerSecond).withAcceleration(metersPerSecondSquared));
+      driveTalon.setControl(drivePID.withVelocity(metersPerSecond));
     }
   }
 

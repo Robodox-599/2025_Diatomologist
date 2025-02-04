@@ -129,7 +129,7 @@ public class ModuleIOSim extends ModuleIO {
   }
 
   @Override
-  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {
+  public void setDriveSetpoint(final double metersPerSecond) {
     driveClosedLoop = true;
     setDriveVoltage(
         driveController.calculate(

@@ -203,11 +203,12 @@ public class Drive extends SubsystemBase {
     // Update odometry // This updates based on sensor data and kinematics
     double[] sampleTimestamps =
         modules[0].getOdometryTimestamps(); // All signals are sampled together
-    for (int i = 0; i < sampleTimestamps.length; i++) {
+    int sampleCount = sampleTimestamps.length;
+    for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
-      SwerveModulePosition[] modulePositions = new SwerveModulePosition[modules.length];
-      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[modules.length];
-      for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
@@ -218,7 +219,7 @@ public class Drive extends SubsystemBase {
       }
 
       // Update gyro angle
-      if (gyroIO.connected) {
+      if (gyroIO.connected && (gyroIO.odometryYawPositions.length != 0)) {
         // Use the real gyro angle
         rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {

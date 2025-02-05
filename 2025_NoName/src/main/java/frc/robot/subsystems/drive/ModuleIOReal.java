@@ -120,11 +120,14 @@ public class ModuleIOReal extends ModuleIO {
     // Applied Volts (likely 12) / Wheel_speed
     driveConfig.Slot0.kV = 2.29463140693;
     driveConfig.Slot0.kS = 0.209;
-    driveConfig.Slot0.kP = 5;
+    driveConfig.Slot0.kP = 11;
+    driveConfig.Slot0.kD = 0;
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
     turnConfig.Slot0.kS = 0.24;
     turnConfig.Slot0.kP = 100;
+    turnConfig.Slot0.kD = 0;
+
     /* ************ MOTION MAGIC CONFIGS ************ */
 
     // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;

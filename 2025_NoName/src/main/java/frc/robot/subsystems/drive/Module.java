@@ -67,6 +67,7 @@ public class Module {
 
   /** Runs the module closed loop with the specified setpoint state. Returns the optimized state. */
   public void runSetpoint(SwerveModuleState state) {
+
     // Optimize state based on current angle
     state.optimize(getAngle());
     // Apply Optimized State angle to Turn Setpoint

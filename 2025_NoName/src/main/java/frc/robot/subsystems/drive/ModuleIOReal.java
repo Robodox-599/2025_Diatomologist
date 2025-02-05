@@ -100,11 +100,11 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ CURRENT LIMITS ************ */
 
-    driveConfig.CurrentLimits.SupplyCurrentLimit = 35.0;
+    driveConfig.CurrentLimits.SupplyCurrentLimit = 65;
+    driveConfig.CurrentLimits.StatorCurrentLimit = 70;
     driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    turnConfig.CurrentLimits.StatorCurrentLimit = TURN_STATOR_CURRENT_LIMIT;
+    turnConfig.CurrentLimits.StatorCurrentLimit = 40;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     /* ************ DRIVE VOLTAGE-PID CONFIGS ************ */

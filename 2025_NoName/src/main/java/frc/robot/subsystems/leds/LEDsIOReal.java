@@ -12,7 +12,7 @@ import dev.doglog.DogLog;
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
 public class LEDsIOReal extends LEDsIO {
-  private final CANdle candle;
+  public final CANdle candle;
   private int channel = 0;
   private LEDAnim state = LEDAnim.NoState;
 

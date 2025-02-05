@@ -1,4 +1,4 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.subsystems.endefector.endefectorwrist;
 
 public class WristConstants {
   // motor info
@@ -7,6 +7,7 @@ public class WristConstants {
   public static final double gearRatio = 1.0;
   public static final double wristMOI = 0.04;
   public static final double wristPositionTolerance = 0.3; // degrees
+  public static final double inchesPerRev = 10;
 
   // current limit stuff
   public static final boolean EnableCurrentLimit = true;
@@ -48,7 +49,7 @@ public class WristConstants {
   // wrist state stuff
   public static enum WristStates {
     STOW(1),
-    SCORE(2),
+    SCORING(2),
     OVERRIDE(3),
     GROUNDINTAKE(4),
     STATIONINTAKE(5),

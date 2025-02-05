@@ -1,10 +1,11 @@
-package frc.robot.subsystems.endefector.rollers;
+package frc.robot.subsystems.endefector.endefectorrollers;
 
 public class RollersConstants {
   public static enum EndefectorRollerStates {
-    STOP(0),
-    SCORE(1),
-    INTAKE(2);
+    STOP(1),
+    SCORE(2),
+    IDLE(3),
+    INTAKE(4);
 
     private final int index;
 
@@ -43,4 +44,10 @@ public class RollersConstants {
   public static final double nominalVoltage = 12.0;
 
   public static final double rollersScoreVelocity = 0.2;
+
+  public static final double[] velocitys = {
+    0.0, // stop
+    0.0, // score
+    0.0, // intake
+  };
 }

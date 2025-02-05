@@ -1,14 +1,14 @@
 package frc.robot.subsystems.algaegroundintake.intakeRollers;
 
 public class IntakeRollersConstants {
-  public static enum AlageRollerStates {
-    STOP(0),
-    INTAKE(1),
-    REVERSE(2);
+  public static enum AlgaeRollerStates {
+    STOW(1),
+    INTAKE(2),
+    REVERSE(3);
 
     private final int index;
 
-    AlageRollerStates(int index) {
+    AlgaeRollerStates(int index) {
       this.index = index;
     }
 
@@ -42,4 +42,10 @@ public class IntakeRollersConstants {
   public static final double simkV = 0.0;
 
   public static final double rollersReverseVelocity = 0.0;
+
+  public static final double[] velocitys = {
+    0.0, // stop
+    0.0, // score
+    0.0, // intake
+  };
 }

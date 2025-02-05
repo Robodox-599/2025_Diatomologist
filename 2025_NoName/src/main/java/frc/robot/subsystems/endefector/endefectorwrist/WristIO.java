@@ -1,6 +1,6 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.subsystems.endefector.endefectorwrist;
 
-import frc.robot.subsystems.endefector.wrist.WristConstants.WristStates;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.EndefectorUtil;
 
 public abstract class WristIO {

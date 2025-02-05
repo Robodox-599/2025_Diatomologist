@@ -1,7 +1,6 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.subsystems.endefector.endefectorwrist;
 
-import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
-import static frc.robot.util.WristUtil.*;
+import static frc.robot.subsystems.endefector.endefectorwrist.WristConstants.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -12,7 +11,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import frc.robot.subsystems.endefector.wrist.WristConstants.WristStates;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
+import frc.robot.util.EndefectorUtil;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
@@ -125,26 +125,27 @@ public class WristIOTalonFX extends WristIO {
 
   @Override
   public void setState(WristStates state) {
-    double position = MathUtil.clamp(stateToHeight(state), wristLowerLimit, wristUpperLimit);
+    double position =
+        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
 
     switch (state) {
       case STOW:
-        position = setpoints[0];
-        break;
-      case SCORING:
         position = setpoints[1];
         break;
-      case OVERRIDE:
+      case SCORING:
         position = setpoints[2];
         break;
-      case GROUNDINTAKE:
+      case OVERRIDE:
         position = setpoints[3];
+        break;
+      case GROUNDINTAKE:
+        position = setpoints[4];
         break;
       case STATIONINTAKE:
-        position = setpoints[3];
+        position = setpoints[5];
         break;
       case CLIMB:
-        position = setpoints[3];
+        position = setpoints[6];
         break;
       default:
         position = setpoints[0]; // STOW

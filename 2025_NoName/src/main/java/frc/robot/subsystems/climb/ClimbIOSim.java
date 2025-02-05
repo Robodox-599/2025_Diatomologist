@@ -72,6 +72,23 @@ public class ClimbIOSim extends ClimbIO {
             ClimbConstants.climbUpperLimit);
 
     climbSim.setInputVoltage(simPidController.calculate(position));
+
+    switch (state) {
+      case CLIMB:
+        position = ClimbConstants.heights[2];
+        // elevator.setLength(position);
+        System.out.println(state);
+        break;
+      case CLIMBREADY:
+        position = ClimbConstants.heights[1];
+        // elevator.setLength(position);
+        System.out.println(state);
+        break;
+      default:
+        position = ClimbConstants.heights[3]; // STOW
+        System.out.println(state);
+        break;
+    }
   }
 
   @Override

@@ -10,7 +10,7 @@ public abstract class LEDsIO {
 
   public void updateAnim(LEDAnim anim) {}
 
-  public LEDAnim getCurrentState() {
+  public LEDAnim getCurrentAnim() {
     return anim;
   }
 }

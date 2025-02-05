@@ -6,8 +6,8 @@ public abstract class IntakeRollersIO {
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double desiredVelocity = 0.0;
-  protected IntakeRollersConstants.AlageRollerStates currentState =
-      IntakeRollersConstants.AlageRollerStates.STOP;
+  protected IntakeRollersConstants.AlgaeRollerStates currentState =
+      IntakeRollersConstants.AlgaeRollerStates.STOW;
 
   public void updateInputs() {}
 
@@ -21,13 +21,11 @@ public abstract class IntakeRollersIO {
     setVoltage(0.0);
   }
 
-  public IntakeRollersConstants.AlageRollerStates getCurrentState() {
+  public IntakeRollersConstants.AlgaeRollerStates getCurrentState() {
     return currentState;
   }
 
-  public void setState(IntakeRollersConstants.AlageRollerStates state) {
-    currentState = state;
-  }
+  public void setState(IntakeRollersConstants.AlgaeRollerStates state) {}
 
   public double GetCurrentVolts() {
     return appliedVolts;

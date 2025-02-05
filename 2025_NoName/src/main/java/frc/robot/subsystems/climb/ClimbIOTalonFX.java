@@ -2,10 +2,13 @@ package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.util.ClimbUtil;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
@@ -16,8 +19,8 @@ public class ClimbIOTalonFX extends ClimbIO {
   private final DigitalInput limitSwitch;
   private ClimbConstants.ClimbStates currentState = ClimbConstants.ClimbStates.CLIMBREADY;
 
-  // private final MotionMagicVoltage motionMagicRequest;
-  // private int motionSlot;
+  private final MotionMagicVoltage motionMagicRequest;
+  private int motionSlot;
 
   public ClimbIOTalonFX() {
     leaderMotor = new TalonFX(ClimbConstants.leaderMotorID, ClimbConstants.leaderMotorCANbus);
@@ -27,7 +30,7 @@ public class ClimbIOTalonFX extends ClimbIO {
 
     followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 
-    // motionMagicRequest = new MotionMagicVoltage(0);
+    motionMagicRequest = new MotionMagicVoltage(0);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -89,18 +92,37 @@ public class ClimbIOTalonFX extends ClimbIO {
   @Override
   public void setState(ClimbConstants.ClimbStates state) {
     currentState = state;
-    // double position = MathUtil.clamp(ClimbUtil.stateToHeight(state),
-    // ClimbConstants.climbLowerLimit, ClimbConstants.climbUpperLimit);
+    double position =
+        MathUtil.clamp(
+            ClimbUtil.stateToHeight(state),
+            ClimbConstants.climbLowerLimit,
+            ClimbConstants.climbUpperLimit);
 
-    // if (position > getPosition()){
-    //     motionSlot = ClimbConstants.movingUpSlot;
-    // } else {
-    //     motionSlot = ClimbConstants.movingDownSlot;
-    // }
+    if (position > getPosition()) {
+      motionSlot = ClimbConstants.movingUpSlot;
+    } else {
+      motionSlot = ClimbConstants.movingDownSlot;
+    }
 
-    // motionMagicRequest.withSlot(motionSlot);
-    // motionMagicRequest.Position = position;
-    // leaderMotor.setControl(motionMagicRequest);
+    motionMagicRequest.withSlot(motionSlot);
+    motionMagicRequest.Position = position;
+    leaderMotor.setControl(motionMagicRequest);
+    switch (state) {
+      case CLIMB:
+        position = ClimbConstants.heights[2];
+        // elevator.setLength(position);
+        System.out.println(state);
+        break;
+      case CLIMBREADY:
+        position = ClimbConstants.heights[1];
+        // elevator.setLength(position);
+        System.out.println(state);
+        break;
+      default:
+        position = ClimbConstants.heights[3]; // STOW
+        System.out.println(state);
+        break;
+    }
   }
 
   @Override

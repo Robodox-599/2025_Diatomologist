@@ -54,7 +54,7 @@ public class IntakeRollers extends SubsystemBase {
     return io;
   }
 
-  public Command moveToState(IntakeRollersConstants.AlageRollerStates state) {
+  public Command moveToState(IntakeRollersConstants.AlgaeRollerStates state) {
     return Commands.runOnce(
             () -> {
               io.setState(state);

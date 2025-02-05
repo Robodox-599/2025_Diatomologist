@@ -1,6 +1,6 @@
 package frc.robot.util;
 
-import frc.robot.subsystems.endefector.wrist.WristConstants;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
 public class EndefectorUtil {
 

@@ -3,10 +3,12 @@ package frc.robot.subsystems.algaegroundintake.intakeWrist;
 import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.util.AlgaeGroundIntakeUtil;
 // import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 // import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -16,8 +18,9 @@ public class IntakeWristIOSim extends IntakeWristIO {
   private static final DCMotor WRIST_GEARBOX = DCMotor.getKrakenX60Foc(1);
   private final DCMotorSim wristSim;
 
-  private double passedInPositon;
+  private double passedInPosition;
   private double currentPosition;
+  private int wristSlot;
 
   private final PIDController wristPID =
       new PIDController(
@@ -43,7 +46,7 @@ public class IntakeWristIOSim extends IntakeWristIO {
 
     SimLog.log("WristSimMotor", wristSim);
 
-    DogLog.log("Wrist/TargetPosition", passedInPositon);
+    DogLog.log("Wrist/TargetPosition", passedInPosition);
     DogLog.log("Wrist/CurrentPosition", currentPosition);
     DogLog.log("Wrist/Position", super.position);
   }
@@ -66,5 +69,34 @@ public class IntakeWristIOSim extends IntakeWristIO {
   @Override
   public void stop() {
     wristSim.setAngularVelocity(0);
+  }
+
+  @Override
+  public void setState(AlgaeStates state) {
+    double position =
+        MathUtil.clamp(
+            AlgaeGroundIntakeUtil.stateToSetpoint(state),
+            IntakeWristConstants.intakeWristLowerLimit,
+            IntakeWristConstants.intakeWristUpperLimit);
+
+    switch (state) {
+      case STOW:
+        position = setpoints[2];
+        System.out.println(state);
+        break;
+      case DEPLOYED:
+        position = setpoints[0];
+        System.out.println(state);
+      default:
+        position = setpoints[1]; // STOW
+        System.out.println(state);
+        break;
+    }
+
+    if (passedInPosition > currentPosition) {
+      wristSlot = 0;
+    } else {
+      wristSlot = 1;
+    }
   }
 }

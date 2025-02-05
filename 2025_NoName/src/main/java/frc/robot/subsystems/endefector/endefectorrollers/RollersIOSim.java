@@ -1,6 +1,6 @@
-package frc.robot.subsystems.endefector.rollers;
+package frc.robot.subsystems.endefector.endefectorrollers;
 
-import static frc.robot.subsystems.endefector.rollers.RollersConstants.*;
+import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
@@ -8,8 +8,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.util.SimLog;
-
-// editing file
 
 public class RollersIOSim extends RollersIO {
   private final DCMotorSim rollersSim;
@@ -51,5 +49,24 @@ public class RollersIOSim extends RollersIO {
 
     SimLog.log("RollersSimMotor", rollersSim);
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+  }
+
+  @Override
+  public void setState(RollersConstants.EndefectorRollerStates state) {
+    super.currentState = state;
+    switch (state) {
+      case SCORE:
+        velocity = velocitys[1];
+        System.out.println(state);
+        break;
+      case INTAKE:
+        velocity = velocitys[2];
+        System.out.println(state);
+        break;
+      default:
+        velocity = velocitys[0];
+        System.out.println(state);
+        break;
+    }
   }
 }

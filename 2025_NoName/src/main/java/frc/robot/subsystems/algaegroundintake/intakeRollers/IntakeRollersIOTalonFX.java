@@ -8,6 +8,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import frc.robot.util.MotorLog;
 
+// folder algaegroundintake
+//
 public class IntakeRollersIOTalonFX extends IntakeRollersIO {
 
   private final TalonFX rollersMotor;
@@ -68,10 +70,10 @@ public class IntakeRollersIOTalonFX extends IntakeRollersIO {
   }
 
   @Override
-  public void setState(IntakeRollersConstants.AlageRollerStates state) {
+  public void setState(IntakeRollersConstants.AlgaeRollerStates state) {
     super.currentState = state;
     switch (state) {
-      case STOP:
+      case STOW:
         setVelocity(0);
         break;
       case REVERSE:

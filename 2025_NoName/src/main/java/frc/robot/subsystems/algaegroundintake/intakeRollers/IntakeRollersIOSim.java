@@ -52,4 +52,26 @@ public class IntakeRollersIOSim extends IntakeRollersIO {
     SimLog.log("intakeRollersSimMotor", intakeRollersSim);
     DogLog.log("intakeRollers/VelocitySetpoint", desiredVelocity);
   }
+
+  @Override
+  public void setState(IntakeRollersConstants.AlgaeRollerStates state) {
+    super.currentState = state;
+    switch (state) {
+      case STOW:
+        velocity = velocitys[0];
+        break;
+      case REVERSE:
+        velocity = velocitys[1];
+        System.out.println(state);
+        break;
+      case INTAKE:
+        velocity = velocitys[2];
+        System.out.println(state);
+        break;
+      default:
+        velocity = velocitys[3];
+        System.out.println(state);
+        break;
+    }
+  }
 }

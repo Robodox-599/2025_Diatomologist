@@ -23,15 +23,12 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
-import frc.robot.subsystems.endefector.rollers.Rollers;
-import frc.robot.subsystems.endefector.rollers.RollersConstants;
-import frc.robot.subsystems.endefector.rollers.RollersConstants.EndefectorRollerStates;
-import frc.robot.subsystems.endefector.rollers.RollersIOSim;
-import frc.robot.subsystems.endefector.rollers.RollersIOTalonFX;
-import frc.robot.subsystems.endefector.wrist.Wrist;
-import frc.robot.subsystems.endefector.wrist.WristConstants.WristStates;
-import frc.robot.subsystems.endefector.wrist.WristIOSim;
-import frc.robot.subsystems.endefector.wrist.WristIOTalonFX;
+import frc.robot.subsystems.endefector.*;
+import frc.robot.subsystems.endefector.endefectorrollers.*;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 
@@ -80,16 +77,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // driver.
+    // driver do stuff here.
 
   }
 
   public Command stowAll() {
     return Commands.parallel(
         elevator.moveToState(ElevatorStates.STOW),
-        endefectorWrist.moveToState(WristStates.STOW),
+        endefectorWrist.moveToState(WristConstants.WristStates.STOW),
         algaeWrist.moveToState(AlgaeStates.STOW),
-        climb.moveToState(ClimbStates.STOW));
+        climb.moveToState(ClimbStates.STOW),
+        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.STOW),
+        endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
   }
 
   public Command climbPrep() {
@@ -106,26 +105,26 @@ public class RobotContainer {
 
   public Command score() {
     return Commands.sequence(
-        endefectorWrist.moveToState(WristStates.SCORE),
-        endefectorRollers.moveToState(EndefectorRollerStates.SCORE));
+        endefectorWrist.moveToState(WristConstants.WristStates.SCORING),
+        endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
   }
 
   public Command stationIntake() {
     return Commands.sequence(
-        endefectorWrist.moveToState(WristStates.STATIONINTAKE),
+        endefectorWrist.moveToState(WristConstants.WristStates.STATIONINTAKE),
         endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
   }
 
   public Command groundIntakeDeploy() {
     return Commands.sequence(
         algaeWrist.moveToState(AlgaeStates.DEPLOYED),
-        algaeRollers.moveToState(IntakeRollersConstants.AlageRollerStates.INTAKE));
+        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.INTAKE));
   }
 
   public Command groundIntakeStow() {
     return Commands.sequence(
         algaeWrist.moveToState(AlgaeStates.STOW),
-        algaeRollers.moveToState(IntakeRollersConstants.AlageRollerStates.STOP));
+        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.STOW));
   }
 
   public Command rumbleControllers() {

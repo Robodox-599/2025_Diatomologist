@@ -16,8 +16,8 @@ import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWrist;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.endefector.rollers.Rollers;
-import frc.robot.subsystems.endefector.wrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorwrist.*;
 import frc.robot.subsystems.leds.LEDs;
 
 public class SubsystemVisualizer extends SubsystemBase {
@@ -103,7 +103,19 @@ public class SubsystemVisualizer extends SubsystemBase {
       case L4:
         elevatorVis.setLength(elevator.getIO().getPositionInches());
         break;
-      default:
+      case INTAKE:
+        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        break;
+      case GROUNDINTAKE:
+        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        break;
+      case ALGAE_L2:
+        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        break;
+      case ALGAE_L3:
+        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        break;
+      default: // stow
         elevatorVis.setLength(elevator.getIO().getPositionInches());
         break;
     }
@@ -115,11 +127,7 @@ public class SubsystemVisualizer extends SubsystemBase {
         algaeGroundIntakeWristVis.setAngle(algaeWrist.getIO().getCurrentPosition());
         algaeGroundIntakeWristVis.setColor(new Color8Bit(Color.kGreen));
         break;
-      case NOTDEPLOYED:
-        algaeGroundIntakeWristVis.setAngle(algaeWrist.getIO().getCurrentPosition());
-        algaeGroundIntakeWristVis.setColor(new Color8Bit(Color.kRed));
-        break;
-      default:
+      default: // stow
         algaeGroundIntakeWristVis.setAngle(algaeWrist.getIO().getCurrentPosition());
         algaeGroundIntakeWristVis.setColor(new Color8Bit(Color.kBlue));
         break;
@@ -128,23 +136,15 @@ public class SubsystemVisualizer extends SubsystemBase {
 
   public void updateIntakeRollers() {
     switch (algaeRollers.getIO().getCurrentState()) {
-      case DEPLOYED:
+      case INTAKE:
         algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
         algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kGreen));
         break;
-      case NOTDEPLOYED:
-        algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
-        algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kRed));
-        break;
-      case REVERSED:
+      case REVERSE:
         algaeGroundIntakeRollersVis.setAngle((algaeRollers.getIO().GetCurrentVolts()) * -1);
         algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kPurple));
         break;
-      case IDLE:
-        algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
-        algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kBlue));
-        break;
-      default:
+      default: // stow
         algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
         algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kYellow));
         break;
@@ -174,10 +174,6 @@ public class SubsystemVisualizer extends SubsystemBase {
         endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kRed));
         break;
-      case OVERRIDE:
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
-        endefectorWristVis.setColor(new Color8Bit(Color.kGreen));
-        break;
       case GROUNDINTAKE:
         endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kRed));
@@ -199,23 +195,19 @@ public class SubsystemVisualizer extends SubsystemBase {
 
   public void updateEndefectorRollers() {
     switch (endefectorRollers.getIO().getCurrentState()) {
-      case DEPLOYED:
+      case STOP:
         endefectorRollersVis.setAngle(endefectorRollers.getIO().GetCurrentVolts());
         endefectorRollersVis.setColor(new Color8Bit(Color.kGreen));
         break;
-      case NOTDEPLOYED:
+      case SCORE:
         endefectorRollersVis.setAngle(endefectorRollers.getIO().GetCurrentVolts());
         endefectorRollersVis.setColor(new Color8Bit(Color.kRed));
         break;
-      case REVERSED:
+      case INTAKE:
         endefectorRollersVis.setAngle((endefectorRollers.getIO().GetCurrentVolts()) * -1);
         endefectorRollersVis.setColor(new Color8Bit(Color.kPurple));
         break;
-      case IDLE:
-        endefectorRollersVis.setAngle(endefectorRollers.getIO().GetCurrentVolts());
-        endefectorRollersVis.setColor(new Color8Bit(Color.kBlue));
-        break;
-      default:
+      default: // idle
         endefectorRollersVis.setAngle(endefectorRollers.getIO().GetCurrentVolts());
         endefectorRollersVis.setColor(new Color8Bit(Color.kYellow));
         break;

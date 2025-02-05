@@ -1,12 +1,14 @@
-package frc.robot.subsystems.endefector.wrist;
+package frc.robot.subsystems.endefector.endefectorwrist;
 
-import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
+import static frc.robot.subsystems.endefector.endefectorwrist.WristConstants.*;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.util.EndefectorUtil;
 import frc.robot.util.SimLog;
 
 public class WristIOSim extends WristIO {
@@ -47,6 +49,47 @@ public class WristIOSim extends WristIO {
   @Override
   public void goToPose(double position) {
     wristSim.setInputVoltage(wristPID.calculate(position));
+  }
+
+  @Override
+  public void setState(WristStates state) {
+    position =
+        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
+    System.out.println(super.state);
+    wristSim.setInputVoltage(wristPID.calculate(position));
+
+    switch (state) {
+      case STOW:
+        position = setpoints[1];
+        System.out.println(state);
+
+        break;
+      case SCORING:
+        position = setpoints[2];
+        System.out.println(state);
+
+        break;
+      case OVERRIDE:
+        position = setpoints[3];
+        System.out.println(state);
+
+        break;
+      case GROUNDINTAKE:
+        position = setpoints[4];
+        System.out.println(state);
+
+        break;
+      case STATIONINTAKE:
+        position = setpoints[5];
+        System.out.println(state);
+
+        break;
+      case CLIMB:
+        position = setpoints[6];
+        System.out.println(state);
+
+        break;
+    }
   }
 
   @Override

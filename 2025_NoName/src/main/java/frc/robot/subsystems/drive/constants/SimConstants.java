@@ -4,7 +4,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class SimConstants {
-  public static final double drive_kp = 3.7;
+  public static final double drive_kp = 2.4;
   public static final double drive_kd = 0;
   public static final double drive_ks = 0.001;
   public static final double drive_kv_rot = 0.91035;

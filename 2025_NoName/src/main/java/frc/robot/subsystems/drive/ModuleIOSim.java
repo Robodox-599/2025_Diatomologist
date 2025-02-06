@@ -51,7 +51,7 @@ public class ModuleIOSim extends ModuleIO {
                 RealConstants.TURN_GEAR_RATIO),
             SimConstants.turn_gearbox);
 
-    turnController.enableContinuousInput(-Math.PI, Math.PI);
+    turnController.enableContinuousInput(-0.5, 0.5);
     // turnController.setTolerance(0.05);
     // driveController.setTolerance(0.05);
     // DriverStation.silenceJoystickConnectionWarning(true);

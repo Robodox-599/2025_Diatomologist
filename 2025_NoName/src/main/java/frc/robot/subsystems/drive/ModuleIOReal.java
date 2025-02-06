@@ -117,10 +117,10 @@ public class ModuleIOReal extends ModuleIO {
     // Wheel_speed=
     // Wheel_RPS * Wheel_circumference
     // kV =
-    // Applied Volts (likely 12) / Wheel_speed
-    driveConfig.Slot0.kV = 2.29463140693;
+    // Applied Volts (lik[\]ely 12) / Wheel_speed
+    driveConfig.Slot0.kV = 2.904069;
     driveConfig.Slot0.kS = 0.209;
-    driveConfig.Slot0.kP = 11;
+    driveConfig.Slot0.kP = 7.5;
     driveConfig.Slot0.kD = 0;
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */

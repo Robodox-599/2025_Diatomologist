@@ -80,9 +80,9 @@ public class Drive extends SubsystemBase {
         choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       case SIM:
-        choreoPathXController = new PIDController(9, 0, 0);
-        choreoPathYController = new PIDController(7, 0, 0);
-        choreoPathAngleController = new PIDController(7, 0, 0);
+        choreoPathXController = new PIDController(1, 0, 0);
+        choreoPathYController = new PIDController(1, 0, 0);
+        choreoPathAngleController = new PIDController(1, 0, 0);
         break;
       default:
         choreoPathXController = new PIDController(1, 0, 0);
@@ -217,9 +217,8 @@ public class Drive extends SubsystemBase {
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
-
       // Update gyro angle
-      if (gyroIO.connected && (gyroIO.odometryYawPositions.length != 0)) {
+      if (gyroIO.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {

@@ -7,11 +7,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import frc.robot.util.MotorLog;
+import com.ctre.phoenix6.hardware.CANrange;
 
 public class RollersIOTalonFX extends RollersIO {
 
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
+  private  CANrange CANrange;
 
   private double desiredVelocity;
 
@@ -85,4 +87,16 @@ public class RollersIOTalonFX extends RollersIO {
         break;
     }
   }
+
+  @Override
+  public boolean rangeDeviceDetected() {
+  double rangeSignal = 0.0;
+  rangeSignal = CANrange.getDistance().getValueAsDouble();
+
+  if (rangeSignal >= rangeTolerance) {
+      return true;
+  } else {
+      return false;
+  }
+ }
 }

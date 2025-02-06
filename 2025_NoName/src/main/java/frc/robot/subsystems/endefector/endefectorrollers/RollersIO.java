@@ -29,4 +29,8 @@ public abstract class RollersIO {
   public RollersConstants.EndefectorRollerStates getCurrentState() {
     return currentState;
   }
+
+  public boolean rangeDeviceDetected(){
+    return false;
+  }
 }

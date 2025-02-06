@@ -45,6 +45,12 @@ public class RollersConstants {
 
   public static final double rollersScoreVelocity = 0.2;
 
+  public static final double centerOffset = 0.0;
+
+  public static final int CANrangeId = 0;
+  public static final String CANrangeCANbus = "rio";
+  public static final double rangeTolerance = 0.0;
+
   public static final double[] velocitys = {
     0.0, // stop
     0.0, // score

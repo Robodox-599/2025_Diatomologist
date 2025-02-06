@@ -11,20 +11,23 @@ import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollers;
 import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersConstants;
 import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersIOSim;
 import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersIOTalonFX;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWrist;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.AlgaeStates;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristIOSim;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristIOTalonFX;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWrist;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.AlgaeStates;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristIOSim;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristIOTalonFX;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
-import frc.robot.subsystems.endefector.*;
-import frc.robot.subsystems.endefector.endefectorrollers.*;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
@@ -70,15 +73,22 @@ public class RobotContainer {
     }
     subsystemVisualizer =
         new SubsystemVisualizer(
-            elevator, climb, LEDs, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers);
+            elevator, climb, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers);
     DogLog.setOptions(
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
     configureBindings();
   }
 
   private void configureBindings() {
-    // driver do stuff here.
+    driver.a().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L1));
 
+    driver.b().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L2));
+
+    driver.y().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
+
+    driver
+        .x()
+        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
   }
 
   public Command stowAll() {

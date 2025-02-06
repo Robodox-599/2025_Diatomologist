@@ -20,8 +20,8 @@ public class IntakeRollersConstants {
   public static final int rollersMotorID = 1;
   public static final String rollersMotorCANBus = "rio";
 
-  public static final double gearRatio = 0;
-  public static final double rollersMOI = 0;
+  public static final double gearRatio = 0.01;
+  public static final double rollersMOI = 0.01;
 
   public static final boolean EnableCurrentLimit = true;
   public static final int ContinousCurrentLimit = 50;

@@ -12,20 +12,18 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollers;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWrist;
+import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWrist;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.*;
-import frc.robot.subsystems.leds.LEDs;
 
 public class SubsystemVisualizer extends SubsystemBase {
 
   private Mechanism2d mech = new Mechanism2d(60, 60);
   private MechanismRoot2d root = mech.getRoot("Root", 30, 5);
 
-  private LEDs LEDs;
   private IntakeRollers algaeRollers;
   private IntakeWrist algaeWrist;
   private Elevator elevator;
@@ -65,16 +63,16 @@ public class SubsystemVisualizer extends SubsystemBase {
   public SubsystemVisualizer(
       Elevator elevator,
       Climb climb,
-      LEDs LEDs,
       IntakeWrist algaeWrist,
       IntakeRollers algaeRollers,
       Wrist endWrist,
       Rollers endRollers) {
     this.elevator = elevator;
     this.climb = climb;
-    this.LEDs = LEDs;
     this.algaeWrist = algaeWrist;
     this.algaeRollers = algaeRollers;
+    this.endefectorWrist = endWrist;
+    this.endefectorRollers = endRollers;
   }
 
   @Override

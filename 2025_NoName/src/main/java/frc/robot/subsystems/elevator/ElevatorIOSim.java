@@ -60,7 +60,6 @@ public class ElevatorIOSim extends ElevatorIO {
     super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
     super.currentAmps = elevatorSim.getCurrentDrawAmps();
     super.targetPositionInches = targetPositionInches;
-    // super.positionRotations = elevatorSim.getAngularPositionRotations(); // might not need
     super.tempCelsius = 25.0; // setting
 
     /* Checks if elevator is at setpoint */
@@ -90,30 +89,32 @@ public class ElevatorIOSim extends ElevatorIO {
 
     switch (state) {
       case L1:
-        position = ElevatorConstants.heights[0];
+        targetPositionInches = ElevatorConstants.heights[0];
         // elevator.setLength(position);
         System.out.println(state);
         break;
       case L2:
-        position = ElevatorConstants.heights[1];
+        targetPositionInches = ElevatorConstants.heights[1];
         // elevator.setLength(position);
         System.out.println(state);
         break;
       case L3:
-        position = ElevatorConstants.heights[2];
+        targetPositionInches = ElevatorConstants.heights[2];
         // elevator.setLength(position);
         System.out.println(state);
         break;
       case L4:
-        position = ElevatorConstants.heights[3];
+        targetPositionInches = ElevatorConstants.heights[3];
         // elevator.setLength(position);
         System.out.println(state);
         break;
       case STOW:
-        position = ElevatorConstants.heights[4]; // STOW
+        targetPositionInches = ElevatorConstants.heights[4]; // STOW
         System.out.println(state);
         break;
     }
+
+    position = targetPositionInches;
   }
 
   @Override

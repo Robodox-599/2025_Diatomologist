@@ -1,6 +1,4 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
-
-import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -8,7 +6,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.AlgaeStates;
 import frc.robot.util.AlgaeGroundIntakeUtil;
 import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
@@ -25,7 +22,8 @@ public class IntakeWristIOTalonFX extends IntakeWristIO {
 
   public IntakeWristIOTalonFX() {
 
-    wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
+    wristMotor =
+        new TalonFX(IntakeWristConstants.wristMotorID, IntakeWristConstants.wristMotorCANBus);
     wristConfig = new TalonFXConfiguration();
     m_request = new MotionMagicVoltage(0);
 
@@ -49,7 +47,7 @@ public class IntakeWristIOTalonFX extends IntakeWristIO {
     wristConfig.CurrentLimits.SupplyCurrentLowerLimit = IntakeWristConstants.PeakCurrentDuration;
     wristConfig.CurrentLimits.SupplyCurrentLowerTime = IntakeWristConstants.PeakCurrentDuration;
 
-    wristConfig.Feedback.RotorToSensorRatio = gearRatio;
+    wristConfig.Feedback.RotorToSensorRatio = IntakeWristConstants.gearRatio;
 
     wristMotor.optimizeBusUtilization();
     wristMotor.getConfigurator().apply(wristConfig);
@@ -109,7 +107,7 @@ public class IntakeWristIOTalonFX extends IntakeWristIO {
   }
 
   @Override
-  public void setState(AlgaeStates state) {
+  public void setState(IntakeWristConstants.AlgaeStates state) {
     double position =
         MathUtil.clamp(
             AlgaeGroundIntakeUtil.stateToSetpoint(state),
@@ -118,12 +116,12 @@ public class IntakeWristIOTalonFX extends IntakeWristIO {
 
     switch (state) {
       case STOW:
-        position = setpoints[2];
+        position = IntakeWristConstants.setpoints[2];
         break;
       case DEPLOYED:
-        position = setpoints[0];
+        position = IntakeWristConstants.setpoints[0];
       default:
-        position = setpoints[1]; // STOW
+        position = IntakeWristConstants.setpoints[1]; // STOW
         break;
     }
 

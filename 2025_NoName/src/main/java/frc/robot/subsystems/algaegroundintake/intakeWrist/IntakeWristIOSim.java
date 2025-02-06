@@ -1,6 +1,6 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
-import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
+import static frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.*;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -72,7 +72,7 @@ public class IntakeWristIOSim extends IntakeWristIO {
   }
 
   @Override
-  public void setState(AlgaeStates state) {
+  public void setState(IntakeWristConstants.AlgaeStates state) {
     double position =
         MathUtil.clamp(
             AlgaeGroundIntakeUtil.stateToSetpoint(state),
@@ -81,15 +81,12 @@ public class IntakeWristIOSim extends IntakeWristIO {
 
     switch (state) {
       case STOW:
-        position = setpoints[2];
-        System.out.println(state);
+        position = IntakeWristConstants.setpoints[2];
         break;
       case DEPLOYED:
-        position = setpoints[0];
-        System.out.println(state);
+        position = IntakeWristConstants.setpoints[0];
       default:
-        position = setpoints[1]; // STOW
-        System.out.println(state);
+        position = IntakeWristConstants.setpoints[1]; // STOW
         break;
     }
 

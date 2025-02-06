@@ -1,6 +1,5 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
-import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.AlgaeStates;
 import frc.robot.util.AlgaeGroundIntakeUtil;
 
 public abstract class IntakeWristIO {
@@ -28,7 +27,7 @@ public abstract class IntakeWristIO {
 
   public void setBrake(boolean brake) {}
 
-  public void setState(AlgaeStates state) {}
+  public void setState(IntakeWristConstants.AlgaeStates state) {}
 
   public IntakeWristConstants.AlgaeStates getCurrentState() {
     return currentState;

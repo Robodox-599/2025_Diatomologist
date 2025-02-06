@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algaegroundintake.intakeWrist;
+package frc.robot.subsystems.algaegroundintake.intakewrist;
 
 import edu.wpi.first.math.util.Units;
 

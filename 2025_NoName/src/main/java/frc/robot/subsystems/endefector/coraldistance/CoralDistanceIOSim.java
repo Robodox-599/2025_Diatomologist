@@ -1,5 +1,3 @@
-package frc.robot.subsystems.endefector.coraldistance;
+// package frc.robot.subsystems.endefector.coraldistance;
 
-public class CoralDistanceIOSim {
-    
-}
+// public class CoralDistanceIOSim {}

@@ -70,9 +70,9 @@ public final class ElevatorConstants {
   public static final double kS = 0.0;
 
   // Add these for better PID tuning
-  public static final double simkP = 0.8;
-  public static final double simkI = 0.001;
-  public static final double simkD = 0.05;
+  public static final double simkP = 0.7;
+  public static final double simkI = 0.0;
+  public static final double simkD = 0.0;
   public static final double simkF = 0.0;
 
   public static final double supplyCurrentLimitAmps = 0.1;

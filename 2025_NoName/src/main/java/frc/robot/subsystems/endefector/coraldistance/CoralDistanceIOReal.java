@@ -31,7 +31,7 @@ public class CoralDistanceIOReal extends CoralDistanceIO {
 
     @Override
     public double getDistance(){
-        return CANrange.getDistance().getValueAsDouble();
+        return CANrange.getDistance().getValueAsDouble()/39.3701;
     }
 
     @Override
@@ -40,6 +40,7 @@ public class CoralDistanceIOReal extends CoralDistanceIO {
         double needsToMove = 0.0;
 
         if(coralDistance >= coralLowerLimit && coralDistance <= coralUpperLimit) {
+            
             needsToMove = 0;
         } else {
             if(coralDistance < coralLowerLimit){
@@ -51,4 +52,16 @@ public class CoralDistanceIOReal extends CoralDistanceIO {
         }
         return needsToMove;
     }
+
+    @Override
+    public boolean inPosition() {
+        double coralDistance = CANrange.getDistance().getValueAsDouble()/39.3701;
+        boolean inPosition = false;
+        if(coralDistance >= coralLowerLimit && coralDistance <= coralUpperLimit) {
+            inPosition = true;
+        } else {
+            inPosition = false;
+        }
+        return inPosition;
+ }
 }

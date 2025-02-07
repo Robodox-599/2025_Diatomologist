@@ -12,4 +12,8 @@ public abstract class CoralDistanceIO {
     public double distancetoMove() {
         return 0.0;
     }
+
+    public boolean inPosition(){
+        return false;
+    }
 }

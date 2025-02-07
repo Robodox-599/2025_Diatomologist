@@ -2,6 +2,8 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.FieldConstants;
+
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -25,7 +27,7 @@ public class VisionIOSim extends VisionIOReal {
     // Initialize visionSim if still Null
     if (visionSim == null) {
       visionSim = new VisionSystemSim("main");
-      visionSim.addAprilTags(VisionConstants.aprilTagLayout);
+      visionSim.addAprilTags(FieldConstants.AprilTags.aprilTagFieldLayout);
     }
     // Set Camera Properties to Simulate Real Cameras
     var cameraProp = new SimCameraProperties();

@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class VisionIO {
@@ -31,6 +34,8 @@ public abstract class VisionIO {
   /** Stores the latest observed angles of a target as a pair of 2D rotations. */
   protected ObservedTargetRotations latestTargetAngle =
       new ObservedTargetRotations(new Rotation2d(), new Rotation2d());
+
+  protected Optional<PoseObservation> previousUpdate = Optional.empty();
 
   /**
    * An array containing pose observations made by the camera. Each observation includes metadata
@@ -69,14 +74,14 @@ public abstract class VisionIO {
       double timestamp,
       Pose3d observedPose,
       double ambiguity,
-      int tagCount,
+      List<Integer> tagsList,
       double averageTagDistance) {
     public double getAverageTagDistance() {
       return averageTagDistance;
     }
 
     public int getTagCount() {
-      return tagCount;
+      return tagsList.size();
     }
 
     public double getAmbiguity() {
@@ -91,8 +96,6 @@ public abstract class VisionIO {
       return timestamp;
     }
   }
-
-  public void givePose(Supplier<Pose2d> poseSupplier) {}
 
   /**
    * @return Name of camera instance applied to the camera (grabbed from VisionConsants)

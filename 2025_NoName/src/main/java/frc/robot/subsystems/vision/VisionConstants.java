@@ -30,10 +30,13 @@ public record VisionConstants(
    * The maximum allowed Z-axis error in a pose observation (in meters). Observations greater than
    * this error will be rejected.
    */
-  public double maxZError() {
-    return 0.75;
+  public double getMaxZError() {
+    return 0.2;
   }
 
+  public double getMaxAngleError() {
+    return 0.08726646259971647; // 5 degrees in radians, used for filtering out bad observations
+  }
   /**
    * The baseline standard deviation for linear measurements at 1 meter distance and 1 detected tag.
    * This value is adjusted dynamically (based on actual distance and the number of detected tags),
@@ -52,6 +55,6 @@ public record VisionConstants(
     return 0.06;
   }
 
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+
 }

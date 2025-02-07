@@ -6,11 +6,14 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.FieldConstants;
+import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,8 +51,8 @@ public class Vision extends SubsystemBase {
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
     List<Pose3d> allRobotPoses = new LinkedList<>();
-    List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
-    List<Pose3d> allRobotPosesRejected = new LinkedList<>();
+    List<Pose2d> allRobotPosesAccepted = new LinkedList<>();
+    List<Pose2d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
@@ -64,7 +67,7 @@ public class Vision extends SubsystemBase {
 
       // Add tag poses
       for (int tagId : io[cameraIndex].tagIds) {
-        var tagPose = VisionConstants.aprilTagLayout.getTagPose(tagId);
+        var tagPose = FieldConstants.AprilTags.aprilTagFieldLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
         }
@@ -73,7 +76,10 @@ public class Vision extends SubsystemBase {
       // Loop over pose observations
       for (var observation : io[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        boolean rejectPose = checkPose(observation, cameraIndex);
+        PoseObservation[] poseObservationWithPreviousUpdate = new PoseObservation[2];
+        poseObservationWithPreviousUpdate[0] = observation;
+        poseObservationWithPreviousUpdate[1] = io[cameraIndex].previousUpdate.orElse(null);
+        boolean rejectPose = checkPose(poseObservationWithPreviousUpdate, cameraIndex);
         // Add pose to log
         robotPoses.add(observation.observedPose());
         if (rejectPose) {
@@ -85,7 +91,7 @@ public class Vision extends SubsystemBase {
 
         // Calculate standard deviations for selected pose
         double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+            Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
         double linearStdDev =
             io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
         // double angularStdDev =
@@ -95,7 +101,7 @@ public class Vision extends SubsystemBase {
         // angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
 
         consumer.accept(
-            observation.getObservedPose().toPose2d(),
+            observation.getObservedPose(),
             observation.timestamp(),
             VecBuilder.fill(linearStdDev, linearStdDev, 1000000000));
       }
@@ -139,25 +145,40 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
-  private boolean checkPose(PoseObservation observation, int cameraIndex) {
+  
+  private boolean checkPose(PoseObservation[] observations, int cameraIndex) {
+    PoseObservation latestObservation =  observations[0];
+    PoseObservation previousPoseObservation = observations[1];
+    Pose2d pose =  latestObservation.getObservedPose();
+    Pose2d previousPose = previousPoseObservation.getObservedPose();
+    double time = latestObservation.getTimestamp() - previousPoseObservation.getTimestamp();
+    Translation2d simplePose = pose.getTranslation();
+    boolean outOfBounds =
+        simplePose.getX() < 0.0
+          || simplePose.getX() > FieldConstants.fieldLength
+          || simplePose.getY() < 0.0
+          || simplePose.getY() > FieldConstants.fieldWidth
+          || Double.isNaN(simplePose.getX())
+          || Double.isNaN(simplePose.getY());
+    boolean extremeJitter =
+        pose.getTranslation().getDistance(previousPose.getTranslation())
+          > time * RealConstants.MAX_LINEAR_SPEED;
+    boolean infeasibleZValue = Math.abs(pose.getTranslation().getZ()) > io[cameraIndex].getVisionConstants().getMaxZError();
+    boolean infeasiblePitchValue = pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError();
+    boolean infeasibleRollValue = pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError();
+    boolean outOfRange = latestObservation.getAverageTagDistance() > 5.5;
+    boolean noTags = latestObservation.tagsList().size() < 0;
+    boolean sketchyTags = latestObservation.tagsList().stream().anyMatch(sketchyTagsList::contains);
+
     boolean rejectPose =
-        observation.tagCount() == 0 // Must have at least one tag
-            || (observation.tagCount() == 1
-                && observation.ambiguity()
-                    > io[cameraIndex]
-                        .getVisionConstants()
-                        .maxAmbiguity()) // Cannot be high ambiguity
-            || Math.abs(observation.observedPose().getZ())
-                > io[cameraIndex]
-                    .getVisionConstants()
-                    .maxZError() // Must have realistic Z coordinate
-            // Must be within the field boundaries
-            || observation.observedPose().getX() < 0.0
-            || observation.observedPose().getX() > VisionConstants.aprilTagLayout.getFieldLength()
-            || observation.observedPose().getY() < 0.0
-            || observation.observedPose().getY() > VisionConstants.aprilTagLayout.getFieldWidth()
-            || observation == null
-            || !io[cameraIndex].hasTargets;
+      outOfBounds
+        || extremeJitter
+        || infeasibleZValue
+        || infeasiblePitchValue
+        || infeasibleRollValue
+        || outOfRange
+        || noTags
+        || sketchyTags;
     return rejectPose;
   }
 }

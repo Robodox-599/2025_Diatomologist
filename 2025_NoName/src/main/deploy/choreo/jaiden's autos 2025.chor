@@ -4,25 +4,18 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
-   "xOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.2365375 m",
-     "val":0.2365375
-    }
-   },
-   "straightOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.473075 m",
-     "val":0.473075
-    }
-   },
    "botRadius":{
     "dimension":"Length",
     "var":{
      "exp":"0.4318 m",
      "val":0.4318
+    }
+   },
+   "xOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.2365375 m",
+     "val":0.2365375
     }
    },
    "fieldLength":{
@@ -32,18 +25,25 @@
      "val":17.528
     }
    },
-   "fieldWidth":{
-    "dimension":"Length",
-    "var":{
-     "exp":"8.051 m",
-     "val":8.051
-    }
-   },
    "yOffset":{
     "dimension":"Length",
     "var":{
      "exp":"0.40969496789 m",
      "val":0.40969496789
+    }
+   },
+   "straightOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.473075 m",
+     "val":0.473075
+    }
+   },
+   "fieldWidth":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.051 m",
+     "val":8.051
     }
    }
   },
@@ -71,8 +71,8 @@
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"75 lbs",
+   "val":34.01942775
   },
   "inertia":{
    "exp":"6 kg m ^ 2",

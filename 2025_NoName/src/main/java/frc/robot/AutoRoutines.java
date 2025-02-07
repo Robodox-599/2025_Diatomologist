@@ -12,6 +12,18 @@ public class AutoRoutines {
     this.autoFactory = autoFactory;
   }
 
+  public AutoRoutine LTestAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("LTestAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory LLLLL = routine.trajectory("LLLLL");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(LLLLL.resetOdometry(), LLLLL.cmd()));
+
+    return routine;
+  }
+
   public AutoRoutine rightAutoRoutine() {
     AutoRoutine routine = autoFactory.newRoutine("rightAuto");
 

@@ -103,6 +103,7 @@ public class RobotContainer {
     // Logging starting here
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+    autoChooser.addRoutine("LTestAutoRoutine", autoRoutines::LTestAutoRoutine);
 
     // DataLogManager.start();
     // DriverStation.startDataLog(DataLogManager.getLog());
@@ -125,7 +126,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
+        drive.runVoltageTeleopFieldRelative(
             () ->
                 new ChassisSpeeds(
                     -joystickDeadbandApply(controller.getLeftY())

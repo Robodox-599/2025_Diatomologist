@@ -30,7 +30,7 @@ public abstract class RollersIO {
     return currentState;
   }
 
-  public boolean rangeDeviceDetected(){
+  public boolean rangeDeviceDetected() {
     return false;
   }
 }

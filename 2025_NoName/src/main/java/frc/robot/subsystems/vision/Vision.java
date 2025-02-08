@@ -23,6 +23,10 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final Alert[] disconnectedAlerts;
 
+  List<Pose3d> tagPoses = new LinkedList<>();
+  List<Pose3d> robotPosesAccepted = new LinkedList<>();
+  List<Pose3d> robotPosesRejected = new LinkedList<>();
+
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
@@ -48,22 +52,11 @@ public class Vision extends SubsystemBase {
       io[i].updateInputs();
     }
 
-    // Initialize logging values
-    List<Pose3d> allTagPoses = new LinkedList<>();
-    List<Pose3d> allRobotPoses = new LinkedList<>();
-    List<Pose2d> allRobotPosesAccepted = new LinkedList<>();
-    List<Pose2d> allRobotPosesRejected = new LinkedList<>();
-
     // Loop over cameras
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!io[cameraIndex].cameraConnected);
-
-      // Initialize logging values
-      List<Pose3d> tagPoses = new LinkedList<>();
-      List<Pose3d> robotPoses = new LinkedList<>();
-      List<Pose3d> robotPosesAccepted = new LinkedList<>();
-      List<Pose3d> robotPosesRejected = new LinkedList<>();
 
       // Add tag poses
       for (int tagId : io[cameraIndex].tagIds) {
@@ -79,14 +72,21 @@ public class Vision extends SubsystemBase {
         PoseObservation[] poseObservationWithPreviousUpdate = new PoseObservation[2];
         poseObservationWithPreviousUpdate[0] = observation;
         poseObservationWithPreviousUpdate[1] = io[cameraIndex].previousUpdate.orElse(null);
+        if (poseObservationWithPreviousUpdate[1] == null) {
+          continue;
+        }
         boolean rejectPose = checkPose(poseObservationWithPreviousUpdate, cameraIndex);
         // Add pose to log
-        robotPoses.add(observation.observedPose());
+        DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
         if (rejectPose) {
-          robotPosesRejected.add(observation.observedPose());
+          DogLog.log(
+              "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
+              observation.observedPose());
           continue;
         } else {
-          robotPosesAccepted.add(observation.observedPose());
+          DogLog.log(
+              "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
+              observation.getObservedPose());
         }
 
         // Calculate standard deviations for selected pose
@@ -101,40 +101,12 @@ public class Vision extends SubsystemBase {
         // angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
 
         consumer.accept(
-            observation.getObservedPose(),
+            observation.getObservedPose().toPose2d(),
             observation.timestamp(),
             VecBuilder.fill(linearStdDev, linearStdDev, 1000000000));
       }
-
-      // Log camera datadata
-      DogLog.log(
-          "Vision/" + io[cameraIndex].getName() + "/TagPoses",
-          tagPoses.toArray(new Pose3d[tagPoses.size()]));
-      DogLog.log(
-          "Vision/" + io[cameraIndex].getName() + "/RobotPoses",
-          robotPoses.toArray(new Pose3d[robotPoses.size()]));
-      DogLog.log(
-          "Vision/" + io[cameraIndex].getName() + "/InitialAcceptedRobotPoses",
-          robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
-      DogLog.log(
-          "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPoses",
-          robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
-
-      allTagPoses.addAll(tagPoses);
-      allRobotPoses.addAll(robotPoses);
-      allRobotPosesAccepted.addAll(robotPosesAccepted);
-      allRobotPosesRejected.addAll(robotPosesRejected);
+      logValues(cameraIndex);
     }
-    // Log summary data
-    DogLog.log("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
-    DogLog.log(
-        "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
-    DogLog.log(
-        "Vision/Summary/AcceptedRobotPoses",
-        allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
-    DogLog.log(
-        "Vision/Summary/RejectedRobotPoses",
-        allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
   @FunctionalInterface
@@ -145,40 +117,61 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
-  
   private boolean checkPose(PoseObservation[] observations, int cameraIndex) {
-    PoseObservation latestObservation =  observations[0];
+    PoseObservation latestObservation = observations[0];
     PoseObservation previousPoseObservation = observations[1];
-    Pose2d pose =  latestObservation.getObservedPose();
-    Pose2d previousPose = previousPoseObservation.getObservedPose();
+    Pose3d pose = latestObservation.getObservedPose();
+    Pose3d previousPose = previousPoseObservation.getObservedPose();
     double time = latestObservation.getTimestamp() - previousPoseObservation.getTimestamp();
-    Translation2d simplePose = pose.getTranslation();
+    Translation2d simplePose = pose.getTranslation().toTranslation2d();
     boolean outOfBounds =
         simplePose.getX() < 0.0
-          || simplePose.getX() > FieldConstants.fieldLength
-          || simplePose.getY() < 0.0
-          || simplePose.getY() > FieldConstants.fieldWidth
-          || Double.isNaN(simplePose.getX())
-          || Double.isNaN(simplePose.getY());
+            || simplePose.getX() > FieldConstants.fieldLength
+            || simplePose.getY() < 0.0
+            || simplePose.getY() > FieldConstants.fieldWidth
+            || Double.isNaN(simplePose.getX())
+            || Double.isNaN(simplePose.getY());
     boolean extremeJitter =
         pose.getTranslation().getDistance(previousPose.getTranslation())
-          > time * RealConstants.MAX_LINEAR_SPEED;
-    boolean infeasibleZValue = Math.abs(pose.getTranslation().getZ()) > io[cameraIndex].getVisionConstants().getMaxZError();
-    boolean infeasiblePitchValue = pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError();
-    boolean infeasibleRollValue = pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError();
+            > time * RealConstants.MAX_LINEAR_SPEED;
+    boolean infeasibleZValue =
+        Math.abs(pose.getTranslation().getZ())
+            > io[cameraIndex].getVisionConstants().getMaxZError();
+    boolean infeasiblePitchValue =
+        pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError();
+    boolean infeasibleRollValue =
+        pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError();
     boolean outOfRange = latestObservation.getAverageTagDistance() > 5.5;
     boolean noTags = latestObservation.tagsList().size() < 0;
-    boolean sketchyTags = latestObservation.tagsList().stream().anyMatch(sketchyTagsList::contains);
+    boolean sketchyTags = latestObservation.tagsList().stream().anyMatch(List.of()::contains);
 
     boolean rejectPose =
-      outOfBounds
-        || extremeJitter
-        || infeasibleZValue
-        || infeasiblePitchValue
-        || infeasibleRollValue
-        || outOfRange
-        || noTags
-        || sketchyTags;
+        outOfBounds
+            || extremeJitter
+            || infeasibleZValue
+            || infeasiblePitchValue
+            || infeasibleRollValue
+            || outOfRange
+            || noTags
+            || sketchyTags;
     return rejectPose;
+  }
+
+  public void logValues(int cameraIndex) {
+    DogLog.log(
+        "Vision/" + io[cameraIndex].getName() + "/CameraConnected",
+        io[cameraIndex].cameraConnected);
+    DogLog.log("Vision/" + io[cameraIndex].getName() + "/HasTargets", io[cameraIndex].hasTargets);
+    DogLog.log("Vision/" + io[cameraIndex].getName() + "/NumTargets", io[cameraIndex].numTargets);
+    DogLog.log("Vision/" + io[cameraIndex].getName() + "/TagIds", io[cameraIndex].tagIds);
+    DogLog.log(
+        "Vision/" + io[cameraIndex].getName() + "/LatestTargetAngleX",
+        io[cameraIndex].latestTargetAngle.getTargetX());
+    DogLog.log(
+        "Vision/" + io[cameraIndex].getName() + "/LatestTargetAngleY",
+        io[cameraIndex].latestTargetAngle.getTargetY());
+    DogLog.log(
+        "Vision/" + io[cameraIndex].getName() + "/TagPoses",
+        tagPoses.toArray(new Pose3d[tagPoses.size()]));
   }
 }

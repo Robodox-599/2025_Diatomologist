@@ -1,7 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 
 /**
@@ -37,6 +35,7 @@ public record VisionConstants(
   public double getMaxAngleError() {
     return 0.08726646259971647; // 5 degrees in radians, used for filtering out bad observations
   }
+
   /**
    * The baseline standard deviation for linear measurements at 1 meter distance and 1 detected tag.
    * This value is adjusted dynamically (based on actual distance and the number of detected tags),
@@ -54,7 +53,4 @@ public record VisionConstants(
   public double angularStdDevBaseline() {
     return 0.06;
   }
-
-
-
 }

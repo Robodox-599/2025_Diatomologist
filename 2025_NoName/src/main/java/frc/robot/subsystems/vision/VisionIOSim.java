@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.FieldConstants;
-
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -45,14 +44,10 @@ public class VisionIOSim extends VisionIOReal {
     cameraProp.setLatencyStdDevMs(5.0);
     // apply given properties to camera
     simCamera = new PhotonCameraSim(camera, cameraProp);
-    /**
-     * Turns on the wireframes. which useful for debug website when running Simulation, shows
-     * wireframes around all the tags visible to easily see what the cameras exactly see.
-     */
-    simCamera.enableDrawWireframe(true);
+
     // Sets the max range of visibility, needed otherwise cameras can detect targets very far in
     // simulation
-    simCamera.setMaxSightRange(7.0);
+    simCamera.setMaxSightRange(5);
 
     visionSim.addCamera(simCamera, robotToCamera);
   }

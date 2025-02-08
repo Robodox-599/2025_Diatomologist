@@ -6,30 +6,20 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.AprilTags;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
 import org.photonvision.estimation.TargetModel;
-import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -78,17 +68,27 @@ public class VisionIOReal extends VisionIO {
 
     DogLog.log("Vision/" + camera.getName() + "/Camera Transform", robotToCamera);
   }
+
   private Pose3d reproject(PhotonTrackedTarget target, Rotation2d gyroAngle) {
-    Translation2d tagLoc = FieldConstants.AprilTags.TAGS_POSE2D[target.fiducialId - 1].getTranslation();
+    Translation3d tagLoc =
+        FieldConstants.AprilTags.TAGS[target.fiducialId - 1].pose.getTranslation();
     Transform3d cameraToTag = target.getBestCameraToTarget();
-    Translation2d tagToRobotOffset =
-        robotToCameraPoseOffset.transformBy(cameraToTag).toPose2d().getTranslation();
-    tagToRobotOffset = tagToRobotOffset.rotateBy(gyroAngle);
-    return new Pose3d(new Translation3d(tagLoc.minus(tagToRobotOffset).getX(), tagLoc.minus(tagToRobotOffset).getY(), ), gyroAngle);
+    Translation3d tagToRobotOffset =
+        robotToCameraPoseOffset.transformBy(cameraToTag).getTranslation();
+    tagToRobotOffset = tagToRobotOffset.rotateBy(new Rotation3d(gyroAngle));
+
+    // Update the latestTargetAngle with the tag's x and y rotations
+    Rotation3d tagRotation =
+        FieldConstants.AprilTags.TAGS[target.fiducialId - 1].pose.getRotation();
+    latestTargetAngle =
+        new ObservedTargetRotations(
+            new Rotation2d(tagRotation.getX()), new Rotation2d(tagRotation.getY()));
+
+    return new Pose3d(tagLoc.minus(tagToRobotOffset), new Rotation3d(gyroAngle));
   }
 
-
-  public Optional<PoseObservation> updateTest(EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
+  public Optional<PoseObservation> updateTest(
+      EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
     for (PhotonTrackedTarget target : estRoboPose.targetsUsed) {
       int minId = AprilTags.TAGS[0].ID;
       int maxId = AprilTags.TAGS[AprilTags.TAGS.length - 1].ID;
@@ -100,7 +100,7 @@ public class VisionIOReal extends VisionIO {
     }
 
     double avgDistance;
-    Pose2d pose = estRoboPose.estimatedPose.toPose2d();
+    Pose3d pose = estRoboPose.estimatedPose;
     if (estRoboPose.targetsUsed.size() == 1) {
       var target = estRoboPose.targetsUsed.get(0);
       avgDistance = target.getBestCameraToTarget().getTranslation().getNorm();
@@ -116,13 +116,12 @@ public class VisionIOReal extends VisionIO {
               .orElseGet(() -> 100.0);
     }
 
-
     PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-    
+
     PoseObservation latestUpdate =
         new PoseObservation(
             estRoboPose.timestampSeconds,
-            previousUpdate.get().getObservedPose(),
+            pose,
             latestResult.getPoseAmbiguity(),
             getSeenTags(),
             avgDistance);
@@ -141,20 +140,16 @@ public class VisionIOReal extends VisionIO {
     super.cameraConnected = camera.isConnected();
     List<PoseObservation> poseObservations = new LinkedList<>();
     List<PhotonPipelineResult> resultList = camera.getAllUnreadResults();
-    Set<Short> tagIds = new HashSet<>();
-    
+
     if (camera == null || !camera.isConnected() || resultList == null || resultList.isEmpty()) {
-        super.hasTargets = false;
-        return;
+      super.hasTargets = false;
+      return;
     }
-    
+
     super.hasTargets = true;
-    
-    // Retrieve the most recent result from the total list
-    PhotonPipelineResult latestResult = resultList.get(resultList.size() - 1);
-    List<PhotonTrackedTarget> visibleTags = latestResult.getTargets();
-    
+
     seenTags.clear();
+    super.previousUpdate = previousUpdate;
     resultList.stream()
         .filter(result -> result.hasTargets())
         .map(result -> poseEstimator.update(result))
@@ -164,36 +159,12 @@ public class VisionIOReal extends VisionIO {
         .filter(Optional::isPresent)
         .map(Optional::get)
         .forEach(poseObservations::add);
-    
-    super.tagIds = new int[visibleTags.size()];
-    for (int i = 0; i < visibleTags.size(); i++) {
-        super.tagIds[i] = visibleTags.get(i).getFiducialId();
-    }
-    
+
     // Determine the possible robot pose results the camera has determined
     super.poseObservations = new PoseObservation[poseObservations.size()];
     for (int i = 0; i < poseObservations.size(); i++) {
-        super.poseObservations[i] = poseObservations.get(i);
+      super.poseObservations[i] = poseObservations.get(i);
     }
-  }
-
-
-  /**
-   * Log the difference between the camera rotation entered in constants and the camera rotation
-   * measured by the vision system. A positive error means that the camera rotation needs to be
-   * reduced in constants.
-   *
-   * @param cameraPose The detected pose of the camera in field space
-   */
-  private void logDeltaRotation(Pose3d cameraPose) {
-    Rotation3d rotation = cameraPose.getRotation();
-    Rotation3d cameraRotation = constants.robotToCameraTransform3d().getRotation().unaryMinus();
-    DogLog.log(
-        "Vision/" + constants.cameraName() + "/Camera Rotation Error/x (roll, deg)",
-        cameraRotation.getMeasureX().minus(rotation.getMeasureX()).in(Units.Degree));
-    DogLog.log(
-        "Vision/" + constants.cameraName() + "/Camera Rotation Error/y (pitch, deg)",
-        cameraRotation.getMeasureY().minus(rotation.getMeasureY()).in(Units.Degree));
   }
 
   // Returns name of the camera

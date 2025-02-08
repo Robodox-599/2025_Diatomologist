@@ -12,14 +12,40 @@ public class AutoRoutines {
     this.autoFactory = autoFactory;
   }
 
-  public AutoRoutine LTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("LTestAuto");
+  public AutoRoutine turningTestAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("turningTestAuto");
 
     // Load the routine's trajectories
-    AutoTrajectory LLLLL = routine.trajectory("LLLLL");
+    AutoTrajectory turningTest = routine.trajectory("turningTest");
 
     // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(LLLLL.resetOdometry(), LLLLL.cmd()));
+    routine.active().onTrue(Commands.sequence(turningTest.resetOdometry(), turningTest.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine forwardBackTestAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("forwardBackTestAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory forwardBackTest = routine.trajectory("forwardBackTest");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine
+        .active()
+        .onTrue(Commands.sequence(forwardBackTest.resetOdometry(), forwardBackTest.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine diamondTestAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("diamondTestAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory diamondTest = routine.trajectory("diamondTest");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(diamondTest.resetOdometry(), diamondTest.cmd()));
 
     return routine;
   }

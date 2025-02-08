@@ -103,7 +103,9 @@ public class RobotContainer {
     // Logging starting here
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
-    autoChooser.addRoutine("LTestAutoRoutine", autoRoutines::LTestAutoRoutine);
+    autoChooser.addRoutine("forwardBackTestAutoRoutine", autoRoutines::forwardBackTestAutoRoutine);
+    autoChooser.addRoutine("diamondTestAutoRoutine", autoRoutines::diamondTestAutoRoutine);
+    autoChooser.addRoutine("turningTestAutoRoutine", autoRoutines::turningTestAutoRoutine);
 
     // DataLogManager.start();
     // DriverStation.startDataLog(DataLogManager.getLog());

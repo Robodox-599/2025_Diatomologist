@@ -77,12 +77,12 @@ public class Drive extends SubsystemBase {
       case REAL:
         choreoPathXController = new PIDController(0.1, 0, 0);
         choreoPathYController = new PIDController(0.1, 0, 0);
-        choreoPathAngleController = new PIDController(0.1, 0, 0);
+        choreoPathAngleController = new PIDController(0.3, 0, 0);
         break;
       case SIM:
-        choreoPathXController = new PIDController(0.2, 0, 0);
-        choreoPathYController = new PIDController(0.2, 0, 0);
-        choreoPathAngleController = new PIDController(0.2, 0, 0);
+        choreoPathXController = new PIDController(0.16, 0, 0);
+        choreoPathYController = new PIDController(0.16, 0, 0);
+        choreoPathAngleController = new PIDController(0.18, 0, 0);
         break;
       default:
         choreoPathXController = new PIDController(1, 0, 0);
@@ -200,7 +200,6 @@ public class Drive extends SubsystemBase {
   }
 
   private void updateOdom() {
-    // Update odometry // This updates based on sensor data and kinematics
     double[] sampleTimestamps =
         modules[0].getOdometryTimestamps(); // All signals are sampled together
     int sampleCount = sampleTimestamps.length;
@@ -217,8 +216,9 @@ public class Drive extends SubsystemBase {
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
+
       // Update gyro angle
-      if (gyroIO.connected) {
+      if (gyroIO.connected && gyroIO.odometryYawPositions.length > i) {
         // Use the real gyro angle
         rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {
@@ -258,22 +258,21 @@ public class Drive extends SubsystemBase {
 
   public void followChoreoPath(SwerveSample sample) {
     Pose2d pose = getPose();
-    ChassisSpeeds speeds = getChassisSpeeds();
-    DogLog.log("Choreo/RobotPose2d", pose);
-    DogLog.log("Choreo/SwerveSample", sample);
+    // DogLog.log("Choreo/RobotPose2d", pose);
+    // DogLog.log("Choreo/SwerveSample", sample);
 
-    DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
+    // DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
 
-    DogLog.log("Choreo/RobotMeasuredVelocity", speeds);
+    // DogLog.log("Choreo/RobotMeasuredVelocity", speeds);
 
-    var pathTargetSpeeds = sample.getChassisSpeeds();
-    pathTargetSpeeds.vxMetersPerSecond += choreoPathXController.calculate(pose.getX(), sample.x);
-
-    pathTargetSpeeds.vyMetersPerSecond += choreoPathYController.calculate(pose.getY(), sample.y);
-    pathTargetSpeeds.omegaRadiansPerSecond +=
-        choreoPathAngleController.calculate(pose.getRotation().getRadians(), sample.heading);
-
-    runVelocity(pathTargetSpeeds);
+    ChassisSpeeds speeds =
+        new ChassisSpeeds(
+            sample.vx + choreoPathXController.calculate(pose.getX(), sample.x),
+            sample.vy + choreoPathYController.calculate(pose.getY(), sample.y),
+            sample.omega
+                + choreoPathAngleController.calculate(
+                    pose.getRotation().getRadians(), sample.heading));
+    runVelocity(speeds);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */

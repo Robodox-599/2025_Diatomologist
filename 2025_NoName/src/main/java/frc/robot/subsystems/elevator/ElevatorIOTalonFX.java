@@ -99,23 +99,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
 
-    switch (state) {
-      case L1:
-        position = ElevatorConstants.heights[0];
-        break;
-      case L2:
-        position = ElevatorConstants.heights[1];
-        break;
-      case L3:
-        position = ElevatorConstants.heights[2];
-        break;
-      case L4:
-        position = ElevatorConstants.heights[3];
-        break;
-      default:
-        position = ElevatorConstants.heights[0]; // STOW
-        break;
-    }
+    ElevatorUtil.stateToHeight(state);
+
     if (position > getPosition()) {
       motionSlot = ElevatorConstants.movingUpSlot;
     } else {

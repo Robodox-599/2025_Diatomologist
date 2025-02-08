@@ -42,9 +42,9 @@ public final class ElevatorConstants {
   public static final boolean followerInverted = true;
 
   public static final int limitSwitchDioPort = 0;
-  public static final double gearRatio = 10.0;
+  public static final double gearRatio = 6;
   public static final double drumCircumferenceInches = 1.8;
-  public static final double inchesPerRev = 10; // idk prolly wrong
+  public static final double inchesPerRev = 0.39; // idk prolly wrong
   public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
 
   public static final double maxVelocityInchesPerSec = 60.0;
@@ -52,7 +52,7 @@ public final class ElevatorConstants {
 
   /* Position Setpoints (in inches) */
   public static final double elevatorLowerLimit = 0.0;
-  public static final double elevatorUpperLimit = 61.0;
+  public static final double elevatorUpperLimit = 89.0;
   public static final double homePositionOffset = 1.0;
 
   public static final double levelOneHeight = 0.0;
@@ -70,9 +70,9 @@ public final class ElevatorConstants {
   public static final double kS = 0.0;
 
   // Add these for better PID tuning
-  public static final double simkP = 0.7;
+  public static final double simkP = 0.041;
   public static final double simkI = 0.0;
-  public static final double simkD = 0.0;
+  public static final double simkD = 0.0009;
   public static final double simkF = 0.0;
 
   public static final double supplyCurrentLimitAmps = 0.1;

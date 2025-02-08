@@ -13,10 +13,6 @@ public class ElevatorIOSim extends ElevatorIO {
   private final DCMotorSim elevatorSim;
   private final PIDController positionController;
   private double targetPositionInches = 0.0;
-  public double position;
-
-  private final PIDController simPidController =
-      new PIDController(ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
 
   private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
 
@@ -37,10 +33,10 @@ public class ElevatorIOSim extends ElevatorIO {
   @Override
   public void updateInputs() {
     elevatorSim.update(0.02);
-
+    elevatorSim.setInputVoltage(
+        positionController.calculate(super.positionInches, targetPositionInches));
     // Update inputs structure
-    super.positionInches =
-        (elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev) / 39.37;
+    super.positionInches = (elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev);
     super.velocityInchesPerSec =
         elevatorSim.getAngularAccelerationRadPerSecSq() * ElevatorConstants.inchesPerRev;
     super.appliedVolts = elevatorSim.getCurrentDrawAmps() * ElevatorConstants.nominal_voltage;
@@ -56,7 +52,6 @@ public class ElevatorIOSim extends ElevatorIO {
 
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
-    DogLog.log("Elevator/AppliedVolts", super.appliedVolts);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
     DogLog.log("Elevator/State", super.state.toString());
@@ -64,46 +59,12 @@ public class ElevatorIOSim extends ElevatorIO {
 
   @Override
   public void setState(ElevatorConstants.ElevatorStates state) {
-    position =
+    targetPositionInches =
         MathUtil.clamp(
             ElevatorUtil.stateToHeight(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
     System.out.println(super.state);
-    elevatorSim.setInputVoltage(simPidController.calculate(position));
-
-    switch (state) {
-      case L1:
-        targetPositionInches = ElevatorConstants.heights[0];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      case L2:
-        targetPositionInches = ElevatorConstants.heights[1];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      case L3:
-        targetPositionInches = ElevatorConstants.heights[2];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      case L4:
-        targetPositionInches = ElevatorConstants.heights[3];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      case STOW:
-        targetPositionInches = ElevatorConstants.heights[4]; // STOW
-        System.out.println(state);
-        break;
-      default:
-        targetPositionInches = ElevatorConstants.heights[4]; // STOW
-        System.out.println(state);
-        break;
-    }
-
-    position = targetPositionInches;
   }
 
   @Override

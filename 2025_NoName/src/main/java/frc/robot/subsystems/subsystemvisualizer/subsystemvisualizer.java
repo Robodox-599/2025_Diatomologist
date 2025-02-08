@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.subsystemvisualizer;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -90,31 +91,31 @@ public class SubsystemVisualizer extends SubsystemBase {
   public void updateElevator() {
     switch (elevator.getIO().getCurrentState()) {
       case L1:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case L2:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case L3:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case L4:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case INTAKE:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case GROUNDINTAKE:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case ALGAE_L2:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       case ALGAE_L3:
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
       default: // stow
-        elevatorVis.setLength(elevator.getIO().getPositionInches());
+        elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
     }
   }

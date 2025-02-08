@@ -11,13 +11,14 @@ import frc.robot.util.SimLog;
 
 public class ElevatorIOSim extends ElevatorIO {
   private final DCMotorSim elevatorSim;
+  // private final ElevatorSim =
   private final PIDController positionController;
   private double targetPositionInches = 0.0;
 
   private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
 
   public ElevatorIOSim() {
-    elevatorSim =
+      elevatorSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 ELEVATOR_GEARBOX, ElevatorConstants.elevatorMOI, ElevatorConstants.gearRatio),

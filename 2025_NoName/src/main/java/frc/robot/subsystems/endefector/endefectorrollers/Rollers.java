@@ -1,39 +1,30 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
-
-import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
+// import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.subsystems.endefector.coraldistance.CoralDistance;
+import frc.robot.subsystems.endefector.coraldistance.CoralDistanceIOReal;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Rollers extends SubsystemBase {
   private final RollersIO io;
-
-  // private Timer CANRangeTimer = new Timer();
-  // private CANrange CANrange;
+  private Timer CANRangeTimer = new Timer();
+    private CoralDistance canrange; 
 
   public Rollers(RollersIO io) {
     this.io = io;
-    // CANRangeTimer.start();
+    canrange = new CoralDistance(new CoralDistanceIOReal());
+    CANRangeTimer.start();
   }
 
   public void periodic() {
     io.updateInputs();
-    // if (rangeDeviceDetected()) {
-    //   CANRangeTimer.restart();
-    // }
+    canrange.deviceDetected();
   }
-
-  // public boolean rangeDeviceDetected() {
-  //   double rangeSignal = 0.0;
-  //   rangeSignal = CANrange.getDistance().getValueAsDouble();
-
-  //   if (rangeSignal >= rangeTolerance) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
 
   public Command applyVoltage(double voltage) {
     return Commands.run(
@@ -75,13 +66,23 @@ public class Rollers extends SubsystemBase {
     io.setBrake(brake);
   }
 
-  // public Command runRollersBreak() {
-  //   return Commands.sequence(
-  //       new InstantCommand(() -> io.setVoltage(0.0), this),
-  //       new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
-  //       new InstantCommand(() -> io.setState(RollersConstants.EndefectorRollerStates.SCORE),
-  // this));
-  // }
+  public Command runRollersBreak() {
+    return Commands.sequence(
+        new InstantCommand(() -> io.setVoltage(0.0), this),
+        new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
+        new InstantCommand(() -> io.setState(RollersConstants.EndefectorRollerStates.SCORE), this));
+  }
+
+//     public boolean rangeDeviceDetected(){
+//     double rangeSignal = 0.0;
+//     rangeSignal = CANrange.getDistance().getValueAsDouble();
+
+//     if (rangeSignal >= rangeTolerance) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
   public RollersIO getIO() {
     return io;

@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
+import frc.robot.util.AlgaeGroundIntakeUtil;
 import frc.robot.util.MotorLog;
 
 // folder algaegroundintake
@@ -72,19 +73,6 @@ public class IntakeRollersIOTalonFX extends IntakeRollersIO {
   @Override
   public void setState(IntakeRollersConstants.AlgaeRollerStates state) {
     super.currentState = state;
-    switch (state) {
-      case STOW:
-        setVelocity(0);
-        break;
-      case REVERSE:
-        setVelocity(rollersReverseVelocity);
-        break;
-      case INTAKE:
-        setVelocity(-rollersReverseVelocity);
-        break;
-      default:
-        setVelocity(0);
-        break;
-    }
+    AlgaeGroundIntakeUtil.stateToVelocity(state);
   }
 }

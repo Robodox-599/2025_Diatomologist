@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.util.AlgaeGroundIntakeUtil;
 import frc.robot.util.SimLog;
 
 public class IntakeRollersIOSim extends IntakeRollersIO {
@@ -56,22 +57,6 @@ public class IntakeRollersIOSim extends IntakeRollersIO {
   @Override
   public void setState(IntakeRollersConstants.AlgaeRollerStates state) {
     super.currentState = state;
-    switch (state) {
-      case STOW:
-        velocity = velocitys[0];
-        break;
-      case REVERSE:
-        velocity = velocitys[1];
-        System.out.println(state);
-        break;
-      case INTAKE:
-        velocity = velocitys[2];
-        System.out.println(state);
-        break;
-      default:
-        velocity = velocitys[3];
-        System.out.println(state);
-        break;
-    }
+    AlgaeGroundIntakeUtil.stateToVelocity(state);
   }
 }

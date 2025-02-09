@@ -72,9 +72,9 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     /* Determines if the elevator is at a setpoint */
     double positionError = Math.abs(super.targetPositionInches - super.positionInches);
     double velocityError = Math.abs(super.velocityInchesPerSec);
-    super.atSetpoint =
-        positionError < ElevatorConstants.PositionToleranceInches
-            && velocityError < ElevatorConstants.velocityToleranceInchesPerSec;
+    // super.atSetpoint =
+    //     positionError < ElevatorConstants.PositionToleranceInches
+    //         && velocityError < ElevatorConstants.velocityToleranceInchesPerSec;
 
     super.limitSwitchValue = limitSwitch.get();
     /*Log basic motor inputs */
@@ -98,9 +98,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             ElevatorUtil.stateToHeight(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
-
-    ElevatorUtil.stateToHeight(state);
-
     if (position > getPosition()) {
       motionSlot = ElevatorConstants.movingUpSlot;
     } else {

@@ -57,39 +57,6 @@ public class WristIOSim extends WristIO {
         MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
     System.out.println(super.state);
     wristSim.setInputVoltage(wristPID.calculate(position));
-
-    switch (state) {
-      case STOW:
-        position = setpoints[1];
-        System.out.println(state);
-
-        break;
-      case SCORING:
-        position = setpoints[2];
-        System.out.println(state);
-
-        break;
-      case OVERRIDE:
-        position = setpoints[3];
-        System.out.println(state);
-
-        break;
-      case GROUNDINTAKE:
-        position = setpoints[4];
-        System.out.println(state);
-
-        break;
-      case STATIONINTAKE:
-        position = setpoints[5];
-        System.out.println(state);
-
-        break;
-      case CLIMB:
-        position = setpoints[6];
-        System.out.println(state);
-
-        break;
-    }
   }
 
   @Override

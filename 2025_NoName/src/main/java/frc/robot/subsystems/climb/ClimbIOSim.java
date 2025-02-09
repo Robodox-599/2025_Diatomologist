@@ -32,8 +32,7 @@ public class ClimbIOSim extends ClimbIO {
 
     positionController =
         new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
-    positionController.setTolerance(
-        ClimbConstants.PositionToleranceInches, ClimbConstants.velocityToleranceInchesPerSec);
+    positionController.setTolerance(ClimbConstants.PositionToleranceInches);
   }
 
   @Override
@@ -44,7 +43,7 @@ public class ClimbIOSim extends ClimbIO {
     super.positionInches = climbSim.getAngularPositionRad() * ClimbConstants.inchesPerRev;
     super.velocityInchesPerSec =
         climbSim.getAngularAccelerationRadPerSecSq() * ClimbConstants.inchesPerRev;
-    super.appliedVolts = climbSim.getCurrentDrawAmps() * ClimbConstants.nominal_voltage;
+    super.appliedVolts = climbSim.getCurrentDrawAmps();
     super.currentAmps = climbSim.getCurrentDrawAmps();
     super.targetPositionInches = targetPositionInches;
     super.tempCelsius = 25.0; // setting

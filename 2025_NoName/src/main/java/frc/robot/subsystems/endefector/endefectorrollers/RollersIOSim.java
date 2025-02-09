@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.util.EndefectorUtil;
 import frc.robot.util.SimLog;
 
 public class RollersIOSim extends RollersIO {
@@ -54,19 +55,6 @@ public class RollersIOSim extends RollersIO {
   @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
-    switch (state) {
-      case SCORE:
-        velocity = velocitys[1];
-        System.out.println(state);
-        break;
-      case INTAKE:
-        velocity = velocitys[2];
-        System.out.println(state);
-        break;
-      default:
-        velocity = velocitys[0];
-        System.out.println(state);
-        break;
-    }
+    EndefectorUtil.stateToVelocity(state);
   }
 }

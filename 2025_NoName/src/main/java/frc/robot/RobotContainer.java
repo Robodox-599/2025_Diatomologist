@@ -86,8 +86,18 @@ public class RobotContainer {
 
     driver.y().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
 
+    driver.x().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L4));
+
     driver
-        .x()
+        .rightTrigger()
+        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+
+    driver
+        .rightBumper()
+        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
+
+    driver
+        .leftTrigger()
         .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
   }
 

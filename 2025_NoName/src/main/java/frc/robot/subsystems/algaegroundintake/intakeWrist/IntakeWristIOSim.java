@@ -79,17 +79,6 @@ public class IntakeWristIOSim extends IntakeWristIO {
             IntakeWristConstants.intakeWristLowerLimit,
             IntakeWristConstants.intakeWristUpperLimit);
 
-    switch (state) {
-      case STOW:
-        position = IntakeWristConstants.setpoints[2];
-        break;
-      case DEPLOYED:
-        position = IntakeWristConstants.setpoints[0];
-      default:
-        position = IntakeWristConstants.setpoints[1]; // STOW
-        break;
-    }
-
     if (passedInPosition > currentPosition) {
       wristSlot = 0;
     } else {

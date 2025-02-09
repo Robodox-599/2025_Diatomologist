@@ -70,19 +70,17 @@ public final class ElevatorConstants {
   public static final double kS = 0.0;
 
   // Add these for better PID tuning
-  public static final double simkP = 2.5;
-  public static final double simkI = 0.05;
-  public static final double simkD = 0.0009;
+  public static final double simkP = 8;
+  public static final double simkI = 0.0;
+  public static final double simkD = 0.0;
   public static final double simkF = 0.0;
 
   public static final double supplyCurrentLimitAmps = 0.1;
   public static final double statorCurrentLimitAmps = 0.1;
 
   public static final double PositionToleranceInches = 0.5;
-  public static final double velocityToleranceInchesPerSec = 100;
 
-  public static final double elevatorMOI = 0.0004;
-  public static final double nominal_voltage = 12.0;
+  public static final double elevatorMOI = 0.015;
 
   public static final int movingUpSlot = 1;
   public static final int movingDownSlot = 0;

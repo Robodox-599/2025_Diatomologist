@@ -111,6 +111,8 @@ public class RobotContainer {
   }
 
   public Command score() {
+    //  if (endefectorRollers) TODO: add get beambreak value here to make sure not running the score
+    // command unless there is a coral in the intake.
     return Commands.sequence(
         endefectorWrist.moveToState(WristConstants.WristStates.SCORING),
         endefectorRollers

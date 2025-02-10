@@ -33,4 +33,8 @@ public abstract class RollersIO {
   public boolean rangeDeviceDetected() {
     return false;
   }
+
+  public RollersConstants.EndefectorRollerStates getState() {
+    return currentState;
+  }
 }

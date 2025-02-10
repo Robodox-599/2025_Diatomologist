@@ -1,7 +1,7 @@
 package frc.robot.util;
 
 import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersConstants;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants;
+import frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants;
 
 public class AlgaeGroundIntakeUtil {
 

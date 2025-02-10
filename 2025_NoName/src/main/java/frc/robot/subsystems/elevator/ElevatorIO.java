@@ -36,7 +36,7 @@ public abstract class ElevatorIO {
     return positionInches;
   }
 
-  public ElevatorConstants.ElevatorStates getCurrentState() {
+  public ElevatorConstants.ElevatorStates getState() {
     return state;
   }
 }

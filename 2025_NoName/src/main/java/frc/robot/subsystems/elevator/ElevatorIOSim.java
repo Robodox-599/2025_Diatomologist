@@ -67,6 +67,7 @@ public class ElevatorIOSim extends ElevatorIO {
     DogLog.log("Elevator/AppliedVoltage", simElevatorTest.getInput().get(0, 0));
 
     // Update state
+    // SimLog.log("elevatorMotors", simElevatorTest);
     DogLog.log("Elevaotor/PositionErrorInches", super.targetPositionInches - super.positionInches);
 
     DogLog.log("Elevator/PositionInches", super.positionInches);

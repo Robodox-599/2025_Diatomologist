@@ -12,21 +12,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollers;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWrist;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.*;
 
-public class SubsystemVisualizer extends SubsystemBase {
+public class subsystemvisualizer extends SubsystemBase {
 
   private Mechanism2d mech = new Mechanism2d(60, 60);
   private MechanismRoot2d root = mech.getRoot("Root", 30, 5);
 
-  private IntakeRollers algaeRollers;
-  private IntakeWrist algaeWrist;
   private Elevator elevator;
   private Rollers endefectorRollers;
   private Wrist endefectorWrist;
@@ -61,17 +57,9 @@ public class SubsystemVisualizer extends SubsystemBase {
           new MechanismLigament2d(
               "algaeGroundIntakeRollers", 6, 90, 6, new Color8Bit(Color.kAzure)));
 
-  public SubsystemVisualizer(
-      Elevator elevator,
-      Climb climb,
-      IntakeWrist algaeWrist,
-      IntakeRollers algaeRollers,
-      Wrist endWrist,
-      Rollers endRollers) {
+  public subsystemvisualizer(Elevator elevator, Climb climb, Wrist endWrist, Rollers endRollers) {
     this.elevator = elevator;
     this.climb = climb;
-    this.algaeWrist = algaeWrist;
-    this.algaeRollers = algaeRollers;
     this.endefectorWrist = endWrist;
     this.endefectorRollers = endRollers;
   }
@@ -80,8 +68,6 @@ public class SubsystemVisualizer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateElevator();
-    updateIntakeWrist();
-    updateIntakeRollers();
     updateClimb();
     updateEndefectorWrist();
     updateEndefectorRollers();
@@ -89,7 +75,7 @@ public class SubsystemVisualizer extends SubsystemBase {
   }
 
   public void updateElevator() {
-    switch (elevator.getIO().getCurrentState()) {
+    switch (elevator.getIO().getState()) {
       case L1:
         elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
         break;
@@ -116,36 +102,6 @@ public class SubsystemVisualizer extends SubsystemBase {
         break;
       default: // stow
         elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()));
-        break;
-    }
-  }
-
-  public void updateIntakeWrist() {
-    switch (algaeWrist.getIO().getCurrentState()) {
-      case DEPLOYED:
-        algaeGroundIntakeWristVis.setAngle(algaeWrist.getIO().getCurrentPosition());
-        algaeGroundIntakeWristVis.setColor(new Color8Bit(Color.kGreen));
-        break;
-      default: // stow
-        algaeGroundIntakeWristVis.setAngle(algaeWrist.getIO().getCurrentPosition());
-        algaeGroundIntakeWristVis.setColor(new Color8Bit(Color.kBlue));
-        break;
-    }
-  }
-
-  public void updateIntakeRollers() {
-    switch (algaeRollers.getIO().getCurrentState()) {
-      case INTAKE:
-        algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
-        algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kGreen));
-        break;
-      case REVERSE:
-        algaeGroundIntakeRollersVis.setAngle((algaeRollers.getIO().GetCurrentVolts()) * -1);
-        algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kPurple));
-        break;
-      default: // stow
-        algaeGroundIntakeRollersVis.setAngle(algaeRollers.getIO().GetCurrentVolts());
-        algaeGroundIntakeRollersVis.setColor(new Color8Bit(Color.kYellow));
         break;
     }
   }

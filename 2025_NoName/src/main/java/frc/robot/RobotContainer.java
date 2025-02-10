@@ -7,14 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollers;
-import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersConstants;
-import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersIOSim;
-import frc.robot.subsystems.algaegroundintake.intakeRollers.IntakeRollersIOTalonFX;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWrist;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.AlgaeStates;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristIOSim;
-import frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristIOTalonFX;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
@@ -33,7 +25,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
-import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
+import frc.robot.subsystems.subsystemvisualizer.subsystemvisualizer;
 
 public class RobotContainer {
 
@@ -44,27 +36,24 @@ public class RobotContainer {
 
   // visual stuff
   private LEDs LEDs;
-  private SubsystemVisualizer subsystemVisualizer;
-  private IntakeRollers algaeRollers;
-  private IntakeWrist algaeWrist;
+  private subsystemvisualizer subsystemVisualizer;
+  // private IntakeRollers algaeRollers;
+  // private IntakeWrist algaeWrist;
   private Elevator elevator;
   private Rollers endefectorRollers;
   private Wrist endefectorWrist;
   private Climb climb;
+  private int counter = 0;
 
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        algaeRollers = new IntakeRollers(new IntakeRollersIOTalonFX());
-        algaeWrist = new IntakeWrist(new IntakeWristIOTalonFX());
         elevator = new Elevator(new ElevatorIOTalonFX());
         endefectorRollers = new Rollers(new RollersIOTalonFX());
         endefectorWrist = new Wrist(new WristIOTalonFX());
         climb = new Climb(new ClimbIOTalonFX());
         break;
       case SIM:
-        algaeRollers = new IntakeRollers(new IntakeRollersIOSim());
-        algaeWrist = new IntakeWrist(new IntakeWristIOSim());
         elevator = new Elevator(new ElevatorIOSim());
         endefectorRollers = new Rollers(new RollersIOSim());
         endefectorWrist = new Wrist(new WristIOSim());
@@ -72,8 +61,7 @@ public class RobotContainer {
         break;
     }
     subsystemVisualizer =
-        new SubsystemVisualizer(
-            elevator, climb, algaeWrist, algaeRollers, endefectorWrist, endefectorRollers);
+        new subsystemvisualizer(elevator, climb, endefectorWrist, endefectorRollers);
     DogLog.setOptions(
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
     configureBindings();
@@ -103,11 +91,10 @@ public class RobotContainer {
 
   public Command stowAll() {
     return Commands.parallel(
-        elevator.moveToState(ElevatorStates.STOW),
-        endefectorWrist.moveToState(WristConstants.WristStates.STOW),
-        algaeWrist.moveToState(AlgaeStates.STOW),
+        Commands.sequence(
+            elevator.moveToState(ElevatorStates.STOW),
+            endefectorWrist.moveToState(WristConstants.WristStates.STOW)),
         climb.moveToState(ClimbStates.STOW),
-        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.STOW),
         endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
   }
 
@@ -126,25 +113,37 @@ public class RobotContainer {
   public Command score() {
     return Commands.sequence(
         endefectorWrist.moveToState(WristConstants.WristStates.SCORING),
-        endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+        endefectorRollers
+            .moveToState(RollersConstants.EndefectorRollerStates.SCORE)
+            .andThen(rumbleControllers()));
   }
 
   public Command stationIntake() {
-    return Commands.sequence(
-        endefectorWrist.moveToState(WristConstants.WristStates.STATIONINTAKE),
-        endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
+    switch (elevator.getIO().getState()) {
+      case STOW:
+        return Commands.sequence(
+            endefectorWrist.moveToState(WristConstants.WristStates.STATIONINTAKE),
+            endefectorRollers
+                .moveToState(RollersConstants.EndefectorRollerStates.INTAKE)
+                .andThen(rumbleControllers()));
+      default:
+        return Commands.sequence(elevator.moveToState(ElevatorStates.STOW), stationIntake());
+    }
   }
 
-  public Command groundIntakeDeploy() {
-    return Commands.sequence(
-        algaeWrist.moveToState(AlgaeStates.DEPLOYED),
-        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.INTAKE));
+  public Command setElevatorScoringLevel(ElevatorConstants.ElevatorStates level) {
+    switch (endefectorWrist.getIO().getCurrentState()) {
+      case SCORING:
+        return Commands.sequence(elevator.moveToState(level));
+      default:
+        return Commands.sequence(
+            endefectorWrist.moveToState(WristConstants.WristStates.SCORING),
+            setElevatorScoringLevel(level));
+    }
   }
 
-  public Command groundIntakeStow() {
-    return Commands.sequence(
-        algaeWrist.moveToState(AlgaeStates.STOW),
-        algaeRollers.moveToState(IntakeRollersConstants.AlgaeRollerStates.STOW));
+  public Command setAlgaeIntakeReefPosition() {
+    return Commands.sequence(updateAlgaeIntakeState());
   }
 
   public Command rumbleControllers() {
@@ -155,6 +154,37 @@ public class RobotContainer {
             new StartEndCommand(
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)));
+  }
+
+  public Command updateAlgaeIntakeState() {
+    var tempElevatorState = ElevatorConstants.ElevatorStates.GROUNDINTAKE;
+    var tempEndefectorState = WristConstants.WristStates.GROUNDINTAKE;
+    counter++;
+    if (counter == 1) {
+      tempElevatorState = ElevatorConstants.ElevatorStates.GROUNDINTAKE;
+      tempEndefectorState = WristConstants.WristStates.GROUNDINTAKE;
+    } else if (counter == 2) {
+      tempElevatorState = ElevatorConstants.ElevatorStates.ALGAE_L2;
+      tempEndefectorState = WristConstants.WristStates.REEFINTAKE;
+    } else {
+      counter = 0;
+      tempElevatorState = ElevatorConstants.ElevatorStates.ALGAE_L3;
+      tempEndefectorState = WristConstants.WristStates.REEFINTAKE;
+    }
+    return Commands.sequence(
+        endefectorWrist.moveToState(tempEndefectorState),
+        elevator.moveToState(tempElevatorState),
+        endefectorRollers
+            .moveToState(RollersConstants.EndefectorRollerStates.INTAKEREEF)
+            .andThen(rumbleControllers()));
+  }
+
+  public void incrementAlgaeState() {
+    if (counter > 3) {
+      counter = 0;
+    } else {
+      counter++;
+    }
   }
 
   public Command getAutonomousCommand() {

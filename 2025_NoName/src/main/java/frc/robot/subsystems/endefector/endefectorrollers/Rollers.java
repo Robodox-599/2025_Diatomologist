@@ -5,9 +5,9 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 
 // import frc.robot.subsystems.endefector.coraldistance.CoralDistance;
 // import frc.robot.subsystems.endefector.coraldistance.CoralDistanceIOReal;
@@ -44,11 +44,28 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command moveToState(RollersConstants.EndefectorRollerStates state) {
-    return Commands.runOnce(
+    switch (state) {
+      case INTAKE:
+        return runRollersIntake();
+      case SCORE:
+        return runRollerScore();
+      case STOP:
+        return Commands.runOnce(
             () -> {
               io.setState(state);
-            })
-        .withTimeout(0.6);
+            });
+      default:
+        return Commands.runOnce(
+            () -> {
+              io.setState(state);
+            });
+    }
+    // io.setState(state);
+    // return Commands.runOnce(
+    //         () -> {
+
+    //         })
+    //     .withTimeout(0.6);
   }
 
   public Command stop() {
@@ -69,11 +86,30 @@ public class Rollers extends SubsystemBase {
     io.setBrake(brake);
   }
 
-  public Command runRollersBreak() {
+  public Command runRollersIntake() {
     return Commands.sequence(
-        new InstantCommand(() -> io.setVoltage(0.0), this),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.INTAKE);
+            }),
         new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
-        new InstantCommand(() -> io.setState(RollersConstants.EndefectorRollerStates.SCORE), this));
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
+  }
+
+  public Command runRollerScore() {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.SCORE);
+            }),
+        new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
   }
 
   //     public boolean rangeDeviceDetected(){

@@ -51,9 +51,10 @@ public class WristConstants {
     STOW(1),
     SCORING(2),
     OVERRIDE(3),
-    GROUNDINTAKE(4),
-    STATIONINTAKE(5),
-    CLIMB(6);
+    REEFINTAKE(4),
+    GROUNDINTAKE(5),
+    STATIONINTAKE(6),
+    CLIMB(7);
     private final int index;
 
     WristStates(int index) {

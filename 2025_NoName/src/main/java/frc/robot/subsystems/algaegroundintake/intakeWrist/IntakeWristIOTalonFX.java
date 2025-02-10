@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algaegroundintake.intakewrist;
+package frc.robot.subsystems.algaegroundintake.intakeWrist;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;

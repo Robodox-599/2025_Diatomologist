@@ -4,7 +4,9 @@ public class RollersConstants {
   public static enum EndefectorRollerStates {
     STOP(1),
     SCORE(2),
-    INTAKE(3);
+    INTAKE(3),
+    INTAKEREEF(4),
+    ;
 
     private final int index;
 
@@ -54,5 +56,6 @@ public class RollersConstants {
     0.0, // stop
     0.0, // score
     0.0, // intake
+    0.0 // reefintake
   };
 }

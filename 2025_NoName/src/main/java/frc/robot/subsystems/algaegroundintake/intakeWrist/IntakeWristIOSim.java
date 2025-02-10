@@ -1,6 +1,6 @@
-package frc.robot.subsystems.algaegroundintake.intakewrist;
+package frc.robot.subsystems.algaegroundintake.intakeWrist;
 
-import static frc.robot.subsystems.algaegroundintake.intakewrist.IntakeWristConstants.*;
+import static frc.robot.subsystems.algaegroundintake.intakeWrist.IntakeWristConstants.*;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;

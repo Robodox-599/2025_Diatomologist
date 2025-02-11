@@ -9,6 +9,6 @@ public class ClimbUtil {
   }
 
   public static double stateToHeight(ClimbConstants.ClimbStates state) {
-    return convertToTicks(ClimbConstants.heights[state.getIndex()]);
+    return convertToTicks(ClimbConstants.setpoint[state.getIndex()]);
   }
 }

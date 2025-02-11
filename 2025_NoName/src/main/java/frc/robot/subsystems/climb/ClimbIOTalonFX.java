@@ -100,30 +100,10 @@ public class ClimbIOTalonFX extends ClimbIO {
 
     ClimbUtil.stateToHeight(state);
 
-    if (position > getPosition()) {
+    if (position > getPositionInches()) {
       motionSlot = ClimbConstants.movingUpSlot;
     } else {
       motionSlot = ClimbConstants.movingDownSlot;
-    }
-
-    motionMagicRequest.withSlot(motionSlot);
-    motionMagicRequest.Position = position;
-    leaderMotor.setControl(motionMagicRequest);
-    switch (state) {
-      case CLIMB:
-        position = ClimbConstants.heights[2];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      case CLIMBREADY:
-        position = ClimbConstants.heights[1];
-        // elevator.setLength(position);
-        System.out.println(state);
-        break;
-      default:
-        position = ClimbConstants.heights[3]; // STOW
-        System.out.println(state);
-        break;
     }
   }
 
@@ -154,7 +134,7 @@ public class ClimbIOTalonFX extends ClimbIO {
   }
 
   @Override
-  public double getPosition() {
+  public double getPositionInches() {
     return leaderMotor.getPosition().getValueAsDouble();
   }
 }

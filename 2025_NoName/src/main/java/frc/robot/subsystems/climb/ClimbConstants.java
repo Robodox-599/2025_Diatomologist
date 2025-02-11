@@ -9,6 +9,7 @@ public class ClimbConstants {
     CLIMBREADY(1),
     CLIMB(2),
     STOW(3);
+
     private final int index;
 
     ClimbStates(int index) {
@@ -21,21 +22,22 @@ public class ClimbConstants {
   }
 
   // Setpoint positions in encoder ticks or inches
-  public static final double[] heights = {
-    0.0, // stow and ready to climb
-    69.0, // climb
+  public static final double[] setpoint = {
+    3.5, // stow
+    10.5, // climb
+    30.0 // ready to climb
   };
 
-  public static final int leaderMotorID = 2;
+  public static final int leaderMotorID = 20;
   public static final String leaderMotorCANbus = "rio";
-  public static final int followerMotorID = 1;
+  public static final int followerMotorID = 17;
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
   public static final int limitSwitchDioPort = 0;
-  public static final double gearRatio = 10.0;
+  public static final double gearRatio = 6;
   public static final double drumCircumferenceInches = 1.8;
-  public static final double inchesPerRev = 10; // idk prolly wrong
+  public static final double inchesPerRev = 0.39; // idk prolly wrong
   public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
 
   public static final double maxVelocityInchesPerSec = 60.0;
@@ -57,8 +59,8 @@ public class ClimbConstants {
   public static final double kV = 0.0;
   public static final double kS = 0.0;
 
-  public static final double simkP = 1;
-  public static final double simkI = 0.0;
+  public static final double simkP = 8;
+  public static final double simkI = 0.005;
   public static final double simkD = 0.0;
   public static final double simkF = 0.0;
 

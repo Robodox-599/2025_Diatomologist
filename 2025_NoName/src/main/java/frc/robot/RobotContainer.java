@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
@@ -70,11 +71,11 @@ public class RobotContainer {
   private void configureBindings() {
     driver.a().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L1));
 
-    driver.b().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L2));
+    driver.b().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L4));
 
-    driver.y().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
+    driver.y().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.CLIMB));
 
-    driver.x().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L4));
+    driver.x().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.CLIMBREADY));
 
     driver
         .rightTrigger()

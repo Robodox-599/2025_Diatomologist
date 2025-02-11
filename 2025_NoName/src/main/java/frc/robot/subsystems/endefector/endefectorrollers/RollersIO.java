@@ -6,6 +6,7 @@ public abstract class RollersIO {
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double desiredVelocity = 0.0;
+  protected double canrangeDistance = 0.0;
   protected boolean atSetpoint = false;
   protected RollersConstants.EndefectorRollerStates currentState =
       RollersConstants.EndefectorRollerStates.STOP;
@@ -22,6 +23,12 @@ public abstract class RollersIO {
 
   public void setBrake(boolean brake) {}
 
+  public void startTimer(){}
+
+  public double getTimer(){
+    return 0.0;
+  }
+
   public double GetCurrentVolts() {
     return appliedVolts;
   }
@@ -30,11 +37,12 @@ public abstract class RollersIO {
     return currentState;
   }
 
-  public boolean rangeDeviceDetected() {
+  public boolean deviceDetected() {
     return false;
   }
 
   public RollersConstants.EndefectorRollerStates getState() {
     return currentState;
   }
+
 }

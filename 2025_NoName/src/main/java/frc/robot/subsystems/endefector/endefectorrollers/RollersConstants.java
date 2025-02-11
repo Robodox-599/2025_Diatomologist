@@ -50,7 +50,11 @@ public class RollersConstants {
 
   public static final int CANrangeId = 0;
   public static final String CANrangeCANbus = "rio";
-  public static final double rangeTolerance = 0.0;
+  //This value will be the distance the canrage reads without coral in it, use inches.
+  public static final double noCoralDistance = 11;
+  //This value will be 
+  public static final double detectionDistance = noCoralDistance - 3.5;
+
 
   public static final double[] velocitys = {
     0.0, // stop

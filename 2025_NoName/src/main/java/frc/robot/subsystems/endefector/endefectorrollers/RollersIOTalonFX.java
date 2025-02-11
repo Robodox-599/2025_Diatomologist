@@ -2,23 +2,30 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
 
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.MotorLog;
 
 public class RollersIOTalonFX extends RollersIO {
 
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
-  // private CANrange CANrange;
+  private CANrange CANrange;
+  private Timer CANrangeTimer;
 
   private double desiredVelocity;
 
   {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     rollersConfig = new TalonFXConfiguration();
+    CANrange CANrange = new CANrange(CANrangeId, CANrangeCANbus);
+    Timer CANrangeTimer = new Timer();
+    CANrangeConfiguration configs = new CANrangeConfiguration();
 
     rollersConfig.Slot0.kP = realP;
     rollersConfig.Slot0.kI = realI;
@@ -33,6 +40,7 @@ public class RollersIOTalonFX extends RollersIO {
 
     rollersMotor.optimizeBusUtilization();
     rollersMotor.getConfigurator().apply(rollersConfig);
+    CANrange.getConfigurator().apply(configs);
   }
 
   @Override
@@ -41,6 +49,7 @@ public class RollersIOTalonFX extends RollersIO {
     super.currentAmps = rollersMotor.getSupplyCurrent().getValueAsDouble();
     super.velocity = rollersMotor.getVelocity().getValueAsDouble();
     super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
+    super.canrangeDistance = CANrange.getDistance().getValueAsDouble() - noCoralDistance;
     super.desiredVelocity = desiredVelocity;
 
     MotorLog.log("Rollers", rollersMotor);
@@ -69,6 +78,17 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
+  public void startTimer() {
+    CANrangeTimer.start();
+  }
+
+  @Override
+  public double getTimer(){
+    double time = CANrangeTimer.getTimestamp();
+    return time;
+  }
+
+  @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
@@ -87,15 +107,14 @@ public class RollersIOTalonFX extends RollersIO {
     }
   }
 
-  // @Override
-  // public boolean rangeDeviceDetected() {
-  //   double rangeSignal = 0.0;
-  //   rangeSignal = CANrange.getDistance().getValueAsDouble();
-
-  //   if (rangeSignal >= rangeTolerance) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  @Override
+  public boolean deviceDetected() {
+    double rangeDistance = CANrange.getDistance().getValueAsDouble()*39.3701;
+    boolean isDeviceDetected = false;
+    if (rangeDistance <= RollersConstants.detectionDistance) {
+      isDeviceDetected = true;
+      CANrangeTimer.reset();
+    }
+    return isDeviceDetected;
+  }
 }

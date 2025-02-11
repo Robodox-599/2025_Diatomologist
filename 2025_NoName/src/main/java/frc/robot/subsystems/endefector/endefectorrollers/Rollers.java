@@ -1,32 +1,22 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
 
-// import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
-
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 
-// import frc.robot.subsystems.endefector.coraldistance.CoralDistance;
-// import frc.robot.subsystems.endefector.coraldistance.CoralDistanceIOReal;
-
 public class Rollers extends SubsystemBase {
   private final RollersIO io;
-  private Timer CANRangeTimer = new Timer();
-
-  // private CoralDistance canrange;
 
   public Rollers(RollersIO io) {
     this.io = io;
-    // canrange = new CoralDistance(new CoralDistanceIOReal());
-    // CANRangeTimer.start();
+    io.startTimer();
   }
 
   public void periodic() {
     io.updateInputs();
-    // canrange.deviceDetected();
+    io.deviceDetected();
   }
 
   public Command applyVoltage(double voltage) {
@@ -92,7 +82,7 @@ public class Rollers extends SubsystemBase {
             () -> {
               io.setState(EndefectorRollerStates.INTAKE);
             }),
-        new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
+        new WaitUntilCommand(() -> (io.getTimer() >= 0.1)),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);
@@ -105,23 +95,12 @@ public class Rollers extends SubsystemBase {
             () -> {
               io.setState(EndefectorRollerStates.SCORE);
             }),
-        new WaitUntilCommand(() -> (CANRangeTimer.get() >= 0.1)),
+        new WaitUntilCommand(() -> (io.getTimer()  >= 0.1)),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);
             }));
   }
-
-  //     public boolean rangeDeviceDetected(){
-  //     double rangeSignal = 0.0;
-  //     rangeSignal = CANrange.getDistance().getValueAsDouble();
-
-  //     if (rangeSignal >= rangeTolerance) {
-  //         return true;
-  //     } else {
-  //         return false;
-  //     }
-  // }
 
   public RollersIO getIO() {
     return io;

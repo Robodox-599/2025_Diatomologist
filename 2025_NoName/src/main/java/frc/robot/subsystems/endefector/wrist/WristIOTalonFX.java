@@ -4,7 +4,6 @@ import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
 import static frc.robot.subsystems.endefector.wrist.WristConstants.*;
-import static frc.robot.util.WristUtil.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -119,44 +118,44 @@ public class WristIOTalonFX extends WristIO{
     wristMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
-      @Override
-    public void setState(WristStates state) {
-        currentState = state;
-        double position = MathUtil.clamp(stateToHeight(state), wristLowerLimit, wristUpperLimit);
+//       @Override
+//     public void setState(WristStates state) {
+//         currentState = state;
+//         double position = MathUtil.clamp(stateToHeight(state), wristLowerLimit, wristUpperLimit);
         
-        switch (state) {
-            case STOW:
-                position = setpoints[0];
-                break;
-            case SCORING:
-                position = setpoints[1];
-                break;
-            case OVERRIDE:
-                position = setpoints[2];
-                break;
-            case GROUNDINTAKE:
-                position = setpoints[3];
-                break;
-            case STATIONINTAKE:
-                position = setpoints[3];
-                break;
-            case CLIMB:
-                position = setpoints[3];
-                break;
-            default:
-                position = setpoints[0]; // STOW
-                break;
-        }
-        if (passedInPosition > currentPosition) {
-          wristSlot = 0;
-        } else {
-          wristSlot = 1;
-        }
+//         switch (state) {
+//             case STOW:
+//                 position = setpoints[0];
+//                 break;
+//             case SCORING:
+//                 position = setpoints[1];
+//                 break;
+//             case OVERRIDE:
+//                 position = setpoints[2];
+//                 break;
+//             case GROUNDINTAKE:
+//                 position = setpoints[3];
+//                 break;
+//             case STATIONINTAKE:
+//                 position = setpoints[3];
+//                 break;
+//             case CLIMB:
+//                 position = setpoints[3];
+//                 break;
+//             default:
+//                 position = setpoints[0]; // STOW
+//                 break;
+//         }
+//         if (passedInPosition > currentPosition) {
+//           wristSlot = 0;
+//         } else {
+//           wristSlot = 1;
+//         }
 
-        m_request.withSlot(0);
-        m_request.Position = position;
-        wristMotor.setControl(m_request);
+//         m_request.withSlot(0);
+//         m_request.Position = position;
+//         wristMotor.setControl(m_request);
 
-    }
+//     }
 
 }

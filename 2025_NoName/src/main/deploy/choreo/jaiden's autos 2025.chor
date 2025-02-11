@@ -4,6 +4,20 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "botRadius":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.4318 m",
+     "val":0.4318
+    }
+   },
+   "fieldLength":{
+    "dimension":"Length",
+    "var":{
+     "exp":"17.528 m",
+     "val":17.528
+    }
+   },
    "fieldWidth":{
     "dimension":"Length",
     "var":{
@@ -18,11 +32,11 @@
      "val":0.40969496789
     }
    },
-   "fieldLength":{
+   "xOffset":{
     "dimension":"Length",
     "var":{
-     "exp":"17.528 m",
-     "val":17.528
+     "exp":"0.2365375 m",
+     "val":0.2365375
     }
    },
    "straightOffset":{
@@ -30,20 +44,6 @@
     "var":{
      "exp":"0.473075 m",
      "val":0.473075
-    }
-   },
-   "botRadius":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.4318 m",
-     "val":0.4318
-    }
-   },
-   "xOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.2365375 m",
-     "val":0.2365375
     }
    }
   },
@@ -75,8 +75,8 @@
    "val":34.01942775
   },
   "inertia":{
-   "exp":"6 kg m ^ 2",
-   "val":6.0
+   "exp":"4 kg m ^ 2",
+   "val":4.0
   },
   "gearing":{
    "exp":"5.9",
@@ -87,12 +87,12 @@
    "val":0.0508
   },
   "vmax":{
-   "exp":"4250 RPM",
-   "val":445.058959258554
+   "exp":"5500 RPM",
+   "val":575.9586531581288
   },
   "tmax":{
-   "exp":"0.2 N * m",
-   "val":0.2
+   "exp":"0.5 N * m",
+   "val":0.5
   },
   "cof":{
    "exp":"1.5",

@@ -34,7 +34,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,9 +74,9 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData("Field", field);
     switch (Constants.currentMode) {
       case REAL:
-        choreoPathXController = new PIDController(0.1, 0, 0);
-        choreoPathYController = new PIDController(0.1, 0, 0);
-        choreoPathAngleController = new PIDController(0.3, 0, 0);
+        choreoPathXController = new PIDController(0, 0, 0);
+        choreoPathYController = new PIDController(0, 0, 0);
+        choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       case SIM:
         choreoPathXController = new PIDController(0.16, 0, 0);
@@ -241,6 +240,7 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
+    speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
@@ -249,7 +249,7 @@ public class Drive extends SubsystemBase {
     DogLog.log("Swerve/Speed Error", (discreteSpeeds.minus(getVelocity())));
     DogLog.log(
         "Swerve/Target Chassis Speeds Field Relative",
-        ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
+        ChassisSpeeds.fromFieldRelativeSpeeds(discreteSpeeds, getRotation()));
     DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
     for (int i = 0; i < modules.length; i++) {
       modules[i].runSetpoint(setpointStates[i]);
@@ -258,12 +258,10 @@ public class Drive extends SubsystemBase {
 
   public void followChoreoPath(SwerveSample sample) {
     Pose2d pose = getPose();
-    // DogLog.log("Choreo/RobotPose2d", pose);
-    // DogLog.log("Choreo/SwerveSample", sample);
+    DogLog.log("Choreo/RobotPose2d", pose);
+    DogLog.log("Choreo/SwerveSample", sample);
 
-    // DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
-
-    // DogLog.log("Choreo/RobotMeasuredVelocity", speeds);
+    DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
 
     ChassisSpeeds speeds =
         new ChassisSpeeds(
@@ -272,6 +270,7 @@ public class Drive extends SubsystemBase {
             sample.omega
                 + choreoPathAngleController.calculate(
                     pose.getRotation().getRadians(), sample.heading));
+    DogLog.log("Choreo/RobotSetpointSpeedsAfterPID", speeds);
     runVelocity(speeds);
   }
 
@@ -317,23 +316,14 @@ public class Drive extends SubsystemBase {
 
   public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
     return this.runVelocityCmd(
-        () ->
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds.get(),
-                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                    ? getPose().getRotation()
-                    : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
+        () -> ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation()));
   }
 
   public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
     return this.run(
         () -> {
           var allianceSpeeds =
-              ChassisSpeeds.fromRobotRelativeSpeeds(
-                  speeds.get(),
-                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                      ? getPose().getRotation()
-                      : getPose().getRotation().minus(Rotation2d.fromDegrees(180)));
+              ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation());
           // Calculate module setpoints
           ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
           SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);

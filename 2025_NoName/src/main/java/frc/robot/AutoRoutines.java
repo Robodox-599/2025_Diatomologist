@@ -54,14 +54,15 @@ public class AutoRoutines {
     AutoRoutine routine = autoFactory.newRoutine("rightAuto");
 
     // Load the routine's trajectories
-    AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
-    AutoTrajectory FtoHP = routine.trajectory("FtoHP");
+    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
 
     // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
+    // routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
+
+    routine.active().onTrue(Commands.sequence(HPtoC.resetOdometry(), HPtoC.cmd()));
 
     // When the trajectory is done, start the next trajectory
-    RIGHTtoF.done().onTrue(FtoHP.cmd());
+    // RIGHTtoF.done().onTrue(FtoHP.cmd());
 
     return routine;
   }

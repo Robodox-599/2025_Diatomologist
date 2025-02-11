@@ -83,7 +83,7 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public double getTimer(){
+  public double getTimer() {
     double time = CANrangeTimer.getTimestamp();
     return time;
   }
@@ -109,7 +109,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean deviceDetected() {
-    double rangeDistance = CANrange.getDistance().getValueAsDouble()*39.3701;
+    double rangeDistance = CANrange.getDistance().getValueAsDouble() * 39.3701;
     boolean isDeviceDetected = false;
     if (rangeDistance <= RollersConstants.detectionDistance) {
       isDeviceDetected = true;

@@ -59,7 +59,7 @@ public class ClimbConstants {
   public static final double kV = 0.0;
   public static final double kS = 0.0;
 
-  public static final double simkP = 8;
+  public static final double simkP = 8.5;
   public static final double simkI = 0.005;
   public static final double simkD = 0.0;
   public static final double simkF = 0.0;

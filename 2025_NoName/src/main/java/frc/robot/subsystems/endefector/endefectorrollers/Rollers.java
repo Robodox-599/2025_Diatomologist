@@ -95,7 +95,7 @@ public class Rollers extends SubsystemBase {
             () -> {
               io.setState(EndefectorRollerStates.SCORE);
             }),
-        new WaitUntilCommand(() -> (io.getTimer()  >= 0.1)),
+        new WaitUntilCommand(() -> (io.getTimer() >= 0.1)),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);

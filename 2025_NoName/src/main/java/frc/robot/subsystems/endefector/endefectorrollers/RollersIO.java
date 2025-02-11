@@ -23,9 +23,9 @@ public abstract class RollersIO {
 
   public void setBrake(boolean brake) {}
 
-  public void startTimer(){}
+  public void startTimer() {}
 
-  public double getTimer(){
+  public double getTimer() {
     return 0.0;
   }
 
@@ -44,5 +44,4 @@ public abstract class RollersIO {
   public RollersConstants.EndefectorRollerStates getState() {
     return currentState;
   }
-
 }

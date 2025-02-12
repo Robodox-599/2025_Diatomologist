@@ -290,13 +290,15 @@ public class Drive extends SubsystemBase {
         });
   }
 
-  public void resetPose(Pose2d pose){
+  public void resetPose(Pose2d pose) {
     rawGyroRotation = (pose.getRotation());
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
   void overrideGyroAngle(double angleDegrees) {
-    resetPose(new Pose2d(getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
+    resetPose(
+        new Pose2d(
+            getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
   }
 
   public void zeroPose() {
@@ -309,6 +311,7 @@ public class Drive extends SubsystemBase {
           zeroPose();
         });
   }
+
   /** Returns the current odometry pose. */
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
@@ -318,7 +321,7 @@ public class Drive extends SubsystemBase {
   public Rotation2d getRotation() {
     return getPose().getRotation();
   }
-  
+
   public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
     return this.run(() -> runVelocity(speeds.get()));
   }
@@ -438,7 +441,6 @@ public class Drive extends SubsystemBase {
     return new ChassisSpeeds(
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
-
 
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(

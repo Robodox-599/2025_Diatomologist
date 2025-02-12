@@ -31,6 +31,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -289,9 +290,17 @@ public class Drive extends SubsystemBase {
         });
   }
 
+  public void resetPose(Pose2d pose){
+    rawGyroRotation = (pose.getRotation());
+    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
   void overrideGyroAngle(double angleDegrees) {
-    rawGyroRotation = Rotation2d.fromDegrees(angleDegrees);
-    setPose(new Pose2d(getPose().getTranslation(), rawGyroRotation));
+    resetPose(new Pose2d(getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
+  }
+
+  public void zeroPose() {
+    resetPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
   }
 
   public Command zeroPosition() {
@@ -300,11 +309,16 @@ public class Drive extends SubsystemBase {
           zeroPose();
         });
   }
-
-  void zeroPose() {
-    setPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
+  /** Returns the current odometry pose. */
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
   }
 
+  /** Returns the current odometry rotation. */
+  public Rotation2d getRotation() {
+    return getPose().getRotation();
+  }
+  
   public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
     return this.run(() -> runVelocity(speeds.get()));
   }
@@ -425,20 +439,6 @@ public class Drive extends SubsystemBase {
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
-  /** Returns the current odometry pose. */
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
-  }
-
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
-  }
-
-  /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
 
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(

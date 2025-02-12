@@ -55,7 +55,7 @@ public class RobotContainer {
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
-                drive::setPose, // The drive subsystem
+                drive::resetPose, // The drive subsystem
                 drive::followChoreoPath, // The controller for the drive subsystem
                 true,
                 drive);
@@ -72,7 +72,7 @@ public class RobotContainer {
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
-                drive::setPose, // The drive subsystem
+                drive::resetPose, // The drive subsystem
                 drive::followChoreoPath, // The controller for the drive subsystem
                 true,
                 drive);
@@ -87,7 +87,7 @@ public class RobotContainer {
         autoFactory =
             new AutoFactory(
                 drive::getPose, // A function that returns the current robot pose
-                drive::setPose, // The drive subsystem
+                drive::resetPose, // The drive subsystem
                 drive::followChoreoPath, // The controller for the drive subsystem
                 true,
                 drive);

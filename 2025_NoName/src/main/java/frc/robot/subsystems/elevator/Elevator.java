@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.SafetyChecker;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
+  private final SafetyChecker safetyChecker;
 
-  public Elevator(ElevatorIO io) {
+  public Elevator(ElevatorIO io, SafetyChecker safetyChecker) {
     this.io = io;
+    this.safetyChecker = safetyChecker;
   }
 
   @Override

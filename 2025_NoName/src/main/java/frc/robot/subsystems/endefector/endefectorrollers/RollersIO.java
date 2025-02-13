@@ -23,21 +23,11 @@ public abstract class RollersIO {
 
   public void setBrake(boolean brake) {}
 
-  public void startTimer() {}
-
-  public double getTimer() {
-    return 0.0;
-  }
-
   public double GetCurrentVolts() {
     return appliedVolts;
   }
 
-  public RollersConstants.EndefectorRollerStates getCurrentState() {
-    return currentState;
-  }
-
-  public boolean deviceDetected() {
+  public boolean isDetected() {
     return false;
   }
 

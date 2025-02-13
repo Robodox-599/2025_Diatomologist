@@ -8,7 +8,8 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
 
 public class RollersIOTalonFX extends RollersIO {
@@ -16,15 +17,14 @@ public class RollersIOTalonFX extends RollersIO {
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
   private CANrange CANrange;
-  private Timer CANrangeTimer;
+  Debouncer CANrangeDebouncer = new Debouncer(0.1);
 
   private double desiredVelocity;
 
   {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     rollersConfig = new TalonFXConfiguration();
-    CANrange CANrange = new CANrange(CANrangeId, CANrangeCANbus);
-    Timer CANrangeTimer = new Timer();
+    this.CANrange = new CANrange(CANrangeId, CANrangeCANbus);
     CANrangeConfiguration configs = new CANrangeConfiguration();
 
     rollersConfig.Slot0.kP = realP;
@@ -78,17 +78,6 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void startTimer() {
-    CANrangeTimer.start();
-  }
-
-  @Override
-  public double getTimer() {
-    double time = CANrangeTimer.getTimestamp();
-    return time;
-  }
-
-  @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
@@ -108,13 +97,8 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public boolean deviceDetected() {
-    double rangeDistance = CANrange.getDistance().getValueAsDouble() * 39.3701;
-    boolean isDeviceDetected = false;
-    if (rangeDistance <= RollersConstants.detectionDistance) {
-      isDeviceDetected = true;
-      CANrangeTimer.reset();
-    }
-    return isDeviceDetected;
+  public boolean isDetected() {
+    double rangeDistance = Units.metersToInches(CANrange.getDistance().getValueAsDouble());
+    return CANrangeDebouncer.calculate(rangeDistance <= RollersConstants.detectionDistance);
   }
 }

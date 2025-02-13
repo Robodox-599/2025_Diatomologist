@@ -3,7 +3,6 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 
 public class Rollers extends SubsystemBase {
@@ -11,12 +10,10 @@ public class Rollers extends SubsystemBase {
 
   public Rollers(RollersIO io) {
     this.io = io;
-    io.startTimer();
   }
 
   public void periodic() {
     io.updateInputs();
-    io.deviceDetected();
   }
 
   public Command applyVoltage(double voltage) {
@@ -50,12 +47,6 @@ public class Rollers extends SubsystemBase {
               io.setState(state);
             });
     }
-    // io.setState(state);
-    // return Commands.runOnce(
-    //         () -> {
-
-    //         })
-    //     .withTimeout(0.6);
   }
 
   public Command stop() {
@@ -72,34 +63,54 @@ public class Rollers extends SubsystemBase {
         });
   }
 
-  public void setBrake(boolean brake) {
-    io.setBrake(brake);
+  public Command runRollerScore() {
+    if (io instanceof RollersIOSim) {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.SCORE);
+                  })
+              .withTimeout(0.2),
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+    } else {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.SCORE);
+                  })
+              .until(io::isDetected),
+          Commands.runOnce(
+              () -> {
+                io.setState(EndefectorRollerStates.STOP);
+              }));
+    }
   }
 
   public Command runRollersIntake() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.INTAKE);
-            }),
-        new WaitUntilCommand(() -> (io.getTimer() >= 0.1)),
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.STOP);
-            }));
+    if (io instanceof RollersIOSim) {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.INTAKE);
+                  })
+              .withTimeout(0.2),
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+    } else {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.INTAKE);
+                  })
+              .until(io::isDetected),
+          Commands.runOnce(
+              () -> {
+                io.setState(EndefectorRollerStates.STOP);
+              }));
+    }
   }
 
-  public Command runRollerScore() {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.SCORE);
-            }),
-        new WaitUntilCommand(() -> (io.getTimer() >= 0.1)),
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.STOP);
-            }));
+  public void setBrake(boolean brake) {
+    io.setBrake(brake);
   }
 
   public RollersIO getIO() {

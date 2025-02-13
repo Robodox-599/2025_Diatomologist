@@ -3,12 +3,15 @@ package frc.robot.subsystems.endefector.endefectorwrist;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SafetyChecker;
 
 public class Wrist extends SubsystemBase {
   private final WristIO io;
+  private final SafetyChecker safetyChecker;
 
-  public Wrist(WristIO io) {
+  public Wrist(WristIO io, SafetyChecker safetyChecker) {
     this.io = io;
+    this.safetyChecker = safetyChecker;
   }
 
   @Override

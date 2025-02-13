@@ -9,10 +9,10 @@ import frc.robot.subsystems.drive.Module.ModuleConstants;
 // import frc.robot.subsystems.vision.VisionConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = 0.149658203125; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.3662109375; // FR
-  public static final double Module2AbsoluteEncoderOffset = -0.234375; // BL
-  public static final double Module3AbsoluteEncoderOffset = -0.4658203125; // BR
+  public static final double Module0AbsoluteEncoderOffset = -0.27734375; // FL
+  public static final double Module1AbsoluteEncoderOffset = -0.15185546875; // FR
+  public static final double Module2AbsoluteEncoderOffset = -0.023681640625; // BL
+  public static final double Module3AbsoluteEncoderOffset = 0.144775390625; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 
@@ -60,12 +60,12 @@ public class RealConstants {
           0,
           1,
           2,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module0AbsoluteEncoderOffset),
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          false,
+          true,
           false,
           false);
   public static final ModuleConstants frontRight =
@@ -74,12 +74,12 @@ public class RealConstants {
           3,
           4,
           5,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module1AbsoluteEncoderOffset),
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          false,
+          true,
           false,
           false);
   public static final ModuleConstants backLeft =
@@ -88,12 +88,12 @@ public class RealConstants {
           6,
           7,
           8,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module2AbsoluteEncoderOffset),
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          false,
+          true,
           false,
           false);
   public static final ModuleConstants backRight =
@@ -102,12 +102,12 @@ public class RealConstants {
           9,
           10,
           11,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module3AbsoluteEncoderOffset),
           steerGains,
           driveGains,
           WHEEL_RADIUS,
-          false,
+          true,
           false,
           false);
 

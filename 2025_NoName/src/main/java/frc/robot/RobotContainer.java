@@ -137,7 +137,7 @@ public class RobotContainer {
                     -joystickDeadbandApply(controller.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.9,
-                    joystickDeadbandApply(controller.getRightX())
+                    -joystickDeadbandApply(controller.getRightX())
                         * RealConstants.MAX_ANGULAR_SPEED
                         * 0.9)));
     controller.y().onTrue(drive.zeroGyroCommand());

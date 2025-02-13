@@ -25,11 +25,11 @@
      "val":8.051
     }
    },
-   "yOffset":{
+   "straightOffset":{
     "dimension":"Length",
     "var":{
-     "exp":"0.40969496789 m",
-     "val":0.40969496789
+     "exp":"0.473075 m",
+     "val":0.473075
     }
    },
    "xOffset":{
@@ -39,15 +39,30 @@
      "val":0.2365375
     }
    },
-   "straightOffset":{
+   "yOffset":{
     "dimension":"Length",
     "var":{
-     "exp":"0.473075 m",
-     "val":0.473075
+     "exp":"0.40969496789 m",
+     "val":0.40969496789
     }
    }
   },
-  "poses":{}
+  "poses":{
+   "HPPose":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"0.55 m",
+     "val":0.55
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
@@ -100,16 +115,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    },
    "side":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    },
    "back":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    }
   },
   "differentialTrackWidth":{

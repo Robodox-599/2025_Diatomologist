@@ -106,7 +106,7 @@ public class RobotContainer {
     autoChooser.addRoutine("forwardBackTestAutoRoutine", autoRoutines::forwardBackTestAutoRoutine);
     autoChooser.addRoutine("diamondTestAutoRoutine", autoRoutines::diamondTestAutoRoutine);
     autoChooser.addRoutine("turningTestAutoRoutine", autoRoutines::turningTestAutoRoutine);
-
+    autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
     // DataLogManager.start();
     // DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(

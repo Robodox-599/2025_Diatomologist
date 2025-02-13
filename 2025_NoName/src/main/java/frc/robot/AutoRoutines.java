@@ -12,6 +12,35 @@ public class AutoRoutines {
     this.autoFactory = autoFactory;
   }
 
+  public AutoRoutine leftAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("leftAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine rightAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("rightAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
+    // AutoTrajectory FtoHP = routine.trajectory("FtoHP");
+    // AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
+
+    // When the trajectory is done, start the next trajectory
+    // RIGHTtoF.done().onTrue(FtoHP.cmd());
+    // FtoHP.done().onTrue(HPtoC.cmd());
+
+    return routine;
+  }
+
   public AutoRoutine turningTestAutoRoutine() {
     AutoRoutine routine = autoFactory.newRoutine("turningTestAuto");
 
@@ -46,23 +75,6 @@ public class AutoRoutines {
 
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(diamondTest.resetOdometry(), diamondTest.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine rightAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("rightAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    // routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
-
-    routine.active().onTrue(Commands.sequence(HPtoC.resetOdometry(), HPtoC.cmd()));
-
-    // When the trajectory is done, start the next trajectory
-    // RIGHTtoF.done().onTrue(FtoHP.cmd());
 
     return routine;
   }

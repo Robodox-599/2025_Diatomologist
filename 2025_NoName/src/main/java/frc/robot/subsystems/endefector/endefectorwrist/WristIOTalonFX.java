@@ -77,12 +77,11 @@ public class WristIOTalonFX extends WristIO {
     super.currentAmps = wristMotor.getSupplyCurrent().getValueAsDouble();
     super.velocity = wristMotor.getVelocity().getValueAsDouble();
     super.tempCelsius = wristMotor.getDeviceTemp().getValueAsDouble();
-    super.position = wristMotor.getPosition().getValueAsDouble();
+    super.currentPositionDegrees = wristMotor.getPosition().getValueAsDouble();
     super.targetPosition = this.targetPosition;
-    this.currentPosition = wristMotor.getPosition().getValueAsDouble();
-    super.currentPosition = this.currentPosition;
+    this.currentPosition = super.currentPositionDegrees;
     super.atSetpoint =
-        Math.abs(super.currentPosition - this.targetPosition) < wristPositionTolerance;
+        Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
     MotorLog.log("Wrist", wristMotor);
 
     DogLog.log("Wrist/TargetPosition", passedInPosition);
@@ -106,11 +105,6 @@ public class WristIOTalonFX extends WristIO {
 
     m_request.withSlot(wristSlot);
     wristMotor.setControl(m_request);
-  }
-
-  @Override
-  public double getPose() {
-    return wristMotor.getPosition().getValueAsDouble();
   }
 
   @Override
@@ -160,5 +154,10 @@ public class WristIOTalonFX extends WristIO {
     m_request.withSlot(0);
     m_request.Position = position;
     wristMotor.setControl(m_request);
+  }
+
+  @Override
+  public double getCurrentPosition(){
+    return this.currentPosition;
   }
 }

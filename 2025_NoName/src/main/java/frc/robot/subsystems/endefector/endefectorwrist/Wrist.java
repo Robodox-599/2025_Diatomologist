@@ -17,6 +17,7 @@ public class Wrist extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs();
+    safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
   }
 
   public Command goToPose(double pose) {
@@ -39,8 +40,8 @@ public class Wrist extends SubsystemBase {
     return io.atSetpoint;
   }
 
-  public double getPose() {
-    return io.getPose();
+  public double getCurrentPosition() {
+    return io.currentPositionDegrees;
   }
 
   public void setBrake(boolean brake) {

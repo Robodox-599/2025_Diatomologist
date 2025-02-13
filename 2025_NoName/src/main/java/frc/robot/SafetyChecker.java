@@ -1,38 +1,37 @@
 package frc.robot;
 
+import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+
 public class SafetyChecker {
-  private double elevatorMeters, wristDegrees;
+  private double elevatorInches, wristDegrees;
   private final double maximumElevatorSwingThroughHeight =
-      0.0; // maximum hieght that the endefector/ elevator can be at so the endefector can swing
-  // through the elevator
+      0.0; // maximum height that the endefector/elevator can be at so the endefector can swing through the elevator, check cad for this
   private final double endefectorBehindElevatorDegrees =
       76.0; // the degrees threshold that the endefector is behind the elevator, found in cad
 
-  public void setCurrentElevatorMeters(double elevatorMeters) {
-    this.elevatorMeters = elevatorMeters;
+  public void setCurrentElevatorInches(double elevatorInches) { // set current elevator degrees, this should be done before every safe check!
+    this.elevatorInches = elevatorInches;
   }
 
-  public void setCurrentWristDegrees(double wristDegrees) {
+  public void setCurrentWristDegrees(double wristDegrees) { // set the current wrist degrees, this should be done before every safe check!
     this.wristDegrees = wristDegrees;
   }
 
   public boolean isSafeWrist(double wristTargetDegrees) {
-    boolean targetBehindElevator = isBehindElevator(wristTargetDegrees);
-    boolean currentBehindElevator = isBehindElevator(wristDegrees);
+    boolean targetBehindElevator = isBehindElevator(wristTargetDegrees); // is the target behind the elevator allocated degrees?
+    boolean currentBehindElevator = isBehindElevator(wristDegrees); // is the current angle behind the elevator allocated degrees?
     if (targetBehindElevator != currentBehindElevator) {
-      // if the intake is swinging through elevator
-      return elevatorMeters < maximumElevatorSwingThroughHeight;
+      // if one is not equal to the other, then check the make sure the height of the elevator is good enough to allow swing through the elevator. 
+      return elevatorInches < maximumElevatorSwingThroughHeight;
     }
     return true;
   }
 
-  public boolean isSafeElevator(double elevatorTargetMeters) {
+  public boolean isSafeElevator(double elevatorTargetInches) {
     if (isBehindElevator(wristDegrees)
-        && elevatorTargetMeters < maximumElevatorSwingThroughHeight) {
-      // if the intake is swinging through elevator
-      return true;
-    } else if (!isBehindElevator(wristDegrees)) {
-      // if the intake is not in front of elevator
+        && elevatorTargetInches < maximumElevatorSwingThroughHeight || (!isBehindElevator(wristDegrees))) {
+      // if the endefector is swinging through elevator but the setpoint is under the max elevator swing through height
+      // or if the endefector is not behind the elevator, then return true
       return true;
     }
     return false;

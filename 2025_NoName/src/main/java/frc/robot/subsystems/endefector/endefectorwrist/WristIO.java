@@ -9,8 +9,7 @@ public abstract class WristIO {
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double targetPosition = 0.0;
-  protected double currentPosition = 0.0;
-  protected double position = 0.0;
+  protected double currentPositionDegrees = 0.0;
   protected boolean atSetpoint = false;
   protected WristConstants.WristStates state = WristConstants.WristStates.STOW;
 
@@ -19,10 +18,6 @@ public abstract class WristIO {
   public void setVoltage(double voltage) {}
 
   public void goToPose(double position) {}
-
-  public double getPose() {
-    return 0.0;
-  }
 
   public void stop() {}
 
@@ -39,6 +34,6 @@ public abstract class WristIO {
   }
 
   public double getCurrentPosition() {
-    return EndefectorUtil.convertToTicks(currentPosition);
+    return EndefectorUtil.convertToTicks(currentPositionDegrees);
   }
 }

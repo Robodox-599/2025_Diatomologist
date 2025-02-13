@@ -76,7 +76,7 @@ public class RobotContainer {
         climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         autoFactory =
-            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+            new AutoFactory(drive::getPose, drive::zeroPose, drive::followChoreoPath, true, drive);
         autoRoutines = new AutoRoutines(autoFactory);
         break;
 
@@ -196,18 +196,19 @@ public class RobotContainer {
   // saftey code in subsystems, not in commands.
 
   public Command stationIntake() {
-    return Commands.sequence(
-        endefectorWrist
-            .moveToState(WristConstants.WristStates.STATIONINTAKE)
-            .unless(() -> elevator.getIO().getState() != ElevatorConstants.ElevatorStates.INTAKE),
-        // creates conditional command to
-        Commands.either(
-            elevator.moveToState(ElevatorStates.INTAKE),
-            endefectorWrist.moveToState(WristConstants.WristStates.STATIONINTAKE),
-            () -> elevator.getIO().getState() != ElevatorConstants.ElevatorStates.INTAKE),
-        endefectorRollers
-            .moveToState(RollersConstants.EndefectorRollerStates.INTAKE)
-            .andThen(rumbleControllers()));
+    
+    // return Commands.sequence(
+    //     endefectorWrist
+    //         .moveToState(WristConstants.WristStates.STATIONINTAKE)
+    //         .unless(() -> elevator.getIO().getState() != ElevatorConstants.ElevatorStates.INTAKE),
+    //     // creates conditional command to
+    //     Commands.either(
+    //         elevator.moveToState(ElevatorStates.INTAKE),
+    //         endefectorWrist.moveToState(WristConstants.WristStates.STATIONINTAKE),
+    //         () -> elevator.getIO().getState() != ElevatorConstants.ElevatorStates.INTAKE),
+    //     endefectorRollers
+    //         .moveToState(RollersConstants.EndefectorRollerStates.INTAKE)
+    //         .andThen(rumbleControllers()));
   }
 
   public Command setElevatorScoringLevel(ElevatorConstants.ElevatorStates level) {

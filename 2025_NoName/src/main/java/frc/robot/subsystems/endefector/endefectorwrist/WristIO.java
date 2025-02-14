@@ -29,7 +29,7 @@ public abstract class WristIO {
     return state;
   }
 
-  public double GetCurrentVolts() {
+  public double getCurrentVolts() {
     return appliedVolts;
   }
 

@@ -36,12 +36,15 @@ import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.subsystemvisualizer.subsystemvisualizer;
+import frc.robot.SafetyChecker;
 import java.util.Map;
 
 public class RobotContainer {
@@ -58,6 +61,7 @@ public class RobotContainer {
   private Rollers endefectorRollers;
   private Wrist endefectorWrist;
   private Climb climb;
+  // private SafteyChecker safetyChecker;
   private final Drive drive;
   private int counter = 0;
 
@@ -196,7 +200,79 @@ public class RobotContainer {
   // saftey code in subsystems, not in commands.
 
   public Command stationIntake() {
-    
+    return Commands.sequence(
+      Commands.either(
+        Commands.sequence(
+          elevator.moveToState(ElevatorStates.INTAKE), 
+          endefectorWrist.moveToState(WristStates.STATIONINTAKE), 
+          endefectorRollers.moveToState(EndefectorRollerStates.INTAKE)), 
+        Commands.sequence(
+          endefectorWrist.moveToState(WristStates.SCORING),
+          elevator.moveToState(ElevatorStates.INTAKE),
+          endefectorWrist.moveToState(WristStates.STATIONINTAKE),
+          endefectorRollers.moveToState(EndefectorRollerStates.INTAKE)),
+        ()->safetyChecker.isSafeElevator() && safteyChecker.isSafeWrist()
+          ));
+  }
+  public Command groundIntake() {
+    return Commands.sequence(
+      Commands.either(
+        Commands.sequence(
+          elevator.moveToState(ElevatorStates.INTAKE), 
+          endefectorWrist.moveToState(WristStates.GROUNDINTAKE)), 
+          endefectorRollers.moveToState(EndefectorRollerStates.INTAKE), 
+        Commands.sequence(
+          endefectorWrist.moveToState(WristStates.SCORING),
+          elevator.moveToState(ElevatorStates.INTAKE),
+          endefectorWrist.moveToState(WristStates.GROUNDINTAKE),
+          endefectorRollers.moveToState(EndefectorRollerStates.INTAKE)),
+        ()->safetyChecker.isSafeElevator && safteyChecker.isSafeWrist
+          ));}
+
+  public Command reefIntake() {
+    return Commands.sequence(
+      Commands.either(
+        Commands.sequence(
+          elevator.moveToState(ElevatorStates.INTAKE), 
+          endefectorWrist.moveToState(WristStates.REEFINTAKE)), 
+          endefectorRollers.moveToState(EndefectorRollerStates.REEFINTAKE), 
+        Commands.sequence(
+          endefectorWrist.moveToState(WristStates.SCORING),
+          elevator.moveToState(ElevatorStates.INTAKE),
+          endefectorWrist.moveToState(WristStates.GROUNDINTAKE),
+          endefectorRollers.moveToState(EndefectorRollerStates.REEFINTAKE)),
+        ()->safetyChecker.isSafeElevator && safteyChecker.isSafeWrist
+          ));
+  
+  public Command scorring() {
+    return Commands.sequence(
+      Commands.either(
+        Commands.sequence(
+          elevator.moveToState(ElevatorStates.INTAKE), 
+          endefectorWrist.moveToState(WristStates.SCORING)), 
+          endefectorRollers.moveToState(EndefectorRollerStates.SCORE), 
+        Commands.sequence(
+          endefectorWrist.moveToState(WristStates.SCORING),
+          elevator.moveToState(ElevatorStates.INTAKE),
+          endefectorWrist.moveToState(WristStates.SCORING),
+          endefectorRollers.moveToState(EndefectorRollerStates.SCORE)),
+        ()->safetyChecker.isSafeElevator && safteyChecker.isSafeWrist
+          ));
+
+  public Command climb() {
+    return Commands.sequence(
+      Commands.either(
+        Commands.sequence(
+          elevator.moveToState(ElevatorStates.INTAKE), 
+          endefectorWrist.moveToState(WristStates.CLIMB)), 
+          endefectorRollers.moveToState(EndefectorRollerStates.STOP), 
+        Commands.sequence(
+          endefectorWrist.moveToState(WristStates.SCORING),
+          elevator.moveToState(ElevatorStates.INTAKE),
+          endefectorWrist.moveToState(WristStates.CLIMB),
+          endefectorRollers.moveToState(EndefectorRollerStates.STOP)),
+        ()->safetyChecker.isSafeElevator && safteyChecker.isSafeWrist
+          ));
     // return Commands.sequence(
     //     endefectorWrist
     //         .moveToState(WristConstants.WristStates.STATIONINTAKE)

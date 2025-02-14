@@ -5,7 +5,7 @@ public class RollersConstants {
     STOP(1),
     SCORE(2),
     INTAKE(3),
-    INTAKEREEF(4),
+    REEFINTAKE(4),
     ;
 
     private final int index;

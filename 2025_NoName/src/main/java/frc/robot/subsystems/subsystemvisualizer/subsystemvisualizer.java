@@ -132,30 +132,30 @@ public class subsystemvisualizer extends SubsystemBase {
   public void updateEndefectorWrist() {
     switch (endefectorWrist.getIO().getCurrentState()) {
       case SCORING:
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPositionDegrees());
+        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kRed));
         break;
       case GROUNDINTAKE:
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPositionDegrees());
+        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kRed));
         break;
       case STATIONINTAKE:
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPositionDegrees());
+        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kGreen));
         break;
       case CLIMB:
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPositionDegrees());
+        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kRed));
         break;
       default: // STOW
-        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPositionDegrees());
+        endefectorWristVis.setAngle(endefectorWrist.getIO().getCurrentPosition());
         endefectorWristVis.setColor(new Color8Bit(Color.kBlue));
         break;
     }
   }
 
   public void updateEndefectorRollers() {
-    switch (endefectorRollers.getIO().getCurrentState()) {
+    switch (endefectorRollers.getIO().getState()) {
       case STOP:
         endefectorRollersVis.setAngle(endefectorRollers.getIO().GetCurrentVolts());
         endefectorRollersVis.setColor(new Color8Bit(Color.kGreen));

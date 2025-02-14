@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.drive.constants.RealConstants.TRACK_WIDTH_X;
 import static frc.robot.subsystems.drive.constants.RealConstants.TRACK_WIDTH_Y;
 
@@ -32,17 +31,18 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.constants.RealConstants;
-import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -53,7 +53,6 @@ public class Drive extends SubsystemBase {
   private final Module[] modules; // FL, FR, BL, BR
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
-
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -66,13 +65,32 @@ public class Drive extends SubsystemBase {
   private Pose2d pose = new Pose2d();
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, pose);
-
-  private final PIDController choreoPathXController = new PIDController(1, 0, 0);
-  private final PIDController choreoPathYController = new PIDController(1, 0, 0);
-  private final PIDController choreoPathAngleController = new PIDController(0, 0, 0);
+  private final Field2d field = new Field2d();
+  private final PIDController choreoPathXController;
+  private final PIDController choreoPathYController;
+  private final PIDController choreoPathAngleController;
   private Twist2d fieldVelocity = new Twist2d();
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
+    SmartDashboard.putData("Field", field);
+    switch (Constants.currentMode) {
+      case REAL:
+        choreoPathXController = new PIDController(0, 0, 0);
+        choreoPathYController = new PIDController(0, 0, 0);
+        choreoPathAngleController = new PIDController(0, 0, 0);
+        break;
+      case SIM:
+        choreoPathXController = new PIDController(0.16, 0, 0);
+        choreoPathYController = new PIDController(0.16, 0, 0);
+        choreoPathAngleController = new PIDController(0.18, 0, 0);
+        break;
+      default:
+        choreoPathXController = new PIDController(1, 0, 0);
+        choreoPathYController = new PIDController(1, 0, 0);
+        choreoPathAngleController = new PIDController(0, 0, 0);
+        break;
+    }
+
     this.gyroIO = gyroIO;
 
     modules = new Module[moduleIOs.length];
@@ -176,20 +194,20 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
 
-    // DogLog.log("Odometry/Robot", getPose());
+    DogLog.log("Odometry/Robot", getPose());
     DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
     DogLog.log("SwerveStates/Measured", getModuleStates());
   }
 
   private void updateOdom() {
-    // Update odometry // This updates based on sensor data and kinematics
     double[] sampleTimestamps =
         modules[0].getOdometryTimestamps(); // All signals are sampled together
-    for (int i = 0; i < sampleTimestamps.length; i++) {
+    int sampleCount = sampleTimestamps.length;
+    for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
-      SwerveModulePosition[] modulePositions = new SwerveModulePosition[modules.length];
-      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[modules.length];
-      for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
+      SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+      SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
@@ -200,7 +218,7 @@ public class Drive extends SubsystemBase {
       }
 
       // Update gyro angle
-      if (gyroIO.connected) {
+      if (gyroIO.connected && gyroIO.odometryYawPositions.length > i) {
         // Use the real gyro angle
         rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {
@@ -210,6 +228,7 @@ public class Drive extends SubsystemBase {
       }
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      field.setRobotPose(getPose());
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/Velocity", getVelocity());
     }
@@ -222,6 +241,7 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
+    speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
@@ -230,7 +250,8 @@ public class Drive extends SubsystemBase {
     DogLog.log("Swerve/Speed Error", (discreteSpeeds.minus(getVelocity())));
     DogLog.log(
         "Swerve/Target Chassis Speeds Field Relative",
-        ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
+        ChassisSpeeds.fromFieldRelativeSpeeds(discreteSpeeds, getRotation()));
+    DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
     for (int i = 0; i < modules.length; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
@@ -238,22 +259,20 @@ public class Drive extends SubsystemBase {
 
   public void followChoreoPath(SwerveSample sample) {
     Pose2d pose = getPose();
-    ChassisSpeeds speeds = getChassisSpeeds();
     DogLog.log("Choreo/RobotPose2d", pose);
     DogLog.log("Choreo/SwerveSample", sample);
 
     DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
 
-    DogLog.log("Choreo/RobotMeasuredVelocity", speeds);
-
-    var pathTargetSpeeds = sample.getChassisSpeeds();
-    pathTargetSpeeds.vxMetersPerSecond += choreoPathXController.calculate(pose.getX(), sample.x);
-
-    pathTargetSpeeds.vyMetersPerSecond += choreoPathYController.calculate(pose.getY(), sample.y);
-    pathTargetSpeeds.omegaRadiansPerSecond +=
-        choreoPathAngleController.calculate(pose.getRotation().getRadians(), sample.heading);
-
-    runVelocity(pathTargetSpeeds);
+    ChassisSpeeds speeds =
+        new ChassisSpeeds(
+            sample.vx + choreoPathXController.calculate(pose.getX(), sample.x),
+            sample.vy + choreoPathYController.calculate(pose.getY(), sample.y),
+            sample.omega
+                + choreoPathAngleController.calculate(
+                    pose.getRotation().getRadians(), sample.heading));
+    DogLog.log("Choreo/RobotSetpointSpeedsAfterPID", speeds);
+    runVelocity(speeds);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -270,10 +289,29 @@ public class Drive extends SubsystemBase {
           gyroIO.setYaw(0);
         });
   }
+  // for testing tmr, try putting in a 1.0 values into a new chassis speeds. 1.0 pos x, 1.0 pos y, 1.0 omega, 1.0 -x, 1.0 -y, 1.0 -omega
+  // make sure it goes to the right direction
+  // if it doesnt then the problem is in our code, not in choreo. 
+  // robot thinks its in the right spot so theres nothing wrong with choreo.
+// if the robot thinks its going the righht directoin and its not going the right direction then the issue likely lies somwhere in our control code.
+  public void resetPose(Pose2d pose) {
+    rawGyroRotation = (pose.getRotation());
+    gyroIO.setYaw(rawGyroRotation.getDegrees());
+    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
+  public void zeroAll(Pose2d pose) {
+    resetPose(new Pose2d(0, 0, new Rotation2d(0)));
+  }
 
   void overrideGyroAngle(double angleDegrees) {
-    rawGyroRotation = Rotation2d.fromDegrees(angleDegrees);
-    setPose(new Pose2d(getPose().getTranslation(), rawGyroRotation));
+    resetPose(
+        new Pose2d(
+            getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
+  }
+
+  public void zeroPose() {
+    resetPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
   }
 
   public Command zeroPosition() {
@@ -283,8 +321,14 @@ public class Drive extends SubsystemBase {
         });
   }
 
-  void zeroPose() {
-    setPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
+  /** Returns the current odometry pose. */
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  /** Returns the current odometry rotation. */
+  public Rotation2d getRotation() {
+    return getPose().getRotation();
   }
 
   public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
@@ -298,23 +342,14 @@ public class Drive extends SubsystemBase {
 
   public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
     return this.runVelocityCmd(
-        () ->
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds.get(),
-                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                    ? getPose().getRotation()
-                    : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
+        () -> ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation()));
   }
 
   public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
     return this.run(
         () -> {
           var allianceSpeeds =
-              ChassisSpeeds.fromRobotRelativeSpeeds(
-                  speeds.get(),
-                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                      ? getPose().getRotation()
-                      : getPose().getRotation().minus(Rotation2d.fromDegrees(180)));
+              ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation());
           // Calculate module setpoints
           ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
           SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
@@ -406,28 +441,14 @@ public class Drive extends SubsystemBase {
   }
 
   public ChassisSpeeds getVelocity() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
     var speeds =
-        ChassisSpeeds.fromRobotRelativeSpeeds(
-            kinematics.toChassisSpeeds(
-                Arrays.stream(modules).map((m) -> m.getState()).toArray(SwerveModuleState[]::new)),
-            getRotation());
+        ChassisSpeeds.fromRobotRelativeSpeeds(kinematics.toChassisSpeeds(states), getRotation());
     return new ChassisSpeeds(
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
-  }
-
-  /** Returns the current odometry pose. */
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
-  }
-
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
-  }
-
-  /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
   /** Adds a new timestamped vision measurement. */

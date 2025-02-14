@@ -137,10 +137,10 @@ public class ModuleIOReal extends ModuleIO {
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
 
     /* ************ INVERTS ************ */
-    driveConfig.MotorOutput.Inverted =
-        constants.invertDrive()
-            ? InvertedValue.CounterClockwise_Positive
-            : InvertedValue.Clockwise_Positive;
+    // driveConfig.MotorOutput.Inverted =
+    //     constants.invertDrive()
+    //         ? InvertedValue.CounterClockwise_Positive
+    //         : InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.Inverted =
         constants.invertMotor()
             ? InvertedValue.Clockwise_Positive

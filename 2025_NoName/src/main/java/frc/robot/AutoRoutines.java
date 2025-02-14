@@ -4,6 +4,7 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class AutoRoutines {
   private AutoFactory autoFactory;
@@ -17,10 +18,13 @@ public class AutoRoutines {
 
     // Load the routine's trajectories
     AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
-
+    AutoTrajectory ItoHP = routine.trajectory("ItoHP");
+    AutoTrajectory HPtoI = routine.trajectory("HPtoI");
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
+    LEFTtoI.done().onTrue(new WaitCommand(2).andThen(ItoHP.cmd()));
+    ItoHP.done().onTrue(new WaitCommand(1).andThen(HPtoI.cmd()));
     return routine;
   }
 

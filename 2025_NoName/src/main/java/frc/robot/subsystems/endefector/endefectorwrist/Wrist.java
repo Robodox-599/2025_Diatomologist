@@ -32,7 +32,9 @@ public class Wrist extends SubsystemBase {
     return Commands.run(
             () -> {
               io.setState(state);
-            }).andThen(Commands.waitUntil(this::isAtTargetPosition)).onlyIf(() -> safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(state)));
+            })
+        .andThen(Commands.waitUntil(this::isAtTargetPosition))
+        .onlyIf(() -> safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(state)));
   }
 
   public boolean isAtTargetPosition() {

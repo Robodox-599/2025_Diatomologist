@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SafetyChecker;
-import frc.robot.util.ElevatorUtil;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
@@ -29,18 +28,11 @@ public class Elevator extends SubsystemBase {
 
   /* Moves the elevator to one of the states */
   public Command moveToState(ElevatorConstants.ElevatorStates state) {
-    return Commands.sequence(
-      Commands.either(
-        Commands.run(
+    return Commands.runOnce(
             () -> {
               io.setState(state);
-            }),
-        Commands.run(
-              () -> {
-                io.setState(state);
-              }) 
-              getCurrentPositionDegrees).andThen(
-                Commands.waitUntil(this::isAtTargetPosition)));
+            })
+        .andThen(Commands.waitUntil(this::isAtTargetPosition));
   }
 
   public Command move(double volt) {

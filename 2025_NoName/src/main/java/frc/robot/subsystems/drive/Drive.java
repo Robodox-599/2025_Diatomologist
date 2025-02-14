@@ -289,11 +289,14 @@ public class Drive extends SubsystemBase {
           gyroIO.setYaw(0);
         });
   }
-  // for testing tmr, try putting in a 1.0 values into a new chassis speeds. 1.0 pos x, 1.0 pos y, 1.0 omega, 1.0 -x, 1.0 -y, 1.0 -omega
+
+  // for testing tmr, try putting in a 1.0 values into a new chassis speeds. 1.0 pos x, 1.0 pos y,
+  // 1.0 omega, 1.0 -x, 1.0 -y, 1.0 -omega
   // make sure it goes to the right direction
-  // if it doesnt then the problem is in our code, not in choreo. 
+  // if it doesnt then the problem is in our code, not in choreo.
   // robot thinks its in the right spot so theres nothing wrong with choreo.
-// if the robot thinks its going the righht directoin and its not going the right direction then the issue likely lies somwhere in our control code.
+  // if the robot thinks its going the righht directoin and its not going the right direction then
+  // the issue likely lies somwhere in our control code.
   public void resetPose(Pose2d pose) {
     rawGyroRotation = (pose.getRotation());
     gyroIO.setYaw(rawGyroRotation.getDegrees());

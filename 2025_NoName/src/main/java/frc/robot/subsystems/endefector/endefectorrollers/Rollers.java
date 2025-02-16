@@ -116,4 +116,8 @@ public class Rollers extends SubsystemBase {
   public RollersIO getIO() {
     return io;
   }
+
+  public double getCoralDistance() {
+    return io.getCoralDistance();
+  }
 }

@@ -52,8 +52,4 @@ public class ScoringUtil {
       return targetPose;
     }
   }
-  //   public Transform2d getCoralOffset(){
-  // someone write this later with endeffector.
-  //   }
-
 }

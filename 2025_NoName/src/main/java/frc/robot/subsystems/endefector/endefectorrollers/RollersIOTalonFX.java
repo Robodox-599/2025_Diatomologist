@@ -101,4 +101,9 @@ public class RollersIOTalonFX extends RollersIO {
     double rangeDistance = Units.metersToInches(CANrange.getDistance().getValueAsDouble());
     return CANrangeDebouncer.calculate(rangeDistance <= RollersConstants.detectionDistance);
   }
+
+  @Override
+  public double getCoralDistance() {
+    return CANrange.getDistance().getValueAsDouble();
+  }
 }

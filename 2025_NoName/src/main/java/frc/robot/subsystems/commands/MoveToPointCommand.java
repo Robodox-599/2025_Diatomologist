@@ -235,4 +235,12 @@ public class MoveToPointCommand {
         },
         drive);
   }
+
+  public static Command moveToPointFast(Drive drive, Pose2d point) {
+    return moveToPointCommand(drive, point, () -> false);
+  }
+
+  public static Command moveToPointSlow(Drive drive, Pose2d point) {
+    return moveToPointCommand(drive, point, () -> true);
+  }
 }

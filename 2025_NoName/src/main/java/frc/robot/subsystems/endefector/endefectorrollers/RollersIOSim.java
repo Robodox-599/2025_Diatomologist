@@ -57,4 +57,9 @@ public class RollersIOSim extends RollersIO {
     super.currentState = state;
     EndefectorUtil.stateToVelocity(state);
   }
+
+  @Override
+  public double getCoralDistance() {
+    return Math.random() * 10;
+  }
 }

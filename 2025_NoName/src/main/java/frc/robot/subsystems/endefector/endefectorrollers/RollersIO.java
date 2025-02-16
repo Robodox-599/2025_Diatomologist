@@ -34,4 +34,8 @@ public abstract class RollersIO {
   public RollersConstants.EndefectorRollerStates getState() {
     return currentState;
   }
+
+  public double getCoralDistance() {
+    return 0.0;
+  }
 }

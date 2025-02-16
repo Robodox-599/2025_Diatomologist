@@ -80,7 +80,7 @@ public class VisionIOReal extends VisionIO {
     // Update the latestTargetAngle with the tag's x and y rotations
     Rotation3d tagRotation =
         FieldConstants.AprilTags.TAGS[target.fiducialId - 1].pose.getRotation();
-    latestTargetAngle =
+    super.latestTargetAngle =
         new ObservedTargetRotations(
             new Rotation2d(tagRotation.getX()), new Rotation2d(tagRotation.getY()));
 
@@ -147,7 +147,8 @@ public class VisionIOReal extends VisionIO {
     }
 
     super.hasTargets = true;
-
+    super.numTargets = seenTags.size();
+    super.tagIds = seenTags.stream().mapToInt(i -> i).toArray();
     seenTags.clear();
     super.previousUpdate = previousUpdate;
     resultList.stream()

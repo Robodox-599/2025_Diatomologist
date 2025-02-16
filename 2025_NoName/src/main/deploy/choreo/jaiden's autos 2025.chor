@@ -4,20 +4,6 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
-   "xOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.2365375 m",
-     "val":0.2365375
-    }
-   },
-   "straightOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.473075 m",
-     "val":0.473075
-    }
-   },
    "botRadius":{
     "dimension":"Length",
     "var":{
@@ -39,6 +25,20 @@
      "val":8.051
     }
    },
+   "straightOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.473075 m",
+     "val":0.473075
+    }
+   },
+   "xOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.2365375 m",
+     "val":0.2365375
+    }
+   },
    "yOffset":{
     "dimension":"Length",
     "var":{
@@ -47,7 +47,22 @@
     }
    }
   },
-  "poses":{}
+  "poses":{
+   "HPPose":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"0.55 m",
+     "val":0.55
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
@@ -71,12 +86,12 @@
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"75 lbs",
+   "val":34.01942775
   },
   "inertia":{
-   "exp":"6 kg m ^ 2",
-   "val":6.0
+   "exp":"4 kg m ^ 2",
+   "val":4.0
   },
   "gearing":{
    "exp":"5.9",
@@ -87,12 +102,12 @@
    "val":0.0508
   },
   "vmax":{
-   "exp":"6000 RPM",
-   "val":628.3185307179587
+   "exp":"5500 RPM",
+   "val":575.9586531581288
   },
   "tmax":{
-   "exp":"0.7 N * m",
-   "val":0.7
+   "exp":"0.5 N * m",
+   "val":0.5
   },
   "cof":{
    "exp":"1.5",
@@ -100,16 +115,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    },
    "side":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    },
    "back":{
-    "exp":"17 in",
-    "val":0.4318
+    "exp":"15 in",
+    "val":0.381
    }
   },
   "differentialTrackWidth":{

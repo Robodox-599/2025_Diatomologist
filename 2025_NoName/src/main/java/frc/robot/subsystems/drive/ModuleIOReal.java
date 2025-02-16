@@ -100,40 +100,47 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ CURRENT LIMITS ************ */
 
-    driveConfig.CurrentLimits.SupplyCurrentLimit = 35.0;
+    driveConfig.CurrentLimits.SupplyCurrentLimit = 65;
+    driveConfig.CurrentLimits.StatorCurrentLimit = 70;
     driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    turnConfig.CurrentLimits.StatorCurrentLimit = TURN_STATOR_CURRENT_LIMIT;
+    turnConfig.CurrentLimits.StatorCurrentLimit = 40;
     turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     /* ************ DRIVE VOLTAGE-PID CONFIGS ************ */
-
-    driveConfig.Slot0.kV = 0.14015;
-    driveConfig.Slot0.kS = 0.5;
-    driveConfig.Slot0.kP = 8;
+    // Motor_RPS=
+    // motor_free_speed / 60
+    // Wheel_RPS=
+    // Motor_RPS / Gear_Ratio
+    // Wheel_circumference=
+    // pi * wheel_diameter_inmeters
+    // Wheel_speed=
+    // Wheel_RPS * Wheel_circumference
+    // kV =
+    // Applied Volts (lik[\]ely 12) / Wheel_speed
+    driveConfig.Slot0.kV = 2.904069;
+    driveConfig.Slot0.kS = 0.209;
+    driveConfig.Slot0.kP = 7.5;
     driveConfig.Slot0.kD = 0;
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
-
-    turnConfig.Slot0.kV = 0.0;
     turnConfig.Slot0.kS = 0.24;
     turnConfig.Slot0.kP = 100;
     turnConfig.Slot0.kD = 0;
 
     /* ************ MOTION MAGIC CONFIGS ************ */
 
-    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
-    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
+    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;
+    // turnConfig.MotionMagic.MotionMagicAcceleration = (5800 * 0.1) / TURN_GEAR_RATIO;
     // driveConfig.MotionMagic.MotionMagicCruiseVelocity = MAX_LINEAR_SPEED;
     // driveConfig.MotionMagic.MotionMagicAcceleration = MAX_LINEAR_ACCELERATION;
     // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
 
     /* ************ INVERTS ************ */
-    driveConfig.MotorOutput.Inverted =
-        constants.invertDrive()
-            ? InvertedValue.CounterClockwise_Positive
-            : InvertedValue.Clockwise_Positive;
+    // driveConfig.MotorOutput.Inverted =
+    //     constants.invertDrive()
+    //         ? InvertedValue.CounterClockwise_Positive
+    //         : InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.Inverted =
         constants.invertMotor()
             ? InvertedValue.Clockwise_Positive
@@ -150,11 +157,14 @@ public class ModuleIOReal extends ModuleIO {
     /*  ************ APPLY TURN CONFIG SENSOR FEEDBACK INFO ************ */
 
     turnConfig.Feedback.FeedbackRemoteSensorID = constants.cancoderID();
-    turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    turnConfig.Feedback.FeedbackSensorSource =
+        FeedbackSensorSourceValue
+            .FusedCANcoder; // change to FeedbackSensorSourceValue.FusedCANCoder;
     turnConfig.Feedback.RotorToSensorRatio = RealConstants.TURN_GEAR_RATIO;
     turnConfig.Feedback.SensorToMechanismRatio = 1.0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
+    turnConfig.MotionMagic.MotionMagicAcceleration = 30;
+    turnConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     /* ************ APPLY BRAKE MODES *************/
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -230,8 +240,7 @@ public class ModuleIOReal extends ModuleIO {
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     super.odometryDrivePositionsMeters =
         drivePositionQueue.stream()
-            .mapToDouble(
-                (Double value) -> Units.rotationsToRadians(value / RealConstants.DRIVE_GEAR_RATIO))
+            .mapToDouble((Double value) -> Units.rotationsToRadians(value) / DRIVE_GEAR_RATIO)
             .toArray();
     super.odometryTurnPositions =
         turnPositionQueue.stream()
@@ -241,6 +250,12 @@ public class ModuleIOReal extends ModuleIO {
     MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DrivePositionMeters",
+        super.drivePositionMeters);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DriveVelocityMetersPerSec",
+        super.driveVelocityMetersPerSec);
 
     MotorLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnTalon);
     DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
@@ -249,13 +264,11 @@ public class ModuleIOReal extends ModuleIO {
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition",
         super.turnAbsolutePosition);
-    // DogLog.log(
-    //     "Drive/Module " + constants.prefix() + "/DriveMotor/VelocityRotsPerSec",
-    //     super.driveVelocityMetersPerSec * (WHEEL_RADIUS * 2 * Math.PI));
+
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
-        "Drive/Module" + constants.prefix() + "/Odometry/DrivePositionsMeters",
+        "Drive/Module " + constants.prefix() + "/Odometry/DrivePositionsMeters",
         super.odometryDrivePositionsMeters);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/TurnPositions",
@@ -277,15 +290,14 @@ public class ModuleIOReal extends ModuleIO {
   }
 
   @Override
-  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {
+  public void setDriveSetpoint(final double metersPerSecond) {
     // Doesnt actually refresh drive velocity signal, but should be cached
-    if (metersPerSecond == 0
-        && metersPerSecondSquared == 0
-        && MathUtil.isNear(0.0, driveVelocity.getValueAsDouble(), 0.1)) {
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/TargetVelocity", metersPerSecond);
+    if (metersPerSecond == 0 && MathUtil.isNear(0.0, driveVelocity.getValueAsDouble(), 0.1)) {
       setDriveVoltage(0.0);
     } else {
-      driveTalon.setControl(
-          drivePID.withVelocity(metersPerSecond).withAcceleration(metersPerSecondSquared));
+      driveTalon.setControl(drivePID.withVelocity(metersPerSecond));
     }
   }
 

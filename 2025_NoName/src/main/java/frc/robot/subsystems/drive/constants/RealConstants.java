@@ -9,10 +9,10 @@ import frc.robot.subsystems.drive.Module.ModuleConstants;
 // import frc.robot.subsystems.vision.VisionConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = 0.15087890625; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.363525390625; // FR
-  public static final double Module2AbsoluteEncoderOffset = 0.23388671875; // BL
-  public static final double Module3AbsoluteEncoderOffset = -0.467529296875; // BR
+  public static final double Module0AbsoluteEncoderOffset = 0.149658203125; // FL
+  public static final double Module1AbsoluteEncoderOffset = 0.3662109375; // FR
+  public static final double Module2AbsoluteEncoderOffset = -0.234375; // BL
+  public static final double Module3AbsoluteEncoderOffset = -0.4658203125; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 
@@ -22,7 +22,8 @@ public class RealConstants {
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
-  public static final double MAX_LINEAR_SPEED = Units.feetToMeters(16.5);
+
+  public static final double MAX_LINEAR_SPEED = 4.55;
   public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
   public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);
   public static final double DRIVE_BASE_RADIUS =
@@ -94,7 +95,7 @@ public class RealConstants {
           WHEEL_RADIUS,
           false,
           false,
-          true);
+          false);
   public static final ModuleConstants backRight =
       new ModuleConstants(
           "Back Right",

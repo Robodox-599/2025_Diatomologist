@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MomentOfInertia;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.drive.constants.RealConstants;
@@ -41,7 +40,7 @@ public class ModuleIOSim extends ModuleIO {
                 SimConstants.drive_gearbox,
                 kDriveInertia.magnitude()
                     * kDriveInertia.copySign(kDriveInertia, KilogramSquareMeters),
-                RealConstants.DRIVE_GEAR_RATIO),
+                (1 / RealConstants.DRIVE_GEAR_RATIO)),
             SimConstants.drive_gearbox);
     turnSim =
         new DCMotorSim(
@@ -52,14 +51,19 @@ public class ModuleIOSim extends ModuleIO {
                 RealConstants.TURN_GEAR_RATIO),
             SimConstants.turn_gearbox);
 
-    turnController.enableContinuousInput(-Math.PI, Math.PI);
-    DriverStation.silenceJoystickConnectionWarning(true);
+    turnController.enableContinuousInput(-0.5, 0.5);
+    // turnController.setTolerance(0.05);
+    // driveController.setTolerance(0.05);
+    // DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   @Override
   public void updateInputs() {
     if (driveClosedLoop) {
-      driveAppliedVolts = driveController.calculate(super.driveVelocityMetersPerSec / WHEEL_RADIUS);
+      driveAppliedVolts =
+          driveController.calculate(
+              driveSim.getAngularVelocityRadPerSec(),
+              super.driveVelocityMetersPerSec / WHEEL_RADIUS);
     } else {
       driveController.reset();
     }
@@ -125,7 +129,7 @@ public class ModuleIOSim extends ModuleIO {
   }
 
   @Override
-  public void setDriveSetpoint(final double metersPerSecond, final double metersPerSecondSquared) {
+  public void setDriveSetpoint(final double metersPerSecond) {
     driveClosedLoop = true;
     setDriveVoltage(
         driveController.calculate(

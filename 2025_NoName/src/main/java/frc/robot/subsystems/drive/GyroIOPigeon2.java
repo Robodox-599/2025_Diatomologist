@@ -28,7 +28,7 @@ public class GyroIOPigeon2 extends GyroIO {
     yawVelocity.setUpdateFrequency(50.0);
     pigeon.optimizeBusUtilization();
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pigeon.getYaw());
+    yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw);
   }
 
   @Override

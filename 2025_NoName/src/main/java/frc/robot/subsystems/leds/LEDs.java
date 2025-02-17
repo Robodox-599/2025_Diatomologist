@@ -1,5 +1,7 @@
 package frc.robot.subsystems.leds;
 
+import com.ctre.phoenix.led.CANdle;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,10 +14,39 @@ public class LEDs extends SubsystemBase {
         this.io = io;
     }
 
-    public Command runAnim(LEDAnim anim){
-        
+    public Command runStationIntake(){  
         return runOnce(
-            ()-> io.updateAnim(anim)).andThen(Commands.print(anim.toString()));
+            ()-> io.enableStationIntake());
     }
 
+    public Command runAlgaeIntake(){  
+        return runOnce(
+            ()-> io.enableAlgaeIntake());
+    }
+
+    public Command runNoState(){  
+        return runOnce(
+            ()-> io.enableNoState());
+    }
+
+    public Command runScored(){  
+        return runOnce(
+            ()-> io.enableScored());
+    }
+
+    public Command runClimb(){  
+        return runOnce(
+            ()-> io.enableClimb());
+    }
+
+    public Command runAutoAlign(){  
+        return runOnce(
+            ()-> io.enableAutoAlign());
+    }
+
+    public Command runReadyToScore(){  
+        return runOnce(
+            ()-> io.enableReadyToScore());
+    }
+    
 }

@@ -5,27 +5,30 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 import dev.doglog.DogLog;
 
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix.led.TwinkleAnimation;
 
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
 public class LEDsIOReal extends LEDsIO {
-   public final CANdle candle;
+   public final CANdle candleReal;
    private LEDAnim state = LEDAnim.NoState;
+
    public LEDsIOReal(){
-    candle = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
+    candleReal = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
     CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = false;
         configAll.disableWhenLOS = true;
         configAll.stripType = LEDStripType.GRB;
         configAll.brightnessScalar = 0.1;
         configAll.vBatOutputMode = VBatOutputMode.Modulated;
-        candle.configAllSettings(configAll);
+        candleReal.configAllSettings(configAll);
    }
 
    @Override
@@ -38,41 +41,45 @@ public class LEDsIOReal extends LEDsIO {
 
 
    } 
+//    @Override
+//    public void updateAnim(LEDAnim anim){
+//         state = anim;
+//    }
+   
    @Override
-   public void updateAnim(LEDAnim anim){
-        state = anim;        
-        // candle.setLEDs(255,0,0);
+   public void enableStationIntake(){
+    //candleReal.animate(new ColorFlowAnimation(255, 255, 70, 100, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new LarsonAnimation(255, 255, 3), 1);
+   }
 
-        // switch(anim){
-            // default:
-        //     case StationIntake:
-                // channel = 0;
-                // candle.setLEDs(255,0,0);
-        //         break;
-        //     case Scored:
-        //         channel = 1;
-            if(anim == LEDAnim.ReadyToScore)
-                candle.animate(new ColorFlowAnimation(128, 20, 70, 0, 0.7, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
-            else {
-                candle.setLEDs(0, 0, 0);
-            }
-        //         break;
-        //     case AutoAlign:
-        //         channel = 2;
-        //         candle.animate(new RainbowAnimation(1, 0.7, LEDsConstants.LEDS_PER_ANIMATION, false, channel * LEDsConstants.LEDS_PER_ANIMATION + 8), channel);
-        //         break;
-        //     case Climb:
-        //         channel = 3;
-        //         candle.animate(new StrobeAnimation(240, 10, 180, 0, 0.01, LEDsConstants.LEDS_PER_ANIMATION, channel * LEDsConstants.LEDS_PER_ANIMATION + 8), channel);
-        //         break;
-        //     case AlgaeIntake:
-        //         channel = 3;
-        //         candle.animate(new StrobeAnimation(240, 10, 180, 0, 0.01, LEDsConstants.LEDS_PER_ANIMATION, channel * LEDsConstants.LEDS_PER_ANIMATION + 8), channel);
-        //         break;
-        //     case ReadyToScore:
-        //         channel = 3;
-        //         candle.animate(new StrobeAnimation(240, 10, 180, 0, 0.01, LEDsConstants.LEDS_PER_ANIMATION, channel * LEDsConstants.LEDS_PER_ANIMATION + 8), channel);
-        //         break;
-        // }
+   @Override
+   public void enableAlgaeIntake(){
+    //candleReal.animate(new ColorFlowAnimation(128, 0, 128, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new TwinkleAnimation(128, 0, 128), 1);
+   }
+
+   @Override
+   public void enableNoState(){
+    candleReal.setLEDs(0, 0, 0);
+   }
+
+   @Override
+   public void enableScored(){
+    candleReal.animate(new ColorFlowAnimation(12, 20, 70, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+   }
+
+   @Override
+   public void enableClimb(){
+    candleReal.animate(new ColorFlowAnimation(0, 0, 255, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+   }
+
+   @Override
+   public void enableAutoAlign(){
+    candleReal.animate(new ColorFlowAnimation(128, 20, 70, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+   }
+
+   @Override
+   public void enableReadyToScore(){
+    candleReal.animate(new ColorFlowAnimation(128, 80, 70, 0, 0.7, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
    }
 }

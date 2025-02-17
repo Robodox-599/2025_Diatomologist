@@ -40,11 +40,19 @@ public class RobotContainer {
   private void configureBindings() {
     //controller.a().onTrue(climb.move(2));
 
-    controller.a().whileTrue(lightEmittingDiode.runAnim(LEDAnim.ReadyToScore));
+    controller.a().whileTrue(lightEmittingDiode.runStationIntake());
 
-    controller.b().whileTrue(lightEmittingDiode.runAnim(LEDAnim.AutoAlign));
+    controller.b().whileTrue(lightEmittingDiode.runAlgaeIntake());
 
-    //controller.x().whileTrue(climb.move(2).onFalse(climb.stop());
+    controller.x().whileTrue(lightEmittingDiode.runNoState());
+
+    controller.y().whileTrue(lightEmittingDiode.runScored());
+
+    controller.rightBumper().whileTrue(lightEmittingDiode.runClimb());
+
+    controller.leftBumper().whileTrue(lightEmittingDiode.runAutoAlign());
+
+    controller.rightTrigger().whileTrue(lightEmittingDiode.runReadyToScore());
 
   }
 

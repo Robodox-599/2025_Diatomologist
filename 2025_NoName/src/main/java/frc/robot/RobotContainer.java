@@ -133,13 +133,11 @@ public class RobotContainer {
                 new ChassisSpeeds(
                     -joystickDeadbandApply(driver.getLeftY())
                         * RealConstants.MAX_LINEAR_SPEED
-                        * 0.9,
+                        * 0.85,
                     -joystickDeadbandApply(driver.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
-                        * 0.9,
-                    joystickDeadbandApply(driver.getRightX())
-                        * RealConstants.MAX_ANGULAR_SPEED
-                        * 0.9)));
+                        * 0.85,
+                    joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED)));
     // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();

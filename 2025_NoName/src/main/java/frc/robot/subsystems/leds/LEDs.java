@@ -1,6 +1,7 @@
 package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
@@ -12,8 +13,9 @@ public class LEDs extends SubsystemBase {
     }
 
     public Command runAnim(LEDAnim anim){
+        
         return runOnce(
-            ()-> io.updateAnim(anim));
+            ()-> io.updateAnim(anim)).andThen(Commands.print(anim.toString()));
     }
 
 }

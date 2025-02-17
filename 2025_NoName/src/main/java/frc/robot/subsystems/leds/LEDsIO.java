@@ -1,5 +1,8 @@
 package frc.robot.subsystems.leds;
 
+import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+
 import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
 public abstract class LEDsIO {
@@ -9,5 +12,4 @@ public abstract class LEDsIO {
     public void updateInputs(){}
     
     public void updateAnim(LEDAnim anim){}
-    
 }

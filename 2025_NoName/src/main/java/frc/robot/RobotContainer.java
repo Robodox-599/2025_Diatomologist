@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbIOSim;
-import frc.robot.subsystems.climb.ClimbIOTalonFX;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.leds.LEDsConstants.*;
 
 public class RobotContainer {
-  private Climb climb;
-
+  private LEDs lightEmittingDiode;
   private final CommandXboxController controller =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
@@ -24,12 +24,11 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        climb = new Climb(new ClimbIOTalonFX());
-
+        lightEmittingDiode = new LEDs(new LEDsIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        climb = new Climb(new ClimbIOSim());
+        lightEmittingDiode = new LEDs(new LEDsIOSim());
         break;
     }
       DogLog.setOptions(
@@ -41,7 +40,9 @@ public class RobotContainer {
   private void configureBindings() {
     //controller.a().onTrue(climb.move(2));
 
-    controller.a().whileTrue(climb.move(2));
+    controller.a().whileTrue(lightEmittingDiode.runAnim(LEDAnim.ReadyToScore));
+
+    controller.b().whileTrue(lightEmittingDiode.runAnim(LEDAnim.AutoAlign));
 
     //controller.x().whileTrue(climb.move(2).onFalse(climb.stop());
 

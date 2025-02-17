@@ -373,8 +373,7 @@ public class Drive extends SubsystemBase {
             setpointStates[i].optimize(modules[i].getAngle());
             modules[i].runVoltageSetpoint(
                 new SwerveModuleState(
-                    setpointStates[i].speedMetersPerSecond * 12.0 / RealConstants.MAX_LINEAR_SPEED,
-                    setpointStates[i].angle),
+                    setpointStates[i].speedMetersPerSecond, setpointStates[i].angle),
                 true);
           }
           // Log setpoint states

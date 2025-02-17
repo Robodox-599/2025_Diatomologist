@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static frc.robot.subsystems.drive.constants.RealConstants.MAX_LINEAR_SPEED;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -107,8 +109,11 @@ public class Module {
     io.setTurnSetpoint(state.angle);
     // Apply cosine scaled state velocity to Drive Voltage Setpoint with FOC
     io.setDriveVoltage(
-        state.speedMetersPerSecond * Math.cos(state.angle.minus(io.turnPosition).getRadians()),
-        focEnabled);
+        (state.speedMetersPerSecond
+                * Math.cos(state.angle.minus(io.turnPosition).getRadians())
+                / MAX_LINEAR_SPEED)
+            * 12,
+        true);
   }
 
   /** Disables all outputs to motors. */

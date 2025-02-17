@@ -6,6 +6,7 @@ import static frc.robot.subsystems.drive.constants.RealConstants.WHEEL_RADIUS;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -31,6 +32,7 @@ public class ModuleIOSim extends ModuleIO {
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
   private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
   private String name;
+  private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 2.0);
 
   public ModuleIOSim(final String name) {
     this.name = name;
@@ -100,7 +102,30 @@ public class ModuleIOSim extends ModuleIO {
     super.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     super.odometryDrivePositionsMeters = new double[] {super.drivePositionMeters};
     super.odometryTurnPositions = new Rotation2d[] {super.turnPosition};
+    DogLog.log("Drive/Module " + name + "/Drive/Connected", super.driveConnected);
+    DogLog.log("Drive/Module " + name + "/Turn/Connected", super.turnConnected);
+    DogLog.log("Drive/Module " + name + "/Encoder/Connected", super.encoderConnected);
 
+    DogLog.log("Drive/Module " + name + "/Drive/PositionMeters", super.drivePositionMeters);
+    DogLog.log(
+        "Drive/Module " + name + "/Drive/VelocityMetersPerSec", super.driveVelocityMetersPerSec);
+    DogLog.log("Drive/Module " + name + "/Drive/AppliedVolts", super.driveAppliedVolts);
+    DogLog.log("Drive/Module " + name + "/Drive/CurrentAmps", super.driveCurrentAmps);
+
+    DogLog.log("Drive/Module " + name + "/Turn/Position", super.turnPosition);
+    DogLog.log("Drive/Module " + name + "/Turn/AbsolutePosition", super.turnAbsolutePosition);
+    DogLog.log("Drive/Module " + name + "/Turn/VelocityRadPerSec", super.turnVelocityRadPerSec);
+    DogLog.log("Drive/Module " + name + "/Turn/AppliedVolts", super.turnAppliedVolts);
+    DogLog.log("Drive/Module " + name + "/Turn/CurrentAmps", super.turnCurrentAmps);
+
+    DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
+    DogLog.log(
+        "Drive/Module " + name + "/Odometry/DrivePositionsMeters",
+        super.odometryDrivePositionsMeters);
+    DogLog.log("Drive/Module " + name + "/Odometry/TurnPositions", super.odometryTurnPositions);
+    DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
+    DogLog.log(
+        "Drive/Module " + name + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsMeters);
     SimLog.log("Drive/Module " + name + "/DriveMotor", driveSim);
     DogLog.log("Drive/Module " + name + "/DriveMotor/Connected", super.driveConnected);
 
@@ -133,7 +158,9 @@ public class ModuleIOSim extends ModuleIO {
     driveClosedLoop = true;
     setDriveVoltage(
         driveController.calculate(
-            driveSim.getAngularVelocityRadPerSec() * RealConstants.WHEEL_RADIUS, metersPerSecond));
+                driveSim.getAngularVelocityRadPerSec() * RealConstants.WHEEL_RADIUS,
+                metersPerSecond)
+            + driveFeedforward.calculate(metersPerSecond));
   }
 
   @Override

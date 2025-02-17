@@ -101,30 +101,35 @@ public class VisionIOReal extends VisionIO {
 
     double avgDistance;
     Pose3d pose = estRoboPose.estimatedPose;
-    if (estRoboPose.targetsUsed.size() == 1) {
-      var target = estRoboPose.targetsUsed.get(0);
-      avgDistance = target.getBestCameraToTarget().getTranslation().getNorm();
-      pose = reproject(target, poseSupplier.get().getRotation());
-    } else {
-      avgDistance =
-          estRoboPose.targetsUsed.stream()
-              .map(PhotonTrackedTarget::getBestCameraToTarget)
-              .map(Transform3d::getTranslation)
-              .map(t3 -> Math.hypot(t3.getX(), t3.getY()))
-              .mapToDouble(Double::doubleValue)
-              .average()
-              .orElseGet(() -> 100.0);
-    }
+    // if (estRoboPose.targetsUsed.size() == 1) {
+    //   var target = estRoboPose.targetsUsed.get(0);
+    //   avgDistance = target.getBestCameraToTarget().getTranslation().getNorm();
+    //   pose = reproject(target, poseSupplier.get().getRotation());
+    // } else {
+    avgDistance =
+        estRoboPose.targetsUsed.stream()
+            .map(PhotonTrackedTarget::getBestCameraToTarget)
+            .map(Transform3d::getTranslation)
+            .map(t3 -> Math.hypot(t3.getX(), t3.getY()))
+            .mapToDouble(Double::doubleValue)
+            .average()
+            .orElseGet(() -> 100.0);
+    // }
 
     PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-
-    PoseObservation latestUpdate =
-        new PoseObservation(
-            estRoboPose.timestampSeconds,
-            pose,
-            latestResult.getPoseAmbiguity(),
-            getSeenTags(),
-            avgDistance);
+    PoseObservation latestUpdate;
+    if (latestResult != null) {
+      latestUpdate =
+          new PoseObservation(
+              estRoboPose.timestampSeconds,
+              pose,
+              latestResult.getPoseAmbiguity(),
+              getSeenTags(),
+              avgDistance);
+    } else {
+      latestUpdate =
+          new PoseObservation(estRoboPose.timestampSeconds, pose, 0.5, getSeenTags(), avgDistance);
+    }
 
     previousUpdate = Optional.of(latestUpdate);
 

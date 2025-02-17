@@ -49,13 +49,13 @@ public class LEDsIOReal extends LEDsIO {
    @Override
    public void enableStationIntake(){
     //candleReal.animate(new ColorFlowAnimation(255, 255, 70, 100, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
-    candleReal.animate(new LarsonAnimation(255, 255, 3), 1);
+    candleReal.animate(new StrobeAnimation(255, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
    }
 
    @Override
    public void enableAlgaeIntake(){
     //candleReal.animate(new ColorFlowAnimation(128, 0, 128, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
-    candleReal.animate(new TwinkleAnimation(128, 0, 128), 1);
+    candleReal.animate(new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
    }
 
    @Override
@@ -65,21 +65,22 @@ public class LEDsIOReal extends LEDsIO {
 
    @Override
    public void enableScored(){
-    candleReal.animate(new ColorFlowAnimation(12, 20, 70, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new StrobeAnimation(255, 91, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
    }
 
    @Override
    public void enableClimb(){
-    candleReal.animate(new ColorFlowAnimation(0, 0, 255, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new ColorFlowAnimation(0, 0, 255, 0, 0.70, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
    }
 
    @Override
    public void enableAutoAlign(){
-    candleReal.animate(new ColorFlowAnimation(128, 20, 70, 0, 0.85, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
+    System.out.println("ts pmooooooooooooooo");
    }
 
    @Override
    public void enableReadyToScore(){
-    candleReal.animate(new ColorFlowAnimation(128, 80, 70, 0, 0.7, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    candleReal.animate(new StrobeAnimation(255, 0, 127, 0, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
    }
 }

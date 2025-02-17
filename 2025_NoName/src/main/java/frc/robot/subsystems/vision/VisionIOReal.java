@@ -116,22 +116,23 @@ public class VisionIOReal extends VisionIO {
             .orElseGet(() -> 100.0);
     // }
 
-    PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-    PoseObservation latestUpdate;
-    if (latestResult != null) {
-      latestUpdate =
-          new PoseObservation(
-              estRoboPose.timestampSeconds,
-              pose,
-              latestResult.getPoseAmbiguity(),
-              getSeenTags(),
-              avgDistance);
-    } else {
-      latestUpdate =
-          new PoseObservation(estRoboPose.timestampSeconds, pose, 0.5, getSeenTags(), avgDistance);
-    }
+    // PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
+    // PoseObservation latestUpdate;
+    // if (latestResult != null) {
+    //   latestUpdate == 3;
+    //       new PoseObservation(
+    //           estRoboPose.timestampSeconds,
+    //           pose,
+    //           latestResult.getPoseAmbiguity(),
+    //           getSeenTags(),
+    //           avgDistance);
+    // } else {
+    //   latestUpdate =
+    //       new PoseObservation(estRoboPose.timestampSeconds, pose, 0.5, getSeenTags(),
+    // avgDistance);
+    // }
 
-    previousUpdate = Optional.of(latestUpdate);
+    // previousUpdate = Optional.of(latestUpdate);
 
     return previousUpdate;
   }

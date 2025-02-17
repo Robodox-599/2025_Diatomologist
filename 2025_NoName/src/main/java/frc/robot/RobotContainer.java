@@ -21,7 +21,7 @@ import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
-import frc.robot.subsystems.commands.MoveToPointCommand;
+import frc.robot.subsystems.commands.AutoAlignToReef;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -146,8 +146,8 @@ public class RobotContainer {
     // ALGAE INTAKE COMMAND
     driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    driver.povLeft().whileTrue(MoveToPointCommand.alignToLeft(drive, rollers));
-    driver.povRight().whileTrue(MoveToPointCommand.alignToRight(drive, rollers));
+    driver.povLeft().whileTrue(AutoAlignToReef.alignToLeft(drive, rollers));
+    driver.povRight().whileTrue(AutoAlignToReef.alignToRight(drive, rollers));
     // CLIMB
     driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

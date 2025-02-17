@@ -70,7 +70,6 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathXController;
   private final PIDController choreoPathYController;
   private final PIDController choreoPathAngleController;
-  private Twist2d fieldVelocity = new Twist2d();
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
     SmartDashboard.putData("Field", field);
@@ -144,9 +143,6 @@ public class Drive extends SubsystemBase {
 
     // apply odom update
     updateOdom();
-
-    // apply field velocity update
-    updateFieldVelo();
   }
 
   private void disabledActions() {
@@ -174,30 +170,6 @@ public class Drive extends SubsystemBase {
     for (var module : modules) {
       module.periodic();
     }
-  }
-
-  private void updateFieldVelo() {
-    // Update field velocity
-    SwerveModuleState[] measuredStates = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      measuredStates[i] = modules[i].getState();
-    }
-    ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(measuredStates);
-    Translation2d linearFieldVelocity =
-        new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond)
-            .rotateBy(getRotation());
-    fieldVelocity =
-        new Twist2d(
-            linearFieldVelocity.getX(),
-            linearFieldVelocity.getY(),
-            gyroIO.connected ? gyroIO.yawVelocityRadPerSec : chassisSpeeds.omegaRadiansPerSecond);
-
-    // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
-
-    DogLog.log("Odometry/Robot", getPose());
-    DogLog.log("SwerveChassisSpeeds/Measured", getChassisSpeeds());
-    DogLog.log("SwerveStates/Measured", getModuleStates());
   }
 
   private void updateOdom() {
@@ -230,6 +202,7 @@ public class Drive extends SubsystemBase {
 
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       field.setRobotPose(getPose());
+      gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/Velocity", getVelocity());
     }
@@ -392,13 +365,8 @@ public class Drive extends SubsystemBase {
         });
   }
 
-  /** Returns the module states (turn angles and drive velocities) for all of the modules. */
-  private SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      states[i] = modules[i].getState();
-    }
-    return states;
+  public void stop() {
+    runVelocity(new ChassisSpeeds());
   }
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
@@ -408,11 +376,6 @@ public class Drive extends SubsystemBase {
       states[i] = modules[i].getPosition();
     }
     return states;
-  }
-
-  /** Returns the measured chassis speeds of the robot. */
-  private ChassisSpeeds getChassisSpeeds() {
-    return kinematics.toChassisSpeeds(getModuleStates());
   }
 
   /** Returns the position of each module in radians. */
@@ -444,6 +407,10 @@ public class Drive extends SubsystemBase {
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
+  public ChassisSpeeds getFieldVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getVelocity(), getRotation());
+  }
+
   /** Adds a new timestamped vision measurement. */
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
@@ -461,10 +428,6 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return getMaxLinearSpeedMetersPerSec() / RealConstants.DRIVE_BASE_RADIUS;
-  }
-
-  public Twist2d getFieldVelocity() {
-    return fieldVelocity;
   }
 
   public double getYawVelocity() {

@@ -32,7 +32,11 @@ public final class ElevatorConstants {
     20.0, // L2
     40.0, // L3
     60.0, // L4
-    0.3 // STOW
+    0.3, // STOW
+    10, // STATION INTAKE
+    15, // ALGAE GROUND INTAKE
+    15, // ALGAE L2
+    35 // ALGAE L3
   };
 
   public static final int leaderMotorID = 20;

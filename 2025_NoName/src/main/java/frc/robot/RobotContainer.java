@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,21 +18,19 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
+import frc.robot.subsystems.commands.MoveToPointCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
@@ -55,17 +52,17 @@ public class RobotContainer {
       new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
 
   // Subsystems
+
+  private final Drive drive;
+  private Elevator elevator;
+  private Wrist wrist;
+  private Rollers rollers;
+  private Climb climb;
   private LEDs LEDs;
   private subsystemvisualizer subsystemVisualizer;
-  private Elevator elevator;
-  private Rollers endefectorRollers;
-  private Wrist endefectorWrist;
-  private Climb climb;
   private SafetyChecker safetyChecker;
-  // private SafteyChecker safetyChecker;
-  private final Drive drive;
-  private int counter = 0;
 
+  private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
   // Auto components
   private final AutoRoutines autoRoutines;
   private final AutoFactory autoFactory;
@@ -76,8 +73,8 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        endefectorRollers = new Rollers(new RollersIOTalonFX());
-        endefectorWrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        rollers = new Rollers(new RollersIOTalonFX());
+        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         autoFactory =
@@ -88,8 +85,8 @@ public class RobotContainer {
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        endefectorRollers = new Rollers(new RollersIOSim());
-        endefectorWrist = new Wrist(new WristIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
         climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         autoFactory =
@@ -120,58 +117,106 @@ public class RobotContainer {
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
 
     // Initialize subsystem visualizer
-    subsystemVisualizer =
-        new subsystemvisualizer(elevator, climb, endefectorWrist, endefectorRollers);
+    subsystemVisualizer = new subsystemvisualizer(elevator, climb, wrist, rollers);
 
     logAllReefPositions();
     configureBindings();
   }
 
   private void configureBindings() {
-    RobotController.getSerialNumber();
+    // RobotController.getSerialNumber();
 
-    // Driver controls
-    driver.a().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L1));
-    driver.b().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L4));
-    driver.y().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.CLIMB));
-    driver.x().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.CLIMBREADY));
-    driver
-        .rightTrigger()
-        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
-    driver
-        .rightBumper()
-        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
-    driver
-        .leftTrigger()
-        .whileTrue(endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
-
-    // Drive controls
+    //                               DRIVER BINDS
     drive.setDefaultCommand(
         drive.runVelocityTeleopFieldRelative(
             () ->
                 new ChassisSpeeds(
-                    -joystickDeadbandApply(operator.getLeftY())
+                    -joystickDeadbandApply(driver.getLeftY())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    -joystickDeadbandApply(operator.getLeftX())
+                    -joystickDeadbandApply(driver.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    joystickDeadbandApply(operator.getRightX())
-                        * RealConstants.MAX_ANGULAR_SPEED)));
+                    joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED)));
+    // ZERO GYRO
+    driver.y().onTrue(drive.zeroGyroCommand());
+    drive.zeroGyroCommand().runsWhenDisabled();
+    // STATION INTAKE COMMAND
+    driver.rightTrigger().onTrue(stationIntake());
+    // ALGAE INTAKE COMMAND
+    driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
+    // AUTO ALIGN
+    driver.povLeft().whileTrue(MoveToPointCommand.alignToLeft(drive, rollers));
+    driver.povRight().whileTrue(MoveToPointCommand.alignToRight(drive, rollers));
+    // CLIMB
+    driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
-    operator.y().onTrue(drive.zeroGyroCommand());
-    operator.x().onTrue(drive.zeroPosition());
-    drive.zeroPosition().runsWhenDisabled();
+    //                               OPERATOR BINDS
+    // SCORE L4
+    operator.y().onTrue(scoring(ElevatorStates.L4));
+    // SCORE L3
+    operator.b().onTrue(scoring(ElevatorStates.L3));
+    // SCORE L2
+    operator.a().onTrue(scoring(ElevatorStates.L2));
+    // SCORE L1
+    operator.x().onTrue(scoring(ElevatorStates.L1));
+    // STATION INTAKE
+    operator.rightBumper().onTrue(stationIntake());
+    // ALGAE L3 INTAKE
+    operator.povUp().onTrue(algaeL3Intake());
+    // ALGAE L2 INTAKE
+    operator.povDown().onTrue(algaeL2Intake());
+    // ALGAE GROUND INTAKE
+    operator.leftBumper().onTrue(algaeGroundIntake());
+    // STOW ALL
+    operator.start().onTrue(stowAll());
   }
 
-  // public Command stowAll() {
-  //   return Commands.parallel(
-  //       Commands.sequence(
-  //           elevator.moveToState(ElevatorStates.STOW),
-  //           endefectorWrist.moveToState(WristConstants.WristStates.STOW)),
-  //       climb.moveToState(ClimbStates.STOW),
-  //       endefectorRollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
-  // }
+  public Command stowAll() {
+    Command trueBranch =
+        Commands.sequence(
+            elevator.moveToState(ElevatorStates.STOW),
+            wrist.moveToState(WristStates.STOW),
+            rollers.moveToState(EndefectorRollerStates.STOP),
+            climbStow(),
+            rumbleControllers());
+    Command falseBranch =
+        Commands.sequence(
+            wrist.moveToState(WristStates.SCORING),
+            elevator.moveToState(ElevatorStates.STOW),
+            wrist.moveToState(WristStates.STOW),
+            rollers.moveToState(EndefectorRollerStates.STOP),
+            climbStow(),
+            rumbleControllers());
+    return Commands.either(
+        trueBranch,
+        falseBranch,
+        () ->
+            (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(ElevatorStates.INTAKE))
+                && safetyChecker.isSafeWrist(
+                    EndefectorUtil.stateToSetpoint(WristStates.STATIONINTAKE))));
+  }
+
+  public Command algaeL2Intake() {
+    return Commands.runOnce(
+        () -> {
+          operatorAlgaePick = ElevatorStates.ALGAE_L2;
+        });
+  }
+
+  public Command algaeGroundIntake() {
+    return Commands.runOnce(
+        () -> {
+          operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
+        });
+  }
+
+  public Command algaeL3Intake() {
+    return Commands.runOnce(
+        () -> {
+          operatorAlgaePick = ElevatorStates.ALGAE_L3;
+        });
+  }
 
   public Command climbStow() {
     return climb.moveToState(ClimbStates.STOW);
@@ -187,15 +232,15 @@ public class RobotContainer {
     Command trueBranch =
         Commands.sequence(
             elevator.moveToState(ElevatorStates.INTAKE),
-            endefectorWrist.moveToState(WristStates.STATIONINTAKE),
-            endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+            wrist.moveToState(WristStates.STATIONINTAKE),
+            rollers.moveToState(EndefectorRollerStates.INTAKE),
             rumbleControllers());
     Command falseBranch =
         Commands.sequence(
-            endefectorWrist.moveToState(WristStates.SCORING),
+            wrist.moveToState(WristStates.SCORING),
             elevator.moveToState(ElevatorStates.INTAKE),
-            endefectorWrist.moveToState(WristStates.STATIONINTAKE),
-            endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+            wrist.moveToState(WristStates.STATIONINTAKE),
+            rollers.moveToState(EndefectorRollerStates.INTAKE),
             rumbleControllers());
     return Commands.either(
         trueBranch,
@@ -214,45 +259,45 @@ public class RobotContainer {
       trueBranch =
           Commands.sequence(
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.REEFINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.REEFINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       falseBranch =
           Commands.sequence(
-              endefectorWrist.moveToState(WristStates.SCORING),
+              wrist.moveToState(WristStates.SCORING),
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.REEFINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.REEFINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       wristState = WristStates.REEFINTAKE;
     } else if (ElevatorStates.ALGAE_L2 == state) {
       trueBranch =
           Commands.sequence(
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.REEFINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.REEFINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       falseBranch =
           Commands.sequence(
-              endefectorWrist.moveToState(WristStates.SCORING),
+              wrist.moveToState(WristStates.SCORING),
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.REEFINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.REEFINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       wristState = WristStates.REEFINTAKE;
     } else if (ElevatorStates.GROUNDINTAKE == state) {
       trueBranch =
           Commands.sequence(
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.GROUNDINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.GROUNDINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       falseBranch =
           Commands.sequence(
-              endefectorWrist.moveToState(WristStates.SCORING),
+              wrist.moveToState(WristStates.SCORING),
               elevator.moveToState(ElevatorStates.ALGAE_L3),
-              endefectorWrist.moveToState(WristStates.GROUNDINTAKE),
-              endefectorRollers.moveToState(EndefectorRollerStates.INTAKE),
+              wrist.moveToState(WristStates.GROUNDINTAKE),
+              rollers.moveToState(EndefectorRollerStates.INTAKE),
               rumbleControllers());
       wristState = WristStates.GROUNDINTAKE;
     } else {
@@ -270,10 +315,10 @@ public class RobotContainer {
 
   public Command scoring(ElevatorStates state) {
     return Commands.sequence(
-            endefectorWrist.moveToState(WristStates.SCORING),
+            wrist.moveToState(WristStates.SCORING),
             elevator.moveToState(state),
-            endefectorWrist.moveToState(WristStates.SCORING),
-            endefectorRollers.moveToState(EndefectorRollerStates.SCORE))
+            wrist.moveToState(WristStates.SCORING),
+            rollers.moveToState(EndefectorRollerStates.SCORE).andThen(rumbleControllers()))
         .onlyIf(
             () ->
                 safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state))
@@ -286,14 +331,14 @@ public class RobotContainer {
             Commands.sequence(
                 elevator.moveToState(ElevatorStates.INTAKE),
                 climb.moveToState(ClimbStates.CLIMBREADY),
-                endefectorWrist.moveToState(WristStates.CLIMB),
-                endefectorRollers.moveToState(EndefectorRollerStates.STOP)),
+                wrist.moveToState(WristStates.CLIMB),
+                rollers.moveToState(EndefectorRollerStates.STOP)),
             Commands.sequence(
-                endefectorWrist.moveToState(WristStates.SCORING),
+                wrist.moveToState(WristStates.SCORING),
                 elevator.moveToState(ElevatorStates.INTAKE),
                 climb.moveToState(ClimbStates.CLIMBREADY),
-                endefectorWrist.moveToState(WristStates.CLIMB),
-                endefectorRollers.moveToState(EndefectorRollerStates.STOP)),
+                wrist.moveToState(WristStates.CLIMB),
+                rollers.moveToState(EndefectorRollerStates.STOP)),
             () ->
                 (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(ElevatorStates.INTAKE))
                     && safetyChecker.isSafeWrist(

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SafetyChecker;
+import frc.robot.util.ElevatorUtil;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
@@ -32,7 +33,8 @@ public class Elevator extends SubsystemBase {
             () -> {
               io.setState(state);
             })
-        .andThen(Commands.waitUntil(this::isAtTargetPosition));
+        .andThen(Commands.waitUntil(this::isAtTargetPosition))
+        .onlyIf(() -> safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state)));
   }
 
   public Command move(double volt) {

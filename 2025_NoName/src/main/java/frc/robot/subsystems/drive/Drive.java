@@ -243,6 +243,7 @@ public class Drive extends SubsystemBase {
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
     speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
@@ -333,13 +334,11 @@ public class Drive extends SubsystemBase {
   }
 
   public Command runVelocityFieldRelative(Supplier<ChassisSpeeds> speeds) {
-    return this.runVelocityCmd(
-        () -> ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation()));
+    return this.runVelocityCmd(speeds);
   }
 
   public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
-    return this.runVelocityCmd(
-        () -> ChassisSpeeds.fromFieldRelativeSpeeds(speeds.get(), getPose().getRotation()));
+    return this.runVelocityCmd(speeds);
   }
 
   public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
@@ -362,12 +361,6 @@ public class Drive extends SubsystemBase {
           DogLog.log(
               "Swerve/Target Chassis Speeds Field Relative",
               ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
-          // final boolean focEnable =
-          //     Math.sqrt(
-          //             Math.pow(this.getVelocity().vxMetersPerSecond, 2)
-          //                 + Math.pow(this.getVelocity().vyMetersPerSecond, 2))
-          //         < RealConstants.MAX_LINEAR_SPEED * 0.9;
-
           // Send setpoints to modules
           for (int i = 0; i < modules.length; i++) {
             setpointStates[i].optimize(modules[i].getAngle());

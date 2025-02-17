@@ -128,7 +128,7 @@ public class RobotContainer {
 
     //                               DRIVER BINDS
     drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
+        drive.runVoltageTeleopFieldRelative(
             () ->
                 new ChassisSpeeds(
                     -joystickDeadbandApply(driver.getLeftY())

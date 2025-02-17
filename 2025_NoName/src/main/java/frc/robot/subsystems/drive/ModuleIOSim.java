@@ -42,7 +42,7 @@ public class ModuleIOSim extends ModuleIO {
                 SimConstants.drive_gearbox,
                 kDriveInertia.magnitude()
                     * kDriveInertia.copySign(kDriveInertia, KilogramSquareMeters),
-                (1 / RealConstants.DRIVE_GEAR_RATIO)),
+                (RealConstants.DRIVE_GEAR_RATIO)),
             SimConstants.drive_gearbox);
     turnSim =
         new DCMotorSim(

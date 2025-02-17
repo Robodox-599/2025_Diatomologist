@@ -1,0 +1,136 @@
+{
+ "name":"jaiden's autos 2025",
+ "version":1,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{
+   "botRadius":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.4318 m",
+     "val":0.4318
+    }
+   },
+   "fieldLength":{
+    "dimension":"Length",
+    "var":{
+     "exp":"17.528 m",
+     "val":17.528
+    }
+   },
+   "fieldWidth":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.051 m",
+     "val":8.051
+    }
+   },
+   "straightOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.473075 m",
+     "val":0.473075
+    }
+   },
+   "xOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.2365375 m",
+     "val":0.2365375
+    }
+   },
+   "yOffset":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.40969496789 m",
+     "val":0.40969496789
+    }
+   }
+  },
+  "poses":{
+   "HPPose":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"0.55 m",
+     "val":0.55
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   }
+  }
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"11 in",
+    "val":0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-11 in",
+    "val":-0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "mass":{
+   "exp":"75 lbs",
+   "val":34.01942775
+  },
+  "inertia":{
+   "exp":"4 kg m ^ 2",
+   "val":4.0
+  },
+  "gearing":{
+   "exp":"5.9",
+   "val":5.9
+  },
+  "radius":{
+   "exp":"2 in",
+   "val":0.0508
+  },
+  "vmax":{
+   "exp":"5500 RPM",
+   "val":575.9586531581288
+  },
+  "tmax":{
+   "exp":"0.5 N * m",
+   "val":0.5
+  },
+  "cof":{
+   "exp":"1.5",
+   "val":1.5
+  },
+  "bumper":{
+   "front":{
+    "exp":"15 in",
+    "val":0.381
+   },
+   "side":{
+    "exp":"15 in",
+    "val":0.381
+   },
+   "back":{
+    "exp":"15 in",
+    "val":0.381
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[]
+}

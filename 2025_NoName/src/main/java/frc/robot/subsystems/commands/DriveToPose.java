@@ -70,7 +70,7 @@ public class DriveToPose extends Command {
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMaxRadius", 0.15);
         break;
       case SIM:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.5);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 2);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.18);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 10);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0);

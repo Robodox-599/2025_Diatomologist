@@ -3,8 +3,12 @@ package frc.robot.subsystems.drive.constants;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.drive.Module.ModuleConstants;
+import frc.robot.subsystems.vision.VisionConstants;
 
 // import frc.robot.subsystems.vision.VisionConstants;
 
@@ -111,31 +115,31 @@ public class RealConstants {
           false,
           false);
 
-  //   public static final String cameraName = "FR Camera";
+  public static final String cameraName = "FR_Camera";
 
-  //   // CAMERA 3 POSE (X)
-  //   public static final double cameraPoseX = Units.inchesToMeters(0);
+  // CAMERA 3 POSE (X)
+  public static final double cameraPoseX = Units.inchesToMeters(0);
 
-  //   // CAMERA 3 POSE (Y)
-  //   public static final double cameraPoseY = Units.inchesToMeters(1);
+  // CAMERA 3 POSE (Y)
+  public static final double cameraPoseY = Units.inchesToMeters(1);
 
-  //   // CAMERA 3 POSE (Z)
-  //   public static final double cameraPoseZ = Units.inchesToMeters(21);
+  // CAMERA 3 POSE (Z)
+  public static final double cameraPoseZ = Units.inchesToMeters(21);
 
-  //   // CAMERA 3 POSE (ROLL)
-  //   public static final double cameraPoseRoll = Units.degreesToRadians(0);
+  // CAMERA 3 POSE (ROLL)
+  public static final double cameraPoseRoll = Units.degreesToRadians(0);
 
-  //   // CAMERA 3 POSE (PITCH)
-  //   public static final double cameraPosePitch = Units.degreesToRadians(-28);
+  // CAMERA 3 POSE (PITCH)
+  public static final double cameraPosePitch = Units.degreesToRadians(-28);
 
-  //   // CAMERA 3 POSE (YAW)
-  //   public static final double cameraPoseYaw = Units.degreesToRadians(0);
+  // CAMERA 3 POSE (YAW)
+  public static final double cameraPoseYaw = Units.degreesToRadians(0);
 
-  //   public static final VisionConstants camConstants =
-  //       new VisionConstants(
-  //           cameraName,
-  //           new Transform3d(
-  //               new Translation3d(cameraPoseX, cameraPoseY, cameraPoseZ),
-  //               new Rotation3d(cameraPoseRoll, cameraPosePitch, cameraPoseYaw)),
-  //           1.0);
+  public static final VisionConstants camConstants =
+      new VisionConstants(
+          cameraName,
+          new Transform3d(
+              new Translation3d(cameraPoseX, cameraPoseY, cameraPoseZ),
+              new Rotation3d(cameraPoseRoll, cameraPosePitch, cameraPoseYaw)),
+          1.0);
 }

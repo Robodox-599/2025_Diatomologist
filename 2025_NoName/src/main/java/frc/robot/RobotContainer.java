@@ -15,26 +15,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.commands.AutoAlignToReef;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
-import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
-import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
-import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.util.ElevatorUtil;
-import frc.robot.util.EndefectorUtil;
+import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 import java.util.Map;
 
 public class RobotContainer {
@@ -53,7 +47,7 @@ public class RobotContainer {
   private Climb climb;
   private LEDs LEDs;
   private Vision vision;
-  
+
   // private subsystemvisualizer subsystemVisualizer;
   private SafetyChecker safetyChecker;
 
@@ -84,7 +78,7 @@ public class RobotContainer {
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
         // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
+        rollers = new Rollers(new RollersIOSim());
         // wrist = new Wrist(new WristIOSim(), safetyChecker);
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
@@ -149,8 +143,8 @@ public class RobotContainer {
     // // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // // AUTO ALIGN
-    // driver.povLeft().whileTrue(AutoAlignToReef.alignToLeft(drive, rollers));
-    // driver.povRight().whileTrue(AutoAlignToReef.alignToRight(drive, rollers));
+    driver.povLeft().whileTrue(AutoAlignToReef.alignToLeft(drive, rollers));
+    driver.povRight().whileTrue(AutoAlignToReef.alignToRight(drive, rollers));
     // // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

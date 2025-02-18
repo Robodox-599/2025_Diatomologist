@@ -49,22 +49,28 @@ public class AutoAlignToReef {
   }
 
   public static Command alignToLeft(Drive drive, Rollers rollers) {
-    return new DriveToPose(
-        drive,
-        () ->
-            getNearestBranchPosition(
-                () -> drive.getPose(),
-                true,
-                new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+    var driveToPose =
+        new DriveToPose(
+            drive,
+            () ->
+                getNearestBranchPosition(
+                    () -> drive.getPose(),
+                    true,
+                    new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+
+    return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
 
   public static Command alignToRight(Drive drive, Rollers rollers) {
-    return new DriveToPose(
-        drive,
-        () ->
-            getNearestBranchPosition(
-                () -> drive.getPose(),
-                false,
-                new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+    var driveToPose =
+        new DriveToPose(
+            drive,
+            () ->
+                getNearestBranchPosition(
+                    () -> drive.getPose(),
+                    false,
+                    new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+
+    return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
 }

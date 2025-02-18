@@ -13,7 +13,7 @@ import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
-public class AutoAlignToReef {
+public class AutoAlignToField {
   public static Pose2d getNearestBranchPosition(
       Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch, Translation2d coralOffset) {
     Pose2d robotPose = robotPoseSupplier.get();
@@ -48,7 +48,7 @@ public class AutoAlignToReef {
     return targetPose;
   }
 
-  public static Command alignToLeft(Drive drive, Rollers rollers) {
+  public static Command alignToNearestLeftReef(Drive drive, Rollers rollers) {
     var driveToPose =
         new DriveToPose(
             drive,
@@ -61,7 +61,7 @@ public class AutoAlignToReef {
     return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
 
-  public static Command alignToRight(Drive drive, Rollers rollers) {
+  public static Command alignToNearestRightReef(Drive drive, Rollers rollers) {
     var driveToPose =
         new DriveToPose(
             drive,

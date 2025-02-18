@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.commands.AutoAlignToReef;
+import frc.robot.subsystems.commands.AutoAlignToField;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -125,16 +125,19 @@ public class RobotContainer {
 
     //                               DRIVER BINDS
     drive.setDefaultCommand(
-        drive.runVoltageTeleopFieldRelative(
+        drive.runVelocityTeleopFieldRelative(
             () ->
                 new ChassisSpeeds(
-                    -joystickDeadbandApply(driver.getLeftY())
+                    joystickDeadbandApply(driver.getLeftY())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    -joystickDeadbandApply(driver.getLeftX())
+                    joystickDeadbandApply(driver.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED)));
+                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
+            driver.rightTrigger(),
+            () -> driver.povUp().getAsBoolean(),
+            () -> driver.povDown().getAsBoolean()));
     // // ZERO GYRO
     // driver.y().onTrue(drive.zeroGyroCommand());
     // drive.zeroGyroCommand().runsWhenDisabled();
@@ -143,8 +146,8 @@ public class RobotContainer {
     // // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // // AUTO ALIGN
-    driver.povLeft().whileTrue(AutoAlignToReef.alignToLeft(drive, rollers));
-    driver.povRight().whileTrue(AutoAlignToReef.alignToRight(drive, rollers));
+    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers));
+    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers));
     // // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

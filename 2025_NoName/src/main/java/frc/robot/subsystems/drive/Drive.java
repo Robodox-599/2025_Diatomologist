@@ -20,6 +20,7 @@ import choreo.trajectory.SwerveSample;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,6 +32,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -39,13 +41,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
+import frc.robot.subsystems.commands.CommandConstants;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class Drive extends SubsystemBase {
@@ -70,6 +76,13 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathXController;
   private final PIDController choreoPathYController;
   private final PIDController choreoPathAngleController;
+  ProfiledPIDController angleController =
+      new ProfiledPIDController(
+          CommandConstants.angle_kp,
+          0.0,
+          CommandConstants.angle_kd,
+          new TrapezoidProfile.Constraints(
+              CommandConstants.angle_max_velocity, CommandConstants.angle_max_acceleration));
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
     SmartDashboard.putData("Field", field);
@@ -302,16 +315,36 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
-  public Command runVelocityCmd(Supplier<ChassisSpeeds> speeds) {
-    return this.run(() -> runVelocity(speeds.get()));
-  }
-
-  public Command runVelocityFieldRelative(Supplier<ChassisSpeeds> speeds) {
-    return this.runVelocityCmd(speeds);
-  }
-
-  public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
-    return this.runVelocityCmd(speeds);
+  public Command runVelocityTeleopFieldRelative(
+      Supplier<ChassisSpeeds> joystickSpeeds,
+      BooleanSupplier driveAtAngle,
+      BooleanSupplier leftStation,
+      BooleanSupplier rightStation) {
+    return this.run(
+        () -> {
+          if (driveAtAngle.getAsBoolean()) {
+            Rotation2d stationRotation;
+            if (leftStation.getAsBoolean()) {
+              stationRotation = FieldConstants.CoralStation.leftCenterFace.getRotation();
+            } else if (rightStation.getAsBoolean()) {
+              stationRotation = FieldConstants.CoralStation.rightCenterFace.getRotation();
+            } else {
+              stationRotation = FieldConstants.CoralStation.leftCenterFace.getRotation();
+            }
+            angleController.reset(this.getRotation().getRadians());
+            angleController.enableContinuousInput(-Math.PI, Math.PI);
+            double omega =
+                angleController.calculate(
+                    this.getRotation().getRadians(), stationRotation.getRadians());
+            this.runVelocity(
+                new ChassisSpeeds(
+                    joystickSpeeds.get().vxMetersPerSecond,
+                    joystickSpeeds.get().vyMetersPerSecond,
+                    omega));
+          } else {
+            this.runVelocity(joystickSpeeds.get());
+          }
+        });
   }
 
   public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
@@ -345,6 +378,31 @@ public class Drive extends SubsystemBase {
           // Log setpoint states
           DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
         });
+  }
+
+  public Command joystickDriveAtAngle(
+      Drive drive, Supplier<ChassisSpeeds> joystickSpeeds, Supplier<Rotation2d> rotationSupplier) {
+
+    // Construct command
+    return Commands.run(
+            () -> {
+              // Calculate angular speed
+              double omega =
+                  angleController.calculate(
+                      this.getRotation().getRadians(), rotationSupplier.get().getRadians());
+
+              // Convert to field relative speeds & send command
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      joystickSpeeds.get().vxMetersPerSecond,
+                      joystickSpeeds.get().vyMetersPerSecond,
+                      omega);
+              drive.runVelocity(speeds);
+            },
+            drive)
+
+        // Reset PID controller when command starts
+        .beforeStarting(() -> angleController.reset(this.getRotation().getRadians()));
   }
 
   /**

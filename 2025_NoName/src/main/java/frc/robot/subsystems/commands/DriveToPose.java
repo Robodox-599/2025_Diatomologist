@@ -365,8 +365,7 @@ public class DriveToPose extends Command {
 
     // --- Command chassis speeds ---
     ChassisSpeeds chassisSpeeds =
-        new ChassisSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+        new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
     DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds.toString());
 
     drive.runVelocity(chassisSpeeds);

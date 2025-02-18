@@ -16,9 +16,8 @@ public class LEDsIOSim extends LEDsIO {
     DogLog.log("LEDs/Connected", super.connected);
     DogLog.log("LEDs/Anim", super.anim);
   }
-
-  @Override
-  public void updateAnim(LEDAnim anim) {
-    state = anim;
-  }
+  //     @Override
+  //     public void updateAnim(LEDAnim anim){
+  //          state = anim;
+  //     }
 }

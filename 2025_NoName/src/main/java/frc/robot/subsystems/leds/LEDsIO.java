@@ -8,9 +8,17 @@ public abstract class LEDsIO {
 
   public void updateInputs() {}
 
-  public void updateAnim(LEDAnim anim) {}
+  public void enableStationIntake() {}
 
-  public LEDAnim getCurrentAnim() {
-    return anim;
-  }
+  public void enableAlgaeIntake() {}
+
+  public void enableClimb() {}
+
+  public void enableNoState() {}
+
+  public void enableReadyToScore() {}
+
+  public void enableScored() {}
+
+  public void enableAutoAlign() {}
 }

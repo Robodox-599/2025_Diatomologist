@@ -2,7 +2,6 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
 
 public class LEDs extends SubsystemBase {
   private final LEDsIO io;
@@ -14,11 +13,31 @@ public class LEDs extends SubsystemBase {
     this.io = io;
   }
 
-  public Command runAnim(LEDAnim anim) {
-    return runOnce(() -> io.updateAnim(anim));
+  public Command runStationIntake() {
+    return runOnce(() -> io.enableStationIntake());
   }
 
-  public LEDsIO getIO() {
-    return io;
+  public Command runAlgaeIntake() {
+    return runOnce(() -> io.enableAlgaeIntake());
+  }
+
+  public Command runNoState() {
+    return runOnce(() -> io.enableNoState());
+  }
+
+  public Command runScored() {
+    return runOnce(() -> io.enableScored());
+  }
+
+  public Command runClimb() {
+    return runOnce(() -> io.enableClimb());
+  }
+
+  public Command runAutoAlign() {
+    return runOnce(() -> io.enableAutoAlign());
+  }
+
+  public Command runReadyToScore() {
+    return runOnce(() -> io.enableReadyToScore());
   }
 }

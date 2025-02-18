@@ -64,7 +64,7 @@ public class ClimbIOSim extends ClimbIO {
     DogLog.log("Climb/AtSetpoint", super.atSetpoint);
     DogLog.log("Climb/State", super.state.toString());
 
-    System.out.println(super.positionInches);
+    // System.out.println(super.positionInches);
   }
 
   @Override

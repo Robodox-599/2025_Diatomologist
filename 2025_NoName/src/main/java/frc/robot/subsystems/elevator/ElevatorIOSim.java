@@ -84,7 +84,7 @@ public class ElevatorIOSim extends ElevatorIO {
             ElevatorUtil.stateToHeight(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
-    System.out.println(super.state);
+    // System.out.println(super.state);
   }
 
   @Override

@@ -60,24 +60,24 @@ public class DriveToPose extends Command {
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaMaxVelocity", Units.degreesToRadians(360.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaMaxAcceleration", 8.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.01);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.1);
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaTolerance", Units.degreesToRadians(1.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMinRadius", 0.1);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMaxRadius", 0.15);
       case SIM:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.75);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 4.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0.0);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.5);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.18);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 10);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxVelocity", 3.8);
         SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "DriveMaxVelocitySlow", 0.0); // Placeholder for slow velocity
+            SMARTDASHBOARD_PREFIX + "DriveMaxVelocitySlow", 1.5); // Placeholder for slow velocity
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxAcceleration", 3.0);
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaMaxVelocity", Units.degreesToRadians(360.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaMaxAcceleration", 8.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.01);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.05);
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaTolerance", Units.degreesToRadians(1.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMinRadius", 0.1);
@@ -277,7 +277,8 @@ public class DriveToPose extends Command {
         new Pose2d(
             lastSetpointTranslation,
             Rotation2d.fromRadians(thetaController.getSetpoint().position)));
-    DogLog.log("DriveToPose/Goal", targetPose);
+    DogLog.log("DriveToPose/CurrentPose", currentPose);
+    DogLog.log("DriveToPose/Target", targetPose);
   }
 
   @Override

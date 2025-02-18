@@ -112,7 +112,7 @@ public class subsystemvisualizer extends SubsystemBase {
       case CLIMB:
         climbVis.setAngle(climb.getIO().getPositionInches());
         climbVis.setColor(new Color8Bit(Color.kGreen));
-        System.out.println("ts pmo");
+        // System.out.println("ts pmo");
         break;
       case CLIMBREADY:
         climbVis.setAngle(Units.inchesToMeters(climb.getIO().getPositionInches()));

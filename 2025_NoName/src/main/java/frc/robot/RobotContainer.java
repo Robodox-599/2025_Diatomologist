@@ -39,7 +39,6 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristState
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
-import frc.robot.subsystems.subsystemvisualizer.subsystemvisualizer;
 import frc.robot.util.ElevatorUtil;
 import frc.robot.util.EndefectorUtil;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class RobotContainer {
   private Rollers rollers;
   private Climb climb;
   private LEDs LEDs;
-  private subsystemvisualizer subsystemVisualizer;
+  // private subsystemvisualizer subsystemVisualizer;
   private SafetyChecker safetyChecker;
 
   private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
@@ -117,7 +116,7 @@ public class RobotContainer {
         new DogLogOptions().withCaptureDs(true).withCaptureNt(true).withNtPublish(true));
 
     // Initialize subsystem visualizer
-    subsystemVisualizer = new subsystemvisualizer(elevator, climb, wrist, rollers);
+    // subsystemVisualizer = new subsystemvisualizer(elevator, climb, wrist, rollers);
 
     logAllReefPositions();
     configureBindings();

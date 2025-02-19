@@ -38,11 +38,11 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristState
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOReal;
 import frc.robot.subsystems.vision.VisionIOSim;
-import frc.robot.util.ElevatorUtil;
-import frc.robot.util.EndefectorUtil;
 
 public class RobotContainer {
   // Controllers
@@ -76,6 +76,7 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
+        LEDs = new LEDs(new LEDsIOReal());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -85,24 +86,18 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory);
         break;
 
-      case SIM:
+      default:
         DriverStation.silenceJoystickConnectionWarning(true);
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
         rollers = new Rollers(new RollersIOSim());
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
+        LEDs = new LEDs(new LEDsIOSim());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOSim(RealConstants.camConstants, drive::getPose));
-        autoFactory =
-            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        autoRoutines = new AutoRoutines(autoFactory);
-        break;
-
-      default:
-        drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         autoRoutines = new AutoRoutines(autoFactory);
@@ -179,35 +174,22 @@ public class RobotContainer {
   }
 
   public Command stowAll() {
-
-    // Command trueBranch =
-    //     Commands.sequence(
-    //         elevator.moveToState(ElevatorStates.STOW),
-    //         wrist.moveToState(WristStates.STOW),
-    //         rollers.moveToState(EndefectorRollerStates.STOP),
-    //         climbStow(),
-    //         rumbleControllers());
-    // Command falseBranch =
-    //     Commands.sequence(
-    //         wrist.moveToState(WristStates.SCORING),
-    //         elevator.moveToState(ElevatorStates.STOW),
-    //         wrist.moveToState(WristStates.STOW),
-    //         rollers.moveToState(EndefectorRollerStates.STOP),
-    //         climbStow(),
-    //         rumbleControllers());
-    // return Commands.either(
-    //     trueBranch,
-    //     falseBranch,
-    //     () ->
-    //         (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(ElevatorStates.INTAKE))
-    //             && safetyChecker.isSafeWrist(
-    //                 EndefectorUtil.stateToSetpoint(WristStates.STATIONINTAKE))));
-
     return Commands.sequence(
         Commands.parallel(
             elevator.moveToState(ElevatorStates.STOW),
             wrist.moveToState(WristStates.STOW),
-            rollers.moveToState(EndefectorRollerStates.STOP)),
+            rollers.moveToState(EndefectorRollerStates.STOP),
+            LEDs.runNoState()),
+        rumbleControllers());
+  }
+
+  public Command stationIntake() {
+    return Commands.sequence(
+        Commands.parallel(
+            elevator.moveToState(ElevatorStates.INTAKE),
+            wrist.moveToState(WristStates.STATIONINTAKE),
+            rollers.moveToState(EndefectorRollerStates.INTAKE),
+            LEDs.runStationIntake()),
         rumbleControllers());
   }
 
@@ -242,122 +224,57 @@ public class RobotContainer {
 
   // saftey code in subsystems, not in commands.
 
-  public Command stationIntake() {
-    Command trueBranch =
-        Commands.sequence(
-            elevator.moveToState(ElevatorStates.INTAKE),
-            wrist.moveToState(WristStates.STATIONINTAKE),
-            rollers.moveToState(EndefectorRollerStates.INTAKE),
-            rumbleControllers());
-    Command falseBranch =
-        Commands.sequence(
-            wrist.moveToState(WristStates.SCORING),
-            elevator.moveToState(ElevatorStates.INTAKE),
-            wrist.moveToState(WristStates.STATIONINTAKE),
-            rollers.moveToState(EndefectorRollerStates.INTAKE),
-            rumbleControllers());
-    return Commands.either(
-        trueBranch,
-        falseBranch,
-        () ->
-            (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(ElevatorStates.INTAKE))
-                && safetyChecker.isSafeWrist(
-                    EndefectorUtil.stateToSetpoint(WristStates.STATIONINTAKE))));
-  }
-
   public Command algaeIntake(ElevatorStates state) {
-    Command trueBranch;
-    Command falseBranch;
-    WristStates wristState;
+    Command algaeIntakeCommand;
     if (ElevatorStates.ALGAE_L3 == state) {
-      trueBranch =
+      algaeIntakeCommand =
           Commands.sequence(
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.REEFINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
+              Commands.parallel(
+                  elevator.moveToState(ElevatorStates.ALGAE_L3),
+                  wrist.moveToState(WristStates.REEFINTAKE),
+                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  LEDs.runAlgaeIntake()),
               rumbleControllers());
-      falseBranch =
-          Commands.sequence(
-              wrist.moveToState(WristStates.SCORING),
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.REEFINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
-              rumbleControllers());
-      wristState = WristStates.REEFINTAKE;
     } else if (ElevatorStates.ALGAE_L2 == state) {
-      trueBranch =
+      algaeIntakeCommand =
           Commands.sequence(
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.REEFINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
+              Commands.parallel(
+                  elevator.moveToState(ElevatorStates.ALGAE_L2),
+                  wrist.moveToState(WristStates.REEFINTAKE),
+                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  LEDs.runAlgaeIntake()),
               rumbleControllers());
-      falseBranch =
-          Commands.sequence(
-              wrist.moveToState(WristStates.SCORING),
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.REEFINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
-              rumbleControllers());
-      wristState = WristStates.REEFINTAKE;
     } else if (ElevatorStates.GROUNDINTAKE == state) {
-      trueBranch =
+      algaeIntakeCommand =
           Commands.sequence(
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.GROUNDINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
+              Commands.parallel(
+                  elevator.moveToState(ElevatorStates.GROUNDINTAKE),
+                  wrist.moveToState(WristStates.GROUNDINTAKE),
+                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  LEDs.runAlgaeIntake()),
               rumbleControllers());
-      falseBranch =
-          Commands.sequence(
-              wrist.moveToState(WristStates.SCORING),
-              elevator.moveToState(ElevatorStates.ALGAE_L3),
-              wrist.moveToState(WristStates.GROUNDINTAKE),
-              rollers.moveToState(EndefectorRollerStates.INTAKE),
-              rumbleControllers());
-      wristState = WristStates.GROUNDINTAKE;
     } else {
-      trueBranch = Commands.print("Invalid Elevator State");
-      falseBranch = Commands.print("Invalid Elevator State");
-      wristState = WristStates.SCORING;
+      algaeIntakeCommand = Commands.none();
     }
-    return Commands.either(
-        trueBranch,
-        falseBranch,
-        () ->
-            (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state))
-                && safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(wristState))));
+
+    return algaeIntakeCommand;
   }
 
   public Command scoring(ElevatorStates state) {
     return Commands.sequence(
-            wrist.moveToState(WristStates.SCORING),
-            elevator.moveToState(state),
-            wrist.moveToState(WristStates.SCORING),
-            rollers.moveToState(EndefectorRollerStates.SCORE).andThen(rumbleControllers()))
-        .onlyIf(
-            () ->
-                safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state))
-                    && safetyChecker.isSafeWrist(
-                        EndefectorUtil.stateToSetpoint(WristStates.SCORING)));
+        Commands.parallel(elevator.moveToState(state), wrist.moveToState(WristStates.SCORING)),
+        LEDs.runReadyToScore(),
+        rollers.moveToState(EndefectorRollerStates.SCORE),
+        rumbleControllers());
   }
 
   public Command climb() {
-    return Commands.either(
-            Commands.sequence(
-                elevator.moveToState(ElevatorStates.INTAKE),
-                climb.moveToState(ClimbStates.CLIMBREADY),
-                wrist.moveToState(WristStates.CLIMB),
-                rollers.moveToState(EndefectorRollerStates.STOP)),
-            Commands.sequence(
-                wrist.moveToState(WristStates.SCORING),
-                elevator.moveToState(ElevatorStates.INTAKE),
-                climb.moveToState(ClimbStates.CLIMBREADY),
-                wrist.moveToState(WristStates.CLIMB),
-                rollers.moveToState(EndefectorRollerStates.STOP)),
-            () ->
-                (safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(ElevatorStates.INTAKE))
-                    && safetyChecker.isSafeWrist(
-                        EndefectorUtil.stateToSetpoint(WristStates.CLIMB))))
-        .andThen(rumbleControllers());
+    return Commands.sequence(
+        Commands.parallel(
+            elevator.moveToState(ElevatorStates.INTAKE),
+            wrist.moveToState(WristStates.CLIMB),
+            rollers.moveToState(EndefectorRollerStates.STOP)),
+        climb.moveToState(ClimbStates.CLIMBREADY));
   }
 
   public Command rumbleControllers() {

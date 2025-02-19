@@ -6,7 +6,6 @@ import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.commands.AutoAlignToField;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -23,7 +21,6 @@ import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
@@ -78,7 +75,7 @@ public class RobotContainer {
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
         // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        rollers = new Rollers(new RollersIOSim());
+        // rollers = new Rollers(new RollersIOSim());
         // wrist = new Wrist(new WristIOSim(), safetyChecker);
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
@@ -124,31 +121,32 @@ public class RobotContainer {
     // RobotController.getSerialNumber();
 
     //                               DRIVER BINDS
-    drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
-            () ->
-                new ChassisSpeeds(
-                    joystickDeadbandApply(driver.getLeftY())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    joystickDeadbandApply(driver.getLeftX())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
-            driver.rightTrigger(),
-            () -> driver.povUp().getAsBoolean(),
-            () -> driver.povDown().getAsBoolean()));
+    // drive.setDefaultCommand(
+    //     drive.runVelocityTeleopFieldRelative(
+    //         () ->
+    //             new ChassisSpeeds(
+    //                 joystickDeadbandApply(driver.getLeftY())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 joystickDeadbandApply(driver.getLeftX())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getRightX()) *
+    // RealConstants.MAX_ANGULAR_SPEED),
+    //         driver.rightTrigger(),
+    //         () -> driver.povUp().getAsBoolean(),
+    //         () -> driver.povDown().getAsBoolean()));
     // // ZERO GYRO
-    // driver.y().onTrue(drive.zeroGyroCommand());
+    driver.y().onTrue(drive.zeroGyroCommand());
     // drive.zeroGyroCommand().runsWhenDisabled();
     // // STATION INTAKE COMMAND
     // driver.rightTrigger().onTrue(stationIntake());
     // // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // // AUTO ALIGN
-    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers));
-    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers));
-    // // CLIMB
+    // driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers));
+    // driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers));
+    // // // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
     // //                               OPERATOR BINDS

@@ -7,9 +7,11 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.leds.LEDs;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
@@ -48,7 +50,8 @@ public class AutoAlignToField {
     return targetPose;
   }
 
-  public static Command alignToNearestLeftReef(Drive drive, Rollers rollers) {
+  public static Command alignToNearestLeftReef(
+      Drive drive, Rollers rollers, LEDs lightEmitingDiodes) {
     var driveToPose =
         new DriveToPose(
             drive,
@@ -59,10 +62,13 @@ public class AutoAlignToField {
                         new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
                     .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
-    return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+    return Commands.parallel(driveToPose, lightEmitingDiodes.runAutoAlign())
+        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()))
+        .andThen(lightEmitingDiodes.runNoState());
   }
 
-  public static Command alignToNearestRightReef(Drive drive, Rollers rollers) {
+  public static Command alignToNearestRightReef(
+      Drive drive, Rollers rollers, LEDs lightEmitingDiodes) {
     var driveToPose =
         new DriveToPose(
             drive,
@@ -73,6 +79,8 @@ public class AutoAlignToField {
                         new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
                     .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
-    return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+    return Commands.parallel(driveToPose, lightEmitingDiodes.runAutoAlign())
+        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()))
+        .andThen(lightEmitingDiodes.runNoState());
   }
 }

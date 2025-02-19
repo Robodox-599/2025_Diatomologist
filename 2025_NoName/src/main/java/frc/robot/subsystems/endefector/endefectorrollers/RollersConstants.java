@@ -6,7 +6,7 @@ public class RollersConstants {
     SCORE(2),
     INTAKE(3),
     REEFINTAKE(4),
-    ;
+    ALGAEINTAKE(5);
 
     private final int index;
 
@@ -44,9 +44,10 @@ public class RollersConstants {
 
   public static final double nominalVoltage = 12.0;
 
-  public static final double rollersScoreVelocity = 0.2;
+  public static final double rollersScoreSpeed = 0.2;
 
   public static final double centerOffset = 0.0;
+  public static final double algaeIntakeStalling = 65;
 
   public static final int CANrangeId = 0;
   public static final String CANrangeCANbus = "rio";

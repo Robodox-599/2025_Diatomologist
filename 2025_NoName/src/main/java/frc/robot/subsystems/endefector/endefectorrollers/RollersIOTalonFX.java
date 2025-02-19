@@ -12,17 +12,22 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
 
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+
 public class RollersIOTalonFX extends RollersIO {
 
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
+  private TorqueCurrentFOC torqueCurrent;
   private CANrange CANrange;
   Debouncer CANrangeDebouncer = new Debouncer(0.1);
 
   private double desiredVelocity;
+  private boolean isAlgaeStalling;
 
   {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
+    torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
     this.CANrange = new CANrange(CANrangeId, CANrangeCANbus);
     CANrangeConfiguration configs = new CANrangeConfiguration();
@@ -73,6 +78,11 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
+  public void setSpeed(double speed) {
+    rollersMotor.set(speed);
+  }
+
+  @Override
   public void setBrake(boolean brake) {
     rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
@@ -82,16 +92,21 @@ public class RollersIOTalonFX extends RollersIO {
     super.currentState = state;
     switch (state) {
       case STOP:
-        setVelocity(0);
+        setSpeed(0);
         break;
       case SCORE:
-        setVelocity(rollersScoreVelocity);
+        setSpeed(rollersScoreSpeed);
         break;
       case INTAKE:
-        setVelocity(-rollersScoreVelocity);
+        setSpeed(-rollersScoreSpeed);
         break;
+      case ALGAEINTAKE:
+        rollersMotor.setControl(torqueCurrent);
+        if (rollersMotor.getStatorCurrent().getValueAsDouble() == 10) {
+          isAlgaeStalling = true;
+        }
       default:
-        setVelocity(0);
+        setSpeed(0);
         break;
     }
   }
@@ -105,5 +120,10 @@ public class RollersIOTalonFX extends RollersIO {
   @Override
   public double getCoralDistance() {
     return CANrange.getDistance().getValueAsDouble();
+  }
+
+  @Override
+  public boolean algaeIntakeStalling() {
+    return isAlgaeStalling;
   }
 }

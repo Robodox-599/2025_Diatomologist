@@ -18,6 +18,8 @@ public abstract class RollersIO {
   public void stop() {}
 
   public void setVelocity(double velocity) {}
+  
+  public void setSpeed(double speed) {}
 
   public void setState(RollersConstants.EndefectorRollerStates state) {}
 
@@ -37,5 +39,9 @@ public abstract class RollersIO {
 
   public double getCoralDistance() {
     return 0.0;
+  }
+
+  public boolean algaeIntakeStalling() {
+    return false;
   }
 }

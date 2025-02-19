@@ -147,8 +147,8 @@ public class RobotContainer {
     // ALGAE INTAKE COMMAND
     driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers));
-    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers));
+    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
+    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
     // CLIMB
     driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

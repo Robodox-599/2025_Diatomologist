@@ -54,9 +54,10 @@ public class AutoAlignToField {
             drive,
             () ->
                 getNearestBranchPosition(
-                    () -> drive.getPose(),
-                    true,
-                    new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+                        () -> drive.getPose(),
+                        true,
+                        new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
+                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
     return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
@@ -67,9 +68,10 @@ public class AutoAlignToField {
             drive,
             () ->
                 getNearestBranchPosition(
-                    () -> drive.getPose(),
-                    false,
-                    new Translation2d(rollers.getCoralDistance(), new Rotation2d())));
+                        () -> drive.getPose(),
+                        false,
+                        new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
+                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
     return driveToPose.until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }

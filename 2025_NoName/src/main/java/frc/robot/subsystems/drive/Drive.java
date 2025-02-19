@@ -325,11 +325,20 @@ public class Drive extends SubsystemBase {
           if (driveAtAngle.getAsBoolean()) {
             Rotation2d stationRotation;
             if (leftStation.getAsBoolean()) {
-              stationRotation = FieldConstants.CoralStation.leftCenterFace.getRotation();
+              stationRotation =
+                  FieldConstants.CoralStation.leftCenterFace
+                      .getRotation()
+                      .plus(new Rotation2d(Math.PI));
             } else if (rightStation.getAsBoolean()) {
-              stationRotation = FieldConstants.CoralStation.rightCenterFace.getRotation();
+              stationRotation =
+                  FieldConstants.CoralStation.rightCenterFace
+                      .getRotation()
+                      .plus(new Rotation2d(Math.PI));
             } else {
-              stationRotation = FieldConstants.CoralStation.leftCenterFace.getRotation();
+              stationRotation =
+                  FieldConstants.CoralStation.leftCenterFace
+                      .getRotation()
+                      .plus(new Rotation2d(Math.PI));
             }
             angleController.reset(this.getRotation().getRadians());
             angleController.enableContinuousInput(-Math.PI, Math.PI);

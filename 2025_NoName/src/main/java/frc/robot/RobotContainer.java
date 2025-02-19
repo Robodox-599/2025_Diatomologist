@@ -137,8 +137,8 @@ public class RobotContainer {
                         * 0.85,
                     -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
             driver.rightTrigger(),
-            () -> driver.povUp().getAsBoolean(),
-            () -> driver.povDown().getAsBoolean()));
+            () -> operator.povUp().getAsBoolean(),
+            () -> operator.povDown().getAsBoolean()));
     // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();

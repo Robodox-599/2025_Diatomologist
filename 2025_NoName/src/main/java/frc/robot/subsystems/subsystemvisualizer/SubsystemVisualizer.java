@@ -24,28 +24,26 @@ public class SubsystemVisualizer extends SubsystemBase {
   Rollers endefectorRollers;
   Wrist endefectorWrist;
   LEDs lightEmittingDiode;
-  
+
   Mechanism2d mech = new Mechanism2d(3, 3);
   MechanismRoot2d root = mech.getRoot("climber", 2, 0);
-  
-  MechanismLigament2d elevatorVis = 
-    root.append(new MechanismLigament2d("elevator", ElevatorConstants.elevatorLowerLimit, 90));
 
-  MechanismLigament2d climbVis = 
-    root.append(new MechanismLigament2d("elevator", 3, 90, 4, new Color8Bit(Color.kPurple)));
-  
-  MechanismLigament2d endfectorWristVis = 
-    elevatorVis.append(new MechanismLigament2d("endefectorWristVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
+  MechanismLigament2d elevatorVis =
+      root.append(new MechanismLigament2d("elevator", ElevatorConstants.elevatorLowerLimit, 90));
 
-  MechanismLigament2d endfectorRollersVis = 
-    endfectorWristVis.append(new MechanismLigament2d("endefectorRollersVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
+  MechanismLigament2d climbVis =
+      root.append(new MechanismLigament2d("elevator", 3, 90, 4, new Color8Bit(Color.kPurple)));
 
-  public SubsystemVisualizer() {
+  MechanismLigament2d endfectorWristVis =
+      elevatorVis.append(
+          new MechanismLigament2d("endefectorWristVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
 
-  }
+  MechanismLigament2d endfectorRollersVis =
+      endfectorWristVis.append(
+          new MechanismLigament2d("endefectorRollersVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
+
+  public SubsystemVisualizer() {}
 
   @Override
-  public void periodic() {
-    
-  }
+  public void periodic() {}
 }

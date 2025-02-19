@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -77,7 +76,6 @@ public class ModuleIOSim extends ModuleIO {
     turnSim.setInputVoltage(MathUtil.clamp(turnAppliedVolts, -12.0, 12.0));
     driveSim.update(0.02);
     turnSim.update(0.02);
-
 
     super.driveConnected = true;
     super.turnConnected = true;
@@ -154,7 +152,9 @@ public class ModuleIOSim extends ModuleIO {
   @Override
   public void setDriveSetpoint(final double metersPerSecond) {
     driveClosedLoop = true;
-    driveFFVolts = SimConstants.drive_ks * Math.signum(metersPerSecond) + SimConstants.drive_kv * metersPerSecond;
+    driveFFVolts =
+        SimConstants.drive_ks * Math.signum(metersPerSecond)
+            + SimConstants.drive_kv * metersPerSecond;
     driveController.setSetpoint(metersPerSecond);
   }
 

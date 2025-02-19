@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static frc.robot.subsystems.drive.constants.RealConstants.WHEEL_RADIUS;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -9,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -32,7 +30,7 @@ public class ModuleIOSim extends ModuleIO {
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
   private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
   private String name;
-  private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 2.0);
+  private double driveFFVolts = 0.0;
 
   public ModuleIOSim(final String name) {
     this.name = name;
@@ -61,25 +59,25 @@ public class ModuleIOSim extends ModuleIO {
 
   @Override
   public void updateInputs() {
+    // Run closed-loop control
     if (driveClosedLoop) {
       driveAppliedVolts =
-          driveController.calculate(
-              driveSim.getAngularVelocityRadPerSec(),
-              super.driveVelocityMetersPerSec / WHEEL_RADIUS);
+          driveFFVolts + driveController.calculate(driveSim.getAngularVelocityRadPerSec());
     } else {
       driveController.reset();
     }
     if (turnClosedLoop) {
-      turnAppliedVolts =
-          turnController.calculate(Units.rotationsToRadians(super.turnPosition.getRotations()));
+      turnAppliedVolts = turnController.calculate(turnSim.getAngularPositionRad());
     } else {
       turnController.reset();
     }
 
+    // Update simulation state
     driveSim.setInputVoltage(MathUtil.clamp(driveAppliedVolts, -12.0, 12.0));
     turnSim.setInputVoltage(MathUtil.clamp(turnAppliedVolts, -12.0, 12.0));
     driveSim.update(0.02);
     turnSim.update(0.02);
+
 
     super.driveConnected = true;
     super.turnConnected = true;
@@ -156,11 +154,8 @@ public class ModuleIOSim extends ModuleIO {
   @Override
   public void setDriveSetpoint(final double metersPerSecond) {
     driveClosedLoop = true;
-    setDriveVoltage(
-        driveController.calculate(
-                driveSim.getAngularVelocityRadPerSec() * RealConstants.WHEEL_RADIUS,
-                metersPerSecond)
-            + driveFeedforward.calculate(metersPerSecond));
+    driveFFVolts = SimConstants.drive_ks * Math.signum(metersPerSecond) + SimConstants.drive_kv * metersPerSecond;
+    driveController.setSetpoint(metersPerSecond);
   }
 
   @Override

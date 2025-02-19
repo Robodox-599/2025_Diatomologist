@@ -275,7 +275,6 @@ public class Drive extends SubsystemBase {
     return new InstantCommand(
         () -> {
           overrideGyroAngle(0);
-          gyroIO.setYaw(0);
         });
   }
 

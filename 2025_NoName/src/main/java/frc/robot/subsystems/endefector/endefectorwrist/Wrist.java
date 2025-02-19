@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
-import frc.robot.util.EndefectorUtil;
 
 public class Wrist extends SubsystemBase {
   private final WristIO io;
@@ -29,12 +28,19 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command moveToState(WristConstants.WristStates state) {
-    return Commands.run(
-            () -> {
-              io.setState(state);
-            })
-        .andThen(Commands.waitUntil(this::isAtTargetPosition))
-        .onlyIf(() -> safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(state)));
+    // return Commands.run(
+    //         () -> {
+    //           io.setState(state);
+    //         })
+    //     .andThen(Commands.waitUntil(this::isAtTargetPosition))
+    //     .onlyIf(() -> safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(state)));
+    return Commands.repeatingSequence(
+            this.runOnce(
+                    () -> {
+                      io.setState(state);
+                    })
+                .onlyIf(() -> safetyChecker.isSafeWrist(getCurrentPosition())))
+        .until(this::isAtTargetPosition);
   }
 
   public boolean isAtTargetPosition() {

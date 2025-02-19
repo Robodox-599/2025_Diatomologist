@@ -29,16 +29,23 @@ public class Elevator extends SubsystemBase {
 
   /* Moves the elevator to one of the states */
   public Command moveToState(ElevatorConstants.ElevatorStates state) {
-    return Commands.runOnce(
-            () -> {
-              io.setState(state);
-            })
-        .andThen(Commands.waitUntil(this::isAtTargetPosition))
-        .onlyIf(() -> safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state)));
+    // return this.runOnce(
+    //         () -> {
+    //           io.setState(state);
+    //         })
+    //     .andThen(Commands.waitUntil(this::isAtTargetPosition))
+    //     .onlyIf(() -> safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state)));
+    return Commands.repeatingSequence(
+            this.runOnce(
+                    () -> {
+                      io.setState(state);
+                    })
+                .onlyIf(() -> safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state))))
+        .until(this::isAtTargetPosition);
   }
 
   public Command move(double volt) {
-    return Commands.run(
+    return this.runOnce(
         () -> {
           io.setVoltage(volt);
         });
@@ -48,9 +55,9 @@ public class Elevator extends SubsystemBase {
 
   public Command homeElevator() {
     return Commands.sequence(
-            new InstantCommand(() -> io.setVoltage(2)),
+            move(2),
             new WaitUntilCommand(() -> io.limitSwitchValue),
-            new InstantCommand(() -> io.setVoltage(0)),
+            move(0),
             new InstantCommand(() -> io.zeroEncoder()))
         .onlyIf(() -> !io.limitSwitchValue);
   }

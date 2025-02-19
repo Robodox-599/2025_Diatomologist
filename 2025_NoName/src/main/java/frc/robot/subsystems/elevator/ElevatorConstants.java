@@ -32,7 +32,7 @@ public final class ElevatorConstants {
     20.0, // L2
     40.0, // L3
     60.0, // L4
-    0.3, // STOW
+    0, // STOW
     10, // STATION INTAKE
     15, // ALGAE GROUND INTAKE
     15, // ALGAE L2
@@ -59,14 +59,6 @@ public final class ElevatorConstants {
   public static final double elevatorUpperLimit = 89.0;
   public static final double homePositionOffset = 1.0;
 
-  public static final double levelOneHeight = 0.0;
-  public static final double levelTwoHeight = 12.0;
-  public static final double levelThreeHeight = 24.0;
-  public static final double levelFourHeight = 72.0;
-  public static final double stowHeight = 0;
-  public static final double endEffectorIntakeHeight = 0;
-  public static final double groundIntakeHeight = 0;
-
   public static final double kP = 1;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
@@ -82,7 +74,8 @@ public final class ElevatorConstants {
   public static final double supplyCurrentLimitAmps = 0.1;
   public static final double statorCurrentLimitAmps = 0.1;
 
-  public static final double PositionToleranceInches = 0.5;
+  public static final double positionToleranceInches = 0.5;
+  public static final double velocityToleranceInchesPerSecond = 0.5;
 
   public static final double elevatorMOI = 0.015;
 

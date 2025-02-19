@@ -98,13 +98,12 @@ public class ClimbIOTalonFX extends ClimbIO {
             ClimbConstants.climbLowerLimit,
             ClimbConstants.climbUpperLimit);
 
-    ClimbUtil.stateToHeight(state);
-
     if (position > getPositionInches()) {
       motionSlot = ClimbConstants.movingUpSlot;
     } else {
       motionSlot = ClimbConstants.movingDownSlot;
     }
+    leaderMotor.setControl((motionMagicRequest.withSlot(motionSlot).withPosition(position)));
   }
 
   @Override

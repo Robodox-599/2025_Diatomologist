@@ -39,7 +39,7 @@ public class ElevatorIOSim extends ElevatorIO {
     positionController =
         new PIDController(
             ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
-    positionController.setTolerance(ElevatorConstants.PositionToleranceInches);
+    positionController.setTolerance(ElevatorConstants.positionToleranceInches);
   }
 
   @Override

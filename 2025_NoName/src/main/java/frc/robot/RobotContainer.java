@@ -126,13 +126,13 @@ public class RobotContainer {
     //     drive.runVelocityTeleopFieldRelative(
     //         () ->
     //             new ChassisSpeeds(
-    //                 joystickDeadbandApply(driver.getLeftY())
+    //                 -joystickDeadbandApply(driver.getLeftY())
     //                     * RealConstants.MAX_LINEAR_SPEED
     //                     * 0.85,
-    //                 joystickDeadbandApply(driver.getLeftX())
+    //                 -joystickDeadbandApply(driver.getLeftX())
     //                     * RealConstants.MAX_LINEAR_SPEED
     //                     * 0.85,
-    //                 -joystickDeadbandApply(driver.getRightX()) *
+    //                 joystickDeadbandApply(driver.getRightX()) *
     // RealConstants.MAX_ANGULAR_SPEED),
     //         driver.rightTrigger(),
     //         () -> driver.povUp().getAsBoolean(),

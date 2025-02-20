@@ -165,8 +165,8 @@ public class Drive extends SubsystemBase {
       for (var module : modules) {
         module.stop();
       }
-      DogLog.log("SwerveStates/Setpoints", new SwerveModuleState[] {});
-      DogLog.log("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+      DogLog.log("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
+      DogLog.log("Swerve/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
       // updateVision();
     }
   }
@@ -218,7 +218,8 @@ public class Drive extends SubsystemBase {
       field.setRobotPose(getPose());
       gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
       DogLog.log("Odometry/Pose", getPose());
-      DogLog.log("Odometry/Velocity", getVelocity());
+      DogLog.log("Odometry/FieldVelocity", getFieldVelocity());
+      DogLog.log("Odometry/RobotVelocity", getRobotVelocity());
     }
   }
 
@@ -230,17 +231,12 @@ public class Drive extends SubsystemBase {
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
     speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
-
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
 
-    DogLog.log("Swerve/Target Speeds", discreteSpeeds);
-    DogLog.log("Swerve/Speed Error", (discreteSpeeds.minus(getVelocity())));
-    DogLog.log(
-        "Swerve/Target Chassis Speeds Field Relative",
-        ChassisSpeeds.fromFieldRelativeSpeeds(discreteSpeeds, getRotation()));
-    DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
+    DogLog.log("Swerve/RobotRelativeTargetSpeeds", discreteSpeeds);
+    DogLog.log("Swerve/SwerveStates/OptimizedSetpoints", setpointStates);
     for (int i = 0; i < modules.length; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
@@ -372,7 +368,7 @@ public class Drive extends SubsystemBase {
               setpointStates, RealConstants.MAX_LINEAR_SPEED);
 
           DogLog.log("Swerve/Target Speeds", discreteSpeeds);
-          DogLog.log("Swerve/Field Speed Error", discreteSpeeds.minus(getVelocity()));
+          DogLog.log("Swerve/Field Speed Error", discreteSpeeds.minus(getFieldVelocity()));
           DogLog.log(
               "Swerve/Target Chassis Speeds Field Relative",
               ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
@@ -385,7 +381,7 @@ public class Drive extends SubsystemBase {
                 true);
           }
           // Log setpoint states
-          DogLog.log("SwerveStates/OptimizedSetpoints", setpointStates);
+          DogLog.log("Swerve/SwerveStates/OptimizedSetpoints", setpointStates);
         });
   }
 
@@ -463,7 +459,7 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  public ChassisSpeeds getVelocity() {
+  public ChassisSpeeds getFieldVelocity() {
     SwerveModuleState[] states = new SwerveModuleState[modules.length];
     for (int i = 0; i < modules.length; i++) {
       states[i] = modules[i].getState();
@@ -474,8 +470,8 @@ public class Drive extends SubsystemBase {
         speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
-  public ChassisSpeeds getFieldVelocity() {
-    return ChassisSpeeds.fromRobotRelativeSpeeds(getVelocity(), getRotation());
+  public ChassisSpeeds getRobotVelocity() {
+    return ChassisSpeeds.fromFieldRelativeSpeeds(getFieldVelocity(), getRotation());
   }
 
   /** Adds a new timestamped vision measurement. */

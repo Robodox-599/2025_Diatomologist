@@ -190,7 +190,8 @@ public class RobotContainer {
             wrist.moveToState(WristStates.STATIONINTAKE),
             rollers.moveToState(EndefectorRollerStates.INTAKE),
             LEDs.runStationIntake()),
-        rumbleControllers());
+        rumbleControllers(),
+        wrist.moveToState(WristStates.SCORING));
   }
 
   public Command algaeL2Intake() {
@@ -232,27 +233,33 @@ public class RobotContainer {
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.ALGAE_L3),
                   wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.moveToState(EndefectorRollerStates.ALGAEINTAKE),
                   LEDs.runAlgaeIntake()),
-              rumbleControllers());
+              rumbleControllers(),
+              wrist.moveToState(WristStates.SCORING),
+              elevator.moveToState(ElevatorStates.GROUNDINTAKE));
     } else if (ElevatorStates.ALGAE_L2 == state) {
       algaeIntakeCommand =
           Commands.sequence(
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.ALGAE_L2),
                   wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.moveToState(EndefectorRollerStates.ALGAEINTAKE),
                   LEDs.runAlgaeIntake()),
-              rumbleControllers());
+              rumbleControllers(),
+              wrist.moveToState(WristStates.SCORING),
+              elevator.moveToState(ElevatorStates.GROUNDINTAKE));
     } else if (ElevatorStates.GROUNDINTAKE == state) {
       algaeIntakeCommand =
           Commands.sequence(
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.GROUNDINTAKE),
                   wrist.moveToState(WristStates.GROUNDINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.moveToState(EndefectorRollerStates.ALGAEINTAKE),
                   LEDs.runAlgaeIntake()),
-              rumbleControllers());
+              rumbleControllers(),
+              wrist.moveToState(WristStates.SCORING),
+              elevator.moveToState(ElevatorStates.GROUNDINTAKE));
     } else {
       algaeIntakeCommand = Commands.none();
     }
@@ -265,7 +272,10 @@ public class RobotContainer {
         Commands.parallel(elevator.moveToState(state), wrist.moveToState(WristStates.SCORING)),
         LEDs.runReadyToScore(),
         rollers.moveToState(EndefectorRollerStates.SCORE),
-        rumbleControllers());
+        rumbleControllers(),
+        elevator.moveToState(ElevatorStates.STOW),
+        wrist.moveToState(WristStates.STATIONINTAKE),
+        rollers.moveToState(EndefectorRollerStates.INTAKE));
   }
 
   public Command climb() {
@@ -274,7 +284,8 @@ public class RobotContainer {
             elevator.moveToState(ElevatorStates.INTAKE),
             wrist.moveToState(WristStates.CLIMB),
             rollers.moveToState(EndefectorRollerStates.STOP)),
-        climb.moveToState(ClimbStates.CLIMBREADY));
+        climb.moveToState(ClimbStates.CLIMBREADY),
+        rumbleControllers());
   }
 
   public Command rumbleControllers() {

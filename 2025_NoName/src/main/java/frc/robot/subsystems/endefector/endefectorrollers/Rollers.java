@@ -36,6 +36,8 @@ public class Rollers extends SubsystemBase {
         return runRollersIntake();
       case SCORE:
         return runRollerScore();
+      case ALGAEINTAKE:
+        return runAlgaeIntake();
       case STOP:
         return Commands.runOnce(
             () -> {
@@ -61,6 +63,25 @@ public class Rollers extends SubsystemBase {
         () -> {
           io.setVelocity(velocity);
         });
+  }
+
+  public Command runAlgaeIntake() {
+    if (io instanceof RollersIOSim) {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.ALGAEINTAKE);
+                  })
+              .withTimeout(0.2),
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+    } else {
+      return Commands.sequence(
+          Commands.run(
+                  () -> {
+                    io.setState(EndefectorRollerStates.ALGAEINTAKE);
+                  })
+              .until(() -> io.isAlgaeDetected));
+    }
   }
 
   public Command runRollerScore() {

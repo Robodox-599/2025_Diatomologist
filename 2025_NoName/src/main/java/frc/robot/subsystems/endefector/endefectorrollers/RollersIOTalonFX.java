@@ -4,6 +4,7 @@ import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants
 
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -11,8 +12,6 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.MotorLog;
-
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 
 public class RollersIOTalonFX extends RollersIO {
 
@@ -56,6 +55,11 @@ public class RollersIOTalonFX extends RollersIO {
     super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
     super.canrangeDistance = CANrange.getDistance().getValueAsDouble() - noCoralDistance;
     super.desiredVelocity = desiredVelocity;
+    if (super.currentAmps >= 10) {
+      super.isAlgaeDetected = true;
+    } else {
+      super.isAlgaeDetected = false;
+    }
 
     MotorLog.log("Rollers", rollersMotor);
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
@@ -102,9 +106,6 @@ public class RollersIOTalonFX extends RollersIO {
         break;
       case ALGAEINTAKE:
         rollersMotor.setControl(torqueCurrent);
-        if (rollersMotor.getStatorCurrent().getValueAsDouble() == 10) {
-          isAlgaeStalling = true;
-        }
       default:
         setSpeed(0);
         break;
@@ -120,10 +121,5 @@ public class RollersIOTalonFX extends RollersIO {
   @Override
   public double getCoralDistance() {
     return CANrange.getDistance().getValueAsDouble();
-  }
-
-  @Override
-  public boolean algaeIntakeStalling() {
-    return isAlgaeStalling;
   }
 }

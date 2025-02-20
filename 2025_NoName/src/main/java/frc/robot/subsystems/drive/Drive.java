@@ -165,9 +165,7 @@ public class Drive extends SubsystemBase {
       for (var module : modules) {
         module.stop();
       }
-      DogLog.log("Swerve/SwerveStates/Setpoints", new SwerveModuleState[] {});
-      DogLog.log("Swerve/SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
-      // updateVision();
+      DogLog.log("Swerve/SwerveStates/OptimizedSetpoints", new SwerveModuleState[] {});
     }
   }
 
@@ -213,13 +211,13 @@ public class Drive extends SubsystemBase {
         Twist2d twist = kinematics.toTwist2d(moduleDeltas);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
       }
-
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
       field.setRobotPose(getPose());
       gyroDisconnectedAlert.set(!gyroIO.connected && Constants.currentMode != Mode.SIM);
       DogLog.log("Odometry/Pose", getPose());
       DogLog.log("Odometry/FieldVelocity", getFieldVelocity());
       DogLog.log("Odometry/RobotVelocity", getRobotVelocity());
+      DogLog.log("Swerve/SwerveStates/Measured", getModuleStates());
     }
   }
 
@@ -437,6 +435,14 @@ public class Drive extends SubsystemBase {
     SwerveModulePosition[] states = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
       states[i] = modules[i].getPosition();
+    }
+    return states;
+  }
+
+  private SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
     }
     return states;
   }

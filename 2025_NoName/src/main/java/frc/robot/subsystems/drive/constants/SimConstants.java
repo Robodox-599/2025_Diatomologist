@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 public class SimConstants {
   public static final double drive_kp = 1.1;
   public static final double drive_kd = 0;
-  public static final double drive_ks = 0.001;
+  public static final double drive_ks = 0.1;
   public static final double drive_kv_rot = 0.91035;
   public static final double drive_kv = 1.0 / Units.rotationsToRadians(1.0 / drive_kv_rot);
   public static final double turn_kp = 60.0;

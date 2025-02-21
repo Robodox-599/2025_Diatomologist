@@ -24,6 +24,18 @@ public class RollersIOSim extends RollersIO {
   }
 
   @Override
+  public void updateInputs() {
+    super.appliedVolts = rollersSim.getInputVoltage();
+    super.currentAmps = rollersSim.getCurrentDrawAmps();
+    super.velocity = rollersSim.getAngularVelocityRPM() / 60.0;
+    super.desiredVelocity = desiredVelocity;
+    super.tempCelsius = 25.0;
+
+    SimLog.log("RollersSimMotor", rollersSim);
+    DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+  }
+
+  @Override
   public void setVoltage(double voltage) {
     rollersSim.setInputVoltage(voltage);
   }
@@ -38,18 +50,6 @@ public class RollersIOSim extends RollersIO {
   @Override
   public void stop() {
     setVelocity(0);
-  }
-
-  @Override
-  public void updateInputs() {
-    super.appliedVolts = rollersSim.getInputVoltage();
-    super.currentAmps = rollersSim.getCurrentDrawAmps();
-    super.velocity = rollersSim.getAngularVelocityRPM() / 60.0;
-    super.desiredVelocity = desiredVelocity;
-    super.tempCelsius = 25.0;
-
-    SimLog.log("RollersSimMotor", rollersSim);
-    DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
   }
 
   @Override

@@ -59,9 +59,9 @@ public class WristConstants {
 
   // setpoints
   public static final double wristLowerLimit = 0.0;
-  public static final double wristUpperLimit = 0.0;
+  public static final double wristUpperLimit = 90.0;
 
-  public static final double wristPositionLimit = 0.0;
+  public static final double wristPositionLimit = 1;
 
   // wrist state stuff
   public static enum WristStates {

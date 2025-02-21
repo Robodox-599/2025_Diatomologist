@@ -121,30 +121,6 @@ public class WristIOTalonFX extends WristIO {
   public void setState(WristStates state) {
     double position =
         MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
-
-    switch (state) {
-      case STOW:
-        position = setpoints[1];
-        break;
-      case SCORING:
-        position = setpoints[2];
-        break;
-      case OVERRIDE:
-        position = setpoints[3];
-        break;
-      case GROUNDINTAKE:
-        position = setpoints[4];
-        break;
-      case STATIONINTAKE:
-        position = setpoints[5];
-        break;
-      case CLIMB:
-        position = setpoints[6];
-        break;
-      default:
-        position = setpoints[0]; // STOW
-        break;
-    }
     if (passedInPosition > currentPosition) {
       wristSlot = 0;
     } else {

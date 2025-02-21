@@ -10,28 +10,30 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.EndefectorUtil;
-import frc.robot.util.SimLog;
 
 public class WristIOSim extends WristIO {
 
   private static final DCMotor WRIST_GEARBOX = DCMotor.getKrakenX60Foc(1);
   private final DCMotorSim wristSim;
 
-  private double passedInPositon;
-  private double currentPosition;
-
-  private final PIDController wristPID = new PIDController(simkP, simkI, simkD);
+  // private double passedInPositon;
+  // private double currentPosition;
+  private PIDController wristPID = new PIDController(simkP, simkI, simkD);
 
   public WristIOSim() {
     wristSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(WRIST_GEARBOX, wristMOI, gearRatio), WRIST_GEARBOX);
+
+    wristPID = new PIDController(WristConstants.simkP, WristConstants.simkI, WristConstants.simkD);
+    wristPID.setTolerance(WristConstants.wristPositionLimit);
   }
 
   @Override
   public void updateInputs() {
     wristSim.update(0.02);
 
+    super.atSetpoint = wristPID.atSetpoint();
     super.appliedVolts = wristSim.getInputVoltage();
     super.currentAmps = wristSim.getCurrentDrawAmps();
     super.velocity = wristSim.getAngularVelocityRPM() / 60.0;
@@ -50,16 +52,11 @@ public class WristIOSim extends WristIO {
   }
 
   @Override
-  public void goToPose(double position) {
-    wristSim.setInputVoltage(wristPID.calculate(position));
-  }
-
-  @Override
   public void setState(WristStates state) {
-    currentPositionDegrees =
+    targetPosition =
         MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
-    // System.out.println(super.state);
-    wristSim.setInputVoltage(wristPID.calculate(currentPositionDegrees));
+    System.out.println(super.state);
+    wristSim.setInputVoltage(wristPID.calculate(targetPosition));
   }
 
   @Override

@@ -22,7 +22,6 @@ public class RollersIOTalonFX extends RollersIO {
   Debouncer CANrangeDebouncer = new Debouncer(0.1);
 
   private double desiredVelocity;
-  private boolean isAlgaeStalling;
 
   {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);

@@ -20,13 +20,6 @@ public class Wrist extends SubsystemBase {
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
   }
 
-  public Command goToPose(double pose) {
-    return Commands.run(
-        () -> {
-          io.goToPose(pose);
-        });
-  }
-
   public Command moveToState(WristConstants.WristStates state) {
     // return Commands.run(
     //         () -> {
@@ -34,6 +27,7 @@ public class Wrist extends SubsystemBase {
     //         })
     //     .andThen(Commands.waitUntil(this::isAtTargetPosition))
     //     .onlyIf(() -> safetyChecker.isSafeWrist(EndefectorUtil.stateToSetpoint(state)));
+    safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
     return Commands.repeatingSequence(
             this.runOnce(
                     () -> {

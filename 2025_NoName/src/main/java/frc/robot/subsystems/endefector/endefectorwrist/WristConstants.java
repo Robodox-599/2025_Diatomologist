@@ -44,7 +44,7 @@ public class WristConstants {
   public static final double realRetractkV = 0.0;
 
   // sim stuff
-  public static final double simkP = 0.0;
+  public static final double simkP = 8.0;
   public static final double simkI = 0.0;
   public static final double simkD = 0.0;
   public static final double simkV = 0.0;
@@ -60,6 +60,8 @@ public class WristConstants {
   // setpoints
   public static final double wristLowerLimit = 0.0;
   public static final double wristUpperLimit = 0.0;
+
+  public static final double wristPositionLimit = 0.0;
 
   // wrist state stuff
   public static enum WristStates {
@@ -82,14 +84,14 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    0.0,
-    0.0, // stow
-    0.0, // scoring
-    0.0, // ground intake
-    0.0, // station intake
-    0.0 // climb
+    10.0,
+    20.0, // stow
+    30.0, // scoring
+    40.0, // ground intake
+    50.0, // station intake
+    60.0 // climb
     ,
-    0.0,
-    0.0,
+    70.0,
+    80.0,
   };
 }

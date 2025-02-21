@@ -34,6 +34,7 @@ import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.Endefe
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
@@ -125,7 +126,7 @@ public class RobotContainer {
   private void configureBindings() {
     // RobotController.getSerialNumber();
 
-    //                               DRIVER BINDS
+    // //                               DRIVER BINDS
     drive.setDefaultCommand(
         drive.runVelocityTeleopFieldRelative(
             () ->
@@ -172,6 +173,12 @@ public class RobotContainer {
     operator.leftBumper().onTrue(algaeGroundIntake());
     // STOW ALL
     operator.start().onTrue(stowAll());
+
+    operator.b().whileTrue(wrist.moveToState(WristConstants.WristStates.CLIMB));
+
+    operator.a().whileTrue(wrist.moveToState(WristConstants.WristStates.STATIONINTAKE));
+
+    operator.x().whileTrue(wrist.moveToState(WristConstants.WristStates.STOW));
   }
 
   public Command stowAll() {

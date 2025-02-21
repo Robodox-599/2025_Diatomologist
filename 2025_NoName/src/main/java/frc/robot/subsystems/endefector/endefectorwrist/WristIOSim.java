@@ -39,11 +39,11 @@ public class WristIOSim extends WristIO {
     super.currentPositionDegrees = wristSim.getAngularPositionRotations();
     super.tempCelsius = 25.0;
 
-    SimLog.log("WristSimMotor", wristSim);
-
-    DogLog.log("Wrist/TargetPosition", passedInPositon);
-    DogLog.log("Wrist/CurrentPosition", currentPosition);
-    DogLog.log("Wrist/Position", super.currentPositionDegrees);
+    DogLog.log("Wrist/CurrentAmps", super.currentAmps);
+    DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Wrist/TargetPosition", super.targetPosition);
+    DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
+    DogLog.log("Wrist/Temperature", super.tempCelsius);
 
     wristSim.setInputVoltage(
         wristPID.calculate(super.currentPositionDegrees, super.targetPosition));

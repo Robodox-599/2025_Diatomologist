@@ -3,10 +3,10 @@ package frc.robot;
 public class SafetyChecker {
   private double elevatorInches, wristDegrees;
   private final double maximumElevatorSwingThroughHeight =
-      0.0; // maximum height that the endefector/elevator can be at so the endefector can swing
+      50; // maximum height that the endefector/elevator can be at so the endefector can swing
   // through the elevator, check cad for this
   private final double maxHitCrossbarHeight =
-      0.0; // maximum height that the endefector/elevator can be at so the endefector can swing
+      50; // maximum height that the endefector/elevator can be at so the endefector can swing
   // through the elevator, check cad for this
   private final double endefectorBehindElevatorDegrees =
       76.0; // the degrees threshold that the endefector is behind the elevator, found in cad

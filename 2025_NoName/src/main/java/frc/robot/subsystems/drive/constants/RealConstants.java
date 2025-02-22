@@ -13,10 +13,10 @@ import frc.robot.subsystems.vision.VisionConstants;
 // import frc.robot.subsystems.vision.VisionConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = 0.149658203125; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.3662109375; // FR
-  public static final double Module2AbsoluteEncoderOffset = -0.234375; // BL
-  public static final double Module3AbsoluteEncoderOffset = -0.4658203125; // BR
+  public static final double Module0AbsoluteEncoderOffset = -0.27734375; // FL
+  public static final double Module1AbsoluteEncoderOffset = -0.15185546875; // FR
+  public static final double Module2AbsoluteEncoderOffset = -0.023681640625; // BL
+  public static final double Module3AbsoluteEncoderOffset = 0.144775390625; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 

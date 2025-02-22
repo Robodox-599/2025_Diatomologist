@@ -58,8 +58,8 @@ public class WristConstants {
   public static final double cancoderOffset = 0.0;
 
   // setpoints
-  public static final double wristLowerLimit = 0.0;
-  public static final double wristUpperLimit = 90.0;
+  public static final double wristMinAngle = 0.0;
+  public static final double wristMaxAngle = 90.0;
 
   public static final double wristPositionLimit = 1;
 

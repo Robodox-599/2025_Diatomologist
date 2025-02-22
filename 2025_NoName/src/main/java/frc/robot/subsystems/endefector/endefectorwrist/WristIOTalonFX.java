@@ -79,13 +79,17 @@ public class WristIOTalonFX extends WristIO {
     super.tempCelsius = wristMotor.getDeviceTemp().getValueAsDouble();
     super.currentPositionDegrees = wristMotor.getPosition().getValueAsDouble();
     super.targetPosition = this.targetPosition;
-    this.currentPosition = super.currentPositionDegrees;
     super.atSetpoint =
-        Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
+    Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
     MotorLog.log("Wrist", wristMotor);
 
-    DogLog.log("Wrist/TargetPosition", passedInPosition);
-    DogLog.log("Wrist/CurrentPosition", currentPosition);
+    DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Wrist/CurrentAmps", super.currentAmps);
+    DogLog.log("Wrist/Velocity", super.velocity);
+    DogLog.log("Wrist/Temperature", super.tempCelsius);
+    DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
+    DogLog.log("Wrist/AtSetpoint", super.atSetpoint);
+    
   }
 
   @Override
@@ -120,7 +124,7 @@ public class WristIOTalonFX extends WristIO {
   @Override
   public void setState(WristStates state) {
     double position =
-        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristLowerLimit, wristUpperLimit);
+        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristMinAngle, wristMaxAngle);
     if (passedInPosition > currentPosition) {
       wristSlot = 0;
     } else {

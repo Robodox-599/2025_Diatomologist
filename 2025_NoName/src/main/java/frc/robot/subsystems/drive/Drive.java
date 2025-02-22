@@ -94,9 +94,9 @@ public class Drive extends SubsystemBase {
         choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       case SIM:
-        choreoPathXController = new PIDController(0.16, 0, 0);
-        choreoPathYController = new PIDController(0.16, 0, 0);
-        choreoPathAngleController = new PIDController(0.18, 0, 0);
+        choreoPathXController = new PIDController(0, 0, 0.4);
+        choreoPathYController = new PIDController(0, 0, 0.4);
+        choreoPathAngleController = new PIDController(0.3, 0, 0);
         break;
       default:
         choreoPathXController = new PIDController(1, 0, 0);

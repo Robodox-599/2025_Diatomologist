@@ -80,7 +80,7 @@ public class WristIOTalonFX extends WristIO {
     super.currentPositionDegrees = wristMotor.getPosition().getValueAsDouble();
     super.targetPosition = this.targetPosition;
     super.atSetpoint =
-    Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
+        Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
     MotorLog.log("Wrist", wristMotor);
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
@@ -89,7 +89,6 @@ public class WristIOTalonFX extends WristIO {
     DogLog.log("Wrist/Temperature", super.tempCelsius);
     DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
     DogLog.log("Wrist/AtSetpoint", super.atSetpoint);
-    
   }
 
   @Override

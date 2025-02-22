@@ -8,7 +8,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.util.EndefectorUtil;
-import frc.robot.util.SimLog;
 
 public class RollersIOSim extends RollersIO {
   private final DCMotorSim rollersSim;
@@ -33,8 +32,7 @@ public class RollersIOSim extends RollersIO {
     super.desiredVelocity = desiredVelocity;
     super.tempCelsius = 25.0;
 
-    rollersSim.setInputVoltage(
-        rollerController.calculate(super.velocity, super.desiredVelocity));
+    rollersSim.setInputVoltage(rollerController.calculate(super.velocity, super.desiredVelocity));
 
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     DogLog.log("Rollers/State", super.currentState);

@@ -55,7 +55,7 @@ public class ClimbIOSim extends ClimbIO {
     super.atSetpoint = positionController.atSetpoint();
 
     // Update state
-    SimLog.log("climbMotors", climbSim);
+    SimLog.log("Climb/ClimbMotors", climbSim);
 
     DogLog.log("Climb/PositionInches", super.positionInches);
     DogLog.log("Climb/VelocityInchesPerSec", super.velocityInchesPerSec);

@@ -86,7 +86,22 @@ public class RobotContainer {
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         autoRoutines = new AutoRoutines(autoFactory);
         break;
-
+      case SIM:
+        DriverStation.silenceJoystickConnectionWarning(true);
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        climb = new Climb(new ClimbIOSim());
+        drive = new Drive(new GyroIO() {}, Drive.createSimModules());
+        LEDs = new LEDs(new LEDsIOSim());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOSim(RealConstants.camConstants, drive::getPose));
+        autoFactory =
+            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        autoRoutines = new AutoRoutines(autoFactory);
+        break;
       default:
         DriverStation.silenceJoystickConnectionWarning(true);
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
@@ -145,7 +160,10 @@ public class RobotContainer {
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
     // STATION INTAKE COMMAND
-    driver.rightTrigger().onTrue(stationIntake());
+    driver
+        .rightTrigger()
+        .whileTrue(rollers.moveToState(EndefectorRollerStates.INTAKE))
+        .onFalse(stowAll());
     // ALGAE INTAKE COMMAND
     driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN

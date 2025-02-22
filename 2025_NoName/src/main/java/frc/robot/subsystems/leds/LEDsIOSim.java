@@ -16,8 +16,39 @@ public class LEDsIOSim extends LEDsIO {
     DogLog.log("LEDs/Connected", super.connected);
     DogLog.log("LEDs/Anim", super.anim);
   }
-  //     @Override
-  //     public void updateAnim(LEDAnim anim){
-  //          state = anim;
-  //     }
+
+  @Override
+  public void enableStationIntake() {
+    state = LEDAnim.StationIntake;
+  }
+
+  @Override
+  public void enableAlgaeIntake() {
+    state = LEDAnim.AlgaeIntake;
+  }
+
+  @Override
+  public void enableNoState() {
+    state = LEDAnim.NoState;
+  }
+
+  @Override
+  public void enableScored() {
+    state = LEDAnim.Scored;
+  }
+
+  @Override
+  public void enableClimb() {
+    state = LEDAnim.Climb;
+  }
+
+  @Override
+  public void enableAutoAlign() {
+    state = LEDAnim.AutoAlign;
+  }
+
+  @Override
+  public void enableReadyToScore() {
+    state = LEDAnim.ReadyToScore;
+  }
 }

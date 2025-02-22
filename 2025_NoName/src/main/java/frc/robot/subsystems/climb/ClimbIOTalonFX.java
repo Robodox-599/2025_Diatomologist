@@ -77,8 +77,8 @@ public class ClimbIOTalonFX extends ClimbIO {
 
     super.limitSwitchValue = limitSwitch.get();
     /*Log basic motor inputs */
-    MotorLog.log("leaderMotor", leaderMotor);
-    MotorLog.log("followerMotor", followerMotor);
+    MotorLog.log("Climb/leaderMotor", leaderMotor);
+    MotorLog.log("Climb/followerMotor", followerMotor);
 
     /* Log all super */
     DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);

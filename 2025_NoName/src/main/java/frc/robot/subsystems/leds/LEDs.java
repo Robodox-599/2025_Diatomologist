@@ -13,6 +13,11 @@ public class LEDs extends SubsystemBase {
     this.io = io;
   }
 
+  @Override
+  public void periodic() {
+    io.updateInputs();
+  }
+
   public Command runStationIntake() {
     return runOnce(() -> io.enableStationIntake());
   }

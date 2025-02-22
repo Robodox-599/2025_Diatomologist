@@ -35,40 +35,36 @@ public class LEDsIOReal extends LEDsIO {
     DogLog.log("LEDs/Anim", super.anim);
   }
 
-  //    @Override
-  //    public void updateAnim(LEDAnim anim){
-  //         state = anim;
-  //    }
-
   @Override
   public void enableStationIntake() {
-    // candleReal.animate(new ColorFlowAnimation(255, 255, 70, 100, 0.85,
-    // LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    state = LEDAnim.StationIntake;
     candleReal.animate(
         new StrobeAnimation(255, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableAlgaeIntake() {
-    // candleReal.animate(new ColorFlowAnimation(128, 0, 128, 0, 0.85,
-    // LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0), 1);
+    state = LEDAnim.AlgaeIntake;
     candleReal.animate(
         new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableNoState() {
+    state = LEDAnim.NoState;
     candleReal.setLEDs(0, 0, 0);
   }
 
   @Override
   public void enableScored() {
+    state = LEDAnim.Scored;
     candleReal.animate(
         new StrobeAnimation(255, 91, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableClimb() {
+    state = LEDAnim.Climb;
     candleReal.animate(
         new ColorFlowAnimation(
             0, 0, 255, 0, 0.70, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
@@ -77,12 +73,13 @@ public class LEDsIOReal extends LEDsIO {
 
   @Override
   public void enableAutoAlign() {
+    state = LEDAnim.AutoAlign;
     candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
-    System.out.println("ts pmooooooooooooooo");
   }
 
   @Override
   public void enableReadyToScore() {
+    state = LEDAnim.ReadyToScore;
     candleReal.animate(
         new StrobeAnimation(255, 0, 127, 0, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }

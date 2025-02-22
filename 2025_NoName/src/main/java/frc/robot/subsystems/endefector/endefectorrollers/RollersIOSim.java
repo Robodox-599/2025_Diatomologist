@@ -25,14 +25,23 @@ public class RollersIOSim extends RollersIO {
 
   @Override
   public void updateInputs() {
+    rollersSim.update(0.02);
+
     super.appliedVolts = rollersSim.getInputVoltage();
     super.currentAmps = rollersSim.getCurrentDrawAmps();
     super.velocity = rollersSim.getAngularVelocityRPM() / 60.0;
     super.desiredVelocity = desiredVelocity;
     super.tempCelsius = 25.0;
 
-    SimLog.log("RollersSimMotor", rollersSim);
+    rollersSim.setInputVoltage(
+        rollerController.calculate(super.velocity, super.desiredVelocity));
+
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+    DogLog.log("Rollers/State", super.currentState);
+    DogLog.log("Rollers/Velocity", super.velocity);
+    DogLog.log("Rollers/Voltage", super.appliedVolts);
+    DogLog.log("Rollers/Amps", super.currentAmps);
+    DogLog.log("Rollers/Temp", 60);
   }
 
   @Override
@@ -40,22 +49,25 @@ public class RollersIOSim extends RollersIO {
     rollersSim.setInputVoltage(voltage);
   }
 
-  @Override
-  public void setVelocity(double velocity) {
-    desiredVelocity = velocity;
-    rollersSim.setInputVoltage(
-        rollerController.calculate(rollersSim.getAngularVelocityRPM() / 60.0, velocity));
-  }
+  // @Override
+  // public void setVelocity(double velocity) {
+  //   desiredVelocity = velocity;
+  //   rollersSim.setInputVoltage(rollerController.calculate(velocity, desiredVelocity));
+  // }
 
-  @Override
-  public void stop() {
-    setVelocity(0);
-  }
+  // @Override
+  // public void stop() {
+  //   setVelocity(0);
+  // }
 
   @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
-    EndefectorUtil.stateToVelocity(state);
+
+    desiredVelocity = EndefectorUtil.stateToVelocity(state);
+
+    rollersSim.setInputVoltage(rollerController.calculate(desiredVelocity));
+    System.out.println(super.velocity);
   }
 
   @Override

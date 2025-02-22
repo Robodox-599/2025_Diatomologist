@@ -78,6 +78,8 @@ public class ElevatorIOSim extends ElevatorIO {
 
   @Override
   public void setState(ElevatorConstants.ElevatorStates state) {
+    super.state = state;
+
     targetPositionInches =
         MathUtil.clamp(
             ElevatorUtil.stateToHeight(state),

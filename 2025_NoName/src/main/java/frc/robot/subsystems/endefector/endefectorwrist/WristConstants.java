@@ -44,9 +44,9 @@ public class WristConstants {
   public static final double realRetractkV = 0.0;
 
   // sim stuff
-  public static final double simkP = 8.0;
-  public static final double simkI = 0.0;
-  public static final double simkD = 0.0;
+  public static final double simkP = 6.9;
+  public static final double simkI = 0.5;
+  public static final double simkD = 2.25;
   public static final double simkV = 0.0;
   public static final double simkS = 0.0;
   public static final double simVelocityConstant = 0.2;

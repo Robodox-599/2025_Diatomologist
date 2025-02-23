@@ -9,7 +9,6 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.ElevatorUtil;
-import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
 public class ElevatorIOTalonFX extends ElevatorIO {
@@ -77,9 +76,15 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             && velocityError < ElevatorConstants.velocityToleranceInchesPerSecond;
 
     super.limitSwitchValue = limitSwitch.get();
-    /*Log basic motor inputs */
-    MotorLog.log("leaderMotor", leaderMotor);
-    MotorLog.log("followerMotor", followerMotor);
+    /*Leader motor */
+    DogLog.log("ElevatorLeader/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("ElevatorLeader/AppliedVoltage", super.appliedVolts);
+    DogLog.log("ElevatorLeader/TempCelcius", super.tempCelsius);
+
+    // Follower motor
+    DogLog.log("ElevatorFollower/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("ElevatorFollower/AppliedVoltage", super.appliedVolts);
+    DogLog.log("ElevatorFollower/TempCelcius", super.tempCelsius);
 
     /* Log all super */
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);

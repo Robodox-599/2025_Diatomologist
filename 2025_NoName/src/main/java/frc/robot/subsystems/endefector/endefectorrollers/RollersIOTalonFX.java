@@ -11,7 +11,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
-import frc.robot.util.MotorLog;
 
 public class RollersIOTalonFX extends RollersIO {
 
@@ -60,7 +59,10 @@ public class RollersIOTalonFX extends RollersIO {
       super.isAlgaeDetected = false;
     }
 
-    MotorLog.log("Rollers", rollersMotor);
+    DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("Rollers/Velocity", super.velocity);
+    DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Rollers/TempCelcius", super.tempCelsius);
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
   }
 

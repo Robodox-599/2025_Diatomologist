@@ -9,7 +9,6 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.ClimbUtil;
-import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
 public class ClimbIOTalonFX extends ClimbIO {
@@ -76,9 +75,15 @@ public class ClimbIOTalonFX extends ClimbIO {
             && velocityError < ClimbConstants.velocityToleranceInchesPerSec;
 
     super.limitSwitchValue = limitSwitch.get();
-    /*Log basic motor inputs */
-    MotorLog.log("Climb/leaderMotor", leaderMotor);
-    MotorLog.log("Climb/followerMotor", followerMotor);
+    // Leader motor
+    DogLog.log("ClimbLeader/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("ClimbLeader/AppliedVoltage", super.appliedVolts);
+    DogLog.log("ClimbLeader/TempCelcius", super.tempCelsius);
+
+    // Follower motor
+    DogLog.log("ClimbFollower/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("ClimbFollower/AppliedVoltage", super.appliedVolts);
+    DogLog.log("ClimbFollower/TempCelcius", super.tempCelsius);
 
     /* Log all super */
     DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);

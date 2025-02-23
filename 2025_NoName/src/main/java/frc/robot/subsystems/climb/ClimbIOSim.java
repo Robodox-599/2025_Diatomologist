@@ -11,7 +11,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.util.ClimbUtil;
-import frc.robot.util.SimLog;
 
 public class ClimbIOSim extends ClimbIO {
   private final DCMotorSim climbSim;
@@ -55,7 +54,10 @@ public class ClimbIOSim extends ClimbIO {
     super.atSetpoint = positionController.atSetpoint();
 
     // Update state
-    SimLog.log("Climb/ClimbMotors", climbSim);
+    DogLog.log("Climb/PositionInches", super.positionInches);
+    DogLog.log("Climb/VelocityInchesPerSecond", super.velocityInchesPerSec);
+    DogLog.log("Climb/CurrentAmps", super.currentAmps);
+    DogLog.log("Climb/AppliedVoltage", super.appliedVolts);
 
     DogLog.log("Climb/PositionInches", super.positionInches);
     DogLog.log("Climb/VelocityInchesPerSec", super.velocityInchesPerSec);

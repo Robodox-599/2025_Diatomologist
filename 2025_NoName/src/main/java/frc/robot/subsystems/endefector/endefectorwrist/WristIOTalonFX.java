@@ -13,7 +13,6 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.EndefectorUtil;
-import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 
 // import edu.wpi.first.math.MathUtil;
@@ -81,7 +80,6 @@ public class WristIOTalonFX extends WristIO {
     super.targetPosition = this.targetPosition;
     super.atSetpoint =
         Math.abs(super.currentPositionDegrees - this.targetPosition) < wristPositionTolerance;
-    MotorLog.log("Wrist", wristMotor);
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
     DogLog.log("Wrist/CurrentAmps", super.currentAmps);

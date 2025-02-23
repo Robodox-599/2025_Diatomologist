@@ -2,8 +2,8 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 public class RollersConstants {
   public static enum EndefectorRollerStates {
-    STOP(0),
-    SCORE(1),
+    SCORE(0),
+    STOP(1),
     INTAKE(2),
     REEFINTAKE(3),
     ALGAEINTAKE(4);
@@ -55,8 +55,8 @@ public class RollersConstants {
   public static final double detectionDistance = noCoralDistance - 3.5;
 
   public static final double[] velocitys = {
-    0.0, // stop
     20.0, // score
+    0.0, // stop
     40.0, // intake
     60.0 // reefintake
   };

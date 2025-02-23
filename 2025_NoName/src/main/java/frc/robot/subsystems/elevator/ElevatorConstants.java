@@ -6,15 +6,15 @@ public final class ElevatorConstants {
   /* CHANGE LATER */
 
   public static enum ElevatorStates {
-    L1(1),
-    L2(2),
-    L3(3),
-    L4(4),
-    STOW(5),
-    INTAKE(6),
-    GROUNDINTAKE(7),
-    ALGAE_L2(8),
-    ALGAE_L3(9);
+    L1(0),
+    L2(1),
+    L3(2),
+    L4(3),
+    STOW(4),
+    INTAKE(5),
+    GROUNDINTAKE(6),
+    ALGAE_L2(7),
+    ALGAE_L3(8);
     private final int index;
 
     ElevatorStates(int index) {

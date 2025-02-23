@@ -2,11 +2,11 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 public class RollersConstants {
   public static enum EndefectorRollerStates {
-    STOP(1),
-    SCORE(2),
-    INTAKE(3),
-    REEFINTAKE(4),
-    ALGAEINTAKE(5);
+    STOP(0),
+    SCORE(1),
+    INTAKE(2),
+    REEFINTAKE(3),
+    ALGAEINTAKE(4);
 
     private final int index;
 

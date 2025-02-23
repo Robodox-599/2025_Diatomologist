@@ -5,7 +5,6 @@ import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -17,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
-import frc.robot.subsystems.commands.AutoAlignToField;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -30,17 +29,18 @@ import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
-import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOReal;
 import frc.robot.subsystems.vision.VisionIOSim;
@@ -61,6 +61,7 @@ public class RobotContainer {
   private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
+  private SubsystemVisualizer subsystemVisualizer;
 
   private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
   // Auto components
@@ -120,6 +121,8 @@ public class RobotContainer {
         break;
     }
 
+    subsystemVisualizer = new SubsystemVisualizer(elevator, climb, wrist, rollers);
+
     // Auto chooser setup
     SmartDashboard.putData("AutoChooser", autoChooser);
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
@@ -141,22 +144,23 @@ public class RobotContainer {
   private void configureBindings() {
     // RobotController.getSerialNumber();
 
-    // //                               DRIVER BINDS
-    drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
-            () ->
-                new ChassisSpeeds(
-                    joystickDeadbandApply(driver.getLeftY())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    joystickDeadbandApply(driver.getLeftX())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
-            driver.rightTrigger(),
-            () -> operator.povUp().getAsBoolean(),
-            () -> operator.povDown().getAsBoolean()));
-    // ZERO GYRO
+    //                               DRIVER BINDS
+    // drive.setDefaultCommand(
+    //     drive.runVelocityTeleopFieldRelative(
+    //         () ->
+    //             new ChassisSpeeds(
+    //                 joystickDeadbandApply(driver.getLeftY())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //     * 0.85,
+    // joystickDeadbandApply(driver.getLeftX())
+    // //      * RealConstants.MAX_LINEAR_SPEED
+    //      * 0.85,
+    //  -joystickDeadbandApply(driver.getRightX()) *
+    //  RealConstants.MAX_ANGULAR_SPEED),
+    //          driver.rightTrigger(),
+    //          () -> operator.povUp().getAsBoolean(),
+    //          () -> operator.povDown().getAsBoolean()));
+    //  // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
     // STATION INTAKE COMMAND
@@ -164,8 +168,8 @@ public class RobotContainer {
     // ALGAE INTAKE COMMAND
     driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
-    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
+    //  driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
+    //  driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
     // CLIMB
     driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
@@ -189,11 +193,11 @@ public class RobotContainer {
     // STOW ALL
     operator.start().onTrue(stowAll());
 
-    //driver.b().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
+    driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
 
-    // driver.a().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.ALGAEINTAKE));
+    driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
 
-    //driver.x().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+    //driver.povDown().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.STOW));
   }
 
   public Command stowAll() {

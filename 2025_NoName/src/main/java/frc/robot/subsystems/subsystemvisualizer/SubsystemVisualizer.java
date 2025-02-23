@@ -4,15 +4,16 @@
 
 package frc.robot.subsystems.subsystemvisualizer;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
@@ -25,25 +26,57 @@ public class SubsystemVisualizer extends SubsystemBase {
   Wrist endefectorWrist;
   LEDs lightEmittingDiode;
 
-  Mechanism2d mech = new Mechanism2d(3, 3);
-  MechanismRoot2d root = mech.getRoot("climber", 2, 0);
+  Mechanism2d mech = new Mechanism2d(60, 60);
+  MechanismRoot2d root = mech.getRoot("root", 30, 0);
 
   MechanismLigament2d elevatorVis =
-      root.append(new MechanismLigament2d("elevator", ElevatorConstants.elevatorLowerLimit, 90));
+      root.append(new MechanismLigament2d("elevator", 10, 90, 8, new Color8Bit(Color.kRed)));
 
   MechanismLigament2d climbVis =
-      root.append(new MechanismLigament2d("elevator", 3, 90, 4, new Color8Bit(Color.kPurple)));
+      root.append(new MechanismLigament2d("climb", 9, 45, 6, new Color8Bit(Color.kGreen)));
 
   MechanismLigament2d endfectorWristVis =
       elevatorVis.append(
-          new MechanismLigament2d("endefectorWristVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
+          new MechanismLigament2d("endefectorWristVis", 6, -45, 4, new Color8Bit(Color.kPurple)));
 
   MechanismLigament2d endfectorRollersVis =
       endfectorWristVis.append(
-          new MechanismLigament2d("endefectorRollersVis", 3, 90, 4, new Color8Bit(Color.kPurple)));
+          new MechanismLigament2d("endefectorRollersVis", 3, -45, 4, new Color8Bit(Color.kYellow)));
 
-  public SubsystemVisualizer() {}
+  public SubsystemVisualizer(Elevator elevator, Climb climb, Wrist wrist, Rollers rollers) {
+    this.elevator = elevator;
+    this.climb = climb;
+    this.endefectorWrist = wrist;
+    this.endefectorRollers = rollers;
+  }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    updateElevator();
+    updateClimb();
+    updateWrist();
+    updateRollers();
+
+    endfectorRollersVis.setAngle(45);
+
+    SmartDashboard.putData("DongleMechanism2D", mech);
+  }
+
+  public void updateElevator() {
+    elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()) * 25);
+  }
+
+  public void updateClimb() {
+    climbVis.setAngle(Units.inchesToMeters(climb.getIO().getPositionInches()) * 25);
+  }
+
+  public void updateWrist() {
+    endfectorWristVis.setAngle(
+        Units.inchesToMeters(endefectorWrist.getIO().getCurrentPosition()) * 25);
+  }
+
+  public void updateRollers() {
+    endfectorRollersVis.setAngle(
+        Units.inchesToMeters(endefectorRollers.getIO().getCurrentVolts()) * 300);
+  }
 }

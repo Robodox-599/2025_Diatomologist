@@ -73,12 +73,12 @@ public class Rollers extends SubsystemBase {
                     io.setState(EndefectorRollerStates.ALGAEINTAKE);
                   })
               .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.SCORE)));
     } else {
       return Commands.sequence(
           Commands.run(
                   () -> {
-                    io.setState(EndefectorRollerStates.ALGAEINTAKE);
+                    io.setState(EndefectorRollerStates.SCORE);
                   })
               .until(() -> io.isAlgaeDetected));
     }
@@ -92,7 +92,7 @@ public class Rollers extends SubsystemBase {
                     io.setState(EndefectorRollerStates.SCORE);
                   })
               .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.ALGAEINTAKE)));
     } else {
       return Commands.sequence(
           Commands.run(

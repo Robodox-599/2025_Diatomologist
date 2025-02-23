@@ -45,4 +45,8 @@ public abstract class RollersIO {
   public boolean algaeIntakeStalling() {
     return false;
   }
+
+  public double getVelocity() {
+    return velocity;
+  }
 }

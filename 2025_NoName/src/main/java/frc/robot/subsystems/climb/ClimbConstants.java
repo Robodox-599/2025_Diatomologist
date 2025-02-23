@@ -6,9 +6,10 @@ public class ClimbConstants {
   /* CHANGE LATER */
 
   public static enum ClimbStates {
-    CLIMBREADY(1),
-    CLIMB(2),
-    STOW(3);
+    CLIMBREADY(0),
+    CLIMB(1),
+    STOW(2),
+    EXTRA(3);
 
     private final int index;
 

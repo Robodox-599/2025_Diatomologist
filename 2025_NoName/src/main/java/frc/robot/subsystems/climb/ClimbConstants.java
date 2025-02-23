@@ -8,8 +8,7 @@ public class ClimbConstants {
   public static enum ClimbStates {
     CLIMBREADY(0),
     CLIMB(1),
-    STOW(2),
-    EXTRA(3);
+    STOW(2);
 
     private final int index;
 

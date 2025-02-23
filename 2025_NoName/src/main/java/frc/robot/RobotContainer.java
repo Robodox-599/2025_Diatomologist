@@ -28,7 +28,6 @@ import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
@@ -159,7 +158,7 @@ public class RobotContainer {
     //          driver.rightTrigger(),
     //          () -> operator.povUp().getAsBoolean(),
     //          () -> operator.povDown().getAsBoolean()));
-    //  // ZERO GYRO
+    // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
     // STATION INTAKE COMMAND
@@ -192,11 +191,29 @@ public class RobotContainer {
     // STOW ALL
     operator.start().onTrue(stowAll());
 
-    driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
+    // SUBSYSTEM VISUALIZER TEST COMMANDS:
 
-    driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+    // driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
 
-    // driver.povDown().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.STOW));
+    // driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+
+    // driver
+    //     .povDown()
+    //     .whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.REEFINTAKE));
+
+    // driver.povUp().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
+
+    // driver.a().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.ALGAEINTAKE));
+
+    // driver.rightTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.REEFINTAKE));
+
+    // driver.leftTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.CLIMB));
+
+    // driver
+    //     .rightBumper()
+    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
+
+    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
   }
 
   public Command stowAll() {

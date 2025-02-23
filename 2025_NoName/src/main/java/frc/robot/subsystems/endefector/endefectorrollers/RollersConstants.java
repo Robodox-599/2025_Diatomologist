@@ -30,7 +30,7 @@ public class RollersConstants {
   public static final double gearRatio = 1.0;
   public static final double rollersMOI = 0.04;
 
-  public static final double simkP = 0.0;
+  public static final double simkP = 7.0;
   public static final double simkI = 0.0;
   public static final double simkD = 0.0;
   public static final double simkS = 0.0;
@@ -41,8 +41,6 @@ public class RollersConstants {
   public static final double realD = 0.0;
   public static final double realS = 0.0;
   public static final double realV = 0.0;
-
-  public static final double nominalVoltage = 12.0;
 
   public static final double rollersScoreSpeed = 0.2;
 
@@ -58,8 +56,8 @@ public class RollersConstants {
 
   public static final double[] velocitys = {
     0.0, // stop
-    0.0, // score
-    0.0, // intake
-    0.0 // reefintake
+    20.0, // score
+    40.0, // intake
+    60.0 // reefintake
   };
 }

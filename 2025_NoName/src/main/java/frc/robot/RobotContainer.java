@@ -160,10 +160,7 @@ public class RobotContainer {
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
     // STATION INTAKE COMMAND
-    driver
-        .rightTrigger()
-        .whileTrue(rollers.moveToState(EndefectorRollerStates.INTAKE))
-        .onFalse(stowAll());
+    driver.rightTrigger().onTrue(stationIntake());
     // ALGAE INTAKE COMMAND
     driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
@@ -172,7 +169,7 @@ public class RobotContainer {
     // CLIMB
     driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
-    //                               OPERATOR BINDS
+    // OPERATOR BINDS
     // SCORE L4
     operator.y().onTrue(scoring(ElevatorStates.L4));
     // SCORE L3
@@ -192,11 +189,11 @@ public class RobotContainer {
     // STOW ALL
     operator.start().onTrue(stowAll());
 
-    operator.b().whileTrue(wrist.moveToState(WristConstants.WristStates.CLIMB));
+    //driver.b().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
 
-    operator.a().whileTrue(wrist.moveToState(WristConstants.WristStates.STATIONINTAKE));
+    // driver.a().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.ALGAEINTAKE));
 
-    operator.x().whileTrue(wrist.moveToState(WristConstants.WristStates.STOW));
+    //driver.x().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
   }
 
   public Command stowAll() {

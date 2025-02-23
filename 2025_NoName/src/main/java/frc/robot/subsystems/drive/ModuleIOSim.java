@@ -32,7 +32,8 @@ public class ModuleIOSim extends ModuleIO {
   private static final MomentOfInertia kDriveInertia = KilogramSquareMeters.of(0.025);
   private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
   private String name;
-  private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 2.0);
+  private final SimpleMotorFeedforward driveFeedforward =
+      new SimpleMotorFeedforward(SimConstants.drive_ks, SimConstants.drive_kv);
 
   public ModuleIOSim(final String name) {
     this.name = name;
@@ -109,6 +110,9 @@ public class ModuleIOSim extends ModuleIO {
     DogLog.log("Drive/Module " + name + "/Drive/PositionMeters", super.drivePositionMeters);
     DogLog.log(
         "Drive/Module " + name + "/Drive/VelocityMetersPerSec", super.driveVelocityMetersPerSec);
+    DogLog.log(
+        "Drive/Module " + name + "/Drive/VelocityRotationsPerSec",
+        super.driveVelocityMetersPerSec / (Math.PI * 2 * WHEEL_RADIUS));
     DogLog.log("Drive/Module " + name + "/Drive/AppliedVolts", super.driveAppliedVolts);
     DogLog.log("Drive/Module " + name + "/Drive/CurrentAmps", super.driveCurrentAmps);
 

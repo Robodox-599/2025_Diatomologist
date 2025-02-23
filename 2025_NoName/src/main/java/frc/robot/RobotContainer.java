@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
 import frc.robot.subsystems.climb.ClimbIOTalonFX;
@@ -197,7 +196,7 @@ public class RobotContainer {
 
     driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
 
-    //driver.povDown().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.STOW));
+    // driver.povDown().whileTrue(climb.moveToState(ClimbConstants.ClimbStates.STOW));
   }
 
   public Command stowAll() {

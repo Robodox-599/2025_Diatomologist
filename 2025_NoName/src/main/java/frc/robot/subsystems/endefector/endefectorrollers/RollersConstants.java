@@ -58,6 +58,7 @@ public class RollersConstants {
     20.0, // score
     0.0, // stop
     40.0, // intake
+    80,
     60.0 // reefintake
   };
 }

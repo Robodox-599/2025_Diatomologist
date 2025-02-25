@@ -84,14 +84,11 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    10.0,
-    20.0, // stow
+    10.0, 20.0, // stow
     30.0, // scoring
     40.0, // ground intake
     50.0, // station intake
-    60.0 // climb
-    ,
-    70.0,
-    80.0,
+    60.0, // climb,
+    80.0
   };
 }

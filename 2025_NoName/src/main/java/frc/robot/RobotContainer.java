@@ -18,7 +18,6 @@ import frc.robot.Constants.*;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.subsystems.climb.ClimbIOSim;
-import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -26,15 +25,12 @@ import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
-import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
@@ -71,10 +67,10 @@ public class RobotContainer {
     safetyChecker = new SafetyChecker();
     switch (Constants.currentMode) {
       case REAL:
-        elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        rollers = new Rollers(new RollersIOTalonFX());
-        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
-        climb = new Climb(new ClimbIOTalonFX());
+        // elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
+        // rollers = new Rollers(new RollersIOTalonFX());
+        // wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        // climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         LEDs = new LEDs(new LEDsIOReal());
         vision =
@@ -159,43 +155,55 @@ public class RobotContainer {
     //          () -> operator.povUp().getAsBoolean(),
     //          () -> operator.povDown().getAsBoolean()));
     // ZERO GYRO
-    driver.y().onTrue(drive.zeroGyroCommand());
-    drive.zeroGyroCommand().runsWhenDisabled();
-    // STATION INTAKE COMMAND
-    driver.rightTrigger().onTrue(stationIntake());
-    // ALGAE INTAKE COMMAND
-    driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
-    // AUTO ALIGN
-    //  driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
-    //  driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
-    // CLIMB
-    driver.povUp().whileTrue(climb()).onFalse(stowAll());
+    // driver.y().onTrue(drive.zeroGyroCommand());
+    // drive.zeroGyroCommand().runsWhenDisabled();
+    // // STATION INTAKE COMMAND
+    // driver.rightTrigger().onTrue(stationIntake());
+    // // ALGAE INTAKE COMMAND
+    // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
+    // // AUTO ALIGN
+    // //  driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers,
+    // LEDs));
+    // //  driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers,
+    // LEDs));
+    // // CLIMB
+    // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
     // OPERATOR BINDS
     // SCORE L4
-    operator.y().onTrue(scoring(ElevatorStates.L4));
+    driver.y().onTrue(scoring(ElevatorStates.L4));
     // SCORE L3
-    operator.b().onTrue(scoring(ElevatorStates.L3));
+    driver.b().onTrue(scoring(ElevatorStates.L3));
     // SCORE L2
-    operator.a().onTrue(scoring(ElevatorStates.L2));
+    driver.a().onTrue(scoring(ElevatorStates.L2));
     // SCORE L1
-    operator.x().onTrue(scoring(ElevatorStates.L1));
+    driver.x().onTrue(scoring(ElevatorStates.L1));
     // STATION INTAKE
-    operator.rightBumper().onTrue(stationIntake());
+    driver.rightBumper().onTrue(stationIntake());
     // ALGAE L3 INTAKE
-    operator.povUp().onTrue(algaeL3Intake());
+    driver.povUp().onTrue(algaeL3Intake());
     // ALGAE L2 INTAKE
-    operator.povDown().onTrue(algaeL2Intake());
+    driver.povDown().onTrue(algaeL2Intake());
     // ALGAE GROUND INTAKE
-    operator.leftBumper().onTrue(algaeGroundIntake());
+    driver.leftBumper().onTrue(algaeGroundIntake());
     // STOW ALL
-    operator.start().onTrue(stowAll());
+    driver.start().onTrue(stowAll());
 
     // SUBSYSTEM VISUALIZER TEST COMMANDS:
 
     // driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
 
     // driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
+
+    // driver
+    //     .rightTrigger()
+    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
+
+    // driver.leftTrigger().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L2));
+
+    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L3));
+
+    // driver.rightBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.INTAKE));
 
     // driver
     //     .povDown()

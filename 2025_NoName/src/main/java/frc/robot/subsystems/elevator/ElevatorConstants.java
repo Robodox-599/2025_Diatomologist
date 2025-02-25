@@ -15,6 +15,7 @@ public final class ElevatorConstants {
     GROUNDINTAKE(6),
     ALGAE_L2(7),
     ALGAE_L3(8);
+
     private final int index;
 
     ElevatorStates(int index) {
@@ -32,7 +33,7 @@ public final class ElevatorConstants {
     20.0, // L2
     40.0, // L3
     60.0, // L4
-    0, // STOW
+    5.5, // STOW
     10, // STATION INTAKE
     15, // ALGAE GROUND INTAKE
     15, // ALGAE L2

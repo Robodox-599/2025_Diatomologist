@@ -76,7 +76,7 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathXController;
   private final PIDController choreoPathYController;
   private final PIDController choreoPathAngleController;
-
+  private ChassisSpeeds maxMeasuredSpeed = new ChassisSpeeds();
   ProfiledPIDController angleController =
       new ProfiledPIDController(
           CommandConstants.angle_kp,
@@ -192,7 +192,7 @@ public class Drive extends SubsystemBase {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+      for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
@@ -218,6 +218,11 @@ public class Drive extends SubsystemBase {
       DogLog.log("Odometry/FieldVelocity", getFieldVelocity());
       DogLog.log("Odometry/RobotVelocity", getRobotVelocity());
       DogLog.log("Swerve/SwerveStates/Measured", getModuleStates());
+      if (getRobotVelocity().vxMetersPerSecond > maxMeasuredSpeed.vxMetersPerSecond
+          || getRobotVelocity().vyMetersPerSecond > maxMeasuredSpeed.vyMetersPerSecond) {
+        maxMeasuredSpeed = getRobotVelocity();
+      }
+      DogLog.log("Swerve/MaxMeasuredSpeed", maxMeasuredSpeed);
     }
   }
 

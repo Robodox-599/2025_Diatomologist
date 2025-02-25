@@ -13,21 +13,22 @@ import frc.robot.subsystems.vision.VisionConstants;
 // import frc.robot.subsystems.vision.VisionConstants;
 
 public class RealConstants {
-  public static final double Module0AbsoluteEncoderOffset = 0.149658203125; // FL
-  public static final double Module1AbsoluteEncoderOffset = 0.3662109375; // FR
-  public static final double Module2AbsoluteEncoderOffset = -0.234375; // BL
-  public static final double Module3AbsoluteEncoderOffset = -0.4658203125; // BR
+
+  public static final double Module0AbsoluteEncoderOffset = -0.2685546875; // FL
+  public static final double Module1AbsoluteEncoderOffset = -0.1533203125; // FR
+  public static final double Module2AbsoluteEncoderOffset = -0.02783203125; // BL
+  public static final double Module3AbsoluteEncoderOffset = 0.140625; // BR
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static final double DRIVE_GEAR_RATIO = 5.9;
+  public static final double DRIVE_GEAR_RATIO = 5.02;
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
 
-  public static final double MAX_LINEAR_SPEED = 4.55;
+  public static final double MAX_LINEAR_SPEED = 5.16;
   public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
   public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);
   public static final double DRIVE_BASE_RADIUS =
@@ -64,7 +65,7 @@ public class RealConstants {
           0,
           1,
           2,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module0AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -78,7 +79,7 @@ public class RealConstants {
           3,
           4,
           5,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module1AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -92,7 +93,7 @@ public class RealConstants {
           6,
           7,
           8,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module2AbsoluteEncoderOffset),
           steerGains,
           driveGains,
@@ -106,7 +107,7 @@ public class RealConstants {
           9,
           10,
           11,
-          "BarryDriveCANivore",
+          "DongleDriveCANivore",
           Rotation2d.fromRotations(Module3AbsoluteEncoderOffset),
           steerGains,
           driveGains,

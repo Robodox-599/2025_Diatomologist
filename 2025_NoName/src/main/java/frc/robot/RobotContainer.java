@@ -190,6 +190,16 @@ public class RobotContainer {
     // driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
 
     // driver
+    //     .rightTrigger()
+    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
+
+    // driver.leftTrigger().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L2));
+
+    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L3));
+
+    // driver.rightBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.INTAKE));
+
+    // driver
     //     .povDown()
     //     .whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.REEFINTAKE));
 

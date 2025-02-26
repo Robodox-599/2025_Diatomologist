@@ -96,7 +96,7 @@ public class Drive extends SubsystemBase {
       case SIM:
         choreoPathXController = new PIDController(0, 0, 0.4);
         choreoPathYController = new PIDController(0, 0, 0.4);
-        choreoPathAngleController = new PIDController(0.3, 0, 0);
+        choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       default:
         choreoPathXController = new PIDController(1, 0, 0);
@@ -345,10 +345,11 @@ public class Drive extends SubsystemBase {
                 angleController.calculate(
                     this.getRotation().getRadians(), stationRotation.getRadians());
             this.runVelocity(
-                new ChassisSpeeds(
-                    joystickSpeeds.get().vxMetersPerSecond,
-                    joystickSpeeds.get().vyMetersPerSecond,
-                    omega));
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                    joystickSpeeds.get(),
+                    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                        ? getPose().getRotation()
+                        : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
           } else {
             this.runVelocity(joystickSpeeds.get());
           }

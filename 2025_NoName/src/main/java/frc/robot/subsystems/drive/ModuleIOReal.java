@@ -123,7 +123,7 @@ public class ModuleIOReal extends ModuleIO {
     driveConfig.Slot0.kV = 1.9523813;
     driveConfig.Slot0.kS = 0.49;
     driveConfig.Slot0.kP = 0.35;
-    driveConfig.Slot0.kD = 0.01;
+    driveConfig.Slot0.kD = 0.0;
 
     // DINGUS CONSTANTS
     // driveConfig.Slot0.kV = 2.904069;
@@ -133,7 +133,7 @@ public class ModuleIOReal extends ModuleIO {
 
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
     turnConfig.Slot0.kS = 0.27; // 0.215
-    turnConfig.Slot0.kP = 95; // 95
+    turnConfig.Slot0.kP = 50; // 95
     turnConfig.Slot0.kD = 0;
 
     /* ************ MOTION MAGIC CONFIGS ************ */

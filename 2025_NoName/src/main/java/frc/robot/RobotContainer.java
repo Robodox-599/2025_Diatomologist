@@ -18,6 +18,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -33,7 +35,7 @@ public class RobotContainer {
   // private Rollers rollers;
   // private Climb climb;
   // private LEDs LEDs;
-  // private Vision vision;
+  private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
 
@@ -69,10 +71,11 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         autoRoutines = new AutoRoutines(autoFactory);

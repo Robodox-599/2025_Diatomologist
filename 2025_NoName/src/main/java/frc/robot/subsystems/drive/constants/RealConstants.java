@@ -116,31 +116,59 @@ public class RealConstants {
           false,
           false);
 
-  public static final String cameraName = "FR_Camera";
+  public static final String camera1Name = "FL_Camera";
 
-  // CAMERA 3 POSE (X)
-  public static final double cameraPoseX = Units.inchesToMeters(0);
+  // CAMERA 1 POSE (X)
+  public static final double camera1PoseX = Units.inchesToMeters(6.79209841);
 
-  // CAMERA 3 POSE (Y)
-  public static final double cameraPoseY = Units.inchesToMeters(1);
+  // CAMERA 1 POSE (Z)
+  public static final double camera1PoseZ = Units.inchesToMeters(4.99763044);
 
-  // CAMERA 3 POSE (Z)
-  public static final double cameraPoseZ = Units.inchesToMeters(21);
+  // CAMERA 1 POSE (Y)
+  public static final double camera1PoseY = Units.inchesToMeters(9.15983669);
 
-  // CAMERA 3 POSE (ROLL)
-  public static final double cameraPoseRoll = Units.degreesToRadians(0);
+  // CAMERA 1 POSE (ROLL)
+  public static final double camera1PoseRoll = Units.degreesToRadians(0);
 
-  // CAMERA 3 POSE (PITCH)
-  public static final double cameraPosePitch = Units.degreesToRadians(-28);
+  // CAMERA 1 POSE (PITCH)
+  public static final double camera1PosePitch = Units.degreesToRadians(-15);
 
-  // CAMERA 3 POSE (YAW)
-  public static final double cameraPoseYaw = Units.degreesToRadians(0);
+  // CAMERA 1 POSE (YAW)
+  public static final double camera1PoseYaw = Units.degreesToRadians(-28.6588);
 
-  public static final VisionConstants camConstants =
+  public static final String camera2Name = "FR_Camera";
+
+  // CAMERA 2 POSE (X)
+  public static final double camera2PoseX = Units.inchesToMeters(6.79209841);
+
+  // CAMERA 2 POSE (Z)
+  public static final double camera2PoseZ = Units.inchesToMeters(4.99763044);
+
+  // CAMERA 2 POSE (Y)
+  public static final double camera2PoseY = Units.inchesToMeters(-9.15983669);
+
+  // CAMERA 2 POSE (ROLL)
+  public static final double camera2PoseRoll = Units.degreesToRadians(0);
+
+  // CAMERA 2 POSE (PITCH)
+  public static final double camera2PosePitch = Units.degreesToRadians(-15);
+
+  // CAMERA 2 POSE (YAW)
+  public static final double camera2PoseYaw = Units.degreesToRadians(28.6588);
+
+  public static final VisionConstants cam1Constants =
       new VisionConstants(
-          cameraName,
+          camera1Name,
           new Transform3d(
-              new Translation3d(cameraPoseX, cameraPoseY, cameraPoseZ),
-              new Rotation3d(cameraPoseRoll, cameraPosePitch, cameraPoseYaw)),
+              new Translation3d(camera1PoseX, camera1PoseY, camera1PoseZ),
+              new Rotation3d(camera1PoseRoll, camera1PosePitch, camera1PoseYaw)),
+          1.0);
+
+  public static final VisionConstants cam2Constants =
+      new VisionConstants(
+          camera2Name,
+          new Transform3d(
+              new Translation3d(camera2PoseX, camera2PoseY, camera2PoseZ),
+              new Rotation3d(camera2PoseRoll, camera2PosePitch, camera2PoseYaw)),
           1.0);
 }

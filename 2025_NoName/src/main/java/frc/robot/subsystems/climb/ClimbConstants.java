@@ -35,7 +35,7 @@ public class ClimbConstants {
   public static final boolean followerInverted = true;
 
   public static final int limitSwitchDioPort = 0;
-  public static final double gearRatio = 6;
+  public static final double gearRatio = 50;
   public static final double drumCircumferenceInches = 1.8;
   public static final double inchesPerRev = 0.39; // idk prolly wrong
   public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();

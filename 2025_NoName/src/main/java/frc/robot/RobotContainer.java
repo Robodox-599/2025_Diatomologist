@@ -1,25 +1,29 @@
 package frc.robot;
 
-import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.constants.RealConstants;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -29,86 +33,90 @@ public class RobotContainer {
       new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
 
   // Subsystems
-  private final Drive drive;
-  // private Elevator elevator;
-  // private Wrist wrist;
-  // private Rollers rollers;
-  // private Climb climb;
-  // private LEDs LEDs;
+  // private final Drive drive;
+  private Elevator elevator;
+  private Wrist wrist;
+  private Rollers rollers;
+  private Climb climb;
+  private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
 
   private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
+
   // Auto components
-  private final AutoRoutines autoRoutines;
-  private final AutoFactory autoFactory;
-  public final AutoChooser autoChooser = new AutoChooser();
+  // private final AutoRoutines autoRoutines;
+  // private final AutoFactory autoFactory;
+  // public final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
     safetyChecker = new SafetyChecker();
     switch (Constants.currentMode) {
       case REAL:
-        // elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        // rollers = new Rollers(new RollersIOTalonFX());
-        // wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
-        // climb = new Climb(new ClimbIOTalonFX());
-        drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
-        // LEDs = new LEDs(new LEDsIOReal());
+        elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
+        rollers = new Rollers(new RollersIOTalonFX());
+        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        climb = new Climb(new ClimbIOTalonFX());
+        LEDs = new LEDs(new LEDsIOReal());
+        // drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
         //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
-        autoFactory =
-            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        autoRoutines = new AutoRoutines(autoFactory);
+        // autoFactory =
+        //     new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true,
+        // drive);
+        // autoRoutines = new AutoRoutines(autoFactory);
         break;
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
-        // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
-        // wrist = new Wrist(new WristIOSim(), safetyChecker);
-        // climb = new Climb(new ClimbIOSim());
-        drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
-        autoFactory =
-            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        autoRoutines = new AutoRoutines(autoFactory);
-        break;
-      default:
-        DriverStation.silenceJoystickConnectionWarning(true);
-        // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
-        // wrist = new Wrist(new WristIOSim(), safetyChecker);
-        // climb = new Climb(new ClimbIOSim());
-        drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        climb = new Climb(new ClimbIOSim());
+        LEDs = new LEDs(new LEDsIOSim());
+        // drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
-        //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
-        autoFactory =
-            new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        autoRoutines = new AutoRoutines(autoFactory);
+        //         new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+        //         new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+        // autoFactory =
+        //     new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true,
+        // drive);
+        // autoRoutines = new AutoRoutines(autoFactory);
+        break;
+      default:
+        DriverStation.silenceJoystickConnectionWarning(true);
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        climb = new Climb(new ClimbIOSim());
+        LEDs = new LEDs(new LEDsIOSim());
+        // drive = new Drive(new GyroIO() {}, Drive.createSimModules());
+        // // vision =
+        // //     new Vision(
+        // //         drive::addVisionMeasurement,
+        // //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
+        // autoFactory =
+        //     new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true,
+        // drive);
+        // autoRoutines = new AutoRoutines(autoFactory);
         break;
     }
 
     // subsystemVisualizer = new SubsystemVisualizer(elevator, climb, wrist, rollers);
 
-    // Auto chooser setup
-    SmartDashboard.putData("AutoChooser", autoChooser);
-    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+    // // Auto chooser setup
+    // SmartDashboard.putData("AutoChooser", autoChooser);
+    // RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
-    // Add auto routines
-    autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
-    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
-    autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
-    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+    // // Add auto routines
+    // autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
+    // autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+    // autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
+    // autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
 
     // Logging setup
     // DataLogManager.start();
@@ -127,20 +135,21 @@ public class RobotContainer {
     // RobotController.getSerialNumber();
 
     //                               DRIVER BINDS
-    drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
-            () ->
-                new ChassisSpeeds(
-                    -joystickDeadbandApply(driver.getLeftY())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getLeftX())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
-            driver.rightTrigger(),
-            () -> operator.povUp().getAsBoolean(),
-            () -> operator.povDown().getAsBoolean()));
+    // drive.setDefaultCommand(
+    //     drive.runVelocityTeleopFieldRelative(
+    //         () ->
+    //             new ChassisSpeeds(
+    //                 -joystickDeadbandApply(driver.getLeftY())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getLeftX())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getRightX()) *
+    // RealConstants.MAX_ANGULAR_SPEED),
+    //         driver.rightTrigger(),
+    //         () -> operator.povUp().getAsBoolean(),
+    //         () -> operator.povDown().getAsBoolean()));
     // drive.setDefaultCommand(
     //     drive.runVoltageTeleopFieldRelative(
     //         () ->
@@ -154,8 +163,8 @@ public class RobotContainer {
     //                 -joystickDeadbandApply(driver.getRightX()) *
     // RealConstants.MAX_ANGULAR_SPEED)));
     // ZERO GYRO
-    driver.y().onTrue(drive.zeroGyroCommand());
-    drive.zeroGyroCommand().runsWhenDisabled();
+    // driver.y().onTrue(drive.zeroGyroCommand());
+    // drive.zeroGyroCommand().runsWhenDisabled();
     // STATION INTAKE COMMAND
     // driver.rightTrigger().onTrue(stationIntake());
     // ALGAE INTAKE COMMAND
@@ -188,37 +197,13 @@ public class RobotContainer {
 
     // SUBSYSTEM VISUALIZER TEST COMMANDS:
 
-    // driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
-
-    // driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
-
-    // driver
-    //     .rightTrigger()
-    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
-
-    // driver.leftTrigger().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L2));
-
-    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L3));
-
-    // driver.rightBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.INTAKE));
-
-    // driver
-    //     .povDown()
-    //     .whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.REEFINTAKE));
-
-    // driver.povUp().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
-
-    // driver.a().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.ALGAEINTAKE));
-
-    // driver.rightTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.REEFINTAKE));
-
-    // driver.leftTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.CLIMB));
-
-    // driver
-    //     .rightBumper()
-    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
-
-    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
+    driver.a().onTrue(LEDs.runStationIntake());
+    driver.b().onTrue(LEDs.runAlgaeIntake());
+    driver.y().onTrue(LEDs.runNoState());
+    driver.x().onTrue(LEDs.runScored());
+    driver.rightBumper().onTrue(LEDs.runClimb());
+    driver.leftBumper().onTrue(LEDs.runReadyToScore());
+    driver.rightTrigger().onTrue(LEDs.runAutoAlign());
   }
 
   // public Command stowAll() {
@@ -340,7 +325,7 @@ public class RobotContainer {
         (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 
-  public Command getAutonomousCommand() {
-    return autoChooser.selectedCommandScheduler();
-  }
+  // public Command getAutonomousCommand() {
+  //   return autoChooser.selectedCommandScheduler();
+  // }
 }

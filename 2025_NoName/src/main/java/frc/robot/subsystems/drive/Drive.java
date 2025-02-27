@@ -94,8 +94,8 @@ public class Drive extends SubsystemBase {
         choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       case SIM:
-        choreoPathXController = new PIDController(0, 0, 0.4);
-        choreoPathYController = new PIDController(0, 0, 0.4);
+        choreoPathXController = new PIDController(0, 0, 0);
+        choreoPathYController = new PIDController(0, 0, 0);
         choreoPathAngleController = new PIDController(0, 0, 0);
         break;
       default:
@@ -233,7 +233,6 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
-    speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
@@ -256,9 +255,9 @@ public class Drive extends SubsystemBase {
         new ChassisSpeeds(
             sample.vx + choreoPathXController.calculate(pose.getX(), sample.x),
             sample.vy + choreoPathYController.calculate(pose.getY(), sample.y),
-            sample.omega
+            (sample.omega
                 + choreoPathAngleController.calculate(
-                    pose.getRotation().getRadians(), sample.heading));
+                    pose.getRotation().getRadians(), sample.heading)));
     DogLog.log("Choreo/RobotSetpointSpeedsAfterPID", speeds);
     runVelocity(speeds);
   }
@@ -344,12 +343,16 @@ public class Drive extends SubsystemBase {
             double omega =
                 angleController.calculate(
                     this.getRotation().getRadians(), stationRotation.getRadians());
-            this.runVelocity(
+            var allianceSpeeds =
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     joystickSpeeds.get(),
                     DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                         ? getPose().getRotation()
-                        : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
+                        : getPose().getRotation().minus(Rotation2d.fromDegrees(180)));
+            this.runVelocity(new ChassisSpeeds(
+              joystickSpeeds.get().vxMetersPerSecond,
+              joystickSpeeds.get().vyMetersPerSecond,
+              omega));
           } else {
             this.runVelocity(joystickSpeeds.get());
           }

@@ -122,7 +122,7 @@ public class ModuleIOReal extends ModuleIO {
     // DONGLE CONSTANTS
     driveConfig.Slot0.kV = 1.9523813;
     driveConfig.Slot0.kS = 0.49;
-    driveConfig.Slot0.kP = 0.35;
+    driveConfig.Slot0.kP = 0.2;
     driveConfig.Slot0.kD = 0.0;
 
     // DINGUS CONSTANTS

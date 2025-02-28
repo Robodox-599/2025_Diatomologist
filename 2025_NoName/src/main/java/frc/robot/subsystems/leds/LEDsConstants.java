@@ -1,7 +1,6 @@
 package frc.robot.subsystems.leds;
 
 public class LEDsConstants {
-  // all ts is final
   public static enum LEDAnim {
     StationIntake,
     AlgaeIntake,

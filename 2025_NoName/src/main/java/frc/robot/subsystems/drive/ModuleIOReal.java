@@ -40,7 +40,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.drive.Module.ModuleConstants;
 import frc.robot.subsystems.drive.constants.RealConstants;
-import frc.robot.util.MotorLog;
 import frc.robot.util.PhoenixUtil;
 import java.util.Queue;
 
@@ -243,7 +242,6 @@ public class ModuleIOReal extends ModuleIO {
     super.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
     super.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
     super.turnCurrentAmps = turnCurrent.getValueAsDouble();
-
     super.odometryTimestamps =
         timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     super.odometryDrivePositionsMeters =
@@ -254,10 +252,14 @@ public class ModuleIOReal extends ModuleIO {
         turnPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromRotations(value))
             .toArray(Rotation2d[]::new);
-
-    MotorLog.log("Drive/Module " + constants.prefix() + "/DriveMotor", driveTalon);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/DriveMotor/Connected", super.driveConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DriveAppliedVolts",
+        super.driveAppliedVolts);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/DriveMotor/DriveCurrentAmps",
+        super.driveCurrentAmps);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/DriveMotor/DrivePositionMeters",
         super.drivePositionMeters);
@@ -265,14 +267,22 @@ public class ModuleIOReal extends ModuleIO {
         "Drive/Module " + constants.prefix() + "/DriveMotor/DriveVelocityMetersPerSec",
         super.driveVelocityMetersPerSec);
 
-    MotorLog.log("Drive/Module " + constants.prefix() + "/TurnMotor", turnTalon);
     DogLog.log("Drive/Module " + constants.prefix() + "/TurnMotor/Connected", super.turnConnected);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/TurnMotor/turnPosition", super.turnPosition);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/TurnMotor/TurnAppliedVolts",
+        super.turnAppliedVolts);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/TurnMotor/TurnCurrentAmps", super.turnCurrentAmps);
+    DogLog.log(
+        "Drive/Module " + constants.prefix() + "/TurnMotor/TurnVelocityRadPerSec",
+        super.turnVelocityRadPerSec);
 
     DogLog.log("Drive/Module " + constants.prefix() + "/Encoder/Connected", super.encoderConnected);
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Encoder/AbsolutePosition",
         super.turnAbsolutePosition);
-
     DogLog.log(
         "Drive/Module " + constants.prefix() + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(

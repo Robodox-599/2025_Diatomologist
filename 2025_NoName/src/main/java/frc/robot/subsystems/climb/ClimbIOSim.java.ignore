@@ -71,9 +71,24 @@ public class ClimbIOSim extends ClimbIO {
 
   @Override
   public void setState(ClimbConstants.ClimbStates state) {
+    super.state = state;
+    switch(state){
+      case STOP:
+        targetPositionInches = ClimbConstants.stowHeight;
+      break;
+      case CLIMB:
+        targetPositionInches = ClimbConstants.stowHeight;
+      break;
+      case LOWER:
+        targetPositionInches = ClimbConstants.climbLowerLimit;
+        break;
+      case HOLD:
+        targetPositionInches = ClimbConstants.;
+      break;
+    } 
     targetPositionInches =
         MathUtil.clamp(
-            ClimbUtil.stateToHeight(state),
+            ,
             ClimbConstants.climbLowerLimit,
             ClimbConstants.climbUpperLimit);
 

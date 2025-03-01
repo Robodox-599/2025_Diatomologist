@@ -241,7 +241,12 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
-    speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+    speeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            speeds,
+            DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                ? getPose().getRotation()
+                : getPose().getRotation().minus(Rotation2d.fromDegrees(180)));
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
@@ -268,6 +273,7 @@ public class Drive extends SubsystemBase {
                 + choreoPathAngleController.calculate(
                     pose.getRotation().getRadians(), sample.heading));
     DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", speeds);
+
     runVelocity(speeds);
   }
 

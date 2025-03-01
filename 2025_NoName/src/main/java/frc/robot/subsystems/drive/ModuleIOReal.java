@@ -146,8 +146,8 @@ public class ModuleIOReal extends ModuleIO {
     /* ************ INVERTS ************ */
     driveConfig.MotorOutput.Inverted =
         constants.invertDrive()
-            ? InvertedValue.Clockwise_Positive
-            : InvertedValue.CounterClockwise_Positive;
+            ? InvertedValue.CounterClockwise_Positive
+            : InvertedValue.Clockwise_Positive;
     turnConfig.MotorOutput.Inverted =
         constants.invertMotor()
             ? InvertedValue.CounterClockwise_Positive

@@ -18,7 +18,7 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"HPPose.x", "val":1.6}, "y":{"exp":"HPPose.y", "val":0.55}, "heading":{"exp":"HPPose.heading", "val":0.942477796076938}, "intervals":29, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"HPRight.x", "val":1.6}, "y":{"exp":"HPRight.y", "val":0.55}, "heading":{"exp":"HPRight.heading", "val":0.942477796076938}, "intervals":29, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"3.4915552139282227 m", "val":3.4915552139282227}, "y":{"exp":"2.6307871341705322 m", "val":2.630787134170532}, "heading":{"exp":"60 deg", "val":1.0471975511965976}, "intervals":11, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"3.7252659797668457 m", "val":3.7252659797668457}, "y":{"exp":"3.036344051361084 m", "val":3.036344051361084}, "heading":{"exp":"60 deg", "val":1.0471975511965976}, "intervals":36, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[

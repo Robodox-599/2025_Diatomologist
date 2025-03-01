@@ -19,12 +19,15 @@ public class AutoRoutines {
     // Load the routine's trajectories
     AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
     AutoTrajectory ItoHP = routine.trajectory("ItoHP");
-    AutoTrajectory HPtoI = routine.trajectory("HPtoI");
+    AutoTrajectory HPtoL = routine.trajectory("HPtoL");
+    AutoTrajectory LtoHP = routine.trajectory("LtoHP");
+    AutoTrajectory HPtoK = routine.trajectory("HPtoK");
+
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    LEFTtoI.done().onTrue(new WaitCommand(2).andThen(ItoHP.cmd()));
-    ItoHP.done().onTrue(new WaitCommand(1).andThen(HPtoI.cmd()));
+    // LEFTtoI.done().onTrue(Commands.sequence(RobotContainer.scoring(ElevatorStates.L4)));
+    ItoHP.done().onTrue(new WaitCommand(1).andThen(HPtoL.cmd()));
     return routine;
   }
 
@@ -41,44 +44,6 @@ public class AutoRoutines {
     // When the trajectory is done, start the next trajectory
     // RIGHTtoF.done().onTrue(FtoHP.cmd());
     // FtoHP.done().onTrue(HPtoC.cmd());
-
-    return routine;
-  }
-
-  public AutoRoutine turningTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("turningTestAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory turningTest = routine.trajectory("turningTest");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(turningTest.resetOdometry(), turningTest.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine forwardBackTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("forwardBackTestAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory forwardBackTest = routine.trajectory("forwardBackTest");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    routine
-        .active()
-        .onTrue(Commands.sequence(forwardBackTest.resetOdometry(), forwardBackTest.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine diamondTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("diamondTestAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory diamondTest = routine.trajectory("diamondTest");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(diamondTest.resetOdometry(), diamondTest.cmd()));
 
     return routine;
   }

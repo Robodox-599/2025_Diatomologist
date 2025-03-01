@@ -41,7 +41,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -159,6 +158,15 @@ public class Drive extends SubsystemBase {
     updateOdom();
   }
 
+  /** Adds a new timestamped vision measurement. */
+  public void addVisionMeasurement(
+      Pose2d visionRobotPoseMeters,
+      double timestampSeconds,
+      Matrix<N3, N1> visionMeasurementStdDevs) {
+    poseEstimator.addVisionMeasurement(
+        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  }
+
   private void disabledActions() {
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
@@ -247,10 +255,10 @@ public class Drive extends SubsystemBase {
 
   public void followChoreoPath(SwerveSample sample) {
     Pose2d pose = getPose();
-    DogLog.log("Choreo/RobotPose2d", pose);
-    DogLog.log("Choreo/SwerveSample", sample);
+    DogLog.log("Drive/Choreo/RobotPose2d", pose);
+    DogLog.log("Drive/Choreo/SwerveSample", sample);
 
-    DogLog.log("Choreo/SwerveSample/ChoreoVelocity", sample);
+    DogLog.log("Drive/Choreo/SwerveSample/ChoreoVelocity", sample);
 
     ChassisSpeeds speeds =
         new ChassisSpeeds(
@@ -259,59 +267,8 @@ public class Drive extends SubsystemBase {
             sample.omega
                 + choreoPathAngleController.calculate(
                     pose.getRotation().getRadians(), sample.heading));
-    DogLog.log("Choreo/RobotSetpointSpeedsAfterPID", speeds);
+    DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", speeds);
     runVelocity(speeds);
-  }
-
-  /** Runs the drive in a straight line with the specified drive output. */
-  public void runCharacterization(double output) {
-    for (int i = 0; i < modules.length; i++) {
-      modules[i].runCharacterization(output);
-    }
-  }
-
-  public Command zeroGyroCommand() {
-    return new InstantCommand(
-        () -> {
-          overrideGyroAngle(0);
-        });
-  }
-
-  public void resetPose(Pose2d pose) {
-    rawGyroRotation = (pose.getRotation());
-    gyroIO.setYaw(rawGyroRotation.getDegrees());
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
-
-  public void zeroAll(Pose2d pose) {
-    resetPose(new Pose2d(0, 0, new Rotation2d(0)));
-  }
-
-  void overrideGyroAngle(double angleDegrees) {
-    resetPose(
-        new Pose2d(
-            getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
-  }
-
-  public void zeroPose() {
-    resetPose(new Pose2d(new Translation2d(0, 0), getPose().getRotation()));
-  }
-
-  public Command zeroPosition() {
-    return new InstantCommand(
-        () -> {
-          zeroPose();
-        });
-  }
-
-  /** Returns the current odometry pose. */
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
-  }
-
-  /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
   }
 
   public Command runVelocityTeleopFieldRelative(
@@ -345,11 +302,10 @@ public class Drive extends SubsystemBase {
                 angleController.calculate(
                     this.getRotation().getRadians(), stationRotation.getRadians());
             this.runVelocity(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    joystickSpeeds.get(),
-                    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                        ? getPose().getRotation()
-                        : getPose().getRotation().minus(Rotation2d.fromDegrees(180))));
+                new ChassisSpeeds(
+                    joystickSpeeds.get().vxMetersPerSecond,
+                    joystickSpeeds.get().vyMetersPerSecond,
+                    omega));
           } else {
             this.runVelocity(joystickSpeeds.get());
           }
@@ -389,29 +345,11 @@ public class Drive extends SubsystemBase {
         });
   }
 
-  public Command joystickDriveAtAngle(
-      Drive drive, Supplier<ChassisSpeeds> joystickSpeeds, Supplier<Rotation2d> rotationSupplier) {
-
-    // Construct command
-    return Commands.run(
-            () -> {
-              // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      this.getRotation().getRadians(), rotationSupplier.get().getRadians());
-
-              // Convert to field relative speeds & send command
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      joystickSpeeds.get().vxMetersPerSecond,
-                      joystickSpeeds.get().vyMetersPerSecond,
-                      omega);
-              drive.runVelocity(speeds);
-            },
-            drive)
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(this.getRotation().getRadians()));
+  public Command zeroGyroCommand() {
+    return new InstantCommand(
+        () -> {
+          overrideGyroAngle(0);
+        });
   }
 
   /**
@@ -486,13 +424,33 @@ public class Drive extends SubsystemBase {
     return ChassisSpeeds.fromFieldRelativeSpeeds(getFieldVelocity(), getRotation());
   }
 
-  /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  /** Runs the drive in a straight line with the specified drive output. */
+  public void runCharacterization(double output) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].runCharacterization(output);
+    }
+  }
+
+  public void resetPose(Pose2d pose) {
+    rawGyroRotation = (pose.getRotation());
+    gyroIO.setYaw(rawGyroRotation.getDegrees());
+    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
+  void overrideGyroAngle(double angleDegrees) {
+    resetPose(
+        new Pose2d(
+            getPose().getTranslation(), new Rotation2d(Units.degreesToRadians(angleDegrees))));
+  }
+
+  /** Returns the current odometry pose. */
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  /** Returns the current odometry rotation. */
+  public Rotation2d getRotation() {
+    return getPose().getRotation();
   }
 
   /** Returns the maximum linear speed in meters per sec. */

@@ -12,11 +12,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
+import frc.robot.subsystems.commands.AutoAlignToField;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOSim;
@@ -32,9 +39,9 @@ public class RobotContainer {
   private final Drive drive;
   // private Elevator elevator;
   // private Wrist wrist;
-  // private Rollers rollers;
+  private Rollers rollers;
   // private Climb climb;
-  // private LEDs LEDs;
+  private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
@@ -50,11 +57,11 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        // rollers = new Rollers(new RollersIOTalonFX());
+        rollers = new Rollers(new RollersIOTalonFX());
         // wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         // climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
-        // LEDs = new LEDs(new LEDsIOReal());
+        LEDs = new LEDs(new LEDsIOReal());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -66,11 +73,11 @@ public class RobotContainer {
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
         // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
+        rollers = new Rollers(new RollersIOSim());
         // wrist = new Wrist(new WristIOSim(), safetyChecker);
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
+        LEDs = new LEDs(new LEDsIOSim());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -83,11 +90,11 @@ public class RobotContainer {
       default:
         DriverStation.silenceJoystickConnectionWarning(true);
         // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
+        rollers = new Rollers(new RollersIOSim());
         // wrist = new Wrist(new WristIOSim(), safetyChecker);
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
+        LEDs = new LEDs(new LEDsIOSim());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -161,8 +168,8 @@ public class RobotContainer {
     // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    //  driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
-    //  driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
+    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
+    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
     // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

@@ -61,6 +61,7 @@ public class RobotContainer {
   // Auto components
   private final AutoRoutines autoRoutines;
   private final AutoFactory autoFactory;
+
   public final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
@@ -79,6 +80,7 @@ public class RobotContainer {
         //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       case SIM:
@@ -96,6 +98,7 @@ public class RobotContainer {
                 new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       default:
@@ -112,6 +115,7 @@ public class RobotContainer {
         //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
     }

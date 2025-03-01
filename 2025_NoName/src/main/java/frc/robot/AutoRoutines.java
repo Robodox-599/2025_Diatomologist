@@ -4,7 +4,6 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class AutoRoutines {
   private AutoFactory autoFactory;
@@ -26,8 +25,12 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    // LEFTtoI.done().onTrue(Commands.sequence(RobotContainer.scoring(ElevatorStates.L4)));
-    ItoHP.done().onTrue(new WaitCommand(1).andThen(HPtoL.cmd()));
+    // When the trajectory is done, start the next trajectories
+    LEFTtoI.done().onTrue(ItoHP.cmd());
+    ItoHP.done().onTrue(HPtoL.cmd());
+    HPtoL.done().onTrue(LtoHP.cmd());
+    LtoHP.done().onTrue(HPtoK.cmd());
+
     return routine;
   }
 
@@ -36,14 +39,31 @@ public class AutoRoutines {
 
     // Load the routine's trajectories
     AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
-    // AutoTrajectory FtoHP = routine.trajectory("FtoHP");
-    // AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    AutoTrajectory FtoHP = routine.trajectory("FtoHP");
+    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    AutoTrajectory CtoHP = routine.trajectory("CtoHP");
+    AutoTrajectory HPtoD = routine.trajectory("HPtoD");
+
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
 
     // When the trajectory is done, start the next trajectory
-    // RIGHTtoF.done().onTrue(FtoHP.cmd());
-    // FtoHP.done().onTrue(HPtoC.cmd());
+    RIGHTtoF.done().onTrue(FtoHP.cmd());
+    FtoHP.done().onTrue(HPtoC.cmd());
+    HPtoC.done().onTrue(CtoHP.cmd());
+    CtoHP.done().onTrue(HPtoD.cmd());
+
+    return routine;
+  }
+
+  public AutoRoutine middleAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("middleAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
+
+    // When the routine begins, reset odometry and start the first trajectory
+    routine.active().onTrue(Commands.sequence(MIDtoG.resetOdometry(), MIDtoG.cmd()));
 
     return routine;
   }

@@ -4,7 +4,6 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class AutoRoutines {
   private AutoFactory autoFactory;
@@ -19,12 +18,19 @@ public class AutoRoutines {
     // Load the routine's trajectories
     AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
     AutoTrajectory ItoHP = routine.trajectory("ItoHP");
-    AutoTrajectory HPtoI = routine.trajectory("HPtoI");
+    AutoTrajectory HPtoL = routine.trajectory("HPtoL");
+    AutoTrajectory LtoHP = routine.trajectory("LtoHP");
+    AutoTrajectory HPtoK = routine.trajectory("HPtoK");
+
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    LEFTtoI.done().onTrue(new WaitCommand(2).andThen(ItoHP.cmd()));
-    ItoHP.done().onTrue(new WaitCommand(1).andThen(HPtoI.cmd()));
+    // When the trajectory is done, start the next trajectories
+    // LEFTtoI.done().onTrue(ItoHP.cmd());
+    // ItoHP.done().onTrue(HPtoL.cmd());
+    // HPtoL.done().onTrue(LtoHP.cmd());
+    // LtoHP.done().onTrue(HPtoK.cmd());
+
     return routine;
   }
 
@@ -33,52 +39,31 @@ public class AutoRoutines {
 
     // Load the routine's trajectories
     AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
-    // AutoTrajectory FtoHP = routine.trajectory("FtoHP");
-    // AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    AutoTrajectory FtoHP = routine.trajectory("FtoHP");
+    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    AutoTrajectory CtoHP = routine.trajectory("CtoHP");
+    AutoTrajectory HPtoD = routine.trajectory("HPtoD");
+
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
 
     // When the trajectory is done, start the next trajectory
-    // RIGHTtoF.done().onTrue(FtoHP.cmd());
-    // FtoHP.done().onTrue(HPtoC.cmd());
+    RIGHTtoF.done().onTrue(FtoHP.cmd());
+    FtoHP.done().onTrue(HPtoC.cmd());
+    HPtoC.done().onTrue(CtoHP.cmd());
+    CtoHP.done().onTrue(HPtoD.cmd());
 
     return routine;
   }
 
-  public AutoRoutine turningTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("turningTestAuto");
+  public AutoRoutine middleAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("middleAuto");
 
     // Load the routine's trajectories
-    AutoTrajectory turningTest = routine.trajectory("turningTest");
+    AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
 
     // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(turningTest.resetOdometry(), turningTest.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine forwardBackTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("forwardBackTestAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory forwardBackTest = routine.trajectory("forwardBackTest");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    routine
-        .active()
-        .onTrue(Commands.sequence(forwardBackTest.resetOdometry(), forwardBackTest.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine diamondTestAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("diamondTestAuto");
-
-    // Load the routine's trajectories
-    AutoTrajectory diamondTest = routine.trajectory("diamondTest");
-
-    // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(diamondTest.resetOdometry(), diamondTest.cmd()));
+    routine.active().onTrue(Commands.sequence(MIDtoG.resetOdometry(), MIDtoG.cmd()));
 
     return routine;
   }

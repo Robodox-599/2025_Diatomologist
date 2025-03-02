@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.util.EndefectorUtil;
 
 public class RollersIOSim extends RollersIO {
   private final DCMotorSim rollersSim;
@@ -62,7 +61,7 @@ public class RollersIOSim extends RollersIO {
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
 
-    desiredVelocity = EndefectorUtil.stateToVelocity(state);
+    desiredVelocity = RollersConstants.velocitys[state.getIndex()];
 
     rollersSim.setInputVoltage(rollerController.calculate(desiredVelocity));
     System.out.println(super.velocity);

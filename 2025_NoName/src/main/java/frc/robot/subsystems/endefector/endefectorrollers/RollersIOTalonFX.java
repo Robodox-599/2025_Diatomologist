@@ -64,6 +64,9 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+    DogLog.log("Rollers/State", super.currentState);
+    DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
+    DogLog.log("Rollers/CANRangeDistance", super.canrangeDistance);
   }
 
   @Override

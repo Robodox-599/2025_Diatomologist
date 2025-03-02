@@ -24,8 +24,6 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
 
   List<Pose3d> tagPoses = new LinkedList<>();
-  List<Pose3d> robotPosesAccepted = new LinkedList<>();
-  List<Pose3d> robotPosesRejected = new LinkedList<>();
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -94,16 +92,16 @@ public class Vision extends SubsystemBase {
             Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
         double linearStdDev =
             io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
-        // double angularStdDev =
-        //     io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
+        double angularStdDev =
+            io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
 
         linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        // angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
+        angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
 
         consumer.accept(
             observation.getObservedPose().toPose2d(),
             observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, 1000000000));
+            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
       logValues(cameraIndex);
     }

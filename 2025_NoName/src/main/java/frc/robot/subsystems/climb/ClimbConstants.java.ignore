@@ -34,12 +34,6 @@ public class ClimbConstants {
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
-  public static final int limitSwitchDioPort = 0;
-  public static final double gearRatio = 6;
-  public static final double drumCircumferenceInches = 1.8;
-  public static final double inchesPerRev = 0.39; // idk prolly wrong
-  public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
-
   public static final double maxVelocityInchesPerSec = 60.0;
   public static final double maxAccelerationInchesPerSecSQ = 120.0;
 
@@ -64,15 +58,6 @@ public class ClimbConstants {
   public static final double simkD = 0.0;
   public static final double simkF = 0.0;
 
-  public static final double supplyCurrentLimitAmps = 0.1;
-  public static final double statorCurrentLimitAmps = 0.1;
-
-  public static final double PositionToleranceInches = 0.5;
-  public static final double velocityToleranceInchesPerSec = 0.5;
-
   public static final double climbMOI = 0.15;
   public static final double nominal_voltage = 12.0;
-
-  public static final int movingUpSlot = 1;
-  public static final int movingDownSlot = 0;
 }

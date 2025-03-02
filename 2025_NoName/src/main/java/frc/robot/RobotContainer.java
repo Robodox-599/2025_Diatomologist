@@ -18,8 +18,6 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -35,7 +33,7 @@ public class RobotContainer {
   // private Rollers rollers;
   // private Climb climb;
   // private LEDs LEDs;
-  private Vision vision;
+  // private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
 
@@ -43,6 +41,7 @@ public class RobotContainer {
   // Auto components
   private final AutoRoutines autoRoutines;
   private final AutoFactory autoFactory;
+
   public final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
@@ -61,6 +60,7 @@ public class RobotContainer {
         //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       case SIM:
@@ -71,13 +71,14 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // LEDs = new LEDs(new LEDsIOSim());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+        //         new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
       default:
@@ -94,6 +95,7 @@ public class RobotContainer {
         //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
+        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         autoRoutines = new AutoRoutines(autoFactory);
         break;
     }
@@ -108,7 +110,6 @@ public class RobotContainer {
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
     autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
-    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
 
     // Logging setup
     // DataLogManager.start();
@@ -161,8 +162,8 @@ public class RobotContainer {
     // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    //  driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
-    //  driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
+    // driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
+    // driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
     // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
@@ -262,13 +263,13 @@ public class RobotContainer {
   //       });
   // }
 
-  // public Command climbStow() {
-  //   return climb.moveToState(ClimbStates.STOW);
-  // }
+  // // public Command climbStow() {
+  // //   return climb.moveToState(ClimbStates.STOW);
+  // // }
 
-  // public Command climbFull() {
-  //   return climb.moveToState(ClimbStates.CLIMB);
-  // }
+  // // public Command climbFull() {
+  // //   return climb.moveToState(ClimbStates.CLIMB);
+  // // }
 
   // // saftey code in subsystems, not in commands.
 
@@ -316,14 +317,14 @@ public class RobotContainer {
   //       rumbleControllers());
   // }
 
-  // public Command climb() {
-  //   return Commands.sequence(
-  //       Commands.parallel(
-  //           elevator.moveToState(ElevatorStates.INTAKE),
-  //           wrist.moveToState(WristStates.CLIMB),
-  //           rollers.moveToState(EndefectorRollerStates.STOP)),
-  //       climb.moveToState(ClimbStates.CLIMBREADY));
-  // }
+  // // public Command climb() {
+  // //   return Commands.sequence(
+  // //       Commands.parallel(
+  // //           elevator.moveToState(ElevatorStates.INTAKE),
+  // //           wrist.moveToState(WristStates.CLIMB),
+  // //           rollers.moveToState(EndefectorRollerStates.STOP)),
+  // //       climb.moveToState(ClimbStates.CLIMBREADY));
+  // // }
 
   // public Command rumbleControllers() {
   //   return new StartEndCommand(

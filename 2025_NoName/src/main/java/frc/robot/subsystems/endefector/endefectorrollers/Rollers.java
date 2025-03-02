@@ -92,7 +92,7 @@ public class Rollers extends SubsystemBase {
                     io.setState(EndefectorRollerStates.SCORE);
                   })
               .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.ALGAEINTAKE)));
+          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
     } else {
       return Commands.sequence(
           Commands.run(

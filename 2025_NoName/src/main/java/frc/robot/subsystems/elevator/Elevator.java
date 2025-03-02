@@ -29,12 +29,7 @@ public class Elevator extends SubsystemBase {
 
   /* Moves the elevator to one of the states */
   public Command moveToState(ElevatorConstants.ElevatorStates state) {
-    // return this.runOnce(
-    //         () -> {
-    //           io.setState(state);
-    //         })
-    //     .andThen(Commands.waitUntil(this::isAtTargetPosition))
-    //     .onlyIf(() -> safetyChecker.isSafeElevator(ElevatorUtil.stateToHeight(state)));
+
     return Commands.repeatingSequence(
             this.runOnce(
                     () -> {

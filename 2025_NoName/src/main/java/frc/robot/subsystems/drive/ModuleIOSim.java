@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.drive.constants.SimConstants;
-import frc.robot.util.SimLog;
 
 public class ModuleIOSim extends ModuleIO {
   private final DCMotorSim driveSim;
@@ -115,12 +114,14 @@ public class ModuleIOSim extends ModuleIO {
         super.driveVelocityMetersPerSec / (Math.PI * 2 * WHEEL_RADIUS));
     DogLog.log("Drive/Module " + name + "/Drive/AppliedVolts", super.driveAppliedVolts);
     DogLog.log("Drive/Module " + name + "/Drive/CurrentAmps", super.driveCurrentAmps);
-
+    DogLog.log("Drive/Module " + name + "/DriveMotor/Connected", super.driveConnected);
+    DogLog.log("Drive/Module " + name + "/TurnMotor/Connected", super.turnConnected);
     DogLog.log("Drive/Module " + name + "/Turn/Position", super.turnPosition);
     DogLog.log("Drive/Module " + name + "/Turn/AbsolutePosition", super.turnAbsolutePosition);
     DogLog.log("Drive/Module " + name + "/Turn/VelocityRadPerSec", super.turnVelocityRadPerSec);
     DogLog.log("Drive/Module " + name + "/Turn/AppliedVolts", super.turnAppliedVolts);
     DogLog.log("Drive/Module " + name + "/Turn/CurrentAmps", super.turnCurrentAmps);
+    DogLog.log("Drive/Module " + name + "/Encoder/Connected", super.encoderConnected);
 
     DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
@@ -130,13 +131,6 @@ public class ModuleIOSim extends ModuleIO {
     DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
         "Drive/Module " + name + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsMeters);
-    SimLog.log("Drive/Module " + name + "/DriveMotor", driveSim);
-    DogLog.log("Drive/Module " + name + "/DriveMotor/Connected", super.driveConnected);
-
-    SimLog.log("Drive/Module " + name + "/TurnMotor", turnSim);
-    DogLog.log("Drive/Module " + name + "/TurnMotor/Connected", super.turnConnected);
-
-    DogLog.log("Drive/Module " + name + "/Encoder/Connected", super.encoderConnected);
     DogLog.log("Drive/Module " + name + "/Odometry/Timestamps", super.odometryTimestamps);
     DogLog.log(
         "Drive/Module " + name + "/Odometry/DrivePositionsRad", super.odometryDrivePositionsMeters);

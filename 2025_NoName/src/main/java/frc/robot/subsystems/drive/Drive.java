@@ -274,7 +274,17 @@ public class Drive extends SubsystemBase {
                     pose.getRotation().getRadians(), sample.heading));
     DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", speeds);
 
-    runVelocity(speeds);
+    // Calculate module setpoints
+    ChassisSpeeds allianceSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, RealConstants.MAX_LINEAR_SPEED);
+
+    DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+    DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].runSetpoint(setpointStates[i]);
+    }
   }
 
   public Command runVelocityTeleopFieldRelative(
@@ -313,7 +323,23 @@ public class Drive extends SubsystemBase {
                     joystickSpeeds.get().vyMetersPerSecond,
                     omega));
           } else {
-            this.runVelocity(joystickSpeeds.get());
+            // Calculate module setpoints
+            ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                    joystickSpeeds.get(),
+                    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                        ? rawGyroRotation
+                        : rawGyroRotation.plus(Rotation2d.fromDegrees(180)));
+            ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+            SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                setpointStates, RealConstants.MAX_LINEAR_SPEED);
+
+            DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+            DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+            for (int i = 0; i < modules.length; i++) {
+              modules[i].runSetpoint(setpointStates[i]);
+            }
           }
         });
   }

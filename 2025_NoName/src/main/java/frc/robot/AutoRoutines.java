@@ -26,10 +26,10 @@ public class AutoRoutines {
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
     // When the trajectory is done, start the next trajectories
-    LEFTtoI.done().onTrue(ItoHP.cmd());
-    ItoHP.done().onTrue(HPtoL.cmd());
-    HPtoL.done().onTrue(LtoHP.cmd());
-    LtoHP.done().onTrue(HPtoK.cmd());
+    // LEFTtoI.done().onTrue(ItoHP.cmd());
+    // ItoHP.done().onTrue(HPtoL.cmd());
+    // HPtoL.done().onTrue(LtoHP.cmd());
+    // LtoHP.done().onTrue(HPtoK.cmd());
 
     return routine;
   }

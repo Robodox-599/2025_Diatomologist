@@ -4,7 +4,7 @@ public class WristConstants {
   // motor info
   public static final int wristMotorID = 0;
   public static final String wristMotorCANBus = "rio";
-  public static final double gearRatio = 1.0;
+  public static final double gearRatio = 58.78;
   public static final double wristMOI = 0.04;
   public static final double wristPositionTolerance = 0.3; // degrees
   public static final double inchesPerRev = 10;
@@ -85,9 +85,10 @@ public class WristConstants {
 
   public static final double[] setpoints = {
     10.0, 20.0, // stow
-    30.0, // scoring
-    40.0, // ground intake
-    50.0, // station intake
+    83.316, // scoring
+    83.6596, // reef intake
+    47.5356, // ground intake
+    64.5866, // station intake
     60.0, // climb,
     80.0
   };

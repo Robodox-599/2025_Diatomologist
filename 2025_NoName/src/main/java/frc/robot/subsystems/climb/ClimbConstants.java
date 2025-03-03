@@ -1,5 +1,7 @@
 package frc.robot.subsystems.climb;
 
+import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.gearRatio;
+
 import edu.wpi.first.units.Units;
 
 public class ClimbConstants {
@@ -36,6 +38,18 @@ public class ClimbConstants {
 
   public static final double maxVelocityInchesPerSec = 60.0;
   public static final double maxAccelerationInchesPerSecSQ = 120.0;
+  public static final double velocityToleranceInchesPerSec = 2.0;
+  public static final double positionToleranceInches = 0.5;
+
+  public static final int movingUpSlot = 1;
+  public static final int movingDownSlot = 0;
+
+  public static final int limitSwitchDioPort = 0;
+  public static final double gearRatio = 5.4;
+  public static final double drumCircumferenceInches = Math.PI * 2.0;
+  public static final double inchesPerRev =
+      drumCircumferenceInches / gearRatio; // reduction so dividing by gear ratio
+  public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
 
   /* Position Setpoints (in inches) */
   public static final double climbLowerLimit = 0.0;
@@ -43,7 +57,8 @@ public class ClimbConstants {
   public static final double homePositionOffset = 1.0;
 
   public static final double climbHeight = 30.0;
-  public static final double stowHeight = 0;
+  public static final double climbReadyHeight = 15.0;
+  public static final double stowHeight = 6.0;
   public static final double endEffectorIntakeHeight = 0;
   public static final double groundIntakeHeight = 0;
 
@@ -59,5 +74,6 @@ public class ClimbConstants {
   public static final double simkF = 0.0;
 
   public static final double climbMOI = 0.15;
-  public static final double nominal_voltage = 12.0;
+  public static final double statorCurrentLimitAmps = 3.0;
+  public static final double supplyCurrentLimitAmps = 3.0;
 }

@@ -9,8 +9,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.util.ElevatorUtil;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.SubsystemUtil;
 
 public class ElevatorIOTalonFX extends ElevatorIO {
   private final TalonFX leaderMotor;
@@ -98,7 +98,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     currentState = state;
     double position =
         MathUtil.clamp(
-            ElevatorUtil.stateToHeight(state),
+            SubsystemUtil.elevatorStateToHeight(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
     motionMagicRequest.Position = position;

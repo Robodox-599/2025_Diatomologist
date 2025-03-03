@@ -135,14 +135,6 @@ public class ModuleIOReal extends ModuleIO {
     turnConfig.Slot0.kP = 50; // 95
     turnConfig.Slot0.kD = 0;
 
-    /* ************ MOTION MAGIC CONFIGS ************ */
-
-    // turnConfig.MotionMagic.MotionMagicCruiseVelocity = 5800 / TURN_GEAR_RATIO;
-    // turnConfig.MotionMagic.MotionMagicAcceleration = (5800 * 0.1) / TURN_GEAR_RATIO;
-    // driveConfig.MotionMagic.MotionMagicCruiseVelocity = MAX_LINEAR_SPEED;
-    // driveConfig.MotionMagic.MotionMagicAcceleration = MAX_LINEAR_ACCELERATION;
-    // driveConfig.MotionMagic.MotionMagicJerk = MAX_LINEAR_ACCELERATION / 0.1;
-
     /* ************ INVERTS ************ */
     driveConfig.MotorOutput.Inverted =
         constants.invertDrive()

@@ -8,14 +8,12 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
-import frc.robot.util.EndefectorUtil;
 import frc.robot.util.PhoenixUtil;
-
-// import edu.wpi.first.math.MathUtil;
 
 public class WristIOTalonFX extends WristIO {
 
@@ -27,13 +25,12 @@ public class WristIOTalonFX extends WristIO {
 
   private double passedInPosition;
   private double currentPosition;
-  private int wristSlot;
 
   public WristIOTalonFX() {
 
     wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
     wristConfig = new TalonFXConfiguration();
-    m_request = new MotionMagicVoltage(0);
+    m_request = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
     cancoder = new CANcoder(cancoderID, wristMotorCANBus);
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
@@ -43,20 +40,16 @@ public class WristIOTalonFX extends WristIO {
     motionMagicConfigs.MotionMagicCruiseVelocity = 0.0;
     motionMagicConfigs.MotionMagicAcceleration = 0.0;
 
-    wristConfig.Slot0.kP = realExtendkP;
-    wristConfig.Slot0.kI = realExtendkI;
-    wristConfig.Slot0.kD = realExtendkD;
-    wristConfig.Slot0.kV = realExtendkV;
+    wristConfig.Slot0.kP = realkP;
+    wristConfig.Slot0.kI = realkI;
+    wristConfig.Slot0.kD = realkD;
+    wristConfig.Slot0.kV = realkV;
+    wristConfig.Slot0.kS = realkS;
+    wristConfig.Slot0.kG = realkG;
+    wristConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-    wristConfig.Slot1.kP = realRetractkP;
-    wristConfig.Slot1.kI = realRetractkI;
-    wristConfig.Slot1.kD = realRetractkD;
-    wristConfig.Slot1.kV = realRetractkV;
-
-    wristConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
-    wristConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
-    wristConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
-    wristConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
+    wristConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    wristConfig.CurrentLimits.StatorCurrentLimit = 60;
 
     wristConfig.Feedback.FeedbackRemoteSensorID = cancoderID;
     wristConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -64,10 +57,10 @@ public class WristIOTalonFX extends WristIO {
 
     cancoderConfig.MagnetSensor.MagnetOffset = cancoderOffset;
 
-    wristMotor.optimizeBusUtilization();
-    wristMotor.getConfigurator().apply(wristConfig);
-
+    PhoenixUtil.tryUntilOk(5, () -> wristMotor.getConfigurator().apply(wristConfig, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> cancoder.getConfigurator().apply(cancoderConfig, 0.25));
+    wristMotor.optimizeBusUtilization();
+    cancoder.optimizeBusUtilization();
   }
 
   @Override
@@ -97,14 +90,7 @@ public class WristIOTalonFX extends WristIO {
   @Override
   public void goToPose(double position) {
     passedInPosition = position;
-
-    if (passedInPosition > currentPosition) {
-      wristSlot = 0;
-    } else {
-      wristSlot = 1;
-    }
-
-    m_request.withSlot(wristSlot);
+    m_request.withPosition(passedInPosition);
     wristMotor.setControl(m_request);
   }
 
@@ -121,14 +107,7 @@ public class WristIOTalonFX extends WristIO {
   @Override
   public void setState(WristStates state) {
     double position =
-        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristMinAngle, wristMaxAngle);
-    if (passedInPosition > currentPosition) {
-      wristSlot = 0;
-    } else {
-      wristSlot = 1;
-    }
-
-    m_request.withSlot(0);
+        MathUtil.clamp(WristConstants.setpoints[state.getIndex()], wristMinAngle, wristMaxAngle);
     m_request.Position = position;
     wristMotor.setControl(m_request);
   }

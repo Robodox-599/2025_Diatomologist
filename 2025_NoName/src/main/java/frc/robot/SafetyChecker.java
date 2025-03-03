@@ -5,9 +5,6 @@ public class SafetyChecker {
   private final double maximumElevatorSwingThroughHeight =
       33.74; // maximum height that the endefector/elevator can be at so the endefector can swing
   // through the elevator, check cad for this
-  private final double maxHitCrossbarHeight =
-      33.74; // maximum height that the endefector/elevator can be at so the endefector can swing
-  // through the elevator, check cad for this
   private final double endefectorBehindElevatorDegrees =
       76.0; // the degrees threshold that the endefector is behind the elevator, found in cad
 
@@ -48,7 +45,8 @@ public class SafetyChecker {
     boolean currentBehindElevator =
         isBehindElevator(
             wristDegrees); // is the current angle behind the elevator allocated degrees?
-    if (targetBehindElevator == currentBehindElevator && maxHitCrossbarHeight < elevatorInches) {
+    if (targetBehindElevator == currentBehindElevator
+        && maximumElevatorSwingThroughHeight < elevatorInches) {
       // if the target is behind the elevator and the current is behind the elevator and the
       // elevator is under the max swing through height, then return true
       return true;

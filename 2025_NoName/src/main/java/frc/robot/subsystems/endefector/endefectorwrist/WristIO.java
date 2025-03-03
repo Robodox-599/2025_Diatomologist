@@ -1,7 +1,6 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
-import frc.robot.util.EndefectorUtil;
 
 public abstract class WristIO {
   protected double tempCelsius = 0.0;
@@ -34,6 +33,6 @@ public abstract class WristIO {
   }
 
   public double getCurrentPosition() {
-    return EndefectorUtil.convertToTicks(currentPositionDegrees);
+    return currentPositionDegrees;
   }
 }

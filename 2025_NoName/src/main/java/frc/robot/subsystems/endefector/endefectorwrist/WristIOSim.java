@@ -9,7 +9,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
-import frc.robot.util.EndefectorUtil;
 
 public class WristIOSim extends WristIO {
 
@@ -26,7 +25,7 @@ public class WristIOSim extends WristIO {
             LinearSystemId.createDCMotorSystem(WRIST_GEARBOX, wristMOI, gearRatio), WRIST_GEARBOX);
 
     wristPID = new PIDController(WristConstants.simkP, WristConstants.simkI, WristConstants.simkD);
-    wristPID.setTolerance(WristConstants.wristPositionLimit);
+    wristPID.setTolerance(WristConstants.wristPositionTolerance);
   }
 
   @Override
@@ -54,7 +53,7 @@ public class WristIOSim extends WristIO {
   @Override
   public void setState(WristStates state) {
     targetPosition =
-        MathUtil.clamp(EndefectorUtil.stateToSetpoint(state), wristMinAngle, wristMaxAngle);
+        MathUtil.clamp(WristConstants.setpoints[state.getIndex()], wristMinAngle, wristMaxAngle);
     System.out.println(super.state);
     wristSim.setInputVoltage(wristPID.calculate(targetPosition));
   }

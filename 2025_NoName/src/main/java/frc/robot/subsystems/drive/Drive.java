@@ -46,7 +46,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.commands.CommandConstants;
+import frc.robot.commands.CommandConstants;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

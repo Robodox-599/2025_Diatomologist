@@ -1,4 +1,4 @@
-package frc.robot.subsystems.commands;
+package frc.robot.commands;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;

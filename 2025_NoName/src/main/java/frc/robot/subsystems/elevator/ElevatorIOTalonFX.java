@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,7 +18,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   private final DigitalInput limitSwitch;
   private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
   private final MotionMagicVoltage motionMagicRequest;
-  private int motionSlot;
 
   public ElevatorIOTalonFX() {
     leaderMotor = new TalonFX(ElevatorConstants.leaderMotorID, ElevatorConstants.leaderMotorCANbus);
@@ -28,29 +28,27 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 
-    motionMagicRequest = new MotionMagicVoltage(0);
+    motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
-    config.MotionMagic.MotionMagicCruiseVelocity =
-        ElevatorConstants.maxVelocityInchesPerSec / ElevatorConstants.inchesPerRev;
-    config.MotionMagic.MotionMagicAcceleration =
-        ElevatorConstants.maxAccelerationInchesPerSecSQ / ElevatorConstants.inchesPerRev;
+    config.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.maxVelocityRotsPerSec;
+    config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.maxAccelerationRotationsPerSecSQ;
 
     config.Slot0.kP = ElevatorConstants.kP;
     config.Slot0.kI = ElevatorConstants.kI;
     config.Slot0.kD = ElevatorConstants.kD;
     config.Slot0.kV = ElevatorConstants.kV;
     config.Slot0.kS = ElevatorConstants.kS;
+    config.Slot0.kG = ElevatorConstants.kG;
+    config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
     config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorCurrentLimitAmps;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    /* Helps prevent brown outs by limiting current spikes from the battery */
     config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyCurrentLimitAmps;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     PhoenixUtil.tryUntilOk(5, () -> leaderMotor.getConfigurator().apply(config, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> leaderMotor.setPosition(0.0, 0.25));
+
     enableBrakeMode(true);
     leaderMotor.optimizeBusUtilization();
     followerMotor.optimizeBusUtilization();
@@ -103,13 +101,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             ElevatorUtil.stateToHeight(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
-    if (position > getPosition()) {
-      motionSlot = ElevatorConstants.movingUpSlot;
-    } else {
-      motionSlot = ElevatorConstants.movingDownSlot;
-    }
-
-    motionMagicRequest.withSlot(motionSlot);
     motionMagicRequest.Position = position;
     leaderMotor.setControl(motionMagicRequest);
   }

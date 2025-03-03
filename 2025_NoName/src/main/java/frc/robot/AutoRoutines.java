@@ -4,11 +4,12 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.commands.SuperstructureCommands;
 
 public class AutoRoutines {
   private AutoFactory autoFactory;
 
-  public AutoRoutines(AutoFactory autoFactory) {
+  public AutoRoutines(AutoFactory autoFactory, SuperstructureCommands superstructureCommands) {
     this.autoFactory = autoFactory;
   }
 
@@ -48,7 +49,7 @@ public class AutoRoutines {
     routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
 
     // When the trajectory is done, start the next trajectory
-    RIGHTtoF.done().onTrue(FtoHP.cmd());
+    RIGHTtoF.done().onTrue(Commands.parallel(FtoHP.cmd()));
     FtoHP.done().onTrue(HPtoC.cmd());
     HPtoC.done().onTrue(CtoHP.cmd());
     CtoHP.done().onTrue(HPtoD.cmd());

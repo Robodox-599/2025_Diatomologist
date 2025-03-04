@@ -2,14 +2,14 @@ package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.util.ClimbUtil;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.SubsystemUtil;
 
 public class ClimbIOTalonFX extends ClimbIO {
 
@@ -18,25 +18,19 @@ public class ClimbIOTalonFX extends ClimbIO {
   private final DigitalInput limitSwitch;
   private ClimbConstants.ClimbStates currentState = ClimbConstants.ClimbStates.CLIMBREADY;
 
-  private final MotionMagicVoltage motionMagicRequest;
-  private int motionSlot;
+  private final BangBangController bangBangController;
 
   public ClimbIOTalonFX() {
     leaderMotor = new TalonFX(ClimbConstants.leaderMotorID, ClimbConstants.leaderMotorCANbus);
     followerMotor = new TalonFX(ClimbConstants.followerMotorID, ClimbConstants.followerMotorCANbus);
+    bangBangController = new BangBangController();
+
     /*  This tells the motor encoder where 0 inches is*/
     limitSwitch = new DigitalInput(ClimbConstants.limitSwitchDioPort);
 
     followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 
-    motionMagicRequest = new MotionMagicVoltage(0);
-
     TalonFXConfiguration config = new TalonFXConfiguration();
-
-    config.MotionMagic.MotionMagicCruiseVelocity =
-        ClimbConstants.maxVelocityInchesPerSec / ClimbConstants.inchesPerRev;
-    config.MotionMagic.MotionMagicAcceleration =
-        ClimbConstants.maxAccelerationInchesPerSecSQ / ClimbConstants.inchesPerRev;
 
     config.Slot0.kP = ClimbConstants.kP;
     config.Slot0.kI = ClimbConstants.kI;
@@ -71,7 +65,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     double positionError = Math.abs(super.targetPositionInches - super.positionInches);
     double velocityError = Math.abs(super.velocityInchesPerSec);
     super.atSetpoint =
-        positionError < ClimbConstants.PositionToleranceInches
+        positionError < ClimbConstants.positionToleranceInches
             && velocityError < ClimbConstants.velocityToleranceInchesPerSec;
 
     super.limitSwitchValue = limitSwitch.get();
@@ -97,18 +91,13 @@ public class ClimbIOTalonFX extends ClimbIO {
   @Override
   public void setState(ClimbConstants.ClimbStates state) {
     currentState = state;
-    double position =
+    double targetPositionInches =
         MathUtil.clamp(
-            ClimbUtil.stateToHeight(state),
+            SubsystemUtil.climbStateToHeight(state),
             ClimbConstants.climbLowerLimit,
             ClimbConstants.climbUpperLimit);
 
-    if (position > getPositionInches()) {
-      motionSlot = ClimbConstants.movingUpSlot;
-    } else {
-      motionSlot = ClimbConstants.movingDownSlot;
-    }
-    leaderMotor.setControl((motionMagicRequest.withSlot(motionSlot).withPosition(position)));
+    leaderMotor.set(bangBangController.calculate(targetPositionInches));
   }
 
   @Override

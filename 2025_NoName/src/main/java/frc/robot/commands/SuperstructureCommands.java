@@ -207,8 +207,8 @@ public class SuperstructureCommands {
     // ALGAE INTAKE COMMAND
     // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
     // AUTO ALIGN
-    // driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive, rollers, LEDs));
-    // driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive, rollers, LEDs));
+    driver.povLeft().whileTrue(AutoAlignToField.alignToNearestLeftReef(drive));
+    driver.povRight().whileTrue(AutoAlignToField.alignToNearestRightReef(drive));
     // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

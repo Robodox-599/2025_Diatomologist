@@ -138,10 +138,10 @@ public class DriveToPose extends Command {
   @Override
   public void initialize() {
     Pose2d currentPose = robot.get();
-    DogLog.log("DriveToPose/Initialize/CurrentPose", currentPose.toString());
+    DogLog.log("DriveToPose/Initialize/CurrentPose", currentPose);
 
     ChassisSpeeds fieldVelocity = drive.getFieldVelocity();
-    DogLog.log("DriveToPose/Initialize/FieldVelocity", fieldVelocity.toString());
+    DogLog.log("DriveToPose/Initialize/FieldVelocity", fieldVelocity);
 
     double initialDistance =
         currentPose.getTranslation().getDistance(target.get().getTranslation());

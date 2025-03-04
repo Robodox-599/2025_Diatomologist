@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.leds.LEDs;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
@@ -34,7 +32,7 @@ public class AutoAlignToField {
       }
     }
 
-    double adjustX = Units.inchesToMeters(30.738);
+    double adjustX = Units.inchesToMeters(30.738 / 2.0);
     double adjustY = Units.inchesToMeters(6.469);
 
     // Apply the transformation based on left/right boolean
@@ -50,37 +48,27 @@ public class AutoAlignToField {
     return targetPose;
   }
 
-  public static Command alignToNearestLeftReef(
-      Drive drive, Rollers rollers, LEDs lightEmitingDiodes) {
+  public static Command alignToNearestLeftReef(Drive drive) {
     var driveToPose =
         new DriveToPose(
             drive,
             () ->
-                getNearestBranchPosition(
-                        () -> drive.getPose(),
-                        true,
-                        new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
+                getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
                     .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
-    return Commands.parallel(driveToPose, lightEmitingDiodes.runAutoAlign())
-        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()))
-        .andThen(lightEmitingDiodes.runNoState());
+    return Commands.parallel(driveToPose)
+        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
 
-  public static Command alignToNearestRightReef(
-      Drive drive, Rollers rollers, LEDs lightEmitingDiodes) {
+  public static Command alignToNearestRightReef(Drive drive) {
     var driveToPose =
         new DriveToPose(
             drive,
             () ->
-                getNearestBranchPosition(
-                        () -> drive.getPose(),
-                        false,
-                        new Translation2d(rollers.getCoralDistance(), new Rotation2d()))
+                getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
                     .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
-    return Commands.parallel(driveToPose, lightEmitingDiodes.runAutoAlign())
-        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()))
-        .andThen(lightEmitingDiodes.runNoState());
+    return Commands.parallel(driveToPose)
+        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
   }
 }

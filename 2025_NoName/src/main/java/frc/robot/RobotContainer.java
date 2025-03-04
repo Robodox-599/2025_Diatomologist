@@ -14,7 +14,10 @@ import frc.robot.commands.SuperstructureCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOReal;
 
 public class RobotContainer {
   // Controllers
@@ -30,7 +33,7 @@ public class RobotContainer {
   // private Rollers rollers;
   // private Climb climb;
   // private LEDs LEDs;
-  // private Vision vision;
+  private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
   private final SuperstructureCommands superstructureCommands;
@@ -51,10 +54,11 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         // LEDs = new LEDs(new LEDsIOReal());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOReal(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -96,7 +100,6 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
     // Auto chooser setup
-    SmartDashboard.putData("AutoChooser", autoChooser);
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
     // Add auto routines
@@ -107,6 +110,7 @@ public class RobotContainer {
 
     // TESTING ONLY
     autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);
+    SmartDashboard.putData("AutoChooser", autoChooser);
 
     // Logging setup
     // DataLogManager.start();

@@ -1,6 +1,36 @@
 {
   "NetworkTables": {
     "transitory": {
+      "Robot": {
+        "Drive": {
+          "Module Back Left": {
+            "DriveMotor": {
+              "open": true
+            },
+            "Encoder": {
+              "open": true
+            },
+            "open": true
+          },
+          "open": true
+        },
+        "Odometry": {
+          "Pose2d##v_/Robot/Odometry/Pose": {
+            "Rotation2d##v_rotation": {
+              "open": true
+            },
+            "Translation2d##v_translation": {
+              "open": true
+            },
+            "open": true
+          },
+          "open": true
+        },
+        "Vision": {
+          "open": true
+        },
+        "open": true
+      },
       "photonvision": {
         "FR Camera": {
           "open": true
@@ -21,6 +51,15 @@
     }
   },
   "NetworkTables Info": {
+    "AdvantageScope@4": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
     "Clients": {
       "open": true
     },
@@ -28,6 +67,9 @@
       "Publishers": {
         "open": true
       },
+      "open": true
+    },
+    "glass@5": {
       "open": true
     },
     "visible": true

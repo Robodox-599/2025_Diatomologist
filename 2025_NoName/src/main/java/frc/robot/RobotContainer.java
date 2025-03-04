@@ -4,21 +4,20 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
-import frc.robot.subsystems.commands.SuperstructureCommands;
+import frc.robot.commands.SuperstructureCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
-import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
-import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -34,9 +33,9 @@ public class RobotContainer {
   // private Rollers rollers;
   // private Climb climb;
   // private LEDs LEDs;
-  // private Vision vision;
-  private SafetyChecker safetyChecker;
-  private SubsystemVisualizer subsystemVisualizer;
+  private Vision vision;
+  // private SafetyChecker safetyChecker;
+  // private SubsystemVisualizer subsystemVisualizer;
   private final SuperstructureCommands superstructureCommands;
   // Auto components
   private final AutoRoutines autoRoutines;
@@ -45,7 +44,7 @@ public class RobotContainer {
   public final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
-    safetyChecker = new SafetyChecker();
+    // safetyChecker = new SafetyChecker();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -55,10 +54,11 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         // LEDs = new LEDs(new LEDsIOReal());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOReal(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
@@ -71,11 +71,11 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-        //         new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
@@ -123,9 +123,11 @@ public class RobotContainer {
 
     configureBindings();
   }
-  private void configureBindings(){
+
+  private void configureBindings() {
     superstructureCommands.configureBindings();
   }
+
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommandScheduler();
   }

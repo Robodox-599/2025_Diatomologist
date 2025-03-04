@@ -1,4 +1,4 @@
-package frc.robot.subsystems.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,46 +18,45 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristState
 import frc.robot.subsystems.leds.LEDs;
 
 public class SuperstructureCommands {
-    private final Drive drive;
-    private final Elevator elevator;
-    private final Wrist wrist;
-    private final Rollers rollers;
-    // private Cli climb;
-    private final LEDs LEDs;
-    private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
-    private final CommandXboxController operator;
-    private final CommandXboxController driver;
-    public SuperstructureCommands(
-        Drive drive, 
-        Elevator elevator,
-        Wrist wrist,
-        Rollers rollers,
-        // Climb climb,
-        LEDs LEDs,
-        CommandXboxController driver,
-        CommandXboxController operator)
-        {
-            this.drive = drive;
-            this.elevator = elevator;
-            this.wrist = wrist;
-            this.rollers = rollers;
-            this.LEDs = LEDs;
-            this.operator = operator;
-            this.driver = driver;
-        }
-        public SuperstructureCommands(
-        Drive drive, 
-        CommandXboxController driver,
-        CommandXboxController operator)
-        {
-            this.drive = drive;
-            this.operator = operator;
-            this.driver = driver;
-            this.elevator = null;
-            this.wrist = null;
-            this.rollers = null;
-            this.LEDs = null;
-        }
+  private final Drive drive;
+  private final Elevator elevator;
+  private final Wrist wrist;
+  private final Rollers rollers;
+  // private Cli climb;
+  private final LEDs LEDs;
+  private ElevatorStates operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
+  private final CommandXboxController operator;
+  private final CommandXboxController driver;
+
+  public SuperstructureCommands(
+      Drive drive,
+      Elevator elevator,
+      Wrist wrist,
+      Rollers rollers,
+      // Climb climb,
+      LEDs LEDs,
+      CommandXboxController driver,
+      CommandXboxController operator) {
+    this.drive = drive;
+    this.elevator = elevator;
+    this.wrist = wrist;
+    this.rollers = rollers;
+    this.LEDs = LEDs;
+    this.operator = operator;
+    this.driver = driver;
+  }
+
+  public SuperstructureCommands(
+      Drive drive, CommandXboxController driver, CommandXboxController operator) {
+    this.drive = drive;
+    this.operator = operator;
+    this.driver = driver;
+    this.elevator = null;
+    this.wrist = null;
+    this.rollers = null;
+    this.LEDs = null;
+  }
+
   public Command stowAll() {
     return Commands.sequence(
         Commands.parallel(
@@ -171,7 +170,8 @@ public class SuperstructureCommands {
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)));
   }
- public void configureBindings() {
+
+  public void configureBindings() {
     //                               DRIVER BINDS
     drive.setDefaultCommand(
         drive.runVelocityTeleopFieldRelative(
@@ -271,5 +271,4 @@ public class SuperstructureCommands {
     return MathUtil.applyDeadband(
         (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
-
 }

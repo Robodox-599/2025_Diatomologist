@@ -89,6 +89,9 @@ public class VisionIOReal extends VisionIO {
 
   public Optional<PoseObservation> updateTest(
       EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
+    if (resultList.size() == 0) {
+      return null;
+    }
     for (PhotonTrackedTarget target : estRoboPose.targetsUsed) {
       int minId = AprilTags.TAGS[0].ID;
       int maxId = AprilTags.TAGS[AprilTags.TAGS.length - 1].ID;
@@ -101,11 +104,7 @@ public class VisionIOReal extends VisionIO {
 
     double avgDistance;
     Pose3d pose = estRoboPose.estimatedPose;
-    // if (estRoboPose.targetsUsed.size() == 1) {
-    //   var target = estRoboPose.targetsUsed.get(0);
-    //   avgDistance = target.getBestCameraToTarget().getTranslation().getNorm();
-    //   pose = reproject(target, poseSupplier.get().getRotation());
-    // } else {
+
     avgDistance =
         estRoboPose.targetsUsed.stream()
             .map(PhotonTrackedTarget::getBestCameraToTarget)

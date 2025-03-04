@@ -10,7 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.util.ClimbUtil;
+import frc.robot.util.SubsystemUtil;
 
 public class ClimbIOSim extends ClimbIO {
   private final DCMotorSim climbSim;
@@ -31,7 +31,7 @@ public class ClimbIOSim extends ClimbIO {
 
     positionController =
         new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
-    positionController.setTolerance(ClimbConstants.PositionToleranceInches);
+    positionController.setTolerance(ClimbConstants.positionToleranceInches);
   }
 
   @Override
@@ -72,23 +72,10 @@ public class ClimbIOSim extends ClimbIO {
   @Override
   public void setState(ClimbConstants.ClimbStates state) {
     super.state = state;
-    switch(state){
-      case STOP:
-        targetPositionInches = ClimbConstants.stowHeight;
-      break;
-      case CLIMB:
-        targetPositionInches = ClimbConstants.stowHeight;
-      break;
-      case LOWER:
-        targetPositionInches = ClimbConstants.climbLowerLimit;
-        break;
-      case HOLD:
-        targetPositionInches = ClimbConstants.;
-      break;
-    } 
+
     targetPositionInches =
         MathUtil.clamp(
-            ,
+            SubsystemUtil.climbStateToHeight(state),
             ClimbConstants.climbLowerLimit,
             ClimbConstants.climbUpperLimit);
 

@@ -14,10 +14,7 @@ import frc.robot.commands.SuperstructureCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.constants.RealConstants;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOReal;
-import frc.robot.subsystems.vision.VisionIOSim;
+import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 
 public class RobotContainer {
   // Controllers
@@ -33,9 +30,9 @@ public class RobotContainer {
   // private Rollers rollers;
   // private Climb climb;
   // private LEDs LEDs;
-  private Vision vision;
-  // private SafetyChecker safetyChecker;
-  // private SubsystemVisualizer subsystemVisualizer;
+  // private Vision vision;
+  private SafetyChecker safetyChecker;
+  private SubsystemVisualizer subsystemVisualizer;
   private final SuperstructureCommands superstructureCommands;
   // Auto components
   private final AutoRoutines autoRoutines;
@@ -44,7 +41,7 @@ public class RobotContainer {
   public final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
-    // safetyChecker = new SafetyChecker();
+    safetyChecker = new SafetyChecker();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -54,14 +51,12 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         // LEDs = new LEDs(new LEDsIOReal());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOReal(RealConstants.cam2Constants, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOReal(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         break;
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -71,14 +66,13 @@ public class RobotContainer {
         // climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         // LEDs = new LEDs(new LEDsIOSim());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+        //         new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         break;
       default:
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -94,7 +88,6 @@ public class RobotContainer {
         //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
-        // autoFactory.bind("intake", stationIntake()).bind("score", scoring(ElevatorStates.L4));
         break;
     }
 
@@ -107,9 +100,13 @@ public class RobotContainer {
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
     // Add auto routines
+    // COMPETITION
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
     autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
+
+    // TESTING ONLY
+    autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);
 
     // Logging setup
     // DataLogManager.start();

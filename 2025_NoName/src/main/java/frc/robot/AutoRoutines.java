@@ -144,14 +144,14 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory
     routine.active().onTrue(Commands.sequence(MIDtoG.resetOdometry(), MIDtoG.cmd()));
 
-    // When the previous routine is done, score L3, go to the S4, grab algae, and go to net
+    // When the previous routine is done, score L3 and go to S4
     MIDtoG.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoring(ElevatorConstants.ElevatorStates.L3),
-                GtoS4.cmd(),
-                superstructureCommands.algaeL2Intake(),
-                S4toNET.cmd()));
+                superstructureCommands.scoring(ElevatorConstants.ElevatorStates.L3), GtoS4.cmd()));
+
+    // WHen the previous routine is done, grab the algae and go to the net
+    GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(), S4toNET.cmd()));
 
     return routine;
   }

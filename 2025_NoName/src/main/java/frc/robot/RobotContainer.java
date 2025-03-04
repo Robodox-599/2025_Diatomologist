@@ -11,13 +11,29 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.commands.SuperstructureCommands;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.constants.RealConstants;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -28,11 +44,11 @@ public class RobotContainer {
 
   // Subsystems
   private final Drive drive;
-  // private Elevator elevator;
-  // private Wrist wrist;
-  // private Rollers rollers;
-  // private Climb climb;
-  // private LEDs LEDs;
+  private Elevator elevator;
+  private Wrist wrist;
+  private Rollers rollers;
+  private Climb climb;
+  private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
   private SubsystemVisualizer subsystemVisualizer;
@@ -48,12 +64,12 @@ public class RobotContainer {
 
     switch (Constants.currentMode) {
       case REAL:
-        // elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        // rollers = new Rollers(new RollersIOTalonFX());
-        // wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
-        // climb = new Climb(new ClimbIOTalonFX());
+        elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
+        rollers = new Rollers(new RollersIOTalonFX());
+        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
-        // LEDs = new LEDs(new LEDsIOReal());
+        LEDs = new LEDs(new LEDsIOReal());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -64,39 +80,41 @@ public class RobotContainer {
         break;
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
-        // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
-        // wrist = new Wrist(new WristIOSim(), safetyChecker);
-        // climb = new Climb(new ClimbIOSim());
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-        //         new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+        LEDs = new LEDs(new LEDsIOSim());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
       default:
         DriverStation.silenceJoystickConnectionWarning(true);
-        // elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        // rollers = new Rollers(new RollersIOSim());
-        // wrist = new Wrist(new WristIOSim(), safetyChecker);
-        // climb = new Climb(new ClimbIOSim());
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim());
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
-        // LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOSim(RealConstants.camConstants, drive::getPose));
+        LEDs = new LEDs(new LEDsIOSim());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
     }
 
     // subsystemVisualizer = new SubsystemVisualizer(elevator, climb, wrist, rollers);
-    superstructureCommands = new SuperstructureCommands(drive, driver, operator);
+    superstructureCommands =
+        new SuperstructureCommands(drive, elevator, wrist, rollers, LEDs, driver, operator);
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
     // Auto chooser setup

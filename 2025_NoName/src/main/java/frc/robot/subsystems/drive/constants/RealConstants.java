@@ -156,6 +156,46 @@ public class RealConstants {
   // CAMERA 2 POSE (YAW)
   public static final double camera2PoseYaw = Units.degreesToRadians(28.6588);
 
+  public static final String camera3Name = "BL_Camera";
+
+  // CAMERA 3 POSE (X)
+  public static final double camera3PoseX = Units.inchesToMeters(12.37664406);
+
+  // CAMERA 3 POSE (Z)
+  public static final double camera3PoseZ = Units.inchesToMeters(4.88755783);
+
+  // CAMERA 3 POSE (Y)
+  public static final double camera3PoseY = Units.inchesToMeters(7.86625496);
+
+  // CAMERA 3 POSE (ROLL)
+  public static final double camera3PoseRoll = Units.degreesToRadians(0);
+
+  // CAMERA 3 POSE (PITCH)
+  public static final double camera3PosePitch = Units.degreesToRadians(-15);
+
+  // CAMERA 3 POSE (YAW)
+  public static final double camera3PoseYaw = Units.degreesToRadians(28.6588);
+
+  public static final String camera4Name = "BR_Camera";
+
+  // CAMERA 3 POSE (X)
+  public static final double camera4PoseX = Units.inchesToMeters(12.37664406);
+
+  // CAMERA 3 POSE (Z)
+  public static final double camera4PoseZ = Units.inchesToMeters(4.88755783);
+
+  // CAMERA 3 POSE (Y)
+  public static final double camera4PoseY = Units.inchesToMeters(-7.86625496);
+
+  // CAMERA 3 POSE (ROLL)
+  public static final double camera4PoseRoll = Units.degreesToRadians(0);
+
+  // CAMERA 3 POSE (PITCH)
+  public static final double camera4PosePitch = Units.degreesToRadians(-15);
+
+  // CAMERA 3 POSE (YAW)
+  public static final double camera4PoseYaw = Units.degreesToRadians(-28.6588);
+
   public static final VisionConstants cam1Constants =
       new VisionConstants(
           camera1Name,
@@ -170,5 +210,19 @@ public class RealConstants {
           new Transform3d(
               new Translation3d(camera2PoseX, camera2PoseY, camera2PoseZ),
               new Rotation3d(camera2PoseRoll, camera2PosePitch, camera2PoseYaw)),
+          1.0);
+  public static final VisionConstants cam3Constants =
+      new VisionConstants(
+          camera3Name,
+          new Transform3d(
+              new Translation3d(camera3PoseX, camera3PoseY, camera3PoseZ),
+              new Rotation3d(camera3PoseRoll, camera3PosePitch, camera3PoseYaw)),
+          1.0);
+  public static final VisionConstants cam4Constants =
+      new VisionConstants(
+          camera4Name,
+          new Transform3d(
+              new Translation3d(camera4PoseX, camera4PoseY, camera4PoseZ),
+              new Rotation3d(camera4PoseRoll, camera4PosePitch, camera4PoseYaw)),
           1.0);
 }

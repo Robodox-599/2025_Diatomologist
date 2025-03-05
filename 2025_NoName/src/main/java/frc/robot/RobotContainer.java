@@ -74,7 +74,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOReal(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOReal(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOReal(RealConstants.cam3Constants, drive::getPose),
+                new VisionIOReal(RealConstants.cam4Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -90,7 +92,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam3Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam4Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -106,7 +110,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam3Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam4Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;

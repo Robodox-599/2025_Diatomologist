@@ -15,7 +15,8 @@ public final class ElevatorConstants {
     INTAKE(5),
     GROUNDINTAKE(6),
     ALGAE_L2(7),
-    ALGAE_L3(8);
+    ALGAE_L3(8),
+    PREP(9);
 
     private final int index;
 
@@ -38,7 +39,8 @@ public final class ElevatorConstants {
     10, // STATION INTAKE
     15, // ALGAE GROUND INTAKE
     15, // ALGAE L2
-    35 // ALGAE L3
+    35, // ALGAE L3
+    10 // PREP
   };
 
   public static final int leaderMotorID = 20;

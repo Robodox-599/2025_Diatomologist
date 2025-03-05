@@ -49,6 +49,7 @@ public class AutoAlignToField {
   }
 
   public static Command alignToNearestLeftReef(Drive drive) {
+
     var driveToPose =
         new DriveToPose(
             drive,

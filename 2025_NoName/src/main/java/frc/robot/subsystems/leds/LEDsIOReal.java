@@ -38,32 +38,53 @@ public class LEDsIOReal extends LEDsIO {
   @Override
   public void enableStationIntake() {
     state = LEDAnim.StationIntake;
+    // white
     candleReal.animate(
         new StrobeAnimation(255, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableAlgaeIntake() {
+    // green ?????
     state = LEDAnim.AlgaeIntake;
     candleReal.animate(
         new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
+  public void enableIntaked() {
+    state = LEDAnim.AlgaeIntake;
+    // red
+    candleReal.animate(
+        new StrobeAnimation(255,0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+  }
+
+  @Override
   public void enableNoState() {
     state = LEDAnim.NoState;
+    // no color
     candleReal.setLEDs(0, 0, 0);
   }
 
   @Override
   public void enableScored() {
+    // dark green ?????
     state = LEDAnim.Scored;
     candleReal.animate(
         new StrobeAnimation(255, 91, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
+  public void enableScoring() {
+    // neon teal
+    state = LEDAnim.Scored;
+    candleReal.animate(
+        new StrobeAnimation(7, 242, 241, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+  }
+
+  @Override
   public void enableClimb() {
+    // blue
     state = LEDAnim.Climb;
     candleReal.animate(
         new ColorFlowAnimation(
@@ -73,6 +94,7 @@ public class LEDsIOReal extends LEDsIO {
 
   @Override
   public void enableAutoAlign() {
+    //rainbow
     state = LEDAnim.AutoAlign;
     candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
   }
@@ -80,6 +102,7 @@ public class LEDsIOReal extends LEDsIO {
   @Override
   public void enableReadyToScore() {
     state = LEDAnim.ReadyToScore;
+    // hot pink
     candleReal.animate(
         new StrobeAnimation(255, 0, 127, 0, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }

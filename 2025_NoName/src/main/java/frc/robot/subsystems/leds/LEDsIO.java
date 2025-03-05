@@ -20,5 +20,9 @@ public abstract class LEDsIO {
 
   public void enableScored() {}
 
+  public void enableScoring() {}
+
+  public void enableIntaked() {}
+
   public void enableAutoAlign() {}
 }

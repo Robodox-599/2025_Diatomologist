@@ -34,11 +34,11 @@ public class LEDs extends SubsystemBase {
     return runOnce(() -> io.enableScored());
   }
 
-  public Command runScoring(){
+  public Command runScoring() {
     return runOnce(() -> io.enableScoring());
   }
 
-  public Command runIntaked(){
+  public Command runIntaked() {
     return runOnce(() -> io.enableIntaked());
   }
 

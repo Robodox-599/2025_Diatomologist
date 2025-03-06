@@ -56,7 +56,7 @@ public class LEDsIOReal extends LEDsIO {
     state = LEDAnim.AlgaeIntake;
     // red
     candleReal.animate(
-        new StrobeAnimation(255,0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(255, 0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
@@ -94,7 +94,7 @@ public class LEDsIOReal extends LEDsIO {
 
   @Override
   public void enableAutoAlign() {
-    //rainbow
+    // rainbow
     state = LEDAnim.AutoAlign;
     candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
   }

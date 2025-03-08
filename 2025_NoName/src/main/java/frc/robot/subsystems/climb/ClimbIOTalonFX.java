@@ -14,7 +14,6 @@ import frc.robot.util.SubsystemUtil;
 public class ClimbIOTalonFX extends ClimbIO {
 
   private final TalonFX leaderMotor;
-  private final TalonFX followerMotor;
   private final DigitalInput limitSwitch;
   private ClimbConstants.ClimbStates currentState = ClimbConstants.ClimbStates.CLIMBREADY;
 
@@ -22,13 +21,10 @@ public class ClimbIOTalonFX extends ClimbIO {
 
   public ClimbIOTalonFX() {
     leaderMotor = new TalonFX(ClimbConstants.leaderMotorID, ClimbConstants.leaderMotorCANbus);
-    followerMotor = new TalonFX(ClimbConstants.followerMotorID, ClimbConstants.followerMotorCANbus);
     bangBangController = new BangBangController();
 
     /*  This tells the motor encoder where 0 inches is*/
     limitSwitch = new DigitalInput(ClimbConstants.limitSwitchDioPort);
-
-    followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -47,7 +43,6 @@ public class ClimbIOTalonFX extends ClimbIO {
     PhoenixUtil.tryUntilOk(5, () -> leaderMotor.getConfigurator().apply(config, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> leaderMotor.setPosition(0.0, 0.25));
     leaderMotor.optimizeBusUtilization();
-    followerMotor.optimizeBusUtilization();
   }
 
   @Override
@@ -73,11 +68,6 @@ public class ClimbIOTalonFX extends ClimbIO {
     DogLog.log("ClimbLeader/StatorCurrentAmps", super.currentAmps);
     DogLog.log("ClimbLeader/AppliedVoltage", super.appliedVolts);
     DogLog.log("ClimbLeader/TempCelcius", super.tempCelsius);
-
-    // Follower motor
-    DogLog.log("ClimbFollower/StatorCurrentAmps", super.currentAmps);
-    DogLog.log("ClimbFollower/AppliedVoltage", super.appliedVolts);
-    DogLog.log("ClimbFollower/TempCelcius", super.tempCelsius);
 
     /* Log all super */
     DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);

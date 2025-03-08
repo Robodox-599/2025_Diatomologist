@@ -6,6 +6,7 @@ public class LEDsConstants {
     AlgaeIntake,
     NoState,
     Scored,
+    Scoring,
     Climb,
     AutoAlign,
     ReadyToScore;

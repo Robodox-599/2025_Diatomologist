@@ -15,10 +15,10 @@ public class SubsystemUtil {
   }
 
   public static double climbStateToHeight(ClimbConstants.ClimbStates state) {
-    return convertToTicks(ClimbConstants.setpoint[state.getIndex()]);
+    return (ClimbConstants.setpoint[state.getIndex()]);
   }
 
   public static double wristStateToSetpoint(WristConstants.WristStates state) {
-    return convertToTicks(WristConstants.setpoints[state.getIndex()]);
+    return (WristConstants.setpoints[state.getIndex()]);
   }
 }

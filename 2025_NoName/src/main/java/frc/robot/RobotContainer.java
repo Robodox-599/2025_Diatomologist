@@ -11,9 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import frc.robot.commands.SuperstructureCommands;
-import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbIOSim;
-import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -47,7 +44,6 @@ public class RobotContainer {
   private Elevator elevator;
   private Wrist wrist;
   private Rollers rollers;
-  private Climb climb;
   private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
@@ -67,7 +63,6 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
         rollers = new Rollers(new RollersIOTalonFX());
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
-        climb = new Climb(new ClimbIOTalonFX());
         drive = new Drive(new GyroIOPigeon2(), Drive.createTalonFXModules());
         LEDs = new LEDs(new LEDsIOReal());
         vision =
@@ -85,7 +80,6 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
         rollers = new Rollers(new RollersIOSim());
         wrist = new Wrist(new WristIOSim(), safetyChecker);
-        climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         LEDs = new LEDs(new LEDsIOSim());
         vision =
@@ -103,7 +97,6 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
         rollers = new Rollers(new RollersIOSim());
         wrist = new Wrist(new WristIOSim(), safetyChecker);
-        climb = new Climb(new ClimbIOSim());
         drive = new Drive(new GyroIO() {}, Drive.createSimModules());
         LEDs = new LEDs(new LEDsIOSim());
         vision =

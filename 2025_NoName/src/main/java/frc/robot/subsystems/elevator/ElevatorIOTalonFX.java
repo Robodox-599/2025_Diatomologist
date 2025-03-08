@@ -1,13 +1,21 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
@@ -18,6 +26,11 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   private final DigitalInput limitSwitch;
   private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
   private final MotionMagicVoltage motionMagicRequest;
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVolts;
+  private final StatusSignal<Current> current;
+  private final StatusSignal<Temperature> temperature;
 
   public ElevatorIOTalonFX() {
     leaderMotor = new TalonFX(ElevatorConstants.leaderMotorID, ElevatorConstants.leaderMotorCANbus);
@@ -45,25 +58,30 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.statorCurrentLimitAmps;
     config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.supplyCurrentLimitAmps;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    PhoenixUtil.tryUntilOk(5, () -> leaderMotor.getConfigurator().apply(config, 0.25));
-    PhoenixUtil.tryUntilOk(5, () -> leaderMotor.setPosition(0.0, 0.25));
+    PhoenixUtil.tryUntilOk(10, () -> leaderMotor.getConfigurator().apply(config, 1));
+    PhoenixUtil.tryUntilOk(10, () -> followerMotor.getConfigurator().apply(config, 1));
 
-    enableBrakeMode(true);
     leaderMotor.optimizeBusUtilization();
     followerMotor.optimizeBusUtilization();
+
+    position = leaderMotor.getPosition();
+    velocity = leaderMotor.getVelocity();
+    appliedVolts = leaderMotor.getMotorVoltage();
+    current = leaderMotor.getStatorCurrent();
+    temperature = leaderMotor.getDeviceTemp();
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, velocity, temperature, position, current, appliedVolts);
   }
 
   @Override
   public void updateInputs() {
-    super.positionInches =
-        leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerRev;
-    super.velocityInchesPerSec =
-        leaderMotor.getVelocity().getValueAsDouble() * ElevatorConstants.inchesPerRev;
-    super.appliedVolts = leaderMotor.getMotorVoltage().getValueAsDouble();
-    super.currentAmps = leaderMotor.getSupplyCurrent().getValueAsDouble();
+    super.positionInches = position.getValueAsDouble() * ElevatorConstants.inchesPerRev;
+    super.velocityInchesPerSec = velocity.getValueAsDouble() * ElevatorConstants.inchesPerRev;
+    super.appliedVolts = appliedVolts.getValueAsDouble();
+    super.currentAmps = current.getValueAsDouble();
     super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerRev;
-    super.tempCelsius = leaderMotor.getDeviceTemp().getValueAsDouble();
     super.state = currentState;
 
     /* Determines if the elevator is at a setpoint */

@@ -19,8 +19,10 @@ public class RollersConstants {
     }
   }
 
-  public static final int rollersMotorID = 0;
+  public static final int rollersMotorID = 16;
+  public static final int CANrangeId = 18;
   public static final String rollersMotorCANBus = "rio";
+  public static final String CANrangeCANbus = "rio";
 
   public static final boolean EnableCurrentLimit = true;
   public static final int ContinousCurrentLimit = 50;
@@ -47,8 +49,6 @@ public class RollersConstants {
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;
 
-  public static final int CANrangeId = 0;
-  public static final String CANrangeCANbus = "rio";
   // This value will be the distance the canrage reads without coral in it, use inches.
   public static final double noCoralDistance = 11;
   // This value will be

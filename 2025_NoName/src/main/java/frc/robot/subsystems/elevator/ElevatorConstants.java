@@ -43,13 +43,13 @@ public final class ElevatorConstants {
     10 // PREP
   };
 
-  public static final int leaderMotorID = 20;
+  public static final int leaderMotorID = 13;
   public static final String leaderMotorCANbus = "rio";
-  public static final int followerMotorID = 17;
+  public static final int followerMotorID = 14;
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
-  public static final int limitSwitchDioPort = 0;
+  public static final int limitSwitchDioPort = 10;
   public static final double gearRatio = 5.4;
   public static final double drumCircumferenceInches = Math.PI * 2.0;
   public static final double inchesPerRev =

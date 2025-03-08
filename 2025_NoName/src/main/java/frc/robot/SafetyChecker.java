@@ -6,7 +6,7 @@ public class SafetyChecker {
       33.74; // maximum height that the endefector/elevator can be at so the endefector can swing
   // through the elevator, check cad for this
   private final double endefectorBehindElevatorDegrees =
-      76.0; // the degrees threshold that the endefector is behind the elevator, found in cad
+      0.719; // the degrees threshold that the endefector is behind the elevator, found in cad
 
   public void setCurrentElevatorInches(
       double

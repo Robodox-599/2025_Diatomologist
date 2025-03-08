@@ -1,14 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
@@ -173,56 +171,62 @@ public class SuperstructureCommands {
 
   public void configureBindings() {
     //                               DRIVER BINDS
-    drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
-            () ->
-                new ChassisSpeeds(
-                    -joystickDeadbandApply(driver.getLeftY())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getLeftX())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
-            driver.rightTrigger(),
-            () -> operator.povUp().getAsBoolean(),
-            () -> operator.povDown().getAsBoolean()));
     // drive.setDefaultCommand(
-    //     drive.runVoltageTeleopFieldRelative(
+    //     drive.runVelocityTeleopFieldRelative(
     //         () ->
     //             new ChassisSpeeds(
-    //                 joystickDeadbandApply(driver.getLeftY())
+    //                 -joystickDeadbandApply(driver.getLeftY())
     //                     * RealConstants.MAX_LINEAR_SPEED
     //                     * 0.85,
-    //                 joystickDeadbandApply(driver.getLeftX())
+    //                 -joystickDeadbandApply(driver.getLeftX())
     //                     * RealConstants.MAX_LINEAR_SPEED
     //                     * 0.85,
     //                 -joystickDeadbandApply(driver.getRightX()) *
-    // RealConstants.MAX_ANGULAR_SPEED)));
-    // ZERO GYRO
-    driver.y().onTrue(drive.zeroGyroCommand());
-    drive.zeroGyroCommand().runsWhenDisabled();
-    // STATION INTAKE COMMAND
-    // driver.rightTrigger().onTrue(stationIntake());
-    // ALGAE INTAKE COMMAND
-    // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
-    // AUTO ALIGN
-    driver
-        .povLeft()
-        .whileTrue(
-            Commands.sequence(
-                Commands.parallel(
-                    elevator.moveToState(ElevatorStates.PREP),
-                    wrist.moveToState(WristStates.SCORING)),
-                AutoAlignToField.alignToNearestLeftReef(drive)));
-    driver
-        .povRight()
-        .whileTrue(
-            Commands.sequence(
-                Commands.parallel(
-                    elevator.moveToState(ElevatorStates.PREP),
-                    wrist.moveToState(WristStates.SCORING)),
-                AutoAlignToField.alignToNearestRightReef(drive)));
+    // RealConstants.MAX_ANGULAR_SPEED),
+    //         driver.rightTrigger(),
+    //         () -> operator.povUp().getAsBoolean(),
+    //         () -> operator.povDown().getAsBoolean()));
+    // // drive.setDefaultCommand(
+    // //     drive.runVoltageTeleopFieldRelative(
+    // //         () ->
+    // //             new ChassisSpeeds(
+    // //                 joystickDeadbandApply(driver.getLeftY())
+    // //                     * RealConstants.MAX_LINEAR_SPEED
+    // //                     * 0.85,
+    // //                 joystickDeadbandApply(driver.getLeftX())
+    // //                     * RealConstants.MAX_LINEAR_SPEED
+    // //                     * 0.85,
+    // //                 -joystickDeadbandApply(driver.getRightX()) *
+    // // RealConstants.MAX_ANGULAR_SPEED)));
+    // // ZERO GYRO
+    // driver.y().onTrue(drive.zeroGyroCommand());
+    // drive.zeroGyroCommand().runsWhenDisabled();
+    // // STATION INTAKE COMMAND
+    // // driver.rightTrigger().onTrue(stationIntake());
+    // // ALGAE INTAKE COMMAND
+    // // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
+    // // AUTO ALIGN
+    // driver.a().onTrue(wrist.moveToState(WristStates.STATIONINTAKE));
+    // driver
+    //     .povLeft()
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             Commands.parallel(
+    //                 elevator.moveToState(ElevatorStates.PREP),
+    //                 wrist.moveToState(WristStates.SCORING)),
+    //             AutoAlignToField.alignToNearestLeftReef(drive)));
+    // driver
+    //     .povRight()
+    //     .whileTrue(
+    //         Commands.sequence(
+    //             Commands.parallel(
+    //                 elevator.moveToState(ElevatorStates.PREP),
+    //                 wrist.moveToState(WristStates.SCORING)),
+    //             AutoAlignToField.alignToNearestRightReef(drive)));
+    driver.x().onTrue(wrist.moveToState(WristStates.STOW));
+    driver.a().onTrue(wrist.moveToState(WristStates.SCORING));
+    driver.b().onTrue(wrist.moveToState(WristStates.GROUNDINTAKE));
+
     // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 

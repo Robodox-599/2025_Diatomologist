@@ -2,6 +2,8 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.*;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -11,6 +13,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.PhoenixUtil;
 
 public class RollersIOTalonFX extends RollersIO {
 
@@ -19,6 +28,12 @@ public class RollersIOTalonFX extends RollersIO {
   private TorqueCurrentFOC torqueCurrent;
   private CANrange CANrange;
   Debouncer CANrangeDebouncer = new Debouncer(0.1);
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVolts;
+  private final StatusSignal<Current> current;
+  private final StatusSignal<Temperature> temperature;
+  private final StatusSignal<Distance> distance;
 
   private double desiredVelocity;
 
@@ -40,18 +55,26 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
+    PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
-    rollersMotor.getConfigurator().apply(rollersConfig);
     CANrange.getConfigurator().apply(configs);
+    position = rollersMotor.getPosition();
+    velocity = rollersMotor.getVelocity();
+    appliedVolts = rollersMotor.getMotorVoltage();
+    current = rollersMotor.getStatorCurrent();
+    temperature = rollersMotor.getDeviceTemp();
+    distance = CANrange.getDistance();
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0, velocity, distance, temperature, position, current, appliedVolts);
   }
 
   @Override
   public void updateInputs() {
-    super.appliedVolts = rollersMotor.getMotorVoltage().getValueAsDouble();
-    super.currentAmps = rollersMotor.getSupplyCurrent().getValueAsDouble();
-    super.velocity = rollersMotor.getVelocity().getValueAsDouble();
-    super.tempCelsius = rollersMotor.getDeviceTemp().getValueAsDouble();
-    super.canrangeDistance = CANrange.getDistance().getValueAsDouble() - noCoralDistance;
+    super.appliedVolts = appliedVolts.getValueAsDouble();
+    super.currentAmps = current.getValueAsDouble();
+    super.velocity = velocity.getValueAsDouble();
+    super.tempCelsius = temperature.getValueAsDouble();
+    super.canrangeDistance = distance.getValueAsDouble() - noCoralDistance;
     super.desiredVelocity = desiredVelocity;
     if (super.currentAmps >= 10) {
       super.isAlgaeDetected = true;

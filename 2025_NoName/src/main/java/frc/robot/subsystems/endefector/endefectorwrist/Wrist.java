@@ -21,13 +21,10 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command moveToState(WristConstants.WristStates state) {
-    return Commands.repeatingSequence(
-            this.runOnce(
-                    () -> {
-                      io.setState(state);
-                    })
-                .onlyIf(
-                    () -> safetyChecker.isSafeWrist(WristConstants.setpoints[state.getIndex()])))
+    return this.run(
+            () -> {
+              io.setState(state);
+            })
         .until(this::isAtTargetPosition);
   }
 

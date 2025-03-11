@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.units.Units;
 import frc.robot.Constants;
 
 public final class ElevatorConstants {
@@ -31,16 +30,16 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    0.0, // L1
-    20.0, // L2
-    40.0, // L3
-    60.0, // L4
+    14, // L1
+    25, // L2
+    43, // L3
+    61.25, // L4
     5.5, // STOW
-    10, // STATION INTAKE
-    15, // ALGAE GROUND INTAKE
-    15, // ALGAE L2
-    35, // ALGAE L3
-    10 // PREP
+    0, // STATION INTAKE
+    0, // ALGAE GROUND INTAKE
+    19.55, // ALGAE L2
+    39.55, // ALGAE L3
+    12.0 // PREP
   };
 
   public static final int leaderMotorID = 13;
@@ -51,10 +50,8 @@ public final class ElevatorConstants {
 
   public static final int limitSwitchDioPort = 10;
   public static final double gearRatio = 5.4;
-  public static final double drumCircumferenceInches = Math.PI * 2.0;
   public static final double inchesPerRev =
-      drumCircumferenceInches / gearRatio; // reduction so dividing by gear ratio
-  public static final double drumRadiusMeters = Units.Inches.of(2).magnitude();
+      1.435406698564593; // reduction so dividing by gear ratio
 
   /* Position Setpoints (in inches) */
   public static final double elevatorLowerLimit = 0.0;
@@ -69,10 +66,10 @@ public final class ElevatorConstants {
           .kKrakenX60Foc
           .kV; // there is no sensor to mechanism ratio so kV is the same as the motor's kV
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
-  public static final double kS = 0.0;
-  public static final double kG = 0.0;
+  public static final double kS = 0.12;
+  public static final double kG = 0.4;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
-  public static final double maxAccelerationRotationsPerSecSQ = 120.0;
+  public static final double maxAccelerationRotationsPerSecSQ = 1.25 * maxVelocityRotsPerSec;
 
   // Add these for better PID tuning
   public static final double simkP = 8;
@@ -81,10 +78,9 @@ public final class ElevatorConstants {
   public static final double simkF = 0.0;
 
   public static final double supplyCurrentLimitAmps = 40;
-  public static final double statorCurrentLimitAmps = 0.1;
+  public static final double statorCurrentLimitAmps = 90;
 
   public static final double positionToleranceInches = 0.5;
-  public static final double velocityToleranceInchesPerSecond = 0.5;
 
   public static final double elevatorMOI = 0.015;
 }

@@ -30,27 +30,6 @@ public class Rollers extends SubsystemBase {
         });
   }
 
-  public Command moveToState(RollersConstants.EndefectorRollerStates state) {
-    switch (state) {
-      case INTAKE:
-        return runRollersIntake();
-      case SCORE:
-        return runRollerScore();
-      case ALGAEINTAKE:
-        return runAlgaeIntake();
-      case STOP:
-        return Commands.runOnce(
-            () -> {
-              io.setState(state);
-            });
-      default:
-        return Commands.runOnce(
-            () -> {
-              io.setState(state);
-            });
-    }
-  }
-
   public Command stop() {
     return Commands.run(
         () -> {
@@ -85,49 +64,39 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command runRollerScore() {
-    if (io instanceof RollersIOSim) {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.SCORE);
-                  })
-              .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
-    } else {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.SCORE);
-                  })
-              .until(io::isDetected),
-          Commands.runOnce(
-              () -> {
-                io.setState(EndefectorRollerStates.STOP);
-              }));
-    }
+    // if (io instanceof RollersIOSim) {
+    //   return Commands.sequence(
+    //       Commands.run(
+    //               () -> {
+    //                 io.setState(EndefectorRollerStates.SCORE);
+    //               })
+    //           .withTimeout(1),
+    //       Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
+    // } else {
+    return Commands.sequence(
+        Commands.run(
+                () -> {
+                  io.setState(EndefectorRollerStates.SCORE);
+                })
+            .until(io::isDetected),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
+    // }
   }
 
   public Command runRollersIntake() {
-    if (io instanceof RollersIOSim) {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.INTAKE);
-                  })
-              .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
-    } else {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.INTAKE);
-                  })
-              .until(io::isDetected),
-          Commands.runOnce(
-              () -> {
-                io.setState(EndefectorRollerStates.STOP);
-              }));
-    }
+    return Commands.sequence(
+        Commands.run(
+                () -> {
+                  io.setState(EndefectorRollerStates.INTAKE);
+                })
+            .until(io::isDetected),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
   }
 
   public void setBrake(boolean brake) {

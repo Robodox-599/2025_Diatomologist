@@ -10,7 +10,6 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.leds.LEDs;
@@ -44,34 +43,30 @@ public class SuperstructureCommands {
     this.driver = driver;
   }
 
-  public SuperstructureCommands(
-      Drive drive, CommandXboxController driver, CommandXboxController operator) {
-    this.drive = drive;
-    this.operator = operator;
-    this.driver = driver;
-    this.elevator = null;
-    this.wrist = null;
-    this.rollers = null;
-    this.LEDs = null;
-  }
-
   public Command stowAll() {
     return Commands.sequence(
         Commands.parallel(
             elevator.moveToState(ElevatorStates.STOW),
             wrist.moveToState(WristStates.STOW),
-            rollers.moveToState(EndefectorRollerStates.STOP),
+            rollers.stop(),
             LEDs.runNoState()),
+        rumbleControllers());
+  }
+
+  public Command scoring(ElevatorStates state) {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.SCORING),
+        elevator.moveToState(state),
+        LEDs.runReadyToScore().withTimeout(0.1),
         rumbleControllers());
   }
 
   public Command stationIntake() {
     return Commands.sequence(
-        Commands.parallel(
-            elevator.moveToState(ElevatorStates.INTAKE),
-            wrist.moveToState(WristStates.STATIONINTAKE),
-            rollers.moveToState(EndefectorRollerStates.INTAKE),
-            LEDs.runStationIntake()),
+        elevator.moveToState(ElevatorStates.INTAKE),
+        wrist.moveToState(WristStates.STATIONINTAKE),
+        LEDs.runStationIntake().withTimeout(0.1),
+        rollers.runRollersIntake(),
         rumbleControllers());
   }
 
@@ -114,7 +109,7 @@ public class SuperstructureCommands {
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.ALGAE_L3),
                   wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.runAlgaeIntake(),
                   LEDs.runAlgaeIntake()),
               rumbleControllers());
     } else if (ElevatorStates.ALGAE_L2 == state) {
@@ -123,7 +118,7 @@ public class SuperstructureCommands {
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.ALGAE_L2),
                   wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.runAlgaeIntake(),
                   LEDs.runAlgaeIntake()),
               rumbleControllers());
     } else if (ElevatorStates.GROUNDINTAKE == state) {
@@ -132,7 +127,7 @@ public class SuperstructureCommands {
               Commands.parallel(
                   elevator.moveToState(ElevatorStates.GROUNDINTAKE),
                   wrist.moveToState(WristStates.GROUNDINTAKE),
-                  rollers.moveToState(EndefectorRollerStates.INTAKE),
+                  rollers.runAlgaeIntake(),
                   LEDs.runAlgaeIntake()),
               rumbleControllers());
     } else {
@@ -140,14 +135,6 @@ public class SuperstructureCommands {
     }
 
     return algaeIntakeCommand;
-  }
-
-  public Command scoring(ElevatorStates state) {
-    return Commands.sequence(
-        Commands.parallel(elevator.moveToState(state), wrist.moveToState(WristStates.SCORING)),
-        LEDs.runReadyToScore(),
-        rollers.moveToState(EndefectorRollerStates.SCORE),
-        rumbleControllers());
   }
 
   // public Command climb() {
@@ -166,7 +153,8 @@ public class SuperstructureCommands {
         .alongWith(
             new StartEndCommand(
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
-                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)));
+                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
+        .withTimeout(0.2);
   }
 
   public void configureBindings() {
@@ -223,24 +211,25 @@ public class SuperstructureCommands {
     //                 elevator.moveToState(ElevatorStates.PREP),
     //                 wrist.moveToState(WristStates.SCORING)),
     //             AutoAlignToField.alignToNearestRightReef(drive)));
-    driver.x().onTrue(wrist.moveToState(WristStates.STOW));
-    driver.a().onTrue(wrist.moveToState(WristStates.SCORING));
-    driver.b().onTrue(wrist.moveToState(WristStates.GROUNDINTAKE));
+    // driver.x().onTrue(wrist.moveToState(WristStates.STOW));
+    // driver.a().onTrue(Commands.sequence(wrist.moveToState(WristStates.SCORING)));
 
     // CLIMB
     // driver.povUp().whileTrue(climb()).onFalse(stowAll());
 
     // OPERATOR BINDS
     // SCORE L4
-    // operator.y().onTrue(scoring(ElevatorStates.L4));
+    driver.y().whileTrue(scoring(ElevatorStates.L4));
     // SCORE L3
-    // operator.b().onTrue(scoring(ElevatorStates.L3));
+    driver.b().whileTrue(scoring(ElevatorStates.L3));
     // SCORE L2
-    // operator.a().onTrue(scoring(ElevatorStates.L2));
+    driver.a().whileTrue(scoring(ElevatorStates.L2));
     // SCORE L1
-    // operator.x().onTrue(scoring(ElevatorStates.L1));
+    driver.x().whileTrue(scoring(ElevatorStates.L1));
     // STATION INTAKE
-    // operator.rightBumper().onTrue(stationIntake());
+    driver.rightBumper().whileTrue(stationIntake());
+    driver.leftBumper().whileTrue(rollers.runRollerScore());
+    driver.leftBumper().onFalse(rollers.stop());
     // ALGAE L3 INTAKE
     // operator.povUp().onTrue(algaeL3Intake());
     // ALGAE L2 INTAKE

@@ -77,6 +77,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
   @Override
   public void updateInputs() {
+    BaseStatusSignal.refreshAll(velocity, temperature, position, current, appliedVolts);
     super.positionInches = position.getValueAsDouble() * ElevatorConstants.inchesPerRev;
     super.velocityInchesPerSec = velocity.getValueAsDouble() * ElevatorConstants.inchesPerRev;
     super.appliedVolts = appliedVolts.getValueAsDouble();
@@ -86,10 +87,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     /* Determines if the elevator is at a setpoint */
     double positionError = Math.abs(super.targetPositionInches - super.positionInches);
-    double velocityError = Math.abs(super.velocityInchesPerSec);
-    super.atSetpoint =
-        positionError < ElevatorConstants.positionToleranceInches
-            && velocityError < ElevatorConstants.velocityToleranceInchesPerSecond;
+    super.atSetpoint = positionError < ElevatorConstants.positionToleranceInches;
 
     super.limitSwitchValue = limitSwitch.get();
     /*Leader motor */
@@ -151,6 +149,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
   @Override
   public double getPosition() {
-    return leaderMotor.getPosition().getValueAsDouble();
+    return leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerRev;
   }
 }

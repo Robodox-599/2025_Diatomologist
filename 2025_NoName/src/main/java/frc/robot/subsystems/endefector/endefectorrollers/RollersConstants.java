@@ -44,7 +44,7 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersScoreSpeed = 0.2;
+  public static final double rollersScoreSpeed = -0.085;
 
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;

@@ -12,7 +12,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -27,7 +26,7 @@ public class RollersIOTalonFX extends RollersIO {
   TalonFXConfiguration rollersConfig;
   private TorqueCurrentFOC torqueCurrent;
   private CANrange CANrange;
-  Debouncer CANrangeDebouncer = new Debouncer(0.1);
+  Debouncer CANrangeDebouncer = new Debouncer(0.01);
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -89,6 +88,7 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
+    DogLog.log("Rollers/CoralDetected", this.isDetected());
     DogLog.log("Rollers/CANRangeDistance", super.canrangeDistance);
   }
 
@@ -126,7 +126,7 @@ public class RollersIOTalonFX extends RollersIO {
         setSpeed(0);
         break;
       case SCORE:
-        setSpeed(rollersScoreSpeed);
+        setSpeed(-rollersScoreSpeed * 3);
         break;
       case INTAKE:
         setSpeed(-rollersScoreSpeed);
@@ -141,8 +141,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
-    double rangeDistance = Units.metersToInches(CANrange.getDistance().getValueAsDouble());
-    return CANrangeDebouncer.calculate(rangeDistance <= RollersConstants.detectionDistance);
+    return (!CANrange.getIsDetected().getValue());
   }
 
   @Override

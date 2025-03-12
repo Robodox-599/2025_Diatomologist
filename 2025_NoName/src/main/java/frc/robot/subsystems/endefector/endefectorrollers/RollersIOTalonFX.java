@@ -4,7 +4,6 @@ import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANrange;
@@ -46,10 +45,6 @@ public class RollersIOTalonFX extends RollersIO {
     m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreak2Port);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
-    this.CANrange = new CANrange(CANrangeId, CANrangeCANbus);
-    CANrangeConfiguration configs = new CANrangeConfiguration();
-    beamBreakTimer.start();
-    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreak2Port);
 
     rollersConfig.Slot0.kP = realP;
     rollersConfig.Slot0.kI = realI;
@@ -62,12 +57,12 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    configs.ProximityParams.ProximityHysteresis = 0.07;
-    configs.ProximityParams.ProximityThreshold = 0.2;
+    // configs.ProximityParams.ProximityHysteresis = 0.07;
+    // configs.ProximityParams.ProximityThreshold = 0.2;
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
-    CANrange.getConfigurator().apply(configs);
+    // CANrange.getConfigurator().apply(configs);
     position = rollersMotor.getPosition();
     velocity = rollersMotor.getVelocity();
     appliedVolts = rollersMotor.getMotorVoltage();
@@ -157,6 +152,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
+    DogLog.log("Rollers/isDetected", !(beamBreakTimer.get() >= 0.1));
     return !(beamBreakTimer.get() >= 0.1);
   }
 

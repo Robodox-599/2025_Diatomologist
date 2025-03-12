@@ -91,14 +91,14 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     super.limitSwitchValue = limitSwitch.get();
     /*Leader motor */
-    DogLog.log("ElevatorLeader/StatorCurrentAmps", super.currentAmps);
-    DogLog.log("ElevatorLeader/AppliedVoltage", super.appliedVolts);
-    DogLog.log("ElevatorLeader/TempCelcius", super.tempCelsius);
+    DogLog.log("Elevator/ElevatorLeader/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("Elevator/ElevatorLeader/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Elevator/ElevatorLeader/TempCelcius", super.tempCelsius);
 
     // Follower motor
-    DogLog.log("ElevatorFollower/StatorCurrentAmps", super.currentAmps);
-    DogLog.log("ElevatorFollower/AppliedVoltage", super.appliedVolts);
-    DogLog.log("ElevatorFollower/TempCelcius", super.tempCelsius);
+    DogLog.log("Elevator/ElevatorFollower/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("Elevator/ElevatorFollower/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Elevator/ElevatorFollower/TempCelcius", super.tempCelsius);
 
     /* Log all super */
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
@@ -149,6 +149,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
   @Override
   public double getPosition() {
-    return leaderMotor.getPosition().getValueAsDouble() * ElevatorConstants.inchesPerRev;
+    return super.positionInches;
   }
 }

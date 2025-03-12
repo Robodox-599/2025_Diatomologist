@@ -53,10 +53,50 @@ public class SuperstructureCommands {
         rumbleControllers());
   }
 
-  public Command scoring(ElevatorStates state) {
+  // public Command scoring(ElevatorStates state) {
+  //   return Commands.sequence(
+  //       wrist.moveToState(WristStates.PREPARE),
+  //       elevator.moveToState(state),
+  //       wrist.moveToState(WristStates.SCORING),
+  //       LEDs.runReadyToScore().withTimeout(0.1),
+  //       rollers.runRollerScore(),
+  //       rumbleControllers());
+  // }
+
+  public Command scoringL1() {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
-        elevator.moveToState(state),
+        elevator.moveToState(ElevatorStates.L1),
+        wrist.moveToState(WristStates.SCORING),
+        LEDs.runReadyToScore().withTimeout(0.1),
+        rollers.runRollerScore(),
+        rumbleControllers());
+  }
+
+  public Command scoringL2() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L2),
+        wrist.moveToState(WristStates.SCORING),
+        LEDs.runReadyToScore().withTimeout(0.1),
+        rollers.runRollerScore(),
+        rumbleControllers());
+  }
+
+  public Command scoringL3() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L3),
+        wrist.moveToState(WristStates.SCORING),
+        LEDs.runReadyToScore().withTimeout(0.1),
+        rollers.runRollerScore(),
+        rumbleControllers());
+  }
+
+  public Command scoringL4() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L4),
         wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
         rollers.runRollerScore(),
@@ -233,18 +273,18 @@ public class SuperstructureCommands {
 
     // OPERATOR BINDS
     // SCORE L4
-    driver.y().whileTrue(scoring(ElevatorStates.L4));
+    driver.y().onTrue(scoringL1());
     // SCORE L3
-    driver.b().whileTrue(scoring(ElevatorStates.L3));
+    driver.b().onTrue(scoringL2());
     // SCORE L2
-    driver.a().whileTrue(scoring(ElevatorStates.L2));
+    driver.a().onTrue(scoringL3());
     // SCORE L1
-    driver.x().whileTrue(scoring(ElevatorStates.L1));
+    driver.x().onTrue(scoringL4());
     // STATION INTAKE
-    driver.rightTrigger().whileTrue(stationIntake());
+    driver.rightTrigger().onTrue(stationIntake());
     // EJECT CORAL INTAKE
     driver.leftTrigger().whileTrue(ejectCoralIntake());
-
+    driver.leftTrigger().onFalse(rollers.stop());
     // ALGAE L3 INTAKE
     // operator.povUp().onTrue(algaeL3Intake());
     // ALGAE L2 INTAKE

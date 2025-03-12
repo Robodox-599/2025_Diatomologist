@@ -7,7 +7,7 @@ public class WristConstants {
   public static final String wristMotorCANBus = "rio";
   public static final double gearRatio = 58.78;
   public static final double wristMOI = 0.04;
-  public static final double wristPositionTolerance = 0.1; // rotations
+  public static final double wristPositionTolerance = 0.03; // rotations
 
   // current limit stuff
   public static final boolean EnableCurrentLimit = true;
@@ -59,7 +59,7 @@ public class WristConstants {
 
   public static final double[] setpoints = {
     0.52, // stow
-    0.739, // PREPARE
+    0.75, // PREPARE
     0.68, // SCORING
     0.52, // OVERRIDE
     0.827, // reef intake

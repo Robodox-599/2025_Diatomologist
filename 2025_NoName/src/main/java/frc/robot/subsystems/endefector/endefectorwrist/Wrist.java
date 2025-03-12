@@ -1,9 +1,11 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
+import frc.robot.util.SubsystemUtil;
 
 public class Wrist extends SubsystemBase {
   private final WristIO io;
@@ -25,11 +27,16 @@ public class Wrist extends SubsystemBase {
             () -> {
               io.setState(state);
             })
-        .until(this::isAtTargetPosition);
+        .until(() -> isAtTargetPosition(state));
   }
 
-  public boolean isAtTargetPosition() {
-    return io.atSetpoint;
+  public boolean isAtTargetPosition(WristConstants.WristStates state) {
+    DogLog.log(
+        "Wrist/IsAtTargetPosition",
+        (Math.abs(io.getCurrentPosition() - SubsystemUtil.wristStateToSetpoint(state))
+            < WristConstants.wristPositionTolerance));
+    return (Math.abs(io.getCurrentPosition() - SubsystemUtil.wristStateToSetpoint(state))
+        < WristConstants.wristPositionTolerance);
   }
 
   public double getCurrentPosition() {

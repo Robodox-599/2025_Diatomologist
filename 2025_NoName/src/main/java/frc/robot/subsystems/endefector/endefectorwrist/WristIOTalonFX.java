@@ -157,6 +157,6 @@ public class WristIOTalonFX extends WristIO {
 
   @Override
   public double getCurrentPosition() {
-    return this.currentPosition;
+    return super.currentPositionDegrees;
   }
 }

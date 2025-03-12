@@ -6,7 +6,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
@@ -14,7 +13,6 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -26,7 +24,6 @@ public class RollersIOTalonFX extends RollersIO {
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
   private TorqueCurrentFOC torqueCurrent;
-  private CANrange CANrange;
   Debouncer CANrangeDebouncer = new Debouncer(0.03);
   private Timer beamBreakTimer = new Timer();
   private DigitalInput m_BeamBreak2;
@@ -36,13 +33,12 @@ public class RollersIOTalonFX extends RollersIO {
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> current;
   private final StatusSignal<Temperature> temperature;
-  private final StatusSignal<Distance> distance;
 
   private double desiredVelocity;
 
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
-    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreak2Port);
+    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreakPort);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
 
@@ -57,20 +53,15 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    // configs.ProximityParams.ProximityHysteresis = 0.07;
-    // configs.ProximityParams.ProximityThreshold = 0.2;
-
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
-    // CANrange.getConfigurator().apply(configs);
     position = rollersMotor.getPosition();
     velocity = rollersMotor.getVelocity();
     appliedVolts = rollersMotor.getMotorVoltage();
     current = rollersMotor.getStatorCurrent();
     temperature = rollersMotor.getDeviceTemp();
-    distance = CANrange.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, velocity, distance, temperature, position, current, appliedVolts);
+        50.0, velocity, temperature, position, current, appliedVolts);
   }
 
   @Override
@@ -79,7 +70,6 @@ public class RollersIOTalonFX extends RollersIO {
     super.currentAmps = current.getValueAsDouble();
     super.velocity = velocity.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
-    super.canrangeDistance = distance.getValueAsDouble() - noCoralDistance;
     super.desiredVelocity = desiredVelocity;
     if (super.currentAmps >= 10) {
       super.isAlgaeDetected = true;
@@ -152,12 +142,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
-    DogLog.log("Rollers/isDetected", !(beamBreakTimer.get() >= 0.1));
-    return !(beamBreakTimer.get() >= 0.1);
-  }
-
-  @Override
-  public double getCoralDistance() {
-    return CANrange.getDistance().getValueAsDouble();
+    DogLog.log("Rollers/isDetected", (beamBreakTimer.get() >= 0.15));
+    return (beamBreakTimer.get() >= 0.15);
   }
 }

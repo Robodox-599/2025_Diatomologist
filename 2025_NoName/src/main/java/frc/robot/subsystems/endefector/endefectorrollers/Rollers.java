@@ -78,7 +78,7 @@ public class Rollers extends SubsystemBase {
                 () -> {
                   io.setState(EndefectorRollerStates.SCORE);
                 })
-            .until(io::isDetected),
+            .until(() -> !io.isDetected()),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);

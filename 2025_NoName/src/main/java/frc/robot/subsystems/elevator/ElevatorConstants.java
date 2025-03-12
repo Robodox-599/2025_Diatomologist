@@ -30,9 +30,9 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    17, // L1
-    28, // L2
-    46, // L3
+    16, // L1
+    26, // L2
+    43, // L3
     61.25, // L4
     5.5, // STOW
     0, // STATION INTAKE
@@ -48,7 +48,8 @@ public final class ElevatorConstants {
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
-  public static final int limitSwitchDioPort = 0;
+  public static final int limitSwitchDioPort1 = 0;
+  public static final int limitSwitchDioPort2 = 1;
   public static final double gearRatio = 5.4;
   public static final double inchesPerRev =
       1.435406698564593; // reduction so dividing by gear ratio

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
@@ -67,9 +68,7 @@ public class SuperstructureCommands {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.L1),
-        wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
-        rollers.runRollerScore(),
         rumbleControllers());
   }
 
@@ -77,9 +76,7 @@ public class SuperstructureCommands {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.L2),
-        wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
-        rollers.runRollerScore(),
         rumbleControllers());
   }
 
@@ -87,9 +84,7 @@ public class SuperstructureCommands {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.L3),
-        wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
-        rollers.runRollerScore(),
         rumbleControllers());
   }
 
@@ -97,9 +92,7 @@ public class SuperstructureCommands {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.L4),
-        wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
-        rollers.runRollerScore(),
         rumbleControllers());
   }
 
@@ -111,10 +104,12 @@ public class SuperstructureCommands {
         LEDs.runStationIntake().withTimeout(0.1),
         rollers.runRollersIntake(),
         rumbleControllers(),
+        LEDs.runIntaked(),
         prepareToScore(),
         LEDs.runReadyToScore());
   }
 
+  // DANGEROUS (PROBABLY DONT USE)
   public Command ejectCoralIntake() {
     return rollers.runRollersReverse();
   }
@@ -122,6 +117,15 @@ public class SuperstructureCommands {
   public Command prepareToScore() {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE), elevator.moveToState(ElevatorStates.PREP));
+  }
+
+  public Command scoreCoral() {
+    return Commands.sequence(
+        LEDs.runScoring(),
+        wrist.moveToState(WristStates.SCORING),
+        rollers.runRollerScore(),
+        LEDs.runScored(),
+        stationIntake());
   }
 
   public Command algaeL2Intake() {
@@ -273,18 +277,22 @@ public class SuperstructureCommands {
 
     // OPERATOR BINDS
     // SCORE L4
-    driver.y().onTrue(scoringL1());
+    driver.x().onTrue(scoringL1());
     // SCORE L3
-    driver.b().onTrue(scoringL2());
+    driver.a().onTrue(scoringL2());
     // SCORE L2
-    driver.a().onTrue(scoringL3());
+    driver.b().onTrue(scoringL3());
     // SCORE L1
-    driver.x().onTrue(scoringL4());
+    driver.y().onTrue(scoringL4());
     // STATION INTAKE
-    driver.rightTrigger().onTrue(stationIntake());
+    driver.rightBumper().onTrue(stationIntake());
+
+    // SCORE
+    driver.leftBumper().onTrue(scoreCoral());
+
     // EJECT CORAL INTAKE
-    driver.leftTrigger().whileTrue(ejectCoralIntake());
-    driver.leftTrigger().onFalse(rollers.stop());
+    // driver.leftTrigger().whileTrue(ejectCoralIntake());
+    // driver.leftTrigger().onFalse(rollers.stop());
     // ALGAE L3 INTAKE
     // operator.povUp().onTrue(algaeL3Intake());
     // ALGAE L2 INTAKE

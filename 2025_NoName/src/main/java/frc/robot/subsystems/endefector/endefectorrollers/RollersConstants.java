@@ -57,6 +57,9 @@ public class RollersConstants {
   // This value will be
   public static final double detectionDistance = noCoralDistance - 3.5;
 
+  public static final int beakBreak2Port = 0;
+  public static final double beamBreakDebounce = 0.0;
+
   public static final double[] velocitys = {
     0.25, // score
     0.0, // stop

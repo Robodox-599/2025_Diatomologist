@@ -31,6 +31,7 @@ public class RollersIOTalonFX extends RollersIO {
   Debouncer CANrangeDebouncer = new Debouncer(0.03);
   private Timer beamBreakTimer = new Timer();
   private DigitalInput m_BeamBreak2;
+
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -42,6 +43,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
+    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreak2Port);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
     this.CANrange = new CANrange(CANrangeId, CANrangeCANbus);
@@ -74,7 +76,6 @@ public class RollersIOTalonFX extends RollersIO {
     distance = CANrange.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, velocity, distance, temperature, position, current, appliedVolts);
-        
   }
 
   @Override
@@ -90,7 +91,9 @@ public class RollersIOTalonFX extends RollersIO {
     } else {
       super.isAlgaeDetected = false;
     }
-
+    if (m_BeamBreak2.get()) {
+      beamBreakTimer.restart();
+    }
     DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
@@ -154,7 +157,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
-    return !(CANrange.getIsDetected().getValue());
+    return !(beamBreakTimer.get() >= 0.1);
   }
 
   @Override

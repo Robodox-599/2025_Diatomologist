@@ -6,7 +6,8 @@ public class RollersConstants {
     STOP(1),
     INTAKE(2),
     REEFINTAKE(3),
-    ALGAEINTAKE(4);
+    ALGAEINTAKE(4),
+    REVERSE(5);
 
     private final int index;
 
@@ -44,7 +45,9 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersScoreSpeed = -0.085;
+  public static final double rollersScoreSpeed = 0.25;
+  public static final double rollersReverseSpeed = -0.25;
+  public static final double rollersIntakeSpeed = 0.10;
 
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;
@@ -55,10 +58,11 @@ public class RollersConstants {
   public static final double detectionDistance = noCoralDistance - 3.5;
 
   public static final double[] velocitys = {
-    20.0, // score
+    0.25, // score
     0.0, // stop
-    40.0, // intake
-    80,
-    60.0 // reefintake
+    0.05, // intake
+    -0.25, // reef intake
+    -0.25, // algae intake
+    -0.25 // reverse
   };
 }

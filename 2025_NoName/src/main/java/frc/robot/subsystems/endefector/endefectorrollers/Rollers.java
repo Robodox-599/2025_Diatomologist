@@ -99,6 +99,19 @@ public class Rollers extends SubsystemBase {
             }));
   }
 
+  public Command runRollersReverse() {
+    return Commands.sequence(
+        Commands.run(
+                () -> {
+                  io.setState(EndefectorRollerStates.REVERSE);
+                })
+            .until(io::isDetected),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
+  }
+
   public void setBrake(boolean brake) {
     io.setBrake(brake);
   }

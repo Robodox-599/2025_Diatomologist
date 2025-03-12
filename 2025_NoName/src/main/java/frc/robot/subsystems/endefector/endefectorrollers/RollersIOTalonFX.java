@@ -18,6 +18,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.PhoenixUtil;
 
 public class RollersIOTalonFX extends RollersIO {
@@ -26,7 +28,9 @@ public class RollersIOTalonFX extends RollersIO {
   TalonFXConfiguration rollersConfig;
   private TorqueCurrentFOC torqueCurrent;
   private CANrange CANrange;
-  Debouncer CANrangeDebouncer = new Debouncer(0.01);
+  Debouncer CANrangeDebouncer = new Debouncer(0.03);
+  private Timer beamBreakTimer = new Timer();
+  private DigitalInput m_BeamBreak2;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -36,12 +40,14 @@ public class RollersIOTalonFX extends RollersIO {
 
   private double desiredVelocity;
 
-  {
+  public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
     this.CANrange = new CANrange(CANrangeId, CANrangeCANbus);
     CANrangeConfiguration configs = new CANrangeConfiguration();
+    beamBreakTimer.start();
+    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreak2Port);
 
     rollersConfig.Slot0.kP = realP;
     rollersConfig.Slot0.kI = realI;
@@ -54,6 +60,9 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
+    configs.ProximityParams.ProximityHysteresis = 0.07;
+    configs.ProximityParams.ProximityThreshold = 0.2;
+
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
     CANrange.getConfigurator().apply(configs);
@@ -65,6 +74,7 @@ public class RollersIOTalonFX extends RollersIO {
     distance = CANrange.getDistance();
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, velocity, distance, temperature, position, current, appliedVolts);
+        
   }
 
   @Override
@@ -126,13 +136,16 @@ public class RollersIOTalonFX extends RollersIO {
         setSpeed(0);
         break;
       case SCORE:
-        setSpeed(-rollersScoreSpeed * 3);
+        setSpeed(rollersScoreSpeed);
         break;
       case INTAKE:
-        setSpeed(-rollersScoreSpeed);
+        setSpeed(rollersIntakeSpeed);
         break;
       case ALGAEINTAKE:
         rollersMotor.setControl(torqueCurrent);
+      case REVERSE:
+        setSpeed(rollersReverseSpeed);
+        break;
       default:
         setSpeed(0);
         break;
@@ -141,7 +154,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
-    return (!CANrange.getIsDetected().getValue());
+    return !(CANrange.getIsDetected().getValue());
   }
 
   @Override

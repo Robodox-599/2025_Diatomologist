@@ -1,12 +1,12 @@
 package frc.robot.subsystems.elevator;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SafetyChecker;
+import frc.robot.util.SubsystemUtil;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
@@ -23,8 +23,9 @@ public class Elevator extends SubsystemBase {
     safetyChecker.setCurrentElevatorInches(io.getPositionInches());
   }
 
-  public boolean isAtTargetPosition() {
-    return io.atSetpoint;
+  public boolean isAtTargetPosition(ElevatorConstants.ElevatorStates state) {
+    return (Math.abs(io.getPositionInches() - SubsystemUtil.elevatorStateToHeight(state))
+        < ElevatorConstants.positionToleranceInches);
   }
 
   /* Moves the elevator to one of the states */
@@ -45,7 +46,7 @@ public class Elevator extends SubsystemBase {
             () -> {
               io.setState(state);
             })
-        .until(this::isAtTargetPosition);
+        .until(() -> isAtTargetPosition(state));
     // .onlyIf(
     //     () -> safetyChecker.isSafeElevator(SubsystemUtil.elevatorStateToHeight(state))));
   }

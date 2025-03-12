@@ -39,12 +39,13 @@ public class WristConstants {
   // wrist state stuff
   public static enum WristStates {
     STOW(0),
-    SCORING(1),
-    OVERRIDE(2),
-    REEFINTAKE(3),
-    GROUNDINTAKE(4),
-    STATIONINTAKE(5),
-    CLIMB(6);
+    PREPARE(1),
+    SCORING(2),
+    OVERRIDE(3),
+    REEFINTAKE(4),
+    GROUNDINTAKE(5),
+    STATIONINTAKE(6),
+    CLIMB(7);
     private final int index;
 
     WristStates(int index) {
@@ -58,11 +59,12 @@ public class WristConstants {
 
   public static final double[] setpoints = {
     0.52, // stow
-    0.739, // scoring
+    0.739, // PREPARE
+    0.68, // SCORING
     0.52, // OVERRIDE
     0.827, // reef intake
     0.879, // ground intake
     0.64, // station intake
-    0.52 // climb,
+    0.52, // climb,
   };
 }

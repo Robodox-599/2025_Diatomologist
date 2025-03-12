@@ -30,9 +30,9 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    14, // L1
-    25, // L2
-    43, // L3
+    17, // L1
+    28, // L2
+    46, // L3
     61.25, // L4
     5.5, // STOW
     0, // STATION INTAKE
@@ -69,7 +69,7 @@ public final class ElevatorConstants {
   public static final double kS = 0.12;
   public static final double kG = 0.4;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
-  public static final double maxAccelerationRotationsPerSecSQ = 1.25 * maxVelocityRotsPerSec;
+  public static final double maxAccelerationRotationsPerSecSQ = maxVelocityRotsPerSec;
 
   // Add these for better PID tuning
   public static final double simkP = 8;

@@ -55,19 +55,33 @@ public class SuperstructureCommands {
 
   public Command scoring(ElevatorStates state) {
     return Commands.sequence(
-        wrist.moveToState(WristStates.SCORING),
+        wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(state),
+        wrist.moveToState(WristStates.SCORING),
         LEDs.runReadyToScore().withTimeout(0.1),
+        rollers.runRollerScore(),
         rumbleControllers());
   }
 
   public Command stationIntake() {
     return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.INTAKE),
         wrist.moveToState(WristStates.STATIONINTAKE),
         LEDs.runStationIntake().withTimeout(0.1),
         rollers.runRollersIntake(),
-        rumbleControllers());
+        rumbleControllers(),
+        prepareToScore(),
+        LEDs.runReadyToScore());
+  }
+
+  public Command ejectCoralIntake() {
+    return rollers.runRollersReverse();
+  }
+
+  public Command prepareToScore() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE), elevator.moveToState(ElevatorStates.PREP));
   }
 
   public Command algaeL2Intake() {
@@ -174,19 +188,19 @@ public class SuperstructureCommands {
     //         driver.rightTrigger(),
     //         () -> operator.povUp().getAsBoolean(),
     //         () -> operator.povDown().getAsBoolean()));
-    // // drive.setDefaultCommand(
-    // //     drive.runVoltageTeleopFieldRelative(
-    // //         () ->
-    // //             new ChassisSpeeds(
-    // //                 joystickDeadbandApply(driver.getLeftY())
-    // //                     * RealConstants.MAX_LINEAR_SPEED
-    // //                     * 0.85,
-    // //                 joystickDeadbandApply(driver.getLeftX())
-    // //                     * RealConstants.MAX_LINEAR_SPEED
-    // //                     * 0.85,
-    // //                 -joystickDeadbandApply(driver.getRightX()) *
-    // // RealConstants.MAX_ANGULAR_SPEED)));
-    // // ZERO GYRO
+    // drive.setDefaultCommand(
+    //     drive.runVoltageTeleopFieldRelative(
+    //         () ->
+    //             new ChassisSpeeds(
+    //                 joystickDeadbandApply(driver.getLeftY())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 joystickDeadbandApply(driver.getLeftX())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getRightX()) *
+    // RealConstants.MAX_ANGULAR_SPEED)));
+    // // // ZERO GYRO
     // driver.y().onTrue(drive.zeroGyroCommand());
     // drive.zeroGyroCommand().runsWhenDisabled();
     // // STATION INTAKE COMMAND
@@ -227,9 +241,10 @@ public class SuperstructureCommands {
     // SCORE L1
     driver.x().whileTrue(scoring(ElevatorStates.L1));
     // STATION INTAKE
-    driver.rightBumper().whileTrue(stationIntake());
-    driver.leftBumper().whileTrue(rollers.runRollerScore());
-    driver.leftBumper().onFalse(rollers.stop());
+    driver.rightTrigger().whileTrue(stationIntake());
+    // EJECT CORAL INTAKE
+    driver.leftTrigger().whileTrue(ejectCoralIntake());
+
     // ALGAE L3 INTAKE
     // operator.povUp().onTrue(algaeL3Intake());
     // ALGAE L2 INTAKE

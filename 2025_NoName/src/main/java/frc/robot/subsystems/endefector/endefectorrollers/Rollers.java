@@ -100,16 +100,10 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command runRollersReverse() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  io.setState(EndefectorRollerStates.REVERSE);
-                })
-            .until(io::isDetected),
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.STOP);
-            }));
+    return Commands.runOnce(
+        () -> {
+          io.setState(EndefectorRollerStates.REVERSE);
+        });
   }
 
   public void setBrake(boolean brake) {
@@ -122,5 +116,9 @@ public class Rollers extends SubsystemBase {
 
   public double getCoralDistance() {
     return io.getCoralDistance();
+  }
+
+  public boolean isCoralDetected() {
+    return io.isDetected();
   }
 }

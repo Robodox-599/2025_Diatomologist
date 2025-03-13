@@ -63,7 +63,8 @@ public class LEDsIOReal extends LEDsIO {
   public void enableNoState() {
     state = LEDAnim.NoState;
     // no color
-    candleReal.setLEDs(0, 0, 0);
+    candleReal.animate(
+        new StrobeAnimation(0, 0, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override

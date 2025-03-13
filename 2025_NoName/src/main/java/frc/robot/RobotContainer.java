@@ -116,6 +116,9 @@ public class RobotContainer {
         new SuperstructureCommands(drive, elevator, wrist, rollers, LEDs, driver, operator);
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
+    // Disable LEDs when robot is disabled
+    RobotModeTriggers.disabled().onTrue(LEDs.runNoState());
+
     // Auto chooser setup
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 

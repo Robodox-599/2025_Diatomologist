@@ -51,6 +51,10 @@ public class Elevator extends SubsystemBase {
     //     () -> safetyChecker.isSafeElevator(SubsystemUtil.elevatorStateToHeight(state))));
   }
 
+  public ElevatorConstants.ElevatorStates getState() {
+    return io.getState();
+  }
+
   public Command move(double volt) {
     return this.runOnce(
         () -> {

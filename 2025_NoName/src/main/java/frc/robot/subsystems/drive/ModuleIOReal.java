@@ -119,9 +119,14 @@ public class ModuleIOReal extends ModuleIO {
     // Applied Volts (lik[\]ely 12) / Wheel_speed
 
     // DONGLE CONSTANTS
-    driveConfig.Slot0.kV = 1.9523813;
-    driveConfig.Slot0.kS = 0.49;
-    driveConfig.Slot0.kP = 0.35;
+    driveConfig.Slot0.kV =
+        12
+            / ((((5800 / 60) / RealConstants.DRIVE_GEAR_RATIO)
+                * 2
+                * RealConstants.WHEEL_RADIUS
+                * Math.PI));
+    driveConfig.Slot0.kS = 0.3;
+    driveConfig.Slot0.kP = 8;
     driveConfig.Slot0.kD = 0.0;
 
     // DINGUS CONSTANTS

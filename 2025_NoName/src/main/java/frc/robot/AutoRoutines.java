@@ -4,6 +4,7 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.SuperstructureCommands;
 
 public class AutoRoutines {
@@ -28,28 +29,37 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory to go to the reef
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    // // When the previous trajectory is done, score L3, then go to HP and run intake
-    // LEFTtoI.done()
-    //     .onTrue(
-    //         Commands.sequence(
-    //             superstructureCommands.scoring(ElevatorConstants.ElevatorStates.L3),
-    //             Commands.parallel(ItoHP.cmd(), superstructureCommands.stationIntake())));
+    // When the previous trajectory is done, score L3, then go to HP and run intake
+    LEFTtoI.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
+                Commands.parallel(ItoHP.cmd(), superstructureCommands.stationIntake())));
 
-    // // When the previous trajectory is done, start the next trajectory to go to the reef
-    // ItoHP.done().onTrue(HPtoL.cmd());
+    // When the previous trajectory is done, start the next trajectory to go to the reef
+    ItoHP.done().onTrue(HPtoL.cmd());
 
-    // // When the previous trajectory is done, score L3, then go to HP and run intake
-    // HPtoL.done()
-    //     .onTrue(
-    //         Commands.sequence(
-    //             superstructureCommands.scoring(ElevatorConstants.ElevatorStates.L3),
-    //             Commands.parallel(LtoHP.cmd(), superstructureCommands.stationIntake())));
+    // When the previous trajectory is done, score L3, then go to HP and run intake
+    HPtoL.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
+                Commands.parallel(LtoHP.cmd(), superstructureCommands.stationIntake())));
 
-    // // When the previous trajectory is done, start the next trajectory to go to the reef
-    // LtoHP.done().onTrue(HPtoK.cmd());
+    // When the previous trajectory is done, start the next trajectory to go to the reef
+    LtoHP.done().onTrue(HPtoK.cmd());
 
-    // // When the previous trajectory is done, score L3
-    // HPtoK.done().onTrue(superstructureCommands.scoring(ElevatorConstants.ElevatorStates.L3));
+    // When the previous trajectory is done, score L3
+    HPtoK.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral()));
 
     return routine;
   }
@@ -71,7 +81,9 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoringL3(),
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
                 Commands.parallel(ItoHP.cmd(), superstructureCommands.stationIntake())));
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
@@ -81,14 +93,21 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoringL3(),
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
                 Commands.parallel(LtoHP.cmd(), superstructureCommands.stationIntake())));
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     LtoHP.done().onTrue(HPtoK.cmd());
 
     // When the previous trajectory is done, score L3
-    HPtoK.done().onTrue(superstructureCommands.scoringL3());
+    HPtoK.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral()));
 
     return routine;
   }
@@ -110,7 +129,9 @@ public class AutoRoutines {
     RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoringL3(),
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
                 Commands.parallel(FtoHP.cmd(), superstructureCommands.stationIntake())));
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
@@ -120,14 +141,21 @@ public class AutoRoutines {
     HPtoC.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoringL3(),
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
                 Commands.parallel(CtoHP.cmd(), superstructureCommands.stationIntake())));
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     CtoHP.done().onTrue(HPtoD.cmd());
 
     // When the previous trajectory is done, score L3
-    HPtoD.done().onTrue(superstructureCommands.scoringL3());
+    HPtoD.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral()));
 
     return routine;
   }
@@ -144,7 +172,13 @@ public class AutoRoutines {
     routine.active().onTrue(Commands.sequence(MIDtoG.resetOdometry(), MIDtoG.cmd()));
 
     // When the previous routine is done, score L3 and go to S4
-    MIDtoG.done().onTrue(Commands.sequence(superstructureCommands.scoringL3(), GtoS4.cmd()));
+    MIDtoG.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL3(),
+                new WaitCommand(0.7),
+                superstructureCommands.scoreCoral(),
+                GtoS4.cmd()));
 
     // WHen the previous routine is done, grab the algae and go to the net
     GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(), S4toNET.cmd()));

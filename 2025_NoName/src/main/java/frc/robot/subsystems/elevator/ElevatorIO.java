@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.util.sendable.Sendable;
-
 public abstract class ElevatorIO {
   protected double tempCelsius = 0.0;
   protected double positionInches = 0.0;

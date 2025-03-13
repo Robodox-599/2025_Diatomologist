@@ -202,7 +202,7 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
         if (modules[moduleIndex].getOdometryPositions().length == 0) {
-          break;
+          return;
         }
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =

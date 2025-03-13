@@ -47,6 +47,10 @@ public class Wrist extends SubsystemBase {
     io.setBrake(brake);
   }
 
+  public WristConstants.WristStates getState() {
+    return io.getCurrentState();
+  }
+
   public Command stop() {
     return Commands.run(
         () -> {

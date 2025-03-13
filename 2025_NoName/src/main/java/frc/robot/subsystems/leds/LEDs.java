@@ -1,5 +1,6 @@
 package frc.robot.subsystems.leds;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,6 +17,7 @@ public class LEDs extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs();
+    disableAction();
   }
 
   public Command runStationIntake() {
@@ -52,5 +54,11 @@ public class LEDs extends SubsystemBase {
 
   public Command runReadyToScore() {
     return runOnce(() -> io.enableReadyToScore());
+  }
+
+  private void disableAction() {
+    if (DriverStation.isDisabled()) {
+      io.enableNoState();
+    }
   }
 }

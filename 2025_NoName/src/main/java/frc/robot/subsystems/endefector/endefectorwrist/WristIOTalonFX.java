@@ -57,7 +57,7 @@ public class WristIOTalonFX extends WristIO {
 
     wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV;
     // I don't really know what values to put here :(
-    wristConfig.MotionMagic.MotionMagicAcceleration = (12 - realkG - realkS) / realkV;
+    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 1.25);
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;
@@ -118,7 +118,7 @@ public class WristIOTalonFX extends WristIO {
     DogLog.log("Wrist/Velocity", super.velocity);
     DogLog.log("Wrist/Temperature", super.tempCelsius);
     DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
-    DogLog.log("Wrist/AtSetpoint", super.atSetpoint);
+    DogLog.log("Wrist/WristAtSetpoint", super.atSetpoint);
     DogLog.log("Wrist/AbsolutePosition", absolutePosition.getValueAsDouble());
     DogLog.log("Wrist/CurrentState", super.state);
     DogLog.log("Wrist/TargetPosition", targetPosition);
@@ -153,6 +153,11 @@ public class WristIOTalonFX extends WristIO {
     m_request.withPosition(position);
     super.state = state;
     wristMotor.setControl(m_request);
+  }
+
+  @Override
+  public WristConstants.WristStates getCurrentState() {
+    return super.state;
   }
 
   @Override

@@ -31,9 +31,9 @@ public final class ElevatorConstants {
   // Setpoint positions in inches
   public static final double[] heights = {
     16, // L1
-    26, // L2
-    43, // L3
-    61.25, // L4
+    21, // L2
+    40, // L3
+    62.25, // L4
     5.5, // STOW
     0, // STATION INTAKE
     0, // ALGAE GROUND INTAKE

@@ -23,12 +23,12 @@ public class RealConstants {
 
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static final double DRIVE_GEAR_RATIO = 5.02;
+  public static final double DRIVE_GEAR_RATIO = 5.36;
 
   // TURNING GEAR RATIO
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
 
-  public static final double MAX_LINEAR_SPEED = 5.16;
+  public static final double MAX_LINEAR_SPEED = 4.69;
   public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
   public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);
   public static final double DRIVE_BASE_RADIUS =

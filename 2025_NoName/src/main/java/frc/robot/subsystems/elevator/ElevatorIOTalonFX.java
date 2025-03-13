@@ -17,7 +17,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
 
@@ -76,6 +75,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     temperature = leaderMotor.getDeviceTemp();
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, velocity, temperature, position, current, appliedVolts);
+
+    zeroEncoder();
   }
 
   @Override
@@ -103,13 +104,11 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     /* Log all super */
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
-    DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
+    DogLog.log("Elevator/ElevatorAtSetpoint", super.atSetpoint);
     DogLog.log("Elevator/State", super.state.toString());
     DogLog.log("Elevator/LimitSwitchValue", super.limitSwitchValue);
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
-
-
   }
 
   @Override
@@ -122,6 +121,11 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             ElevatorConstants.elevatorUpperLimit);
     motionMagicRequest.Position = position;
     leaderMotor.setControl(motionMagicRequest);
+  }
+
+  @Override
+  public ElevatorConstants.ElevatorStates getState() {
+    return super.state;
   }
 
   @Override
@@ -148,6 +152,7 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   @Override
   public void zeroEncoder() {
     leaderMotor.setPosition(0);
+    followerMotor.setPosition(0);
   }
 
   @Override

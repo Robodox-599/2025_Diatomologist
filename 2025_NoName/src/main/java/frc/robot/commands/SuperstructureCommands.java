@@ -173,9 +173,9 @@ public class SuperstructureCommands {
             LEDs.runScoring(),
             rollers.runRollerScore(),
             LEDs.runScored(),
-            stationIntake()),
+            prepareToScore()),
         Commands.sequence(
-            LEDs.runScoring(), rollers.runRollerScore(), LEDs.runScored(), stationIntake()),
+            LEDs.runScoring(), rollers.runRollerScore(), LEDs.runScored(), prepareToScore()),
         () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
   }
 

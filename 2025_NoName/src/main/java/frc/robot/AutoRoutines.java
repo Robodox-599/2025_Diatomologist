@@ -92,7 +92,7 @@ public class AutoRoutines {
                 new WaitCommand(0.5), superstructureCommands.scoreCoral(), ItoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
-    ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
+    // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     ItoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoL.cmd()));
@@ -107,7 +107,7 @@ public class AutoRoutines {
                 new WaitCommand(0.5), superstructureCommands.scoreCoral(), LtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
-    LtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
+    // LtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     LtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoK.cmd()));
@@ -145,7 +145,7 @@ public class AutoRoutines {
                 new WaitCommand(0.5), superstructureCommands.scoreCoral(), FtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
-    FtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
+    // FtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     FtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoC.cmd()));
@@ -160,7 +160,7 @@ public class AutoRoutines {
                 new WaitCommand(0.5), superstructureCommands.scoreCoral(), CtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
-    CtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
+    // CtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
     CtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoD.cmd()));

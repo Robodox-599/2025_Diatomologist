@@ -173,9 +173,9 @@ public class SuperstructureCommands {
             LEDs.runScoring(),
             rollers.runRollerScore(),
             LEDs.runScored(),
-            prepareToScore()),
+            stationIntake()),
         Commands.sequence(
-            LEDs.runScoring(), rollers.runRollerScore(), LEDs.runScored(), prepareToScore()),
+            LEDs.runScoring(), rollers.runRollerScore(), LEDs.runScored(), stationIntake()),
         () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
   }
 
@@ -308,10 +308,12 @@ public class SuperstructureCommands {
     // STATION INTAKE
     operator.rightBumper().onTrue(stationIntake());
     // SCORE
-    operator.rightTrigger().onTrue(Commands.sequence(scoreCoral(), stationIntake()));
+    operator.rightTrigger().onTrue(scoreCoral());
     // EJECT CORAL INTAKE
     operator.leftBumper().whileTrue(ejectCoralIntake());
     operator.leftBumper().onFalse(rollers.stop());
+    // PREPARE
+    operator.leftTrigger().onTrue(prepareToScore());
   }
 
   private static double joystickDeadbandApply(double x) {

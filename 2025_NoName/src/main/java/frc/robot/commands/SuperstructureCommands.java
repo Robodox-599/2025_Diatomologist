@@ -278,53 +278,24 @@ public class SuperstructureCommands {
                     -joystickDeadbandApply(driver.getLeftX())
                         * RealConstants.MAX_LINEAR_SPEED
                         * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED),
-            driver.rightTrigger(),
-            () -> operator.povUp().getAsBoolean(),
-            () -> operator.povDown().getAsBoolean()));
-    // drive.setDefaultCommand(
-    //     drive.runVoltageTeleopFieldRelative(
-    //         () ->
-    //             new ChassisSpeeds(
-    //                 joystickDeadbandApply(driver.getLeftY())
-    //                     * RealConstants.MAX_LINEAR_SPEED
-    //                     * 0.85,
-    //                 joystickDeadbandApply(driver.getLeftX())
-    //                     * RealConstants.MAX_LINEAR_SPEED
-    //                     * 0.85,
-    //                 -joystickDeadbandApply(driver.getRightX()) *
-    // RealConstants.MAX_ANGULAR_SPEED)));
+                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED)));
     // // // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
-    // // STATION INTAKE COMMAND
-    // // driver.rightTrigger().onTrue(stationIntake());
-    // // ALGAE INTAKE COMMAND
-    // // driver.leftTrigger().onTrue(algaeIntake(operatorAlgaePick));
-    // // AUTO ALIGN
-    // driver.a().onTrue(wrist.moveToState(WristStates.STATIONINTAKE));
-    // driver
-    //     .povLeft()
-    //     .whileTrue(
-    //         Commands.sequence(
-    //             Commands.parallel(
-    //                 elevator.moveToState(ElevatorStates.PREP),
-    //                 wrist.moveToState(WristStates.SCORING)),
-    //             AutoAlignToField.alignToNearestLeftReef(drive)));
-    // driver
-    //     .povRight()
-    //     .whileTrue(
-    //         Commands.sequence(
-    //             Commands.parallel(
-    //                 elevator.moveToState(ElevatorStates.PREP),
-    //                 wrist.moveToState(WristStates.SCORING)),
-    //             AutoAlignToField.alignToNearestRightReef(drive)));
-    // driver.x().onTrue(wrist.moveToState(WristStates.STOW));
-    // driver.a().onTrue(Commands.sequence(wrist.moveToState(WristStates.SCORING)));
-
-    // CLIMB
-    // driver.povUp().whileTrue(climb()).onFalse(stowAll());
-
+    driver.rightTrigger().whileTrue(stationIntake());
+    driver
+        .povLeft()
+        .whileTrue(
+            Commands.sequence(
+                Commands.parallel(prepareToScore(), AutoAlignToField.alignToNearestLeftReef(drive)),
+                rumbleControllers()));
+    driver
+        .povRight()
+        .whileTrue(
+            Commands.sequence(
+                Commands.parallel(
+                    prepareToScore(), AutoAlignToField.alignToNearestRightReef(drive)),
+                rumbleControllers()));
     // OPERATOR BINDS
     // SCORE L4
     operator.x().onTrue(moveToL1());
@@ -337,52 +308,10 @@ public class SuperstructureCommands {
     // STATION INTAKE
     operator.rightBumper().onTrue(stationIntake());
     // SCORE
-    operator.rightTrigger().onTrue(scoreCoral());
+    operator.rightTrigger().onTrue(Commands.sequence(scoreCoral(), stationIntake()));
     // EJECT CORAL INTAKE
     operator.leftBumper().whileTrue(ejectCoralIntake());
     operator.leftBumper().onFalse(rollers.stop());
-    // ALGAE L3 INTAKE
-    // operator.povUp().onTrue(algaeL3Intake());
-    // ALGAE L2 INTAKE
-    // operator.povDown().onTrue(algaeL2Intake());
-    // ALGAE GROUND INTAKE
-    // operator.leftBumper().onTrue(algaeGroundIntake());
-    // STOW ALL
-    // operator.start().onTrue(stowAll());
-
-    // SUBSYSTEM VISUALIZER TEST COMMANDS:
-
-    // driver.povLeft().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.STOP));
-
-    // driver.povRight().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.SCORE));
-
-    // driver
-    //     .rightTrigger()
-    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
-
-    // driver.leftTrigger().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L2));
-
-    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.ALGAE_L3));
-
-    // driver.rightBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.INTAKE));
-
-    // driver
-    //     .povDown()
-    //     .whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.REEFINTAKE));
-
-    // driver.povUp().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.INTAKE));
-
-    // driver.a().whileTrue(rollers.moveToState(RollersConstants.EndefectorRollerStates.ALGAEINTAKE));
-
-    // driver.rightTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.REEFINTAKE));
-
-    // driver.leftTrigger().whileTrue(wrist.moveToState(WristConstants.WristStates.CLIMB));
-
-    // driver
-    //     .rightBumper()
-    //     .whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.GROUNDINTAKE));
-
-    // driver.leftBumper().whileTrue(elevator.moveToState(ElevatorConstants.ElevatorStates.L3));
   }
 
   private static double joystickDeadbandApply(double x) {

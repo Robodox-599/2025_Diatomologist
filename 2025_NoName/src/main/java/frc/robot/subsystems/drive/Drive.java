@@ -45,12 +45,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.FieldConstants;
 import frc.robot.commands.CommandConstants;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class Drive extends SubsystemBase {
@@ -182,14 +180,10 @@ public class Drive extends SubsystemBase {
     gyroIO.updateInputs();
 
     for (var module : modules) {
-      module.updateInputs();
+      module.periodic();
     }
 
     odometryLock.unlock();
-
-    for (var module : modules) {
-      module.periodic();
-    }
   }
 
   private void updateOdom() {
@@ -201,9 +195,6 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
-        if (modules[moduleIndex].getOdometryPositions().length == 0) {
-          return;
-        }
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
@@ -214,7 +205,7 @@ public class Drive extends SubsystemBase {
       }
 
       // Update gyro angle
-      if (gyroIO.connected && gyroIO.odometryYawPositions.length > i) {
+      if (gyroIO.connected) {
         // Use the real gyro angle
         rawGyroRotation = gyroIO.odometryYawPositions[i];
       } else {
@@ -290,60 +281,60 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public Command runVelocityTeleopFieldRelative(
-      Supplier<ChassisSpeeds> joystickSpeeds,
-      BooleanSupplier driveAtAngle,
-      BooleanSupplier leftStation,
-      BooleanSupplier rightStation) {
+  public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> joystickSpeeds // ,
+      // BooleanSupplier driveAtAngle,
+      // BooleanSupplier leftStation,
+      // BooleanSupplier rightStation
+      ) {
     return this.run(
         () -> {
-          if (driveAtAngle.getAsBoolean()) {
-            Rotation2d stationRotation;
-            if (leftStation.getAsBoolean()) {
-              stationRotation =
-                  FieldConstants.CoralStation.leftCenterFace
-                      .getRotation()
-                      .plus(new Rotation2d(Math.PI));
-            } else if (rightStation.getAsBoolean()) {
-              stationRotation =
-                  FieldConstants.CoralStation.rightCenterFace
-                      .getRotation()
-                      .plus(new Rotation2d(Math.PI));
-            } else {
-              stationRotation =
-                  FieldConstants.CoralStation.leftCenterFace
-                      .getRotation()
-                      .plus(new Rotation2d(Math.PI));
-            }
-            angleController.reset(this.getRotation().getRadians());
-            angleController.enableContinuousInput(-Math.PI, Math.PI);
-            double omega =
-                angleController.calculate(
-                    this.getRotation().getRadians(), stationRotation.getRadians());
-            this.runVelocity(
-                new ChassisSpeeds(
-                    joystickSpeeds.get().vxMetersPerSecond,
-                    joystickSpeeds.get().vyMetersPerSecond,
-                    omega));
-          } else {
-            // Calculate module setpoints
-            ChassisSpeeds speeds =
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                    joystickSpeeds.get(),
-                    DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                        ? rawGyroRotation
-                        : rawGyroRotation.plus(Rotation2d.fromDegrees(180)));
-            ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-            SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-            SwerveDriveKinematics.desaturateWheelSpeeds(
-                setpointStates, RealConstants.MAX_LINEAR_SPEED);
+          // if (driveAtAngle.getAsBoolean()) {
+          //   Rotation2d stationRotation;
+          //   if (leftStation.getAsBoolean()) {
+          //     stationRotation =
+          //         FieldConstants.CoralStation.leftCenterFace
+          //             .getRotation()
+          //             .plus(new Rotation2d(Math.PI));
+          //   } else if (rightStation.getAsBoolean()) {
+          //     stationRotation =
+          //         FieldConstants.CoralStation.rightCenterFace
+          //             .getRotation()
+          //             .plus(new Rotation2d(Math.PI));
+          //   } else {
+          //     stationRotation =
+          //         FieldConstants.CoralStation.leftCenterFace
+          //             .getRotation()
+          //             .plus(new Rotation2d(Math.PI));
+          //   }
+          //   angleController.reset(this.getRotation().getRadians());
+          //   angleController.enableContinuousInput(-Math.PI, Math.PI);
+          //   double omega =
+          //       angleController.calculate(
+          //           this.getRotation().getRadians(), stationRotation.getRadians());
+          //   this.runVelocity(
+          //       new ChassisSpeeds(
+          //           joystickSpeeds.get().vxMetersPerSecond,
+          //           joystickSpeeds.get().vyMetersPerSecond,
+          //           omega));
+          // } else {
+          // Calculate module setpoints
+          ChassisSpeeds speeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  joystickSpeeds.get(),
+                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                      ? rawGyroRotation
+                      : rawGyroRotation.plus(Rotation2d.fromDegrees(180)));
+          ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+          SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+          SwerveDriveKinematics.desaturateWheelSpeeds(
+              setpointStates, RealConstants.MAX_LINEAR_SPEED);
 
-            DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
-            DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-            for (int i = 0; i < modules.length; i++) {
-              modules[i].runSetpoint(setpointStates[i]);
-            }
+          DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+          DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+          for (int i = 0; i < modules.length; i++) {
+            modules[i].runSetpoint(setpointStates[i]);
           }
+          // }
         });
   }
 

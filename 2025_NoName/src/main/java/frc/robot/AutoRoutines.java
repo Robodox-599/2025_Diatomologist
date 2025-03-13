@@ -32,11 +32,8 @@ public class AutoRoutines {
     // Just before reaching the reef, extend the elevator to L3
     LEFTtoI.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
 
-    // When the previous trajectory is done, score, then go to HP 
-    LEFTtoI.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.scoreCoral(), ItoHP.cmd()));
+    // When the previous trajectory is done, score, then go to HP
+    LEFTtoI.done().onTrue(Commands.sequence(superstructureCommands.scoreCoral(), ItoHP.cmd()));
 
     // // Just before reaching the HP station, start intaking
     // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
@@ -88,17 +85,17 @@ public class AutoRoutines {
     // Just before reaching the reef, extend the elevator to L3
     LEFTtoI.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
 
-    // When the previous trajectory is done, score, then go to HP 
+    // When the previous trajectory is done, score, then go to HP
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreCoral(), ItoHP.cmd()));
+                new WaitCommand(0.5), superstructureCommands.scoreCoral(), ItoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
     ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
-    ItoHP.done().onTrue(HPtoL.cmd());
+    ItoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoL.cmd()));
 
     // Just before reaching the reef, extend the elevator to L3
     HPtoL.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
@@ -107,23 +104,20 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreCoral(),
-                LtoHP.cmd()));
+                new WaitCommand(0.5), superstructureCommands.scoreCoral(), LtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
     LtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
-    LtoHP.done().onTrue(HPtoK.cmd());
+    LtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoK.cmd()));
 
     // Just before reaching the reef, extend the elevator to L3
     HPtoK.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
 
     // When the previous trajectory is done, score L3
     HPtoK.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.scoreCoral()));
+        .onTrue(Commands.sequence(new WaitCommand(0.5), superstructureCommands.scoreCoral()));
 
     return routine;
   }
@@ -148,14 +142,13 @@ public class AutoRoutines {
     RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreCoral(),
-                FtoHP.cmd()));
+                new WaitCommand(0.5), superstructureCommands.scoreCoral(), FtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
     FtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
-    FtoHP.done().onTrue(HPtoC.cmd());
+    FtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoC.cmd()));
 
     // Just before reaching the reef, extend the elevator to L3
     HPtoC.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
@@ -164,23 +157,20 @@ public class AutoRoutines {
     HPtoC.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreCoral(),
-                CtoHP.cmd()));
+                new WaitCommand(0.5), superstructureCommands.scoreCoral(), CtoHP.cmd()));
 
     // Just before reaching the HP station, start intaking
     CtoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
 
     // When the previous trajectory is done, start the next trajectory to go to the reef
-    CtoHP.done().onTrue(HPtoD.cmd());
+    CtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoD.cmd()));
 
     // Just before reaching the reef, extend the elevator to L3
     HPtoD.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
 
     // When the previous trajectory is done, score L3
     HPtoD.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.scoreCoral()));
+        .onTrue(Commands.sequence(new WaitCommand(0.5), superstructureCommands.scoreCoral()));
 
     return routine;
   }
@@ -202,11 +192,11 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.moveToL3(),
                 new WaitCommand(0.7),
-                superstructureCommands.scoreCoral(),
-                GtoS4.cmd()));
+                superstructureCommands.scoreCoral()));
 
     // WHen the previous routine is done, grab the algae and go to the net
-    GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(), S4toNET.cmd()));
+    // GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(),
+    // S4toNET.cmd()));
 
     return routine;
   }

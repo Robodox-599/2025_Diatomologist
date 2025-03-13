@@ -34,7 +34,6 @@ public class VisionIOReal extends VisionIO {
 
   private Optional<PoseObservation> previousUpdate = Optional.empty();
   private ArrayList<Integer> seenTags = new ArrayList<>();
-  private ArrayList<PoseObservation> poseObservations = new ArrayList<>();
 
   /**
    * Buffer which keeps track of the robot rotation over the past few seconds This allows us to
@@ -114,7 +113,6 @@ public class VisionIOReal extends VisionIO {
             .average()
             .orElseGet(() -> 100.0);
     // }
-
     PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
     PoseObservation latestUpdate;
     if (latestResult != null) {
@@ -142,6 +140,9 @@ public class VisionIOReal extends VisionIO {
   @Override
   public void updateInputs() {
     super.cameraConnected = camera.isConnected();
+    if (!super.cameraConnected) {
+      return;
+    }
     List<PoseObservation> poseObservations = new LinkedList<>();
     List<PhotonPipelineResult> resultList = camera.getAllUnreadResults();
 
@@ -155,6 +156,7 @@ public class VisionIOReal extends VisionIO {
     super.tagIds = seenTags.stream().mapToInt(i -> i).toArray();
     seenTags.clear();
     super.previousUpdate = previousUpdate;
+
     resultList.stream()
         .filter(result -> result.hasTargets())
         .map(result -> poseEstimator.update(result))

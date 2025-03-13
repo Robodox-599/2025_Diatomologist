@@ -47,10 +47,6 @@ public class Module {
         new Alert("Disconnected turn encoder on module " + name + ".", AlertType.kError);
   }
 
-  public void updateInputs() {
-    io.updateInputs();
-  }
-
   public void periodic() {
     io.updateInputs();
 

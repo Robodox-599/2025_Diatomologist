@@ -52,9 +52,9 @@ public class DriveToPose extends Command {
   static {
     switch (Constants.getMode()) {
       case REAL:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.75);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.4);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 4.0);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 0.4);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0.0);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxVelocity", 3.8);
         SmartDashboard.putNumber(
@@ -172,8 +172,7 @@ public class DriveToPose extends Command {
         "Reset with heading " + currentPose.getRotation().getRadians());
 
     lastSetpointTranslation = currentPose.getTranslation();
-    DogLog.log(
-        "DriveToPose/Initialize/LastSetpointTranslation", lastSetpointTranslation.toString());
+    DogLog.log("DriveToPose/Initialize/LastSetpointTranslation", lastSetpointTranslation);
   }
 
   @Override
@@ -281,9 +280,9 @@ public class DriveToPose extends Command {
 
     // --- Get current and target poses ---
     Pose2d currentPose = robot.get();
-    DogLog.log("DriveToPose/Execute/CurrentPose", currentPose.toString());
+    DogLog.log("DriveToPose/Execute/CurrentPose", currentPose);
     Pose2d targetPose = target.get();
-    DogLog.log("DriveToPose/Execute/TargetPose", targetPose.toString());
+    DogLog.log("DriveToPose/Execute/TargetPose", targetPose);
 
     // --- Compute drive distance and feed-forward scaler ---
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
@@ -322,7 +321,7 @@ public class DriveToPose extends Command {
     Pose2d transformedPose =
         tempPose.transformBy(GeomUtil.toTransform2d(driveController.getSetpoint().position, 0.0));
     lastSetpointTranslation = transformedPose.getTranslation();
-    DogLog.log("DriveToPose/Execute/LastSetpointTranslation", lastSetpointTranslation.toString());
+    DogLog.log("DriveToPose/Execute/LastSetpointTranslation", lastSetpointTranslation);
 
     // --- Compute theta velocity ---
     double thetaVelocity =
@@ -346,7 +345,7 @@ public class DriveToPose extends Command {
                 currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
             .transformBy(GeomUtil.toTransform2d(driveVelocityScalar, 0.0))
             .getTranslation();
-    DogLog.log("DriveToPose/Execute/DriveVelocityVector", driveVelocity.toString());
+    DogLog.log("DriveToPose/Execute/DriveVelocityVector", driveVelocity);
 
     // --- Scale feedback velocities by input feedforward ---
     final double linearS = linearFF.get().getNorm() * 3.0;
@@ -356,7 +355,7 @@ public class DriveToPose extends Command {
 
     driveVelocity =
         driveVelocity.interpolate(linearFF.get().times(RealConstants.MAX_LINEAR_SPEED), linearS);
-    DogLog.log("DriveToPose/Execute/InterpolatedDriveVelocity", driveVelocity.toString());
+    DogLog.log("DriveToPose/Execute/InterpolatedDriveVelocity", driveVelocity);
 
     thetaVelocity =
         MathUtil.interpolate(
@@ -366,7 +365,7 @@ public class DriveToPose extends Command {
     // --- Command chassis speeds ---
     ChassisSpeeds chassisSpeeds =
         new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
-    DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds.toString());
+    DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
 
     drive.runVelocity(chassisSpeeds);
 
@@ -375,9 +374,9 @@ public class DriveToPose extends Command {
         new Pose2d(
             lastSetpointTranslation,
             Rotation2d.fromRadians(thetaController.getSetpoint().position));
-    DogLog.log("DriveToPose/Execute/SetpointPose", setpointPose.toString());
-    DogLog.log("DriveToPose/Execute/CurrentPose", currentPose.toString());
-    DogLog.log("DriveToPose/Execute/TargetPose", targetPose.toString());
+    DogLog.log("DriveToPose/Execute/SetpointPose", setpointPose);
+    DogLog.log("DriveToPose/Execute/CurrentPose", currentPose);
+    DogLog.log("DriveToPose/Execute/TargetPose", targetPose);
   }
 
   @Override

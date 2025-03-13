@@ -32,8 +32,8 @@ public class AutoAlignToField {
       }
     }
 
-    double adjustX = Units.inchesToMeters(30.738 / 2.0);
-    double adjustY = Units.inchesToMeters(6.469);
+    double adjustX = Units.inchesToMeters((30.738 / 2.0) + 2);
+    double adjustY = Units.inchesToMeters(6.469 + 0.5);
 
     // Apply the transformation based on left/right boolean
     Pose2d branchPosition =

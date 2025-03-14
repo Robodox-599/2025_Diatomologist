@@ -27,14 +27,20 @@ public class AutoRoutines {
     AutoTrajectory HPtoK = routine.trajectory("HPtoK");
 
     // When the routine begins, reset odometry and start the first trajectory to go to the reef
-    routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
-
-    // Just before reaching the reef, extend the elevator to L4
-    LEFTtoI.atTime("moveToL4").onTrue(superstructureCommands.moveToL4());
+    routine
+        .active()
+        .onTrue(
+            Commands.parallel(
+                superstructureCommands.autoIntakeFromStart(),
+                Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd())));
 
     // When the previous trajectory is done, score, then go to HP
     LEFTtoI.done()
-        .onTrue(Commands.sequence(new WaitCommand(0.5), superstructureCommands.scoreCoral()));
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.moveToL4().withTimeout(1),
+                superstructureCommands.scoreCoral(),
+                superstructureCommands.stationIntake()));
 
     // // Just before reaching the HP station, start intaking
     // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());

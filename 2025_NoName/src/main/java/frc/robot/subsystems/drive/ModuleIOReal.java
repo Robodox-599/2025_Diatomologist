@@ -126,7 +126,7 @@ public class ModuleIOReal extends ModuleIO {
                 * RealConstants.WHEEL_RADIUS
                 * Math.PI));
     driveConfig.Slot0.kS = 0.3;
-    driveConfig.Slot0.kP = 8;
+    driveConfig.Slot0.kP = 7.5;
     driveConfig.Slot0.kD = 0.0;
 
     // DINGUS CONSTANTS

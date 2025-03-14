@@ -119,10 +119,10 @@ public class SuperstructureCommands {
             wrist.moveToState(WristStates.STATIONINTAKE),
             LEDs.runStationIntake().withTimeout(0.1),
             rollers.runRollersIntake(),
-            rumbleControllers(),
-            LEDs.runIntaked(),
+            rumbleControllers().withTimeout(0.25),
+            LEDs.runIntaked().withTimeout(0.1),
             prepareToScore(),
-            LEDs.runReadyToScore()),
+            LEDs.runReadyToScore().withTimeout(0.1)),
         Commands.none(),
         () -> !rollers.isCoralDetected());
   }
@@ -142,6 +142,16 @@ public class SuperstructureCommands {
 
   public Command ejectCoralIntake() {
     return rollers.runRollersFast();
+  }
+
+  public Command autoIntakeFromStart() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.STATIONINTAKE),
+        LEDs.runStationIntake().withTimeout(0.1),
+        rollers.runRollersIntake(),
+        rumbleControllers().withTimeout(0.25),
+        LEDs.runIntaked().withTimeout(0.1),
+        prepareToScore());
   }
 
   public Command prepareToScore() {

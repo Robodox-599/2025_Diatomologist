@@ -85,10 +85,10 @@ public class Drive extends SubsystemBase {
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
     SmartDashboard.putData("Field", field);
     switch (Constants.currentMode) {
-      case REAL:
-        choreoPathXController = new PIDController(0, 0, 0);
-        choreoPathYController = new PIDController(0, 0, 0);
-        choreoPathAngleController = new PIDController(0, 0, 0);
+      case REAL: // in meters
+        choreoPathXController = new PIDController(0.3, 0, 0);
+        choreoPathYController = new PIDController(0.3, 0, 0);
+        choreoPathAngleController = new PIDController(0.15, 0, 0);
         break;
       case SIM:
         choreoPathXController = new PIDController(0, 0, 0);

@@ -29,11 +29,12 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory to go to the reef
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    // Just before reaching the reef, extend the elevator to L3
-    LEFTtoI.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
+    // Just before reaching the reef, extend the elevator to L4
+    LEFTtoI.atTime("moveToL4").onTrue(superstructureCommands.moveToL4());
 
     // When the previous trajectory is done, score, then go to HP
-    LEFTtoI.done().onTrue(Commands.sequence(superstructureCommands.scoreCoral(), ItoHP.cmd()));
+    LEFTtoI.done()
+        .onTrue(Commands.sequence(new WaitCommand(0.5), superstructureCommands.scoreCoral()));
 
     // // Just before reaching the HP station, start intaking
     // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
@@ -82,8 +83,8 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory to go to the reef
     routine.active().onTrue(Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd()));
 
-    // Just before reaching the reef, extend the elevator to L3
-    LEFTtoI.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
+    // Just before reaching the reef, extend the elevator to L4
+    LEFTtoI.atTime("moveToL4").onTrue(superstructureCommands.moveToL4());
 
     // When the previous trajectory is done, score, then go to HP
     LEFTtoI.done()
@@ -135,8 +136,8 @@ public class AutoRoutines {
     // When the routine begins, reset odometry and start the first trajectory to go to the reef
     routine.active().onTrue(Commands.sequence(RIGHTtoF.resetOdometry(), RIGHTtoF.cmd()));
 
-    // Just before reaching the reef, extend the elevator to L3
-    RIGHTtoF.atTime("moveToL3").onTrue(superstructureCommands.moveToL3());
+    // Just before reaching the reef, extend the elevator to L4
+    RIGHTtoF.atTime("moveToL4").onTrue(superstructureCommands.moveToL4());
 
     // When the previous trajectory is done, score, then go to HP
     RIGHTtoF.done()

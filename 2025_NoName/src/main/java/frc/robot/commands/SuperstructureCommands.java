@@ -47,6 +47,14 @@ public class SuperstructureCommands {
     this.driver = driver;
   }
 
+  public Command autoAlignToLeft() {
+    return AutoAlignToField.alignToNearestLeftReef(drive);
+  }
+
+  public Command autoAlignToRight() {
+    return AutoAlignToField.alignToNearestRightReef(drive);
+  }
+
   public Command stowAll() {
     return Commands.sequence(
         Commands.parallel(
@@ -298,17 +306,14 @@ public class SuperstructureCommands {
         .whileTrue(
             Commands.sequence(
                 Commands.parallel(
-                    prepareToScore(),
-                    AutoAlignToField.alignToNearestLeftReef(drive),
-                    LEDs.runAutoAlign()),
+                    AutoAlignToField.alignToNearestLeftReef(drive), LEDs.runAutoAlign()),
                 rumbleControllers(),
                 LEDs.runReadyToScore()));
     driver
         .povRight()
         .whileTrue(
             Commands.sequence(
-                Commands.parallel(
-                    prepareToScore(), AutoAlignToField.alignToNearestRightReef(drive)),
+                Commands.parallel(AutoAlignToField.alignToNearestRightReef(drive)),
                 rumbleControllers()));
     // OPERATOR BINDS
     // SCORE L4

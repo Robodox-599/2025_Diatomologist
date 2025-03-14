@@ -141,7 +141,7 @@ public class SuperstructureCommands {
   // }
 
   public Command ejectCoralIntake() {
-    return rollers.runRollersReverse();
+    return rollers.runRollersFast();
   }
 
   public Command prepareToScore() {
@@ -287,8 +287,12 @@ public class SuperstructureCommands {
         .povLeft()
         .whileTrue(
             Commands.sequence(
-                Commands.parallel(prepareToScore(), AutoAlignToField.alignToNearestLeftReef(drive)),
-                rumbleControllers()));
+                Commands.parallel(
+                    prepareToScore(),
+                    AutoAlignToField.alignToNearestLeftReef(drive),
+                    LEDs.runAutoAlign()),
+                rumbleControllers(),
+                LEDs.runReadyToScore()));
     driver
         .povRight()
         .whileTrue(

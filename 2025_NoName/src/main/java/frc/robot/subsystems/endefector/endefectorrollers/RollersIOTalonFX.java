@@ -131,8 +131,8 @@ public class RollersIOTalonFX extends RollersIO {
         break;
       case ALGAEINTAKE:
         rollersMotor.setControl(torqueCurrent);
-      case REVERSE:
-        setSpeed(rollersReverseSpeed);
+      case FAST:
+        setSpeed(rollersFastSpeed);
         break;
       default:
         setSpeed(0);

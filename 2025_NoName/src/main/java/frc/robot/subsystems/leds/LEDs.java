@@ -44,10 +44,6 @@ public class LEDs extends SubsystemBase {
     return runOnce(() -> io.enableIntaked());
   }
 
-  public Command runClimb() {
-    return runOnce(() -> io.enableClimb());
-  }
-
   public Command runAutoAlign() {
     return runOnce(() -> io.enableAutoAlign());
   }

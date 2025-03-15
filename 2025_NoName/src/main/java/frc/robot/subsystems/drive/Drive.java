@@ -256,8 +256,8 @@ public class Drive extends SubsystemBase {
     Pose2d pose = getPose();
     DogLog.log("Drive/Choreo/RobotPose2d", pose);
     DogLog.log("Drive/Choreo/SwerveSample", sample);
-
-    DogLog.log("Drive/Choreo/SwerveSample/ChoreoVelocity", sample);
+    DogLog.log("Drive/Choreo/SwerveSample/ChoreoPosition", sample.getPose());
+    DogLog.log("Drive/Choreo/RealRobotPosition", pose);
 
     ChassisSpeeds speeds =
         new ChassisSpeeds(
@@ -282,41 +282,9 @@ public class Drive extends SubsystemBase {
   }
 
   public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> joystickSpeeds // ,
-      // BooleanSupplier driveAtAngle,
-      // BooleanSupplier leftStation,
-      // BooleanSupplier rightStation
       ) {
     return this.run(
         () -> {
-          // if (driveAtAngle.getAsBoolean()) {
-          //   Rotation2d stationRotation;
-          //   if (leftStation.getAsBoolean()) {
-          //     stationRotation =
-          //         FieldConstants.CoralStation.leftCenterFace
-          //             .getRotation()
-          //             .plus(new Rotation2d(Math.PI));
-          //   } else if (rightStation.getAsBoolean()) {
-          //     stationRotation =
-          //         FieldConstants.CoralStation.rightCenterFace
-          //             .getRotation()
-          //             .plus(new Rotation2d(Math.PI));
-          //   } else {
-          //     stationRotation =
-          //         FieldConstants.CoralStation.leftCenterFace
-          //             .getRotation()
-          //             .plus(new Rotation2d(Math.PI));
-          //   }
-          //   angleController.reset(this.getRotation().getRadians());
-          //   angleController.enableContinuousInput(-Math.PI, Math.PI);
-          //   double omega =
-          //       angleController.calculate(
-          //           this.getRotation().getRadians(), stationRotation.getRadians());
-          //   this.runVelocity(
-          //       new ChassisSpeeds(
-          //           joystickSpeeds.get().vxMetersPerSecond,
-          //           joystickSpeeds.get().vyMetersPerSecond,
-          //           omega));
-          // } else {
           // Calculate module setpoints
           ChassisSpeeds speeds =
               ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -334,40 +302,6 @@ public class Drive extends SubsystemBase {
           for (int i = 0; i < modules.length; i++) {
             modules[i].runSetpoint(setpointStates[i]);
           }
-          // }
-        });
-  }
-
-  public Command runVoltageTeleopFieldRelative(Supplier<ChassisSpeeds> speeds) {
-    return this.run(
-        () -> {
-          var allianceSpeeds =
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds.get(),
-                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                      ? getPose().getRotation()
-                      : getPose().getRotation().minus(Rotation2d.fromDegrees(180)));
-          // Calculate module setpoints
-          ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
-          SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-          SwerveDriveKinematics.desaturateWheelSpeeds(
-              setpointStates, RealConstants.MAX_LINEAR_SPEED);
-
-          DogLog.log("Drive/Target Speeds", discreteSpeeds);
-          DogLog.log("Drive/Field Speed Error", discreteSpeeds.minus(getFieldVelocity()));
-          DogLog.log(
-              "Drive/Target Chassis Speeds Field Relative",
-              ChassisSpeeds.fromRobotRelativeSpeeds(discreteSpeeds, getRotation()));
-          // Send setpoints to modules
-          for (int i = 0; i < modules.length; i++) {
-            setpointStates[i].optimize(modules[i].getAngle());
-            modules[i].runVoltageSetpoint(
-                new SwerveModuleState(
-                    setpointStates[i].speedMetersPerSecond, setpointStates[i].angle),
-                true);
-          }
-          // Log setpoint states
-          DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
         });
   }
 

@@ -16,6 +16,10 @@ public abstract class LEDsIO {
 
   public void enableNoState() {}
 
+  public void enableOverride() {}
+
+  public void enablePrepared() {}
+
   public void enableReadyToScore() {}
 
   public void enableScored() {}

@@ -9,6 +9,8 @@ public class LEDsConstants {
     Scoring,
     Climb,
     AutoAlign,
+    Prepared,
+    Override,
     ReadyToScore;
   }
 

@@ -5,8 +5,8 @@ public class RollersConstants {
     SCORE(0),
     STOP(1),
     INTAKE(2),
-    REEFINTAKE(3),
-    ALGAEINTAKE(4),
+    ALGAEREEFINTAKE(3),
+    ALGAEGROUNDINTAKE(4),
     FAST(5);
 
     private final int index;
@@ -48,6 +48,7 @@ public class RollersConstants {
   public static final double rollersScoreSpeed = 0.25;
   public static final double rollersIntakeSpeed = 0.09;
   public static final double rollersFastSpeed = rollersScoreSpeed;
+  public static final double rollersReefIntakeSpeed = -rollersScoreSpeed * 2;
 
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;

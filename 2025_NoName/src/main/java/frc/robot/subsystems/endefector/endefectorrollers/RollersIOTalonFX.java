@@ -129,8 +129,9 @@ public class RollersIOTalonFX extends RollersIO {
       case INTAKE:
         setSpeed(rollersIntakeSpeed);
         break;
-      case ALGAEINTAKE:
-        rollersMotor.setControl(torqueCurrent);
+      case ALGAEREEFINTAKE:
+        setSpeed(rollersReefIntakeSpeed);
+        break;
       case FAST:
         setSpeed(rollersFastSpeed);
         break;

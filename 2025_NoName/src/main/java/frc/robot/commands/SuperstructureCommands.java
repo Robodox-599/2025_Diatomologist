@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.constants.RealConstants;
@@ -48,11 +49,15 @@ public class SuperstructureCommands {
   }
 
   public Command autoAlignToLeft() {
-    return AutoAlignToField.alignToNearestLeftReef(drive);
+    return Commands.sequence(
+        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
+        AutoAlignToField.alignToNearestLeftReef(drive));
   }
 
   public Command autoAlignToRight() {
-    return AutoAlignToField.alignToNearestRightReef(drive);
+    return Commands.sequence(
+        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
+        AutoAlignToField.alignToNearestRightReef(drive));
   }
 
   public Command stowAll() {
@@ -65,22 +70,12 @@ public class SuperstructureCommands {
         rumbleControllers());
   }
 
-  // public Command scoring(ElevatorStates state) {
-  //   return Commands.sequence(
-  //       wrist.moveToState(WristStates.PREPARE),
-  //       elevator.moveToState(state),
-  //       wrist.moveToState(WristStates.SCORING),
-  //       LEDs.runReadyToScore().withTimeout(0.1),
-  //       rollers.runRollerScore(),
-  //       rumbleControllers());
-  // }
-
   public Command moveToL1() {
     return Commands.either(
         Commands.sequence(
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.L1),
-            LEDs.runReadyToScore().withTimeout(0.1),
+            LEDs.runReadyToScore().withTimeout(0.1), // purple
             rumbleControllers()),
         Commands.none(),
         () -> rollers.isCoralDetected());
@@ -91,7 +86,7 @@ public class SuperstructureCommands {
         Commands.sequence(
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.L2),
-            LEDs.runReadyToScore().withTimeout(0.1),
+            LEDs.runReadyToScore().withTimeout(0.1), // purple
             rumbleControllers()),
         Commands.none(),
         () -> rollers.isCoralDetected());
@@ -102,7 +97,7 @@ public class SuperstructureCommands {
         Commands.sequence(
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.L3),
-            LEDs.runReadyToScore().withTimeout(0.1),
+            LEDs.runReadyToScore().withTimeout(0.1), // purple
             rumbleControllers()),
         Commands.none(),
         () -> rollers.isCoralDetected());
@@ -113,7 +108,7 @@ public class SuperstructureCommands {
         Commands.sequence(
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.L4),
-            LEDs.runReadyToScore().withTimeout(0.1),
+            LEDs.runReadyToScore().withTimeout(0.1), // purple
             rumbleControllers()),
         Commands.none(),
         () -> rollers.isCoralDetected());
@@ -125,46 +120,43 @@ public class SuperstructureCommands {
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.INTAKE),
             wrist.moveToState(WristStates.STATIONINTAKE),
-            LEDs.runStationIntake().withTimeout(0.1),
+            LEDs.runStationIntake().withTimeout(0.1), // white
             rollers.runRollersIntake(),
             rumbleControllers().withTimeout(0.25),
-            LEDs.runIntaked().withTimeout(0.1),
-            prepareToScore(),
-            LEDs.runReadyToScore().withTimeout(0.1)),
+            LEDs.runIntaked().withTimeout(0.1), // green
+            prepareToScore().withTimeout(2),
+            LEDs.runPrepared().withTimeout(0.1)), // blue
         Commands.none(),
         () -> !rollers.isCoralDetected());
   }
 
-  // public Command stationIntake() {
-  //   return Commands.sequence(
-  //       wrist.moveToState(WristStates.PREPARE),
-  //       elevator.moveToState(ElevatorStates.INTAKE),
-  //       wrist.moveToState(WristStates.STATIONINTAKE),
-  //       LEDs.runStationIntake().withTimeout(0.1),
-  //       rollers.runRollersIntake(),
-  //       rumbleControllers(),
-  //       LEDs.runIntaked(),
-  //       prepareToScore(),
-  //       LEDs.runReadyToScore());
-  // }
-
   public Command ejectCoralIntake() {
-    return rollers.runRollersFast();
+    return Commands.either(
+        Commands.sequence(
+            wrist.moveToState(WristStates.STATIONINTAKE),
+            LEDs.runStationIntake().withTimeout(0.1), // white
+            rollers.runRollersFast(),
+            LEDs.runScoring().withTimeout(0.1)), // red
+        Commands.sequence(rollers.runRollersFast(), LEDs.runScoring().withTimeout(0.1)), // red
+        () -> elevator.isAtTargetPosition(ElevatorConstants.ElevatorStates.INTAKE));
   }
 
   public Command autoIntakeFromStart() {
     return Commands.sequence(
         wrist.moveToState(WristStates.STATIONINTAKE),
-        LEDs.runStationIntake().withTimeout(0.1),
+        LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runRollersIntake(),
         rumbleControllers().withTimeout(0.25),
-        LEDs.runIntaked().withTimeout(0.1),
-        prepareToScore());
+        LEDs.runIntaked().withTimeout(0.1), // green
+        prepareToScore(),
+        LEDs.runPrepared().withTimeout(0.1)); // blue
   }
 
   public Command prepareToScore() {
     return Commands.sequence(
-        wrist.moveToState(WristStates.PREPARE), elevator.moveToState(ElevatorStates.PREP));
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.PREP),
+        LEDs.runPrepared().withTimeout(0.1)); // blue
   }
 
   public boolean isReadyToScore() {
@@ -185,38 +177,44 @@ public class SuperstructureCommands {
   }
 
   public Command scoreCoral() {
-    return Commands.either( // check if L4 or not
-        Commands.sequence(
-            wrist.moveToState(WristStates.SCORING),
-            LEDs.runScoring(),
-            rollers.runRollerScore(),
-            LEDs.runScored(),
-            stationIntake()),
-        Commands.sequence(
-            LEDs.runScoring(), rollers.runRollerScore(), LEDs.runScored(), stationIntake()),
-        () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
+    return Commands.either( // check if elevator and wrist are at setpoint
+        Commands.either( // check if L4 or not
+            Commands.sequence(
+                wrist.moveToState(WristStates.SCORING),
+                LEDs.runScoring().withTimeout(0.1), // red
+                rollers.runRollerScore(),
+                LEDs.runScored().withTimeout(0.1), // yellow
+                new WaitCommand(0.5),
+                stationIntake()),
+            Commands.sequence(
+                LEDs.runScoring().withTimeout(0.1), // red
+                rollers.runRollerScore(),
+                LEDs.runScored().withTimeout(0.1), // yellow
+                stationIntake()),
+            () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4),
+        Commands.none(),
+        () -> isReadyToScore());
   }
 
-  public Command algaeL2Intake() {
-    return Commands.runOnce(
-        () -> {
-          operatorAlgaePick = ElevatorStates.ALGAE_L2;
-        });
-  }
+  // public Command algaeL2Intake() {
+  //   return Commands.runOnce(
+  //       () -> {
+  //         operatorAlgaePick = ElevatorStates.ALGAE_L2;
+  //       });
+  // }
 
-  public Command algaeGroundIntake() {
-    return Commands.runOnce(
-        () -> {
-          operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
-        });
-  }
+  // public Command algaeGroundIntake() {
+  //   return Commands.runOnce(
+  //       () -> {
+  //         operatorAlgaePick = ElevatorStates.GROUNDINTAKE;
+  //       });
+  // }
 
-  public Command algaeL3Intake() {
-    return Commands.runOnce(
-        () -> {
-          operatorAlgaePick = ElevatorStates.ALGAE_L3;
-        });
-  }
+  // public Command algaeL3Intake() {
+  //   return Commands.runOnce(
+  //       () -> {
+  //         operatorAlgaePick = ElevatorStates.ALGAE_L3;
+  //       });
 
   // public Command climbStow() {
   //   return climb.moveToState(ClimbStates.STOW);
@@ -228,39 +226,29 @@ public class SuperstructureCommands {
 
   // saftey code in subsystems, not in commands.
 
-  public Command algaeIntake(ElevatorStates state) {
-    Command algaeIntakeCommand;
-    if (ElevatorStates.ALGAE_L3 == state) {
-      algaeIntakeCommand =
-          Commands.sequence(
-              Commands.parallel(
-                  elevator.moveToState(ElevatorStates.ALGAE_L3),
-                  wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.runAlgaeIntake(),
-                  LEDs.runAlgaeIntake()),
-              rumbleControllers());
-    } else if (ElevatorStates.ALGAE_L2 == state) {
-      algaeIntakeCommand =
-          Commands.sequence(
-              Commands.parallel(
-                  elevator.moveToState(ElevatorStates.ALGAE_L2),
-                  wrist.moveToState(WristStates.REEFINTAKE),
-                  rollers.runAlgaeIntake(),
-                  LEDs.runAlgaeIntake()),
-              rumbleControllers());
-    } else if (ElevatorStates.GROUNDINTAKE == state) {
-      algaeIntakeCommand =
-          Commands.sequence(
-              Commands.parallel(
-                  elevator.moveToState(ElevatorStates.GROUNDINTAKE),
-                  wrist.moveToState(WristStates.GROUNDINTAKE),
-                  rollers.runAlgaeIntake(),
-                  LEDs.runAlgaeIntake()),
-              rumbleControllers());
-    } else {
-      algaeIntakeCommand = Commands.none();
+  public Command removeAlgae(ElevatorStates state) {
+    Command algaeIntakeCommand = Commands.none();
+    if (!rollers.isCoralDetected()) {
+      if (ElevatorStates.ALGAE_L3 == state) {
+        algaeIntakeCommand =
+            Commands.sequence(
+                prepareToScore(),
+                LEDs.runPrepared().withTimeout(0.1), // blue
+                elevator.moveToState(ElevatorStates.ALGAE_L3),
+                wrist.moveToState(WristStates.REEFINTAKE),
+                rollers.runAlgaeIntake(),
+                LEDs.runAlgaeIntake().withTimeout(0.1)); // cyan
+      } else if (ElevatorStates.ALGAE_L2 == state) {
+        algaeIntakeCommand =
+            Commands.sequence(
+                prepareToScore(),
+                LEDs.runPrepared().withTimeout(0.1), // blue
+                elevator.moveToState(ElevatorStates.ALGAE_L2),
+                wrist.moveToState(WristStates.REEFINTAKE),
+                rollers.runAlgaeIntake(),
+                LEDs.runAlgaeIntake().withTimeout(0.1)); // cyan
+      }
     }
-
     return algaeIntakeCommand;
   }
 
@@ -300,20 +288,21 @@ public class SuperstructureCommands {
     // // // ZERO GYRO
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
-    driver.rightTrigger().whileTrue(stationIntake());
     driver
         .povLeft()
         .whileTrue(
             Commands.sequence(
                 Commands.parallel(
-                    AutoAlignToField.alignToNearestLeftReef(drive), LEDs.runAutoAlign()),
-                rumbleControllers(),
-                LEDs.runReadyToScore()));
+                    AutoAlignToField.alignToNearestLeftReef(drive),
+                    LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
+                rumbleControllers()));
     driver
         .povRight()
         .whileTrue(
             Commands.sequence(
-                Commands.parallel(AutoAlignToField.alignToNearestRightReef(drive)),
+                Commands.parallel(
+                    AutoAlignToField.alignToNearestRightReef(drive),
+                    LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
                 rumbleControllers()));
     // OPERATOR BINDS
     // SCORE L4
@@ -329,10 +318,22 @@ public class SuperstructureCommands {
     // SCORE
     operator.rightTrigger().onTrue(scoreCoral());
     // EJECT CORAL INTAKE
-    operator.leftBumper().whileTrue(ejectCoralIntake());
-    operator.leftBumper().onFalse(rollers.stop());
+    operator.leftTrigger().whileTrue(ejectCoralIntake());
+    operator.leftTrigger().onFalse(rollers.stop());
     // PREPARE
-    operator.leftTrigger().onTrue(prepareToScore());
+    operator.leftBumper().onTrue(prepareToScore());
+    // ALGAE L2
+    operator.povDown().onTrue(removeAlgae(ElevatorConstants.ElevatorStates.ALGAE_L2));
+    // ALGAE L3
+    operator.povUp().onTrue(removeAlgae(ElevatorConstants.ElevatorStates.ALGAE_L3));
+    // OVERRIDE TO HIGHEST
+    operator
+        .start()
+        .onTrue(
+            Commands.sequence(
+                LEDs.runOverride().withTimeout(0.1),
+                wrist.moveToState(WristStates.PREPARE),
+                elevator.moveToState(ElevatorStates.L4)));
   }
 
   private static double joystickDeadbandApply(double x) {

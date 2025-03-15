@@ -62,7 +62,7 @@ public class WristConstants {
     0.735, // PREPARE
     0.68, // SCORING
     0.52, // OVERRIDE
-    0.827, // reef intake
+    0.88, // reef intake
     0.879, // ground intake
     0.64, // station intake
     0.52, // climb,

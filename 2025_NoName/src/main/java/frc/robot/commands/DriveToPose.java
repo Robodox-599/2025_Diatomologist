@@ -52,9 +52,9 @@ public class DriveToPose extends Command {
   static {
     switch (Constants.getMode()) {
       case REAL:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.4);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.6);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 0.4);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 0.1);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0.0);
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxVelocity", 3.8);
         SmartDashboard.putNumber(

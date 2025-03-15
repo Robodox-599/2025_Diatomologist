@@ -68,8 +68,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOReal(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOReal(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOReal(RealConstants.cam1Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -83,8 +83,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -98,8 +98,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOSim(RealConstants.cam2Constants, drive::getPose));
+                new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
+                new VisionIOSim(RealConstants.cam1Constants, drive::getPose));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;
@@ -110,7 +110,7 @@ public class RobotContainer {
         new SuperstructureCommands(drive, elevator, wrist, rollers, LEDs, driver, operator);
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
-    // Disable LEDs when robot is disabled
+    // Run no state when disabled
     RobotModeTriggers.disabled().onTrue(LEDs.runNoState());
 
     // Auto chooser setup

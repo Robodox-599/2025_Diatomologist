@@ -45,53 +45,62 @@ public class LEDsIOReal extends LEDsIO {
 
   @Override
   public void enableAlgaeIntake() {
-    // green ?????
+    // cyan
     state = LEDAnim.AlgaeIntake;
     candleReal.animate(
-        new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(0, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableIntaked() {
     state = LEDAnim.AlgaeIntake;
-    // red
+    // green
     candleReal.animate(
-        new StrobeAnimation(255, 0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableNoState() {
     state = LEDAnim.NoState;
-    // no color
+    // orange
     candleReal.animate(
-        new StrobeAnimation(0, 0, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new ColorFlowAnimation(
+            255, 82, 0, 0, 0.50, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
+        1);
+  }
+
+  @Override
+  public void enableOverride() {
+    state = LEDAnim.Override;
+    // dark red
+    candleReal.animate(new StrobeAnimation(130, 0, 0, 50, 0.5, LEDsConstants.LEDS_PER_ANIMATION));
   }
 
   @Override
   public void enableScored() {
-    // dark green ?????
+    // yellow
     state = LEDAnim.Scored;
     candleReal.animate(
-        new StrobeAnimation(255, 91, 0, 0, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(255, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
   public void enableScoring() {
-    // neon teal
+    // red
     state = LEDAnim.Scored;
     candleReal.animate(
-        new StrobeAnimation(7, 242, 241, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(255, 0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
-  @Override
-  public void enableClimb() {
-    // blue
-    state = LEDAnim.Climb;
-    candleReal.animate(
-        new ColorFlowAnimation(
-            0, 0, 255, 0, 0.70, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
-        1);
-  }
+  // @Override
+  // public void enableClimb() {
+  //   // blue
+  //   state = LEDAnim.Climb;
+  //   candleReal.animate(
+  //       new ColorFlowAnimation(
+  //           0, 0, 255, 0, 0.70, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
+  //       1);
+  // }
 
   @Override
   public void enableAutoAlign() {
@@ -101,10 +110,18 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
+  public void enablePrepared() {
+    state = LEDAnim.Prepared;
+    // blue
+    candleReal.animate(
+        new StrobeAnimation(0, 0, 255, 100, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+  }
+
+  @Override
   public void enableReadyToScore() {
     state = LEDAnim.ReadyToScore;
-    // hot pink
+    // purple
     candleReal.animate(
-        new StrobeAnimation(255, 0, 127, 0, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(255, 0, 255, 100, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 }

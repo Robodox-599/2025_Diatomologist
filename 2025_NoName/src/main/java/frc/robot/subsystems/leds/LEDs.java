@@ -48,8 +48,16 @@ public class LEDs extends SubsystemBase {
     return runOnce(() -> io.enableAutoAlign());
   }
 
+  public Command runPrepared() {
+    return runOnce(() -> io.enablePrepared());
+  }
+
   public Command runReadyToScore() {
     return runOnce(() -> io.enableReadyToScore());
+  }
+
+  public Command runOverride() {
+    return runOnce(() -> io.enableOverride());
   }
 
   private void disableAction() {

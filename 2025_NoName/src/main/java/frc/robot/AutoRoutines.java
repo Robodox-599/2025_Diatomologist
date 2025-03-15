@@ -39,8 +39,8 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.autoAlignToLeft(),
+                superstructureCommands.moveToL2().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 // ItoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -97,8 +97,8 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.autoAlignToLeft(),
+                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 ItoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -111,8 +111,8 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.autoAlignToRight(),
+                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 LtoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -125,8 +125,8 @@ public class AutoRoutines {
     HPtoK.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.autoAlignToLeft(),
+                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 superstructureCommands.stationIntake()));
 
@@ -155,8 +155,8 @@ public class AutoRoutines {
     RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.autoAlignToRight(),
+                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 FtoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -169,8 +169,8 @@ public class AutoRoutines {
     HPtoC.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.autoAlignToLeft(),
+                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 CtoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -183,8 +183,8 @@ public class AutoRoutines {
     HPtoD.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.autoAlignToRight(),
+                superstructureCommands.moveToL3().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 superstructureCommands.stationIntake()));
 
@@ -211,8 +211,8 @@ public class AutoRoutines {
     MIDtoG.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.autoAlignToLeft(),
+                superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.scoreCoral(),
                 superstructureCommands.stationIntake()));
 

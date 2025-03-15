@@ -24,7 +24,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isAtTargetPosition(ElevatorConstants.ElevatorStates state) {
-    return (Math.abs(io.getPositionInches() - SubsystemUtil.elevatorStateToHeight(state))
+    return (Math.abs(io.getPositionInches() - SubsystemUtil.elevatorStateToHeightInches(state))
         < ElevatorConstants.positionToleranceInches);
   }
 

@@ -45,22 +45,11 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command runAlgaeIntake() {
-    if (io instanceof RollersIOSim) {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.ALGAEINTAKE);
-                  })
-              .withTimeout(1),
-          Commands.runOnce(() -> io.setState(EndefectorRollerStates.SCORE)));
-    } else {
-      return Commands.sequence(
-          Commands.run(
-                  () -> {
-                    io.setState(EndefectorRollerStates.SCORE);
-                  })
-              .until(() -> io.isAlgaeDetected));
-    }
+    return Commands.sequence(
+        Commands.run(
+            () -> {
+              io.setState(EndefectorRollerStates.ALGAEREEFINTAKE);
+            }));
   }
 
   public Command runRollerScore() {

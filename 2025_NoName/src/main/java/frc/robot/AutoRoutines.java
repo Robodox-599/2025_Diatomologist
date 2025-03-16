@@ -17,7 +17,7 @@ public class AutoRoutines {
   }
 
   public AutoRoutine testingAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("leftAuto");
+    AutoRoutine routine = autoFactory.newRoutine("testingAuto");
 
     // Load the routine's trajectories
     AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
@@ -39,8 +39,8 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft(),
-                superstructureCommands.moveToL2().withTimeout(1),
+                // superstructureCommands.autoAlignToLeft().withTimeout(3),
+                superstructureCommands.moveToL4().withTimeout(1.5),
                 superstructureCommands.scoreCoral(),
                 // ItoHP.cmd(),
                 superstructureCommands.stationIntake()));
@@ -97,10 +97,10 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft(),
+                // superstructureCommands.autoAlignToLeft(),
                 superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.scoreCoral(),
-                ItoHP.cmd(),
+                // ItoHP.cmd(),
                 superstructureCommands.stationIntake()));
 
     // When the previous trajectory is done, wait 1 second, start the next trajectory to go to the
@@ -155,38 +155,40 @@ public class AutoRoutines {
     RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToRight(),
+                // superstructureCommands.autoAlignToRight().withTimeout(3),
                 superstructureCommands.moveToL4().withTimeout(1),
                 superstructureCommands.scoreCoral(),
-                FtoHP.cmd(),
+                // FtoHP.cmd(),
                 superstructureCommands.stationIntake()));
 
-    // When the previous trajectory is done, wait 1 second, start the next trajectory to go to the
-    // reef
-    FtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoC.cmd()));
+    // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
+    // the
+    // // reef
+    // FtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoC.cmd()));
 
-    // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
-    HPtoC.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.autoAlignToLeft(),
-                superstructureCommands.moveToL3().withTimeout(1),
-                superstructureCommands.scoreCoral(),
-                CtoHP.cmd(),
-                superstructureCommands.stationIntake()));
+    // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
+    // HPtoC.done()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             superstructureCommands.autoAlignToLeft(),
+    //             superstructureCommands.moveToL3().withTimeout(1),
+    //             superstructureCommands.scoreCoral(),
+    //             CtoHP.cmd(),
+    //             superstructureCommands.stationIntake()));
 
-    // When the previous trajectory is done, wait 1 second, start the next trajectory to go to the
-    // reef
-    CtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoD.cmd()));
+    // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
+    // the
+    // // reef
+    // CtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoD.cmd()));
 
-    // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
-    HPtoD.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.autoAlignToRight(),
-                superstructureCommands.moveToL3().withTimeout(1),
-                superstructureCommands.scoreCoral(),
-                superstructureCommands.stationIntake()));
+    // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
+    // HPtoD.done()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             superstructureCommands.autoAlignToRight(),
+    //             superstructureCommands.moveToL3().withTimeout(1),
+    //             superstructureCommands.scoreCoral(),
+    //             superstructureCommands.stationIntake()));
 
     return routine;
   }
@@ -211,8 +213,8 @@ public class AutoRoutines {
     MIDtoG.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft(),
-                superstructureCommands.moveToL4().withTimeout(1),
+                // superstructureCommands.autoAlignToLeft().withTimeout(3),z
+                superstructureCommands.moveToL4().withTimeout(1.5),
                 superstructureCommands.scoreCoral(),
                 superstructureCommands.stationIntake()));
 
@@ -227,10 +229,10 @@ public class AutoRoutines {
     AutoRoutine routine = autoFactory.newRoutine("taxiAuto");
 
     // Load the routine's trajectories
-    AutoTrajectory taxi = routine.trajectory("Taxi");
+    AutoTrajectory MIDtoTaxi = routine.trajectory("MIDtoTaxi");
 
     // When the routine begins, reset odometry and start the first trajectory
-    routine.active().onTrue(Commands.sequence(taxi.resetOdometry(), taxi.cmd()));
+    routine.active().onTrue(Commands.sequence(MIDtoTaxi.resetOdometry(), MIDtoTaxi.cmd()));
 
     return routine;
   }

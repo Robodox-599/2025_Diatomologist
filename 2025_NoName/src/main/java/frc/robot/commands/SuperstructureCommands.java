@@ -124,8 +124,7 @@ public class SuperstructureCommands {
             rollers.runRollersIntake(),
             rumbleControllers().withTimeout(0.25),
             LEDs.runIntaked().withTimeout(0.1), // green
-            prepareToScore().withTimeout(2),
-            LEDs.runPrepared().withTimeout(0.1)), // blue
+            prepareToScore()),
         Commands.none(),
         () -> !rollers.isCoralDetected());
   }
@@ -148,8 +147,7 @@ public class SuperstructureCommands {
         rollers.runRollersIntake(),
         rumbleControllers().withTimeout(0.25),
         LEDs.runIntaked().withTimeout(0.1), // green
-        prepareToScore(),
-        LEDs.runPrepared().withTimeout(0.1)); // blue
+        prepareToScore());
   }
 
   public Command prepareToScore() {
@@ -177,24 +175,44 @@ public class SuperstructureCommands {
   }
 
   public Command scoreCoral() {
-    return Commands.either( // check if elevator and wrist are at setpoint
-        Commands.either( // check if L4 or not
+    return Commands.either( // check if L4 or not
+        Commands.sequence( // if L4, score without checking if at setpoint
+            LEDs.runScoring().withTimeout(0.1), // red
+            rollers.runRollerScore(),
+            LEDs.runScored().withTimeout(0.1), // yellow
+            new WaitCommand(0.5),
+            stationIntake()),
+        Commands.either( // if not L4, check if at setpoint and score if true
             Commands.sequence(
-                wrist.moveToState(WristStates.SCORING),
                 LEDs.runScoring().withTimeout(0.1), // red
                 rollers.runRollerScore(),
                 LEDs.runScored().withTimeout(0.1), // yellow
                 new WaitCommand(0.5),
                 stationIntake()),
-            Commands.sequence(
-                LEDs.runScoring().withTimeout(0.1), // red
-                rollers.runRollerScore(),
-                LEDs.runScored().withTimeout(0.1), // yellow
-                stationIntake()),
-            () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4),
-        Commands.none(),
-        () -> isReadyToScore());
+            Commands.none(),
+            () -> isReadyToScore()),
+        () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
   }
+
+  //   public Command scoreCoral() {
+  //     return Commands.either( // check if elevator and wrist are at setpoint
+  //         Commands.either( // check if L4 or not
+  //             Commands.sequence(
+  //                 wrist.moveToState(WristStates.SCORING),
+  //                 LEDs.runScoring().withTimeout(0.1), // red
+  //                 rollers.runRollerScore(),
+  //                 LEDs.runScored().withTimeout(0.1), // yellow
+  //                 new WaitCommand(0.5),
+  //                 stationIntake()),
+  //             Commands.sequence(
+  //                 LEDs.runScoring().withTimeout(0.1), // red
+  //                 rollers.runRollerScore(),
+  //                 LEDs.runScored().withTimeout(0.1), // yellow
+  //                 stationIntake()),
+  //             () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4),
+  //         Commands.none(),
+  //         () -> isReadyToScore());
+  //   }
 
   // public Command algaeL2Intake() {
   //   return Commands.runOnce(
@@ -232,21 +250,21 @@ public class SuperstructureCommands {
       if (ElevatorStates.ALGAE_L3 == state) {
         algaeIntakeCommand =
             Commands.sequence(
-                prepareToScore(),
+                wrist.moveToState(WristStates.PREPARE),
                 LEDs.runPrepared().withTimeout(0.1), // blue
                 elevator.moveToState(ElevatorStates.ALGAE_L3),
                 wrist.moveToState(WristStates.REEFINTAKE),
-                rollers.runAlgaeIntake(),
-                LEDs.runAlgaeIntake().withTimeout(0.1)); // cyan
+                LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
+                rollers.runAlgaeIntake());
       } else if (ElevatorStates.ALGAE_L2 == state) {
         algaeIntakeCommand =
             Commands.sequence(
-                prepareToScore(),
+                wrist.moveToState(WristStates.PREPARE),
                 LEDs.runPrepared().withTimeout(0.1), // blue
                 elevator.moveToState(ElevatorStates.ALGAE_L2),
                 wrist.moveToState(WristStates.REEFINTAKE),
-                rollers.runAlgaeIntake(),
-                LEDs.runAlgaeIntake().withTimeout(0.1)); // cyan
+                LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
+                rollers.runAlgaeIntake());
       }
     }
     return algaeIntakeCommand;

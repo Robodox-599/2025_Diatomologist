@@ -63,7 +63,7 @@ public class DriveToPose extends Command {
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaMaxVelocity", Units.degreesToRadians(360.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaMaxAcceleration", 8.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.1);
+        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.03);
         SmartDashboard.putNumber(
             SMARTDASHBOARD_PREFIX + "ThetaTolerance", Units.degreesToRadians(1.0));
         SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMinRadius", 0.1);

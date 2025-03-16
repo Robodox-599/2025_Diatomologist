@@ -86,9 +86,9 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData("Field", field);
     switch (Constants.currentMode) {
       case REAL: // in meters
-        choreoPathXController = new PIDController(0.3, 0, 0);
-        choreoPathYController = new PIDController(0.3, 0, 0);
-        choreoPathAngleController = new PIDController(0.15, 0, 0);
+        choreoPathXController = new PIDController(0.7, 0, 0); // 0.3
+        choreoPathYController = new PIDController(0.7, 0, 0); // 0.3
+        choreoPathAngleController = new PIDController(0.15, 0, 0); // 0.15
         break;
       case SIM:
         choreoPathXController = new PIDController(0, 0, 0);

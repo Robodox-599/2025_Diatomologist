@@ -20,7 +20,6 @@ import frc.robot.subsystems.leds.LEDs;
 
 public class SubsystemVisualizer extends SubsystemBase {
 
-  // Climb climb;
   Elevator elevator;
   Rollers endefectorRollers;
   Wrist endefectorWrist;
@@ -45,9 +44,8 @@ public class SubsystemVisualizer extends SubsystemBase {
       endfectorWristVis.append(
           new MechanismLigament2d("endefectorRollersVis", 3, -45, 4, new Color8Bit(Color.kYellow)));
 
-  public SubsystemVisualizer(Elevator elevator, /* Climb climb,*/ Wrist wrist, Rollers rollers) {
+  public SubsystemVisualizer(Elevator elevator, Wrist wrist, Rollers rollers) {
     this.elevator = elevator;
-    // this.climb = climb;
     this.endefectorWrist = wrist;
     this.endefectorRollers = rollers;
   }
@@ -65,10 +63,6 @@ public class SubsystemVisualizer extends SubsystemBase {
   public void updateElevator() {
     elevatorVis.setLength(Units.inchesToMeters(elevator.getIO().getPositionInches()) * 25);
   }
-
-  // public void updateClimb() {
-  //   climbVis.setAngle(Units.inchesToMeters(climb.getIO().getPositionInches()) * 25);
-  // }
 
   public void updateWrist() {
     endfectorWristVis.setAngle(

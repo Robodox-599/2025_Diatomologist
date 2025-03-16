@@ -56,7 +56,7 @@ public class LEDsIOReal extends LEDsIO {
     state = LEDAnim.AlgaeIntake;
     // green
     candleReal.animate(
-        new StrobeAnimation(0, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(0, 255, 0, 100, 0.50, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override
@@ -81,7 +81,7 @@ public class LEDsIOReal extends LEDsIO {
     // yellow
     state = LEDAnim.Scored;
     candleReal.animate(
-        new StrobeAnimation(255, 255, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+        new StrobeAnimation(255, 255, 0, 100, 0.50, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override

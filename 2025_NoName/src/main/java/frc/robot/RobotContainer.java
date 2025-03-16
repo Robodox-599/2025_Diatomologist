@@ -105,7 +105,6 @@ public class RobotContainer {
         break;
     }
 
-    // subsystemVisualizer = new SubsystemVisualizer(elevator, climb, wrist, rollers);
     superstructureCommands =
         new SuperstructureCommands(drive, elevator, wrist, rollers, LEDs, driver, operator);
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
@@ -121,14 +120,11 @@ public class RobotContainer {
     autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
     autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
+    autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
 
     // TESTING ONLY
     autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);
     SmartDashboard.putData("AutoChooser", autoChooser);
-
-    // Logging setup
-    // DataLogManager.start();
-    // DriverStation.startDataLog(DataLogManager.getLog());
     DogLog.setOptions(
         new DogLogOptions()
             .withCaptureDs(true)

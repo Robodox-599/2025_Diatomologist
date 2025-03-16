@@ -7,8 +7,8 @@
    "botRadius":{
     "dimension":"Length",
     "var":{
-     "exp":"0.4318 m",
-     "val":0.4318
+     "exp":"15 in",
+     "val":0.381
     }
    },
    "fieldLength":{

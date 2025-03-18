@@ -194,6 +194,24 @@ public class SuperstructureCommands {
         () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
   }
 
+  public Command scoreCoralWithoutIntaking() {
+    return Commands.either( // check if L4 or not
+        Commands.sequence( // if L4, score without checking if at setpoint
+            LEDs.runScoring().withTimeout(0.1), // red
+            rollers.runRollerScore(),
+            LEDs.runScored().withTimeout(0.1), // yellow
+            new WaitCommand(0.5)),
+        Commands.either( // if not L4, check if at setpoint and score if true
+            Commands.sequence(
+                LEDs.runScoring().withTimeout(0.1), // red
+                rollers.runRollerScore(),
+                LEDs.runScored().withTimeout(0.1), // yellow
+                new WaitCommand(0.5)),
+            Commands.none(),
+            () -> isReadyToScore()),
+        () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);
+  }
+
   //   public Command scoreCoral() {
   //     return Commands.either( // check if elevator and wrist are at setpoint
   //         Commands.either( // check if L4 or not

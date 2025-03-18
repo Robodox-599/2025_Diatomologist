@@ -6,6 +6,7 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.SuperstructureCommands;
+import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 
 public class AutoRoutines {
   private AutoFactory autoFactory;
@@ -193,13 +194,13 @@ public class AutoRoutines {
     return routine;
   }
 
-  public AutoRoutine middleAutoRoutine() {
+  public AutoRoutine middleAutoRoutineWithAlgae() {
     AutoRoutine routine = autoFactory.newRoutine("middleAuto");
 
     // Load the routine's trajectories
     AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
     AutoTrajectory GtoS4 = routine.trajectory("GtoS4");
-    AutoTrajectory S4toNET = routine.trajectory("S4toNET");
+    AutoTrajectory S4toLine = routine.trajectory("S4toLine");
 
     // When the routine begins, intake, reset odometry, and start the first trajectory
     routine
@@ -213,10 +214,40 @@ public class AutoRoutines {
     MIDtoG.done()
         .onTrue(
             Commands.sequence(
-                // superstructureCommands.autoAlignToLeft().withTimeout(3),z
+                // superstructureCommands.autoAlignToLeft().withTimeout(3),
                 superstructureCommands.moveToL4().withTimeout(1.5),
-                superstructureCommands.scoreCoral(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.scoreCoralWithoutIntaking(),
+                GtoS4.cmd()));
+
+    GtoS4.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.removeAlgae(ElevatorStates.ALGAE_L2), S4toLine.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine middleAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("middleAuto");
+
+    // Load the routine's trajectories
+    AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
+
+    // When the routine begins, intake, reset odometry, and start the first trajectory
+    routine
+        .active()
+        .onTrue(
+            Commands.parallel(
+                superstructureCommands.autoIntakeFromStart(),
+                Commands.sequence(MIDtoG.resetOdometry(), MIDtoG.cmd())));
+
+    // When the previous trajectory is done, move to L4, auto align, score, go to HP, and intake
+    MIDtoG.done()
+        .onTrue(
+            Commands.sequence(
+                // superstructureCommands.autoAlignToLeft().withTimeout(3),
+                superstructureCommands.moveToL4().withTimeout(1.5),
+                superstructureCommands.scoreCoral()));
 
     // WHen the previous routine is done, grab the algae and go to the net
     // GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(),

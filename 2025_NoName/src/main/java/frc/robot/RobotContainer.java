@@ -121,6 +121,8 @@ public class RobotContainer {
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
     autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
     autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
+    autoChooser.addRoutine(
+        "DONOTUSE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
 
     // TESTING ONLY
     autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);

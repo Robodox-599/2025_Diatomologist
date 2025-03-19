@@ -35,58 +35,51 @@ public class DriveToPose extends Command {
   }
 
   // Parameters from SmartDashboard
-  private double drivekP;
-  private double drivekD;
-  private double thetakP;
-  private double thetakD;
-  private double driveMaxVelocity;
-  private double driveMaxVelocitySlow;
-  private double driveMaxAcceleration;
-  private double thetaMaxVelocity;
-  private double thetaMaxAcceleration;
-  private double driveTolerance;
-  private double thetaTolerance;
-  private double ffMinRadius;
-  private double ffMaxRadius;
+  private static double drivekP;
+  private static double drivekD;
+  private static double thetakP;
+  private static double thetakD;
+  private static double driveMaxVelocity;
+  private static double driveMaxVelocitySlow;
+  private static double driveMaxAcceleration;
+  private static double thetaMaxVelocity;
+  private static double thetaMaxAcceleration;
+  private static double driveTolerance;
+  private static double thetaTolerance;
+  private static double ffMinRadius;
+  private static double ffMaxRadius;
 
   static {
     switch (Constants.getMode()) {
       case REAL:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 0.6);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 0.1);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxVelocity", 3.8);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "DriveMaxVelocitySlow", 0.0); // Placeholder for slow velocity
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxAcceleration", 3.0);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "ThetaMaxVelocity", Units.degreesToRadians(360.0));
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaMaxAcceleration", 8.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.03);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "ThetaTolerance", Units.degreesToRadians(1.0));
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMinRadius", 0.1);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMaxRadius", 0.15);
+        drivekP = 0.6;
+        drivekD = 0.0;
+        thetakP = 0.6;
+        thetakD = 0.0;
+        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * .75;
+        driveMaxVelocitySlow = 0.0;
+        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * .75;
+        thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED * .75;
+        thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION * .75;
+        driveTolerance = 0.03;
+        thetaTolerance = Units.degreesToRadians(1);
+        ffMinRadius = 0.1;
+        ffMaxRadius = 0.15;
         break;
       case SIM:
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKp", 2);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveKd", 0.18);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKp", 10);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaKd", 0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxVelocity", 3.8);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "DriveMaxVelocitySlow", 1.5); // Placeholder for slow velocity
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveMaxAcceleration", 3.0);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "ThetaMaxVelocity", Units.degreesToRadians(360.0));
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "ThetaMaxAcceleration", 8.0);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "DriveTolerance", 0.05);
-        SmartDashboard.putNumber(
-            SMARTDASHBOARD_PREFIX + "ThetaTolerance", Units.degreesToRadians(1.0));
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMinRadius", 0.1);
-        SmartDashboard.putNumber(SMARTDASHBOARD_PREFIX + "FFMaxRadius", 0.15);
-        break;
+        drivekP = 0.6;
+        drivekD = 0.0;
+        thetakP = 0.6;
+        thetakD = 0.0;
+        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * .75;
+        driveMaxVelocitySlow = 0.0;
+        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * .75;
+        thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED * .75;
+        thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION * .75;
+        driveTolerance = 0.03;
+        thetaTolerance = Units.degreesToRadians(1);
+        ffMinRadius = 0.1;
+        ffMaxRadius = 0.15;
       default:
         break;
     }
@@ -178,105 +171,16 @@ public class DriveToPose extends Command {
   @Override
   public void execute() {
     running = true;
-
-    // --- Update PID parameters if SmartDashboard values have changed ---
-    double currentHash =
-        getSmartDashboardNumber("DriveKp", 0.75)
-            + getSmartDashboardNumber("DriveKd", 0.0)
-            + getSmartDashboardNumber("ThetaKp", 4.0)
-            + getSmartDashboardNumber("ThetaKd", 0.0)
-            + getSmartDashboardNumber("DriveMaxVelocity", 3.8)
-            + getSmartDashboardNumber("DriveMaxVelocitySlow", 0.0)
-            + getSmartDashboardNumber("DriveMaxAcceleration", 3.0)
-            + getSmartDashboardNumber("ThetaMaxVelocity", Units.degreesToRadians(360.0))
-            + getSmartDashboardNumber("ThetaMaxAcceleration", 8.0)
-            + getSmartDashboardNumber("DriveTolerance", 0.01)
-            + getSmartDashboardNumber("ThetaTolerance", Units.degreesToRadians(1.0))
-            + getSmartDashboardNumber("FFMinRadius", 0.1)
-            + getSmartDashboardNumber("FFMaxRadius", 0.15);
-    DogLog.log("DriveToPose/Execute/CurrentHash", currentHash);
-
-    if (currentHash != previousHash) {
-      drivekP = getSmartDashboardNumber("DriveKp", 0.75);
-      drivekD = getSmartDashboardNumber("DriveKd", 0.0);
-      thetakP = getSmartDashboardNumber("ThetaKp", 4.0);
-      thetakD = getSmartDashboardNumber("ThetaKd", 0.0);
-      driveMaxVelocity = getSmartDashboardNumber("DriveMaxVelocity", 3.8);
-      driveMaxVelocitySlow = getSmartDashboardNumber("DriveMaxVelocitySlow", 0.0);
-      driveMaxAcceleration = getSmartDashboardNumber("DriveMaxAcceleration", 3.0);
-      thetaMaxVelocity = getSmartDashboardNumber("ThetaMaxVelocity", Units.degreesToRadians(360.0));
-      thetaMaxAcceleration = getSmartDashboardNumber("ThetaMaxAcceleration", 8.0);
-      driveTolerance = getSmartDashboardNumber("DriveTolerance", 0.01);
-      thetaTolerance = getSmartDashboardNumber("ThetaTolerance", Units.degreesToRadians(1.0));
-      ffMinRadius = getSmartDashboardNumber("FFMinRadius", 0.1);
-      ffMaxRadius = getSmartDashboardNumber("FFMaxRadius", 0.15);
-
-      DogLog.log(
-          "DriveToPose/Execute/SmartDashboardValues",
-          "drivekP="
-              + drivekP
-              + ", drivekD="
-              + drivekD
-              + ", thetakP="
-              + thetakP
-              + ", thetakD="
-              + thetakD);
-      DogLog.log(
-          "DriveToPose/Execute/SmartDashboardValues",
-          "driveMaxVelocity="
-              + driveMaxVelocity
-              + ", driveMaxAcceleration="
-              + driveMaxAcceleration);
-      DogLog.log(
-          "DriveToPose/Execute/SmartDashboardValues",
-          "thetaMaxVelocity="
-              + thetaMaxVelocity
-              + ", thetaMaxAcceleration="
-              + thetaMaxAcceleration);
-      DogLog.log(
-          "DriveToPose/Execute/SmartDashboardValues",
-          "driveTolerance=" + driveTolerance + ", thetaTolerance=" + thetaTolerance);
-      DogLog.log(
-          "DriveToPose/Execute/SmartDashboardValues",
-          "ffMinRadius=" + ffMinRadius + ", ffMaxRadius=" + ffMaxRadius);
-
-      // Update drive controller parameters
-      driveController.setP(drivekP);
-      driveController.setD(drivekD);
-      driveController.setConstraints(
-          new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration));
-      driveController.setTolerance(driveTolerance);
-      DogLog.log(
-          "DriveToPose/Execute/DriveControllerUpdated",
-          "P="
-              + drivekP
-              + ", D="
-              + drivekD
-              + ", MaxVel="
-              + driveMaxVelocity
-              + ", MaxAcc="
-              + driveMaxAcceleration);
-
-      // Update theta controller parameters
-      thetaController.setP(thetakP);
-      thetaController.setD(thetakD);
-      thetaController.setConstraints(
-          new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration));
-      thetaController.setTolerance(thetaTolerance);
-      DogLog.log(
-          "DriveToPose/Execute/ThetaControllerUpdated",
-          "P="
-              + thetakP
-              + ", D="
-              + thetakD
-              + ", MaxVel="
-              + thetaMaxVelocity
-              + ", MaxAcc="
-              + thetaMaxAcceleration);
-
-      previousHash = currentHash;
-      DogLog.log("DriveToPose/Execute/PreviousHashUpdated", previousHash);
-    }
+    driveController.setP(drivekP);
+    driveController.setD(drivekD);
+    driveController.setConstraints(
+        new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration));
+    driveController.setTolerance(driveTolerance);
+    thetaController.setP(thetakP);
+    thetaController.setD(thetakD);
+    thetaController.setConstraints(
+        new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration));
+    thetaController.setTolerance(thetaTolerance);
 
     // --- Get current and target poses ---
     Pose2d currentPose = robot.get();

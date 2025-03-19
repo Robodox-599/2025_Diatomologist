@@ -32,18 +32,18 @@ public class AutoRoutines {
     routine
         .active()
         .onTrue(
-            Commands.parallel(
+            Commands.sequence(
                 superstructureCommands.autoIntakeFromStart(),
-                Commands.sequence(LEFTtoI.resetOdometry(), LEFTtoI.cmd())));
+                LEFTtoI.resetOdometry(),
+                LEFTtoI.cmd()));
 
     // When the previous trajectory is done, move to L4, auto align, score, go to HP, and intake
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                // superstructureCommands.autoAlignToLeft().withTimeout(3),
+                superstructureCommands.autoAlignToLeft().withTimeout(1),
                 superstructureCommands.moveToL4().withTimeout(1.5),
                 superstructureCommands.scoreCoral(),
-                // ItoHP.cmd(),
                 superstructureCommands.stationIntake()));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to

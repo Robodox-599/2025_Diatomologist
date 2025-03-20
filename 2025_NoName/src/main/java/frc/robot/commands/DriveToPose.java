@@ -52,17 +52,17 @@ public class DriveToPose extends Command {
   static {
     switch (Constants.getMode()) {
       case REAL:
-        drivekP = 0.6;
+        drivekP = 1.5;
         drivekD = 0.0;
-        thetakP = 0.6;
+        thetakP = 1;
         thetakD = 0.0;
-        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * .75;
+        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED;
         driveMaxVelocitySlow = 0.0;
-        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * .75;
-        thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED * .75;
-        thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION * .75;
+        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION;
+        thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
+        thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
         driveTolerance = 0.03;
-        thetaTolerance = Units.degreesToRadians(1);
+        thetaTolerance = Units.degreesToRadians(3);
         ffMinRadius = 0.1;
         ffMaxRadius = 0.15;
         break;
@@ -267,11 +267,17 @@ public class DriveToPose extends Command {
     DogLog.log("DriveToPose/Execute/InterpolatedThetaVelocity", thetaVelocity);
 
     // --- Command chassis speeds ---
-    ChassisSpeeds chassisSpeeds =
-        new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
-    DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
+    if (thetaErrorAbs > Units.degreesToRadians(20)) {
+      ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, thetaVelocity);
+      DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
+      drive.runVelocity(chassisSpeeds);
+    } else {
+      ChassisSpeeds chassisSpeeds =
+          new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+      DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
 
-    drive.runVelocity(chassisSpeeds);
+      drive.runVelocity(chassisSpeeds);
+    }
 
     // --- Log additional state info ---
     Pose2d setpointPose =

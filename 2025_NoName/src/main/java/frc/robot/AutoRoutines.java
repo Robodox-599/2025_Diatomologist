@@ -43,12 +43,12 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.autoAlignToLeft().withTimeout(1),
                 superstructureCommands.moveToL4().withTimeout(1.5),
-                superstructureCommands.scoreCoral(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.prepareToScore()));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the reef
-    // ItoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoL.cmd()));
+    // ItoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake()));
 
     // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
     // HPtoL.done()

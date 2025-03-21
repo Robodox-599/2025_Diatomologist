@@ -32,7 +32,7 @@ public class AutoAlignToField {
       }
     }
 
-    double adjustX = Units.inchesToMeters((30.738 / 2.0));
+    double adjustX = Units.inchesToMeters((33 / 2.0));
     double adjustY = Units.inchesToMeters(6.469);
 
     // Apply the transformation based on left/right boolean

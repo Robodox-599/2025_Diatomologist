@@ -61,7 +61,7 @@ public class DriveToPose extends Command {
         driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION;
         thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
         thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
-        driveTolerance = 0.03;
+        driveTolerance = 0.02;
         thetaTolerance = Units.degreesToRadians(3);
         ffMinRadius = 0.1;
         ffMaxRadius = 0.15;

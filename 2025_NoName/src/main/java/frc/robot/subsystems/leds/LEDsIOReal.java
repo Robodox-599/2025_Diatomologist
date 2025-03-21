@@ -73,7 +73,8 @@ public class LEDsIOReal extends LEDsIO {
   public void enableOverride() {
     state = LEDAnim.Override;
     // dark red
-    candleReal.animate(new StrobeAnimation(130, 0, 0, 50, 0.5, LEDsConstants.LEDS_PER_ANIMATION));
+    candleReal.animate(
+        new StrobeAnimation(130, 0, 0, 50, 0.5, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
   }
 
   @Override

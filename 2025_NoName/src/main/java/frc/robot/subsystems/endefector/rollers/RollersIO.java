@@ -8,16 +8,16 @@ public abstract class RollersIO {
   protected double desiredVelocity = 0.0;
 
   public void updateInputs() {}
-  
+
   public void setVoltage(double voltage) {}
-  
-  public void stop(){}
-  
-  public void setVelocity(double velocity){}
 
-  public void setBrake(boolean brake){}
+  public void stop() {}
 
-  public boolean rangeDeviceDetected(){
+  public void setVelocity(double velocity) {}
+
+  public void setBrake(boolean brake) {}
+
+  public boolean rangeDeviceDetected() {
     return false;
   }
 }

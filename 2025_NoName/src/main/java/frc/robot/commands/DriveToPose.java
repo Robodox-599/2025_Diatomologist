@@ -38,6 +38,7 @@ public class DriveToPose extends Command {
   private static double drivekP;
   private static double drivekD;
   private static double thetakP;
+  private static double thetakI;
   private static double thetakD;
   private static double driveMaxVelocity;
   private static double driveMaxVelocitySlow;
@@ -54,14 +55,15 @@ public class DriveToPose extends Command {
       case REAL:
         drivekP = 1.5;
         drivekD = 0.0;
-        thetakP = 1;
+        thetakP = 0.8;
+        thetakI = 0.1;
         thetakD = 0.0;
         driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED;
         driveMaxVelocitySlow = 0.0;
         driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION;
         thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
         thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
-        driveTolerance = 0.02;
+        driveTolerance = 0.01;
         thetaTolerance = Units.degreesToRadians(3);
         ffMinRadius = 0.1;
         ffMaxRadius = 0.15;
@@ -70,6 +72,7 @@ public class DriveToPose extends Command {
         drivekP = 0.6;
         drivekD = 0.0;
         thetakP = 0.6;
+        thetakI = 0.001;
         thetakD = 0.0;
         driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * .75;
         driveMaxVelocitySlow = 0.0;
@@ -177,6 +180,7 @@ public class DriveToPose extends Command {
         new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration));
     driveController.setTolerance(driveTolerance);
     thetaController.setP(thetakP);
+    thetaController.setI(thetakI);
     thetaController.setD(thetakD);
     thetaController.setConstraints(
         new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration));

@@ -107,5 +107,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"moveToL4", "from":{"target":1, "targetTimestamp":1.51525, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"runAutoAlign", "from":{"target":1, "targetTimestamp":1.51525, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
 }

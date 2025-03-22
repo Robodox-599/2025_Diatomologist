@@ -35,43 +35,48 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.autoIntakeFromStart(),
                 LEFTtoI.resetOdometry(),
+                // new WaitCommand(0.5),
                 LEFTtoI.cmd()));
 
+    // LEFTtoI.atTime("runAutoAlign").onTrue(superstructureCommands.autoAlignToLeft().withTimeout(5));
     // When the previous trajectory is done, move to L4, auto align, score, go to HP, and intake
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft().withTimeout(1),
+                superstructureCommands.autoAlignToLeft().withTimeout(5),
                 superstructureCommands.moveToL4().withTimeout(1.5),
                 superstructureCommands.scoreCoralWithoutIntaking(),
-                superstructureCommands.prepareToScore()));
+                superstructureCommands.prepareToScore(),
+                ItoHP.cmd()));
+
+    // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
+    // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
+    // the reef
+    ItoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake(), HPtoL.cmd()));
+
+    // HPtoL.atTime("runAutoAlign").onTrue(superstructureCommands.autoAlignToRight().withTimeout(3));
+
+    // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
+    HPtoL.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.autoAlignToRight().withTimeout(5),
+                superstructureCommands.moveToL3().withTimeout(1),
+                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.prepareToScore(),
+                LtoHP.cmd()));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the reef
-    // ItoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake()));
+    LtoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake(), HPtoK.cmd()));
 
     // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
-    // HPtoL.done()
-    //     .onTrue(
-    //         Commands.sequence(
-    //             superstructureCommands.moveToL3().withTimeout(1),
-    //             superstructureCommands.autoAlignToRight(),
-    //             superstructureCommands.scoreCoral(),
-    //             LtoHP.cmd(),
-    //             superstructureCommands.stationIntake()));
-
-    // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
-    // the reef
-    // LtoHP.done().onTrue(Commands.sequence(new WaitCommand(1), HPtoK.cmd()));
-
-    // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
-    // HPtoK.done()
-    //     .onTrue(
-    //         Commands.sequence(
-    //             superstructureCommands.moveToL3().withTimeout(1),
-    //             superstructureCommands.autoAlignToLeft(),
-    //             superstructureCommands.scoreCoral(),
-    //             superstructureCommands.stationIntake()));
+    HPtoK.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.autoAlignToLeft().withTimeout(5),
+                superstructureCommands.moveToL3().withTimeout(1),
+                superstructureCommands.scoreCoral()));
 
     return routine;
   }

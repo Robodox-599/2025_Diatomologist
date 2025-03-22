@@ -71,47 +71,35 @@ public class SuperstructureCommands {
   }
 
   public Command moveToL1() {
-    return Commands.either(
-        Commands.sequence(
-            wrist.moveToState(WristStates.PREPARE),
-            elevator.moveToState(ElevatorStates.L1),
-            LEDs.runReadyToScore().withTimeout(0.1), // purple
-            rumbleControllers()),
-        Commands.none(),
-        () -> rollers.isCoralDetected());
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L1),
+        LEDs.runReadyToScore().withTimeout(0.1), // purple
+        rumbleControllers());
   }
 
   public Command moveToL2() {
-    return Commands.either(
-        Commands.sequence(
-            wrist.moveToState(WristStates.PREPARE),
-            elevator.moveToState(ElevatorStates.L2),
-            LEDs.runReadyToScore().withTimeout(0.1), // purple
-            rumbleControllers()),
-        Commands.none(),
-        () -> rollers.isCoralDetected());
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L2),
+        LEDs.runReadyToScore().withTimeout(0.1), // purple
+        rumbleControllers());
   }
 
   public Command moveToL3() {
-    return Commands.either(
-        Commands.sequence(
-            wrist.moveToState(WristStates.PREPARE),
-            elevator.moveToState(ElevatorStates.L3),
-            LEDs.runReadyToScore().withTimeout(0.1), // purple
-            rumbleControllers()),
-        Commands.none(),
-        () -> rollers.isCoralDetected());
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L3),
+        LEDs.runReadyToScore().withTimeout(0.1), // purple
+        rumbleControllers());
   }
 
   public Command moveToL4() {
-    return Commands.either(
-        Commands.sequence(
-            wrist.moveToState(WristStates.PREPARE),
-            elevator.moveToState(ElevatorStates.L4),
-            LEDs.runReadyToScore().withTimeout(0.1), // purple
-            rumbleControllers()),
-        Commands.none(),
-        () -> rollers.isCoralDetected());
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.L4),
+        LEDs.runReadyToScore().withTimeout(0.1), // purple
+        rumbleControllers());
   }
 
   public Command stationIntake() {

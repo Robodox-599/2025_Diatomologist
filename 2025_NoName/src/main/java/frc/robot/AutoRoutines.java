@@ -43,11 +43,10 @@ public class AutoRoutines {
     LEFTtoI.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft().withTimeout(5),
-                superstructureCommands.moveToL4().withTimeout(1.5),
+                superstructureCommands.moveToL4().withTimeout(0.8),
+                superstructureCommands.autoAlignToLeft().withTimeout(3),
                 superstructureCommands.scoreCoralWithoutIntaking(),
-                superstructureCommands.prepareToScore(),
-                ItoHP.cmd()));
+                Commands.parallel(superstructureCommands.prepareToScore(), ItoHP.cmd())));
 
     // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
@@ -60,11 +59,10 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToRight().withTimeout(5),
-                superstructureCommands.moveToL3().withTimeout(1),
+                superstructureCommands.moveToL3().withTimeout(0.6),
+                superstructureCommands.autoAlignToRight().withTimeout(3),
                 superstructureCommands.scoreCoralWithoutIntaking(),
-                superstructureCommands.prepareToScore(),
-                LtoHP.cmd()));
+                Commands.parallel(superstructureCommands.prepareToScore(), LtoHP.cmd())));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the reef
@@ -74,9 +72,10 @@ public class AutoRoutines {
     HPtoK.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.autoAlignToLeft().withTimeout(5),
-                superstructureCommands.moveToL3().withTimeout(1),
-                superstructureCommands.scoreCoral()));
+                superstructureCommands.moveToL3().withTimeout(0.6),
+                superstructureCommands.autoAlignToLeft().withTimeout(3),
+                superstructureCommands.scoreCoral(),
+                superstructureCommands.prepareToScore()));
 
     return routine;
   }

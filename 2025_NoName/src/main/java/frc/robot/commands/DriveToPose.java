@@ -37,6 +37,7 @@ public class DriveToPose extends Command {
   // Parameters from SmartDashboard
   private static double drivekP;
   private static double drivekD;
+  private static double drivekI;
   private static double thetakP;
   private static double thetakI;
   private static double thetakD;
@@ -55,16 +56,17 @@ public class DriveToPose extends Command {
       case REAL:
         drivekP = 1.5;
         drivekD = 0.0;
-        thetakP = 0.8;
-        thetakI = 0.1;
-        thetakD = 0.0;
+        drivekI = 0.0;
+        thetakP = 0.7;
+        thetakI = 0.05;
+        thetakD = 0.01;
         driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED;
         driveMaxVelocitySlow = 0.0;
         driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION;
         thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
         thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
-        driveTolerance = 0.01;
-        thetaTolerance = Units.degreesToRadians(3);
+        driveTolerance = 0.02;
+        thetaTolerance = Units.degreesToRadians(5);
         ffMinRadius = 0.1;
         ffMaxRadius = 0.15;
         break;

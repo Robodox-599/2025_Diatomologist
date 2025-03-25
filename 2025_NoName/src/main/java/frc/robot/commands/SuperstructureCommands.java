@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.constants.RealConstants;
@@ -117,6 +116,28 @@ public class SuperstructureCommands {
         () -> !rollers.isCoralDetected());
   }
 
+  public Command stationIntakeWithoutRollers() {
+    return Commands.either(
+        Commands.sequence(
+            wrist.moveToState(WristStates.PREPARE),
+            elevator.moveToState(ElevatorStates.INTAKE),
+            wrist.moveToState(WristStates.STATIONINTAKE),
+            LEDs.runStationIntake().withTimeout(0.1)), // white
+        Commands.none(),
+        () -> !rollers.isCoralDetected());
+  }
+
+  public Command stationIntakeWithRollers() {
+    return Commands.either(
+        Commands.sequence(
+            rollers.runRollersIntake(),
+            rumbleControllers().withTimeout(0.25),
+            LEDs.runIntaked().withTimeout(0.1), // green
+            prepareToScore()),
+        Commands.none(),
+        () -> !rollers.isCoralDetected());
+  }
+
   public Command ejectCoralIntake() {
     return Commands.either(
         Commands.sequence(
@@ -131,7 +152,7 @@ public class SuperstructureCommands {
   public Command autoIntakeFromStart() {
     return Commands.sequence(
         wrist.moveToState(WristStates.STATIONINTAKE),
-        LEDs.runStationIntake().withTimeout(0.1), // white
+        // LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runRollersIntake(),
         rumbleControllers().withTimeout(0.25),
         LEDs.runIntaked().withTimeout(0.1), // green
@@ -168,14 +189,12 @@ public class SuperstructureCommands {
             LEDs.runScoring().withTimeout(0.1), // red
             rollers.runRollerScore(),
             LEDs.runScored().withTimeout(0.1), // yellow
-            new WaitCommand(0.5),
             stationIntake()),
         Commands.either( // if not L4, check if at setpoint and score if true
             Commands.sequence(
                 LEDs.runScoring().withTimeout(0.1), // red
                 rollers.runRollerScore(),
                 LEDs.runScored().withTimeout(0.1), // yellow
-                new WaitCommand(0.5),
                 stationIntake()),
             Commands.none(),
             () -> isReadyToScore()),
@@ -187,14 +206,12 @@ public class SuperstructureCommands {
         Commands.sequence( // if L4, score without checking if at setpoint
             LEDs.runScoring().withTimeout(0.1), // red
             rollers.runRollerScore(),
-            LEDs.runScored().withTimeout(0.1), // yellow
-            new WaitCommand(0.5)),
+            LEDs.runScored().withTimeout(0.1)), // yellow
         Commands.either( // if not L4, check if at setpoint and score if true
             Commands.sequence(
                 LEDs.runScoring().withTimeout(0.1), // red
                 rollers.runRollerScore(),
-                LEDs.runScored().withTimeout(0.1), // yellow
-                new WaitCommand(0.5)),
+                LEDs.runScored().withTimeout(0.1)), // yellow
             Commands.none(),
             () -> isReadyToScore()),
         () -> elevator.getState() == ElevatorConstants.ElevatorStates.L4);

@@ -57,7 +57,7 @@ public class WristIOTalonFX extends WristIO {
 
     wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV;
     // I don't really know what values to put here :(
-    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 1.25);
+    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 4);
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;

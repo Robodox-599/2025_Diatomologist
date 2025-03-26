@@ -143,7 +143,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isDetected() {
-    DogLog.log("Rollers/isDetected", (beamBreakTimer.get() >= 0.15));
-    return (beamBreakTimer.get() >= 0.15);
+    DogLog.log("Rollers/isDetected", (beamBreakTimer.get() >= 0.1));
+    return (beamBreakTimer.get() >= 0.1);
   }
 }

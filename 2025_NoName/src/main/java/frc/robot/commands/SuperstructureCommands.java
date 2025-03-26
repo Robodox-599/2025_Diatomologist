@@ -49,14 +49,22 @@ public class SuperstructureCommands {
 
   public Command autoAlignToLeft() {
     return Commands.sequence(
-        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
+        // LEDs.runAutoAlign().withTimeout(0.1), // rainbow
         AutoAlignToField.alignToNearestLeftReef(drive));
   }
 
   public Command autoAlignToRight() {
     return Commands.sequence(
-        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
+        // LEDs.runAutoAlign().withTimeout(0.1), // rainbow
         AutoAlignToField.alignToNearestRightReef(drive));
+  }
+
+  public Command autoAlignToLeftWithoutLEDs() {
+    return Commands.sequence(AutoAlignToField.alignToNearestLeftReef(drive));
+  }
+
+  public Command autoAlignToRightWithoutLEDs() {
+    return Commands.sequence(AutoAlignToField.alignToNearestRightReef(drive));
   }
 
   public Command stowAll() {
@@ -67,6 +75,17 @@ public class SuperstructureCommands {
             rollers.stop(),
             LEDs.runNoState()),
         rumbleControllers());
+  }
+
+  public Command moveToIntake() {
+    return Commands.sequence(
+        wrist.moveToState(WristStates.PREPARE),
+        elevator.moveToState(ElevatorStates.INTAKE),
+        wrist.moveToState(WristStates.STATIONINTAKE));
+  }
+
+  public Command runRollersIntake() {
+    return rollers.runRollersIntake();
   }
 
   public Command moveToL1() {

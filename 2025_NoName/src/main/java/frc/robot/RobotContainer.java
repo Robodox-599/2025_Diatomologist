@@ -123,6 +123,7 @@ public class RobotContainer {
     autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
     autoChooser.addRoutine(
         "DONOTUSE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
+    autoChooser.addRoutine("startTo15FeetAutoRoutine", autoRoutines::startTo15FeetAutoRoutine);
 
     // TESTING ONLY
     autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);

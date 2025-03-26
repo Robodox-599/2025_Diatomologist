@@ -353,16 +353,14 @@ public class SuperstructureCommands {
         .whileTrue(
             Commands.sequence(
                 Commands.parallel(
-                    AutoAlignToField.alignToNearestLeftReef(drive),
-                    LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
+                    autoAlignToLeft(), LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
                 rumbleControllers()));
     driver
         .povRight()
         .whileTrue(
             Commands.sequence(
                 Commands.parallel(
-                    AutoAlignToField.alignToNearestRightReef(drive),
-                    LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
+                    autoAlignToRight(), LEDs.runAutoAlign().withTimeout(0.1)), // rainbow
                 rumbleControllers()));
     // OPERATOR BINDS
     // SCORE L4

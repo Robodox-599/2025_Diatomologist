@@ -26,6 +26,8 @@ public abstract class RollersIO {
 
   public void setBrake(boolean brake) {}
 
+  public void whenCoralDetected() {}
+
   public double getCurrentVolts() {
     return appliedVolts;
   }

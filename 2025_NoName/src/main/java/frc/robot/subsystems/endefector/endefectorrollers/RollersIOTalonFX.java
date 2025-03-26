@@ -5,6 +5,7 @@ import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -117,6 +118,11 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
+  public void whenCoralDetected() {
+    rollersMotor.setControl(new PositionVoltage(rollersMotor.getPosition().getValueAsDouble() + RollersConstants.distanceToMove));
+  }
+
+  @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
@@ -135,6 +141,9 @@ public class RollersIOTalonFX extends RollersIO {
       case FAST:
         setSpeed(rollersFastSpeed);
         break;
+      case HOLDCORAL:
+        whenCoralDetected();
+      break;
       default:
         setSpeed(0);
         break;

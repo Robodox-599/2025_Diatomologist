@@ -7,7 +7,8 @@ public class RollersConstants {
     INTAKE(2),
     ALGAEREEFINTAKE(3),
     ALGAEGROUNDINTAKE(4),
-    FAST(5);
+    FAST(5),
+    HOLDCORAL(6);
 
     private final int index;
 
@@ -60,6 +61,8 @@ public class RollersConstants {
 
   public static final int beakBreakPort = 3;
   public static final double beamBreakDebounce = 0.0;
+  
+  public static final double distanceToMove = 0.0;
 
   public static final double[] velocitys = {
     0.25, // score

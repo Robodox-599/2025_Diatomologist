@@ -27,7 +27,9 @@ public class RollersIOTalonFX extends RollersIO {
   private TorqueCurrentFOC torqueCurrent;
   Debouncer CANrangeDebouncer = new Debouncer(0.03);
   private Timer beamBreakTimer = new Timer();
+  private Timer PETimer = new Timer();
   private DigitalInput m_BeamBreak2;
+  private DigitalInput PESensor;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -40,6 +42,7 @@ public class RollersIOTalonFX extends RollersIO {
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreakPort);
+    PESensor = new DigitalInput(RollersConstants.PESensorPort);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
 
@@ -80,6 +83,9 @@ public class RollersIOTalonFX extends RollersIO {
     if (m_BeamBreak2.get()) {
       beamBreakTimer.restart();
     }
+    if (PESensor.get()) {
+      PETimer.restart();
+    }
     DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
@@ -87,7 +93,8 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
-    DogLog.log("Rollers/CoralDetected", this.isDetected());
+    DogLog.log("Rollers/CoralDetected", this.isCoralDetected());
+    DogLog.log("Rollers/AlgaeDetected", this.isAlgaeDetected());
     DogLog.log("Rollers/CANRangeDistance", super.canrangeDistance);
   }
 
@@ -151,8 +158,13 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public boolean isDetected() {
+  public boolean isCoralDetected() {
     DogLog.log("Rollers/isDetected", (beamBreakTimer.get() >= 0.1));
     return (beamBreakTimer.get() >= 0.1);
+  }
+
+  @Override
+  public boolean isAlgaeDetected() {
+    return (PETimer.get() >= 0.1);
   }
 }

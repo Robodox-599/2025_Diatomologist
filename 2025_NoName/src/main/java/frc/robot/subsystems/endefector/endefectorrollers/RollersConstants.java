@@ -60,6 +60,7 @@ public class RollersConstants {
   public static final double detectionDistance = noCoralDistance - 3.5;
 
   public static final int beakBreakPort = 3;
+  public static final int PESensorPort = 5;
   public static final double beamBreakDebounce = 0.0;
   
   public static final double distanceToMove = 0.0;

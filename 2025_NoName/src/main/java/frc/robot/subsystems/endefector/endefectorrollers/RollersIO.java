@@ -32,7 +32,11 @@ public abstract class RollersIO {
     return appliedVolts;
   }
 
-  public boolean isDetected() {
+  public boolean isCoralDetected() {
+    return false;
+  }
+
+  public boolean isAlgaeDetected() {
     return false;
   }
 

@@ -107,8 +107,8 @@ public class SuperstructureCommands {
 
   public Command algaeIntake(ElevatorStates state) {
     Command algaeIntakeCommand = Commands.none();
-    if (!rollers.isCoralDetected()) {
-      if (ElevatorStates.ALGAEL3 == state) {
+    if (!rollers.isAlgaeDetected()) { // if there is no algae detected
+      if (ElevatorStates.ALGAEL3 == state) { 
         algaeIntakeCommand =
             Commands.sequence(
                 wrist.moveToState(WristStates.PREPARE),
@@ -116,7 +116,8 @@ public class SuperstructureCommands {
                 elevator.moveToState(ElevatorStates.ALGAEL3),
                 wrist.moveToState(WristStates.ALGAEREEFINTAKE),
                 LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
-                rollers.runAlgaeIntake());
+                rollers.runAlgaeIntake(),
+                wrist.moveToState(WristStates.PREPARE));
       } else if (ElevatorStates.ALGAEL2 == state) {
         algaeIntakeCommand =
             Commands.sequence(
@@ -125,7 +126,8 @@ public class SuperstructureCommands {
                 elevator.moveToState(ElevatorStates.ALGAEL2),
                 wrist.moveToState(WristStates.ALGAEREEFINTAKE),
                 LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
-                rollers.runAlgaeIntake());
+                rollers.runAlgaeIntake(),
+                wrist.moveToState(WristStates.PREPARE));
       } else if (ElevatorStates.ALGAEGROUNDINTAKE == state) {
         algaeIntakeCommand =
             Commands.sequence(
@@ -134,7 +136,8 @@ public class SuperstructureCommands {
                 elevator.moveToState(ElevatorStates.ALGAEGROUNDINTAKE),
                 wrist.moveToState(WristStates.ALGAEGROUNDINTAKE),
                 LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
-                rollers.runAlgaeIntake());
+                rollers.runAlgaeIntake(),
+                wrist.moveToState(WristStates.PREPARE));
       }
     }
     return algaeIntakeCommand;
@@ -172,7 +175,7 @@ public class SuperstructureCommands {
         rumbleControllers());
   }
 
-  public Command moveToBargeNet() {
+  public Command extendToNet() {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
         elevator.moveToState(ElevatorStates.BARGENET),
@@ -235,15 +238,15 @@ public class SuperstructureCommands {
         () -> isReadyToScoreCoral());
   }
 
-  public Command scoreAlgae() {
-    return Commands.either( // check if ready to score algae
-        Commands.sequence(
-            LEDs.runScoring().withTimeout(0.1), // red
-            rollers.runScoreAlgae(),
-            LEDs.runScored().withTimeout(0.1)), // yellow
-        Commands.none(),
-        () -> isReadyToScoreAlgae());
-  }
+//   public Command scoreAlgae() {
+//     return Commands.either( // check if ready to score algae
+//         Commands.sequence(
+//             LEDs.runScoring().withTimeout(0.1), // red
+//             rollers.runScoreAlgae(),
+//             LEDs.runScored().withTimeout(0.1)), // yellow
+//         Commands.none(),
+//         () -> isReadyToScoreAlgae());
+//   }
 
   public Command rumbleControllers() {
     return new StartEndCommand(
@@ -303,8 +306,8 @@ public class SuperstructureCommands {
     // MOVE TO L4
     operator.y().onTrue(moveToL4());
     // MOVE TO NET
-    operator.povLeft().onTrue(moveToBargeNet());
-    operator.povRight().onTrue(moveToBargeNet());
+    operator.povLeft().onTrue(extendToNet());
+    operator.povRight().onTrue(extendToNet());
     // CORAL STATION INTAKE
     operator.rightBumper().onTrue(coralStationIntake());
     // PREPARE

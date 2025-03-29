@@ -3,6 +3,7 @@
  "version":1,
  "snapshot":{
   "waypoints":[
+    {"x":7.580325199999999, "y":7.2898, "heading":-3.141592653589793, "intervals":0, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":7.580325199999999, "y":7.2898, "heading":-3.141592653589793, "intervals":46, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":3.008325199999999, "y":7.2898, "heading":-3.141592653589793, "intervals":48, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
@@ -13,6 +14,7 @@
  },
  "params":{
   "waypoints":[
+    {"x":{"exp":"298.438 in", "val":7.580325199999999}, "y":{"exp":"317 in - botRadius - 15 in", "val":7.2898}, "heading":{"exp":"-180 deg", "val":-3.141592653589793}, "intervals":0, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"298.438 in", "val":7.580325199999999}, "y":{"exp":"317 in - botRadius - 15 in", "val":7.2898}, "heading":{"exp":"-180 deg", "val":-3.141592653589793}, "intervals":46, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"298.438 in - 15 feet", "val":3.008325199999999}, "y":{"exp":"317 in - botRadius - 15 in", "val":7.2898}, "heading":{"exp":"-180 deg", "val":-3.141592653589793}, "intervals":48, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
@@ -26,7 +28,7 @@
  },
  "trajectory":{
   "sampleType":"Swerve",
-  "waypoints":[0.0,2.29694],
+  "waypoints":[0.0,0.0,2.29694],
   "samples":[
     {"t":0.0, "x":7.58033, "y":7.2898, "heading":-3.14159, "vx":0.0, "vy":0.0, "omega":0.0, "ax":-3.46901, "ay":0.0, "alpha":0.0, "fx":[-53.10616,-53.10616,-53.10616,-53.10616], "fy":[0.0,0.0,0.0,0.0]},
     {"t":0.04993, "x":7.576, "y":7.2898, "heading":-3.14159, "vx":-0.17322, "vy":0.0, "omega":0.0, "ax":-3.46888, "ay":0.0, "alpha":0.0, "fx":[-53.10414,-53.10414,-53.10414,-53.10414], "fy":[0.0,0.0,0.0,0.0]},

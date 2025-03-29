@@ -21,41 +21,34 @@
    "fieldWidth":{
     "dimension":"Length",
     "var":{
-     "exp":"8.051 m",
-     "val":8.051
+     "exp":"317 in",
+     "val":8.0518
     }
    },
-   "straightOffset":{
+   "middleCage":{
     "dimension":"Length",
     "var":{
-     "exp":"0.473075 m",
-     "val":0.473075
+     "exp":"242.855 in",
+     "val":6.168517
     }
    },
-   "xOffset":{
+   "startingOffset":{
     "dimension":"Length",
     "var":{
-     "exp":"0.2365375 m",
-     "val":0.2365375
-    }
-   },
-   "yOffset":{
-    "dimension":"Length",
-    "var":{
-     "exp":"0.40969496789 m",
-     "val":0.40969496789
+     "exp":"102 in",
+     "val":2.5908
     }
    }
   },
   "poses":{
    "HPLeft":{
     "x":{
-     "exp":"1.6412826776504517 m",
-     "val":1.6412826776504517
+     "exp":"1.410415530204773 m",
+     "val":1.410415530204773
     },
     "y":{
-     "exp":"7.507998466491699 m",
-     "val":7.507998466491699
+     "exp":"7.33277702331543 m",
+     "val":7.33277702331543
     },
     "heading":{
      "exp":"-54 deg",
@@ -64,26 +57,26 @@
    },
    "HPRight":{
     "x":{
-     "exp":"1.6 m",
-     "val":1.6
+     "exp":"1.410415530204773 m",
+     "val":1.410415530204773
     },
     "y":{
-     "exp":"0.55 m",
-     "val":0.55
+     "exp":"0.685 m",
+     "val":0.685
     },
     "heading":{
      "exp":"54 deg",
      "val":0.942477796076938
     }
    },
-   "Net":{
+   "NET":{
     "x":{
      "exp":"7.8 m",
      "val":7.8
     },
     "y":{
-     "exp":"5.6 m",
-     "val":5.6
+     "exp":"5.338716983795166 m",
+     "val":5.338716983795166
     },
     "heading":{
      "exp":"0 rad",

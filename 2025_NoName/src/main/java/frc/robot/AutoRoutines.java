@@ -46,8 +46,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
 
-    JtoHP.done()
-        .onTrue(HPtoL.cmd());
+    JtoHP.done().onTrue(HPtoL.cmd());
 
     HPtoL.done()
         .onTrue(
@@ -60,8 +59,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), LtoHP.cmd())));
 
-    LtoHP.done()
-        .onTrue(HPtoK.cmd());
+    LtoHP.done().onTrue(HPtoK.cmd());
 
     HPtoK.done()
         .onTrue(
@@ -106,8 +104,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), EtoHP.cmd())));
 
-    EtoHP.done()
-        .onTrue(HPtoC.cmd());
+    EtoHP.done().onTrue(HPtoC.cmd());
 
     HPtoC.done()
         .onTrue(
@@ -120,8 +117,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), CtoHP.cmd())));
 
-    CtoHP.done()
-        .onTrue(HPtoD.cmd());
+    CtoHP.done().onTrue(HPtoD.cmd());
 
     HPtoD.done()
         .onTrue(
@@ -141,7 +137,7 @@ public class AutoRoutines {
     AutoRoutine routine = autoFactory.newRoutine("middleAuto");
 
     AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
-    AutoTrajectory GtoS4 = routine. trajectory("GtoS4");
+    AutoTrajectory GtoS4 = routine.trajectory("GtoS4");
     AutoTrajectory S4toNET = routine.trajectory("S4toNET");
     AutoTrajectory NETtoS5 = routine.trajectory("NETtoS5");
     AutoTrajectory S5toNET = routine.trajectory("S5toNET");
@@ -170,18 +166,17 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 superstructureCommands.algaeIntake(ElevatorStates.ALGAEL2), S4toNET.cmd()));
-    
+
     S4toNET.atTime("extendToNet").onTrue(superstructureCommands.extendToNet());
 
     S4toNET.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreGamePiece(), Commands.parallel(superstructureCommands.algaeIntake(ElevatorStates.ALGAEL3), NETtoS5.cmd())));
+                superstructureCommands.scoreGamePiece(),
+                Commands.parallel(
+                    superstructureCommands.algaeIntake(ElevatorStates.ALGAEL3), NETtoS5.cmd())));
 
-    NETtoS5.done()
-        .onTrue(
-            Commands.sequence(
-                S5toNET.cmd()));
+    NETtoS5.done().onTrue(Commands.sequence(S5toNET.cmd()));
 
     S5toNET.atTime("extendToNet").onTrue(superstructureCommands.extendToNet());
 
@@ -260,8 +255,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
 
-    JtoHP.done()
-        .onTrue(HPtoL.cmd());
+    JtoHP.done().onTrue(HPtoL.cmd());
 
     HPtoL.done()
         .onTrue(
@@ -274,8 +268,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), LtoHP.cmd())));
 
-    LtoHP.done()
-        .onTrue(HPtoK.cmd());
+    LtoHP.done().onTrue(HPtoK.cmd());
 
     HPtoK.done()
         .onTrue(

@@ -40,12 +40,10 @@ public class WristConstants {
   public static enum WristStates {
     STOW(0),
     PREPARE(1),
-    SCORING(2),
-    OVERRIDE(3),
-    REEFINTAKE(4),
-    GROUNDINTAKE(5),
-    STATIONINTAKE(6),
-    CLIMB(7);
+    ALGAEREEFINTAKE(3),
+    ALGAEGROUNDINTAKE(4),
+    CORALSTATIONINTAKE(5),
+    CLIMB(6);
     private final int index;
 
     WristStates(int index) {
@@ -60,11 +58,9 @@ public class WristConstants {
   public static final double[] setpoints = {
     0.52, // stow
     0.735, // PREPARE
-    0.68, // SCORING
-    0.52, // OVERRIDE
-    0.88, // reef intake
-    0.879, // ground intake
-    0.64, // station intake
-    0.52, // climb,
+    0.88, // algae reef intake
+    0.879, // algae ground intake
+    0.64, // coral station intake
+    0.52, // climb
   };
 }

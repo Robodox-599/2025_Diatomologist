@@ -5,10 +5,10 @@ import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
@@ -99,13 +99,8 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void setVoltage(double voltage) {
-    rollersMotor.setVoltage(voltage);
-  }
-
-  @Override
   public void stop() {
-    rollersMotor.setVoltage(0);
+    setVelocity(0);
   }
 
   @Override
@@ -115,44 +110,55 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void setSpeed(double speed) {
-    rollersMotor.set(speed);
+  public void holdCoral() {
+    rollersMotor.setControl(new PositionVoltage(rollersMotor.getPosition().getValueAsDouble()));
   }
 
   @Override
-  public void setBrake(boolean brake) {
-    rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  public void holdCoralAfterIntake() {
+    rollersMotor.setControl(
+        new PositionVoltage(
+            rollersMotor.getPosition().getValueAsDouble() + RollersConstants.distanceToMove));
   }
 
   @Override
-  public void whenCoralDetected() {
-    rollersMotor.setControl(new PositionVoltage(rollersMotor.getPosition().getValueAsDouble() + RollersConstants.distanceToMove));
+  public void holdAlgae() {
+    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleAlgaeHoldVoltage));
   }
 
   @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
-      case STOP:
-        setSpeed(0);
+      case SCORECORAL:
+        setVelocity(rollersCoralScoreSpeed);
         break;
-      case SCORE:
-        setSpeed(rollersScoreSpeed);
+      case SCOREALGAE:
+        setVelocity(rollersAlgaeScoreSpeed);
         break;
-      case INTAKE:
-        setSpeed(rollersIntakeSpeed);
+      case CORALSTATIONINTAKE:
+        setVelocity(rollersCoralStationIntakeSpeed);
         break;
-      case ALGAEREEFINTAKE:
-        setSpeed(rollersReefIntakeSpeed);
-        break;
-      case FAST:
-        setSpeed(rollersFastSpeed);
+      case ALGAEINTAKE:
+        setVelocity(rollersAlgaeIntakeSpeed);
         break;
       case HOLDCORAL:
-        whenCoralDetected();
-      break;
+        holdCoral();
+        break;
+      case HOLDCORALAFTERSTATIONINTAKE:
+        holdCoralAfterIntake();
+        break;
+      case HOLDALGAE:
+        holdAlgae();
+        break;
+      case STOP:
+        setVelocity(0);
+        break;
+      case EJECT:
+        setVelocity(rollersEjectSpeed);
+        break;
       default:
-        setSpeed(0);
+        setVelocity(0);
         break;
     }
   }
@@ -167,4 +173,20 @@ public class RollersIOTalonFX extends RollersIO {
   public boolean isAlgaeDetected() {
     return (PETimer.get() >= 0.1);
   }
+
+  // @Override
+  // public void setVoltage(double voltage) {
+  //   rollersMotor.setVoltage(voltage);
+  // }
+
+  // @Override
+  // public void setSpeed(double speed) {
+  //   rollersMotor.set(speed);
+  // }
+
+  // @Override
+  // public void setBrake(boolean brake) {
+  //   rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  // }
+
 }

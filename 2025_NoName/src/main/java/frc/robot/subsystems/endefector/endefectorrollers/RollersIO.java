@@ -14,19 +14,17 @@ public abstract class RollersIO {
 
   public void updateInputs() {}
 
-  public void setVoltage(double voltage) {}
-
   public void stop() {}
 
   public void setVelocity(double velocity) {}
 
-  public void setSpeed(double speed) {}
-
   public void setState(RollersConstants.EndefectorRollerStates state) {}
 
-  public void setBrake(boolean brake) {}
+  public void holdCoral() {}
 
-  public void whenCoralDetected() {}
+  public void holdCoralAfterIntake() {}
+
+  public void holdAlgae() {}
 
   public double getCurrentVolts() {
     return appliedVolts;
@@ -44,15 +42,17 @@ public abstract class RollersIO {
     return currentState;
   }
 
-  public double getCoralDistance() {
-    return 0.0;
-  }
-
-  public boolean algaeIntakeStalling() {
-    return false;
-  }
+  // public double getCoralDistance() {
+  //   return 0.0;
+  // }
 
   public double getVelocity() {
     return velocity;
   }
+
+  // public void setBrake(boolean brake) {}
+
+  // public void setSpeed(double speed) {}
+
+  // public void setVoltage(double voltage) {}
 }

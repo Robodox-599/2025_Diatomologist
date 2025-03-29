@@ -2,13 +2,15 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 public class RollersConstants {
   public static enum EndefectorRollerStates {
-    SCORE(0),
-    STOP(1),
-    INTAKE(2),
-    ALGAEREEFINTAKE(3),
-    ALGAEGROUNDINTAKE(4),
-    FAST(5),
-    HOLDCORAL(6);
+    SCORECORAL(0),
+    SCOREALGAE(1),
+    CORALSTATIONINTAKE(2),
+    ALGAEINTAKE(3),
+    HOLDCORAL(4),
+    HOLDCORALAFTERSTATIONINTAKE(5),
+    HOLDALGAE(6),
+    STOP(7),
+    EJECT(8);
 
     private final int index;
 
@@ -46,10 +48,13 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersScoreSpeed = 0.25;
-  public static final double rollersIntakeSpeed = 0.09;
-  public static final double rollersFastSpeed = rollersScoreSpeed;
-  public static final double rollersReefIntakeSpeed = -rollersScoreSpeed * 2;
+  public static final double rollersCoralScoreSpeed = 0.25;
+  public static final double rollersCoralStationIntakeSpeed = 0.09;
+  public static final double rollersEjectSpeed = rollersCoralScoreSpeed;
+  public static final double rollersAlgaeIntakeSpeed = -rollersCoralScoreSpeed * 2;
+  public static final double rollersAlgaeScoreSpeed = rollersCoralScoreSpeed * 2;
+
+  public static final double rollersDutyCycleAlgaeHoldVoltage = -0.2;
 
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;
@@ -62,15 +67,15 @@ public class RollersConstants {
   public static final int beakBreakPort = 3;
   public static final int PESensorPort = 5;
   public static final double beamBreakDebounce = 0.0;
-  
+
   public static final double distanceToMove = 0.0;
 
-  public static final double[] velocitys = {
-    0.25, // score
-    0.0, // stop
-    0.05, // intake
-    -0.25, // reef intake
-    -0.25, // algae intake
-    -0.25 // reverse
-  };
+  // public static final double[] velocitys = {
+  //   0.25, // score
+  //   0.0, // stop
+  //   0.05, // intake
+  //   -0.25, // reef intake
+  //   -0.25, // algae intake
+  //   -0.25 // reverse
+  // };
 }

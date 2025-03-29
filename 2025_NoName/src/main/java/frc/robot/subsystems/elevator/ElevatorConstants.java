@@ -6,16 +6,17 @@ public final class ElevatorConstants {
   /* CHANGE LATER */
 
   public static enum ElevatorStates {
-    L1(0),
-    L2(1),
-    L3(2),
-    L4(3),
+    CORALL1(0),
+    CORALL2(1),
+    CORALL3(2),
+    CORALL4(3),
     STOW(4),
-    INTAKE(5),
-    GROUNDINTAKE(6),
-    ALGAE_L2(7),
-    ALGAE_L3(8),
-    PREP(9);
+    CORALSTATIONINTAKE(5),
+    ALGAEGROUNDINTAKE(6),
+    ALGAEL2(7),
+    ALGAEL3(8),
+    BARGENET(9),
+    PREP(10);
 
     private final int index;
 
@@ -30,15 +31,16 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    16, // L1
-    19, // L2
-    35, // L3
-    62.25, // L4
+    16, // CORAL L1
+    19, // CORAL L2
+    35, // CORAL L3
+    62.25, // CORAL L4
     5.5, // STOW
-    0, // STATION INTAKE
+    0, // CORAL STATION INTAKE
     0, // ALGAE GROUND INTAKE
     24, // ALGAE L2
     46, // ALGAE L3
+    65, // ALGAE SCORE
     12.0 // PREP
   };
 

@@ -41,10 +41,10 @@ public class RollersIOSim extends RollersIO {
     DogLog.log("Rollers/Temp", 60);
   }
 
-  @Override
-  public void setVoltage(double voltage) {
-    rollersSim.setInputVoltage(voltage);
-  }
+  // @Override
+  // public void setVoltage(double voltage) {
+  //   rollersSim.setInputVoltage(voltage);
+  // }
 
   @Override
   public void setVelocity(double velocity) {
@@ -57,18 +57,18 @@ public class RollersIOSim extends RollersIO {
     setVelocity(0);
   }
 
-  @Override
-  public void setState(RollersConstants.EndefectorRollerStates state) {
-    super.currentState = state;
+  // @Override
+  // public void setState(RollersConstants.EndefectorRollerStates state) {
+  //   super.currentState = state;
 
-    desiredVelocity = RollersConstants.velocitys[state.getIndex()];
+  //   desiredVelocity = RollersConstants.velocitys[state.getIndex()];
 
-    rollersSim.setInputVoltage(rollerController.calculate(desiredVelocity));
-    System.out.println(super.velocity);
-  }
+  //   rollersSim.setInputVoltage(rollerController.calculate(desiredVelocity));
+  //   System.out.println(super.velocity);
+  // }
 
-  @Override
-  public double getCoralDistance() {
-    return Math.random() * 10;
-  }
+  // @Override
+  // public double getCoralDistance() {
+  //   return Math.random() * 10;
+  // }
 }

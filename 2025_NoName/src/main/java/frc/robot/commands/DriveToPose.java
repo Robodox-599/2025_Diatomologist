@@ -94,9 +94,19 @@ public class DriveToPose extends Command {
   private final Supplier<Pose2d> target;
 
   private final ProfiledPIDController driveController =
-      new ProfiledPIDController(drivekP, drivekI, drivekD, new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration), 0.02);
+      new ProfiledPIDController(
+          drivekP,
+          drivekI,
+          drivekD,
+          new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration),
+          0.02);
   private final ProfiledPIDController thetaController =
-      new ProfiledPIDController(thetakP, thetakI, thetakD, new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration), 0.02);
+      new ProfiledPIDController(
+          thetakP,
+          thetakI,
+          thetakD,
+          new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration),
+          0.02);
 
   private Translation2d lastSetpointTranslation = new Translation2d();
   private double driveErrorAbs = 0.0;

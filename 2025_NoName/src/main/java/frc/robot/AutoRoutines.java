@@ -57,14 +57,15 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         // new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToLeftWithoutLEDs().withTimeout(3))),
+                        superstructureCommands.autoAlignToLeft().withTimeout(3))),
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.prepareToScore(), ItoHP.cmd())));
 
     // ItoHP.atTime("HPIntake").onTrue(superstructureCommands.stationIntake());
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the reef
-    ItoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake(), HPtoL.cmd()));
+    ItoHP.done()
+        .onTrue(Commands.sequence(superstructureCommands.coralStationIntake(), HPtoL.cmd()));
 
     // HPtoL.atTime("runAutoAlign").onTrue(superstructureCommands.autoAlignToRight().withTimeout(3));
 
@@ -76,13 +77,14 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToRightWithoutLEDs().withTimeout(3))),
+                        superstructureCommands.autoAlignToRight().withTimeout(3))),
                 superstructureCommands.scoreCoralWithoutIntaking(),
                 Commands.parallel(superstructureCommands.prepareToScore(), LtoHP.cmd())));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the reef
-    LtoHP.done().onTrue(Commands.sequence(superstructureCommands.stationIntake(), HPtoK.cmd()));
+    LtoHP.done()
+        .onTrue(Commands.sequence(superstructureCommands.coralStationIntake(), HPtoK.cmd()));
 
     // // When the previous trajectory is done, move to L3, auto align, score, go to HP, and intake
     HPtoK.done()
@@ -92,8 +94,8 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToLeftWithoutLEDs().withTimeout(3))),
-                superstructureCommands.scoreCoral(),
+                        superstructureCommands.autoAlignToLeft().withTimeout(3))),
+                superstructureCommands.scoreGamePiece(),
                 superstructureCommands.prepareToScore()));
 
     return routine;
@@ -123,9 +125,9 @@ public class AutoRoutines {
             Commands.sequence(
                 // superstructureCommands.autoAlignToLeft(),
                 superstructureCommands.moveToL4().withTimeout(1),
-                superstructureCommands.scoreCoral(),
+                superstructureCommands.scoreGamePiece(),
                 // ItoHP.cmd(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.coralStationIntake()));
 
     // When the previous trajectory is done, wait 1 second, start the next trajectory to go to the
     // reef
@@ -137,9 +139,9 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.autoAlignToRight(),
                 superstructureCommands.moveToL3().withTimeout(1),
-                superstructureCommands.scoreCoral(),
+                superstructureCommands.scoreGamePiece(),
                 LtoHP.cmd(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.coralStationIntake()));
 
     // When the previous trajectory is done, wait 1 second, start the next trajectory to go to the
     // reef
@@ -151,8 +153,8 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.autoAlignToLeft(),
                 superstructureCommands.moveToL3().withTimeout(1),
-                superstructureCommands.scoreCoral(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.scoreGamePiece(),
+                superstructureCommands.coralStationIntake()));
 
     return routine;
   }
@@ -181,9 +183,9 @@ public class AutoRoutines {
             Commands.sequence(
                 // superstructureCommands.autoAlignToRight().withTimeout(3),
                 superstructureCommands.moveToL4().withTimeout(1),
-                superstructureCommands.scoreCoral(),
+                superstructureCommands.scoreGamePiece(),
                 // FtoHP.cmd(),
-                superstructureCommands.stationIntake()));
+                superstructureCommands.coralStationIntake()));
 
     // // When the previous trajectory is done, wait 1 second, start the next trajectory to go to
     // the
@@ -245,7 +247,7 @@ public class AutoRoutines {
     GtoS4.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.removeAlgae(ElevatorStates.ALGAE_L2), S4toLine.cmd()));
+                superstructureCommands.algaeIntake(ElevatorStates.ALGAEL2), S4toLine.cmd()));
 
     return routine;
   }
@@ -270,7 +272,7 @@ public class AutoRoutines {
             Commands.sequence(
                 // superstructureCommands.autoAlignToLeft().withTimeout(3),
                 superstructureCommands.moveToL4().withTimeout(1.5),
-                superstructureCommands.scoreCoral()));
+                superstructureCommands.scoreGamePiece()));
 
     // WHen the previous routine is done, grab the algae and go to the net
     // GtoS4.done().onTrue(Commands.sequence(superstructureCommands.algaeL2Intake(),

@@ -16,24 +16,10 @@ public class Rollers extends SubsystemBase {
     io.updateInputs();
   }
 
-  public Command applyVoltage(double voltage) {
-    return Commands.run(
-        () -> {
-          io.setVoltage(voltage);
-        });
-  }
-
-  public Command setReverse(double voltage) {
-    return Commands.run(
-        () -> {
-          io.setVoltage(-voltage);
-        });
-  }
-
   public Command stop() {
     return Commands.run(
         () -> {
-          io.setVoltage(0);
+          io.stop();
         });
   }
 
@@ -47,67 +33,87 @@ public class Rollers extends SubsystemBase {
   public Command runAlgaeIntake() {
     return Commands.sequence(
         Commands.run(
-            () -> {
-              io.setState(EndefectorRollerStates.ALGAEREEFINTAKE);
-            }));
+                () -> {
+                  io.setState(EndefectorRollerStates.ALGAEINTAKE);
+                })
+            .until(() -> io.isAlgaeDetected()),
+        Commands.runOnce(() -> io.setState(EndefectorRollerStates.HOLDALGAE)));
   }
 
-  public Command runRollerScore() {
-    // if (io instanceof RollersIOSim) {
-    //   return Commands.sequence(
-    //       Commands.run(
-    //               () -> {
-    //                 io.setState(EndefectorRollerStates.SCORE);
-    //               })
-    //           .withTimeout(1),
-    //       Commands.runOnce(() -> io.setState(EndefectorRollerStates.STOP)));
-    // } else {
+  public Command runScoreAlgae() {
     return Commands.sequence(
         Commands.run(
                 () -> {
-                  io.setState(EndefectorRollerStates.SCORE);
+                  io.setState(EndefectorRollerStates.SCOREALGAE);
                 })
-            .until(() -> !io.isDetected()),
-        Commands.runOnce(
-            () -> {
-              io.setState(EndefectorRollerStates.STOP);
-            }));
-    // }
-  }
-
-  public Command runRollersIntake() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  io.setState(EndefectorRollerStates.INTAKE);
-                })
-            .until(io::isDetected),
+            .until(() -> !io.isCoralDetected()),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);
             }));
   }
 
-  public Command runRollersFast() {
+  public Command runHoldCoral() {
+    return Commands.runOnce(() -> io.setState(EndefectorRollerStates.HOLDCORAL));
+  }
+
+  public Command runCoralStationIntake() {
+    return Commands.sequence(
+        Commands.run(
+                () -> {
+                  io.setState(EndefectorRollerStates.CORALSTATIONINTAKE);
+                })
+            .until(() -> io.isCoralDetected()),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.HOLDCORALAFTERSTATIONINTAKE);
+            }));
+  }
+
+  public Command runScoreCoral() {
+    return Commands.sequence(
+        Commands.run(
+                () -> {
+                  io.setState(EndefectorRollerStates.SCORECORAL);
+                })
+            .until(() -> !io.isCoralDetected()),
+        Commands.runOnce(
+            () -> {
+              io.setState(EndefectorRollerStates.STOP);
+            }));
+  }
+
+  public Command ejectCoral() {
     return Commands.runOnce(
         () -> {
-          io.setState(EndefectorRollerStates.FAST);
+          io.setState(EndefectorRollerStates.EJECT);
         });
   }
 
-  public void setBrake(boolean brake) {
-    io.setBrake(brake);
+  public boolean isCoralDetected() {
+    return io.isCoralDetected();
+  }
+
+  public boolean isAlgaeDetected() {
+    return io.isAlgaeDetected();
   }
 
   public RollersIO getIO() {
     return io;
   }
 
-  public double getCoralDistance() {
-    return io.getCoralDistance();
-  }
+  // public void setBrake(boolean brake) {
+  //   io.setBrake(brake);
+  // }
 
-  public boolean isCoralDetected() {
-    return io.isDetected();
-  }
+  //   public double getCoralDistance() {
+  //     return io.getCoralDistance();
+  //   }
+
+  // public Command applyVoltage(double voltage) {
+  //   return Commands.run(
+  //       () -> {
+  //         io.setVoltage(voltage);
+  //       });
+  // }
 }

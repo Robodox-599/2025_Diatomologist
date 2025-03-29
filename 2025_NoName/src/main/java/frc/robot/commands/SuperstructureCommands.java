@@ -54,7 +54,7 @@ public class SuperstructureCommands {
             wrist.moveToState(WristStates.STOW),
             rollers.stop(),
             LEDs.runNoState()),
-        rumbleControllers());
+        rumbleControllers().withTimeout(0.5));
   }
 
   public Command autoAlignToLeft() {
@@ -241,14 +241,25 @@ public class SuperstructureCommands {
         () -> rollers.isAlgaeDetected());
   }
 
-  public Command scoreCoralWithoutIntaking() {
-    return Commands.either( // check if ready to score coral
-        Commands.sequence(
-            LEDs.runScoring().withTimeout(0.05), // red
-            rollers.runScoreCoral(),
-            LEDs.runScored().withTimeout(0.05)), // yellow
-        Commands.none(),
-        () -> isReadyToScoreCoral());
+  public Command scoreGamePieceWithoutIntaking() {
+    return Commands.either( // check if coral or algae
+        Commands.either( // if algae, check if ready to score algae
+            Commands.sequence(
+                LEDs.runScoring().withTimeout(0.05), // red
+                rollers.runScoreAlgae(),
+                LEDs.runScored().withTimeout(0.05), // yellow
+                rumbleControllers().withTimeout(0.1)),
+            Commands.none(),
+            () -> isReadyToScoreAlgae()),
+        Commands.either( // if coral, check if ready to score algae
+            Commands.sequence(
+                LEDs.runScoring().withTimeout(0.05), // red
+                rollers.runScoreCoral(),
+                LEDs.runScored().withTimeout(0.05), // yellow
+                rumbleControllers().withTimeout(0.1)),
+            Commands.none(),
+            () -> isReadyToScoreCoral()),
+        () -> rollers.isAlgaeDetected());
   }
 
   //   public Command scoreAlgae() {
@@ -269,7 +280,7 @@ public class SuperstructureCommands {
             new StartEndCommand(
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
-        .withTimeout(0.2);
+        .withTimeout(0.5);
   }
 
   public void configureBindings() {

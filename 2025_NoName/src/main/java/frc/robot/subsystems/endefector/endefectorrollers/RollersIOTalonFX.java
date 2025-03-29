@@ -169,9 +169,20 @@ public class RollersIOTalonFX extends RollersIO {
     return (beamBreakTimer.get() >= 0.1);
   }
 
+  // @Override
+  // public boolean isAlgaeDetected() {
+  //   return (PETimer.get() >= 0.1);
+  // }
+
   @Override
   public boolean isAlgaeDetected() {
-    return (PETimer.get() >= 0.1);
+    return isRollersStalling();
+  }
+
+  @Override
+  public boolean isRollersStalling() {
+    DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
+    return (super.currentAmps >= 20);
   }
 
   // @Override
@@ -188,6 +199,5 @@ public class RollersIOTalonFX extends RollersIO {
   // public void setBrake(boolean brake) {
   //   rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   // }
-  // hi
 
 }

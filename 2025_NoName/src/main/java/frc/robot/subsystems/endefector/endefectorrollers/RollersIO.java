@@ -38,6 +38,9 @@ public abstract class RollersIO {
     return false;
   }
 
+  public boolean isRollersStalling() {
+    return false;
+  }
   public RollersConstants.EndefectorRollerStates getState() {
     return currentState;
   }

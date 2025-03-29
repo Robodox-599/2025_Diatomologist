@@ -46,7 +46,7 @@ public class Rollers extends SubsystemBase {
                 () -> {
                   io.setState(EndefectorRollerStates.SCOREALGAE);
                 })
-            .until(() -> !io.isCoralDetected()),
+            .until(() -> !io.isAlgaeDetected()),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);

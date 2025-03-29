@@ -43,7 +43,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         // new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
 
     JtoHP.done().onTrue(HPtoL.cmd());
@@ -56,7 +56,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), LtoHP.cmd())));
 
     LtoHP.done().onTrue(HPtoK.cmd());
@@ -101,7 +101,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         // new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), EtoHP.cmd())));
 
     EtoHP.done().onTrue(HPtoC.cmd());
@@ -114,7 +114,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), CtoHP.cmd())));
 
     CtoHP.done().onTrue(HPtoD.cmd());
@@ -159,7 +159,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreGamePiece(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 GtoS4.cmd()));
 
     GtoS4.done()
@@ -172,7 +172,7 @@ public class AutoRoutines {
     S4toNET.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreGamePiece(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(
                     superstructureCommands.algaeIntake(ElevatorStates.ALGAEL3), NETtoS5.cmd())));
 
@@ -183,7 +183,7 @@ public class AutoRoutines {
     S5toNET.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.scoreGamePiece(), superstructureCommands.prepareToScore()));
+                superstructureCommands.scoreGamePiece()));
 
     return routine;
   }
@@ -252,7 +252,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         // new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
 
     JtoHP.done().onTrue(HPtoL.cmd());
@@ -265,7 +265,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreCoralWithoutIntaking(),
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), LtoHP.cmd())));
 
     LtoHP.done().onTrue(HPtoK.cmd());

@@ -25,7 +25,7 @@ public class RollersIOTalonFX extends RollersIO {
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
   private TorqueCurrentFOC torqueCurrent;
-  Debouncer CANrangeDebouncer = new Debouncer(0.03);
+  Debouncer CANrangeDebouncer = new Debouncer(0.2);
   private Timer beamBreakTimer = new Timer();
   private Timer PETimer = new Timer();
   private DigitalInput m_BeamBreak2;
@@ -75,11 +75,7 @@ public class RollersIOTalonFX extends RollersIO {
     super.velocity = velocity.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
-    if (super.currentAmps >= 10) {
-      super.isAlgaeDetected = true;
-    } else {
-      super.isAlgaeDetected = false;
-    }
+    super.isAlgaeDetected = CANrangeDebouncer.calculate(super.currentAmps >= 20);
     if (m_BeamBreak2.get()) {
       beamBreakTimer.restart();
     }
@@ -176,14 +172,14 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isAlgaeDetected() {
-    return isRollersStalling();
+    return super.isAlgaeDetected;
   }
 
-  @Override
-  public boolean isRollersStalling() {
-    DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
-    return (super.currentAmps >= 20);
-  }
+  // @Override
+  // public boolean isRollersStalling() {
+  //   DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
+  //   return (super.currentAmps >= 20);
+  // }
 
   // @Override
   // public void setVoltage(double voltage) {

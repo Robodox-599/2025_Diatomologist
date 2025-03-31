@@ -57,7 +57,7 @@ public class WristIOTalonFX extends WristIO {
 
     wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV;
     // I don't really know what values to put here :(
-    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 4);
+    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV));
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;
@@ -72,10 +72,10 @@ public class WristIOTalonFX extends WristIO {
     wristConfig.CurrentLimits.SupplyCurrentLimit = 40;
     wristConfig.CurrentLimits.StatorCurrentLimit = 60;
 
-    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.1;
-    wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.52;
+    // wristConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // wristConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // wristConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.1;
+    // wristConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.52;
 
     wristConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     wristConfig.Feedback.FeedbackRemoteSensorID = cancoderID;

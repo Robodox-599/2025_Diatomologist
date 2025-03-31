@@ -2,14 +2,12 @@ package frc.robot.commands;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
@@ -75,13 +73,14 @@ public class SuperstructureCommands {
     return Commands.either(
         Commands.sequence(
             wrist.moveToState(WristStates.PREPARE),
-            elevator.moveToState(ElevatorStates.CORALSTATIONINTAKE),
+            // elevator.moveToState(ElevatorStates.CORALSTATIONINTAKE),
             wrist.moveToState(WristStates.CORALSTATIONINTAKE),
             LEDs.runStationIntake().withTimeout(0.05), // white
-            rollers.runCoralStationIntake(),
+            // rollers.runCoralStationIntake(),
             rumbleControllers().withTimeout(0.25),
-            LEDs.runIntaked().withTimeout(0.05), // green
-            prepareToScore()),
+            LEDs.runIntaked().withTimeout(0.05) // green
+            // prepareToScore()
+            ),
         Commands.none(),
         () -> !rollers.isCoralDetected());
   }
@@ -196,7 +195,7 @@ public class SuperstructureCommands {
   public Command prepareToScore() {
     return Commands.sequence(
         wrist.moveToState(WristStates.PREPARE),
-        elevator.moveToState(ElevatorStates.PREP),
+        // elevator.moveToState(ElevatorStates.PREP),
         LEDs.runPrepared().withTimeout(0.1)); // blue
   }
 
@@ -285,60 +284,61 @@ public class SuperstructureCommands {
 
   public void configureBindings() {
     //                               DRIVER BINDS
-    drive.setDefaultCommand(
-        drive.runVelocityTeleopFieldRelative(
-            () ->
-                new ChassisSpeeds(
-                    -joystickDeadbandApply(driver.getLeftY())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getLeftX())
-                        * RealConstants.MAX_LINEAR_SPEED
-                        * 0.85,
-                    -joystickDeadbandApply(driver.getRightX()) * RealConstants.MAX_ANGULAR_SPEED)));
+    // drive.setDefaultCommand(
+    //     drive.runVelocityTeleopFieldRelative(
+    //         () ->
+    //             new ChassisSpeeds(
+    //                 -joystickDeadbandApply(driver.getLeftY())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getLeftX())
+    //                     * RealConstants.MAX_LINEAR_SPEED
+    //                     * 0.85,
+    //                 -joystickDeadbandApply(driver.getRightX()) *
+    // RealConstants.MAX_ANGULAR_SPEED)));
 
-    // ZERO GYRO
-    driver.y().onTrue(drive.zeroGyroCommand());
-    drive.zeroGyroCommand().runsWhenDisabled();
-    // AUTO ALIGN
-    driver.povLeft().whileTrue(autoAlignToLeft());
-    driver.povRight().whileTrue(autoAlignToRight());
-    // INTAKE ALGAE FLOOR
-    driver.leftTrigger().onTrue(algaeIntake(ElevatorStates.ALGAEGROUNDINTAKE));
-    // SCORE GAME PIECE
-    driver.rightTrigger().onTrue(scoreGamePiece());
+    // // ZERO GYRO
+    // driver.y().onTrue(drive.zeroGyroCommand());
+    // drive.zeroGyroCommand().runsWhenDisabled();
+    // // AUTO ALIGN
+    // driver.povLeft().whileTrue(autoAlignToLeft());
+    // driver.povRight().whileTrue(autoAlignToRight());
+    // // INTAKE ALGAE FLOOR
+    // driver.leftTrigger().onTrue(algaeIntake(ElevatorStates.ALGAEGROUNDINTAKE));
+    // // SCORE GAME PIECE
+    // driver.rightTrigger().onTrue(scoreGamePiece());
 
     //                                OPERATOR BINDS
-    // MOVE TO L1
-    operator.x().onTrue(moveToL1());
-    // MOVE TO L2
-    operator.a().onTrue(moveToL2());
-    // MOVE TO L3
-    operator.b().onTrue(moveToL3());
-    // MOVE TO L4
-    operator.y().onTrue(moveToL4());
-    // MOVE TO NET
-    operator.povLeft().onTrue(extendToNet());
-    operator.povRight().onTrue(extendToNet());
+    // // MOVE TO L1
+    // operator.x().onTrue(moveToL1());
+    // // MOVE TO L2
+    // operator.a().onTrue(moveToL2());
+    // // MOVE TO L3
+    // operator.b().onTrue(moveToL3());
+    // // MOVE TO L4
+    // operator.y().onTrue(moveToL4());
+    // // MOVE TO NET
+    // operator.povLeft().onTrue(extendToNet());
+    // operator.povRight().onTrue(extendToNet());
     // CORAL STATION INTAKE
     operator.rightBumper().onTrue(coralStationIntake());
     // PREPARE
     operator.leftBumper().onTrue(prepareToScore());
-    // EJECT CORAL
-    operator.leftTrigger().whileTrue(ejectCoral());
-    operator.leftTrigger().onFalse(rollers.stop());
-    // INTAKE ALGAE L2
-    operator.povDown().onTrue(algaeIntake(ElevatorStates.ALGAEL2));
-    // INTAKE ALGAE L3
-    operator.povUp().onTrue(algaeIntake(ElevatorStates.ALGAEL3));
-    // OVERRIDE TO HIGHEST LEVEL
-    operator
-        .start()
-        .onTrue(
-            Commands.sequence(
-                LEDs.runOverride().withTimeout(0.1),
-                wrist.moveToState(WristStates.PREPARE),
-                elevator.moveToState(ElevatorStates.CORALL4)));
+    // // EJECT CORAL
+    // operator.leftTrigger().whileTrue(ejectCoral());
+    // operator.leftTrigger().onFalse(rollers.stop());
+    // // INTAKE ALGAE L2
+    // operator.povDown().onTrue(algaeIntake(ElevatorStates.ALGAEL2));
+    // // INTAKE ALGAE L3
+    // operator.povUp().onTrue(algaeIntake(ElevatorStates.ALGAEL3));
+    // // OVERRIDE TO HIGHEST LEVEL
+    // operator
+    //     .start()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             LEDs.runOverride().withTimeout(0.1),
+    //             wrist.moveToState(WristStates.PREPARE),
+    //             elevator.moveToState(ElevatorStates.CORALL4)));
   }
 
   private static double joystickDeadbandApply(double x) {

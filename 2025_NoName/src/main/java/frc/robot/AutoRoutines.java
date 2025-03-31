@@ -180,10 +180,7 @@ public class AutoRoutines {
 
     S5toNET.atTime("extendToNet").onTrue(superstructureCommands.extendToNet());
 
-    S5toNET.done()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.scoreGamePiece()));
+    S5toNET.done().onTrue(superstructureCommands.scoreGamePiece());
 
     return routine;
   }

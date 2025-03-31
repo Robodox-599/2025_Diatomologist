@@ -15,12 +15,12 @@ public class WristConstants {
   public static final int PeakCurrentLimit = 50;
   public static final double PeakCurrentDuration = 0.1;
 
-  public static final double realkP = 15.0;
+  public static final double realkP = 1.0;
   public static final double realkI = 0.0;
-  public static final double realkD = 0.4;
-  public static final double realkS = -0.1;
+  public static final double realkD = 0.0;
+  public static final double realkS = -0.275;
   public static final double realkV = 6.96078949;
-  public static final double realkG = -0.39;
+  public static final double realkG = -0.35;
 
   // sim stuff
   public static final double simkP = 6.9;
@@ -30,7 +30,7 @@ public class WristConstants {
   public static final double simkS = 0.0;
   public static final double simVelocityConstant = 0.2;
 
-  public static final double cancoderOffset = -0.032958984375;
+  public static final double cancoderOffset = -0.967529296875;
 
   // setpoints
   public static final double wristMinAngle = 0.52;
@@ -40,10 +40,9 @@ public class WristConstants {
   public static enum WristStates {
     STOW(0),
     PREPARE(1),
-    ALGAEREEFINTAKE(3),
-    ALGAEGROUNDINTAKE(4),
-    CORALSTATIONINTAKE(5),
-    CLIMB(6);
+    ALGAEREEFINTAKE(2),
+    ALGAEGROUNDINTAKE(3),
+    CORALSTATIONINTAKE(4);
     private final int index;
 
     WristStates(int index) {
@@ -56,11 +55,10 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    0.52, // stow
-    0.735, // PREPARE
-    0.88, // algae reef intake
-    0.879, // algae ground intake
-    0.64, // coral station intake
-    0.52, // climb
+    0.0, // stow
+    -0.78, // PREPARE
+    -0.656, // algae reef intake
+    -0.584, // algae ground intake
+    -0.91, // coral station intake
   };
 }

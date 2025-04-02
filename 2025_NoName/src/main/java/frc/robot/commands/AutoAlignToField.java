@@ -48,6 +48,33 @@ public class AutoAlignToField {
     return targetPose;
   }
 
+  public static Pose2d getNearestReefFacePosition(Supplier<Pose2d> robotPoseSupplier) {
+    Pose2d robotPose = robotPoseSupplier.get();
+    Pose2d nearestFace = null;
+    double minDistance = Double.MAX_VALUE;
+
+    // Find the nearest center face and its index
+    for (int i = 0; i < 6; i++) {
+      Pose2d centerFace = AllianceFlipUtil.apply(FieldConstants.Reef.centerFaces[i]);
+
+      double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestFace = centerFace;
+      }
+    }
+
+    Pose2d nearestReefFacePosition =
+        new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation());
+
+    // The result is now in the same position as the corresponding branchPositions entry
+    Pose2d targetPose = nearestReefFacePosition;
+    DogLog.log("ClosestFace/TargetPose", targetPose);
+    DogLog.log("ClosestFace/RobotPose", robotPose);
+    return targetPose;
+  }
+
   public static Command alignToNearestLeftReef(Drive drive) {
 
     var driveToPose =
@@ -67,6 +94,18 @@ public class AutoAlignToField {
             drive,
             () ->
                 getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
+                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+
+    return Commands.parallel(driveToPose)
+        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+  }
+
+  public static Command alignToNearestReefFace(Drive drive) {
+    var driveToPose =
+        new DriveToPose(
+            drive,
+            () ->
+                getNearestReefFacePosition(() -> drive.getPose())
                     .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
 
     return Commands.parallel(driveToPose)

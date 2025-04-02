@@ -16,15 +16,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
 
 public class ElevatorIOTalonFX extends ElevatorIO {
   private final TalonFX leaderMotor;
   private final TalonFX followerMotor;
-  private final DigitalInput limitSwitch1;
-  private final DigitalInput limitSwitch2;
+  // private final DigitalInput limitSwitch1;
+  // private final DigitalInput limitSwitch2;
   private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
   private final MotionMagicVoltage motionMagicRequest;
   private final StatusSignal<Angle> position;
@@ -38,8 +37,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     followerMotor =
         new TalonFX(ElevatorConstants.followerMotorID, ElevatorConstants.followerMotorCANbus);
     /*  This tells the motor encoder where 0 inches is*/
-    limitSwitch1 = new DigitalInput(ElevatorConstants.limitSwitchDioPort1);
-    limitSwitch2 = new DigitalInput(ElevatorConstants.limitSwitchDioPort2);
+    // limitSwitch1 = new DigitalInput(ElevatorConstants.limitSwitchDioPort1);
+    // limitSwitch2 = new DigitalInput(ElevatorConstants.limitSwitchDioPort2);
 
     followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 

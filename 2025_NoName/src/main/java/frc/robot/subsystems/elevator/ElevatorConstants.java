@@ -16,7 +16,8 @@ public final class ElevatorConstants {
     ALGAEL2(7),
     ALGAEL3(8),
     BARGENET(9),
-    PREP(10);
+    PREP(10),
+    PROCESSOR(11);
 
     private final int index;
 
@@ -31,17 +32,18 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    16, // CORAL L1
-    19, // CORAL L2
-    35, // CORAL L3
+    14, // CORAL L1
+    18, // CORAL L2
+    37.5, // CORAL L3
     62.25, // CORAL L4
     5.5, // STOW
     0, // CORAL STATION INTAKE
-    0, // ALGAE GROUND INTAKE
-    24, // ALGAE L2
-    46, // ALGAE L3
-    65, // ALGAE SCORE
-    12.0 // PREP
+    7, // ALGAE GROUND INTAKE
+    28, // ALGAE L2
+    42, // ALGAE L3
+    90, // ALGAE SCORE
+    12.0, // PREP
+    1.0 // PROCESSOR
   };
 
   public static final int leaderMotorID = 13;
@@ -50,18 +52,15 @@ public final class ElevatorConstants {
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
-  public static final int limitSwitchDioPort1 = 0;
-  public static final int limitSwitchDioPort2 = 1;
   public static final double gearRatio = 5.4;
-  public static final double inchesPerRev =
-      1.435406698564593; // reduction so dividing by gear ratio
+  public static final double inchesPerRev = 1.435406698564593;
 
   /* Position Setpoints (in inches) */
   public static final double elevatorLowerLimit = 0.0;
   public static final double elevatorUpperLimit = 89.0;
   public static final double homePositionOffset = 1.0;
 
-  public static final double kP = 0;
+  public static final double kP = 1.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kV =
@@ -69,10 +68,10 @@ public final class ElevatorConstants {
           .kKrakenX60Foc
           .kV; // there is no sensor to mechanism ratio so kV is the same as the motor's kV
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
-  public static final double kS = 0.0;
-  public static final double kG = 0.0;
+  public static final double kS = 0.08;
+  public static final double kG = 0.4;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
-  public static final double maxAccelerationRotationsPerSecSQ = 2.0 * maxVelocityRotsPerSec;
+  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec;
 
   // Add these for better PID tuning
   public static final double simkP = 8;

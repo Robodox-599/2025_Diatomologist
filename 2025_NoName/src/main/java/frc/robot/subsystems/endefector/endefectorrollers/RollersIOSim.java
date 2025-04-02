@@ -26,7 +26,7 @@ public class RollersIOSim extends RollersIO {
     rollersSim.update(0.02);
 
     super.appliedVolts = rollersSim.getInputVoltage();
-    super.currentAmps = rollersSim.getCurrentDrawAmps();
+    super.statorCurrentAmps = rollersSim.getCurrentDrawAmps();
     super.velocity = rollersSim.getAngularVelocityRPM() / 60.0;
     super.desiredVelocity = desiredVelocity;
     super.tempCelsius = 25.0;
@@ -37,7 +37,7 @@ public class RollersIOSim extends RollersIO {
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/Voltage", super.appliedVolts);
-    DogLog.log("Rollers/Amps", super.currentAmps);
+    DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/Temp", 60);
   }
 

@@ -119,13 +119,13 @@ public class RealConstants {
   public static final String camera1Name = "FL_Camera";
 
   // CAMERA 1 POSE (X)
-  public static final double camera1PoseX = Units.inchesToMeters(6.79209841);
+  public static final double camera1PoseX = Units.inchesToMeters(9.14686966);
 
   // CAMERA 1 POSE (Z)
-  public static final double camera1PoseZ = Units.inchesToMeters(4.99763044);
+  public static final double camera1PoseZ = Units.inchesToMeters(7.22884392);
 
   // CAMERA 1 POSE (Y)
-  public static final double camera1PoseY = Units.inchesToMeters(9.15983669);
+  public static final double camera1PoseY = Units.inchesToMeters(7.89826112);
 
   // CAMERA 1 POSE (ROLL)
   public static final double camera1PoseRoll = Units.degreesToRadians(0);
@@ -134,18 +134,18 @@ public class RealConstants {
   public static final double camera1PosePitch = Units.degreesToRadians(-15);
 
   // CAMERA 1 POSE (YAW)
-  public static final double camera1PoseYaw = Units.degreesToRadians(-28.6588);
+  public static final double camera1PoseYaw = Units.degreesToRadians(-28.61);
 
   public static final String camera2Name = "FR_Camera";
 
   // CAMERA 2 POSE (X)
-  public static final double camera2PoseX = Units.inchesToMeters(6.79209841);
+  public static final double camera2PoseX = Units.inchesToMeters(9.14686966);
 
   // CAMERA 2 POSE (Z)
-  public static final double camera2PoseZ = Units.inchesToMeters(4.99763044);
+  public static final double camera2PoseZ = Units.inchesToMeters(7.22884392);
 
   // CAMERA 2 POSE (Y)
-  public static final double camera2PoseY = Units.inchesToMeters(-9.15983669);
+  public static final double camera2PoseY = Units.inchesToMeters(-7.89826112);
 
   // CAMERA 2 POSE (ROLL)
   public static final double camera2PoseRoll = Units.degreesToRadians(0);
@@ -154,7 +154,7 @@ public class RealConstants {
   public static final double camera2PosePitch = Units.degreesToRadians(-15);
 
   // CAMERA 2 POSE (YAW)
-  public static final double camera2PoseYaw = Units.degreesToRadians(28.6588);
+  public static final double camera2PoseYaw = Units.degreesToRadians(28.61);
 
   public static final String camera3Name = "B_Camera";
 

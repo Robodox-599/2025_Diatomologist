@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
@@ -17,7 +18,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.PhoenixUtil;
 
 public class RollersIOTalonFX extends RollersIO {
@@ -25,16 +25,18 @@ public class RollersIOTalonFX extends RollersIO {
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
   private TorqueCurrentFOC torqueCurrent;
-  Debouncer CANrangeDebouncer = new Debouncer(0.2);
-  private Timer beamBreakTimer = new Timer();
-  private Timer PETimer = new Timer();
+  Debouncer algaeStallDebouncer = new Debouncer(0.5);
+  Debouncer coralBeamBreakDebouncer = new Debouncer(0.3);
+  // private Timer beamBreakTimer = new Timer();
+  // private Timer PETimer = new Timer();
   private DigitalInput m_BeamBreak2;
   private DigitalInput PESensor;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> current;
+  private final StatusSignal<Current> statorCurrent;
+  private final StatusSignal<Current> supplyCurrent;
   private final StatusSignal<Temperature> temperature;
 
   private double desiredVelocity;
@@ -45,6 +47,8 @@ public class RollersIOTalonFX extends RollersIO {
     PESensor = new DigitalInput(RollersConstants.PESensorPort);
     torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
+
+    rollersMotor.setNeutralMode(NeutralModeValue.Brake);
 
     rollersConfig.Slot0.kP = realP;
     rollersConfig.Slot0.kI = realI;
@@ -62,35 +66,44 @@ public class RollersIOTalonFX extends RollersIO {
     position = rollersMotor.getPosition();
     velocity = rollersMotor.getVelocity();
     appliedVolts = rollersMotor.getMotorVoltage();
-    current = rollersMotor.getStatorCurrent();
+    statorCurrent = rollersMotor.getStatorCurrent();
     temperature = rollersMotor.getDeviceTemp();
+    supplyCurrent = rollersMotor.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, velocity, temperature, position, current, appliedVolts);
+        50.0, velocity, temperature, supplyCurrent, position, statorCurrent, appliedVolts);
   }
 
   @Override
   public void updateInputs() {
+    BaseStatusSignal.refreshAll(
+        velocity, temperature, position, statorCurrent, supplyCurrent, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();
-    super.currentAmps = current.getValueAsDouble();
+    super.statorCurrentAmps = statorCurrent.getValueAsDouble();
+    super.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+
     super.velocity = velocity.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
-    super.isAlgaeDetected = CANrangeDebouncer.calculate(super.currentAmps >= 20);
-    if (m_BeamBreak2.get()) {
-      beamBreakTimer.restart();
-    }
-    if (PESensor.get()) {
-      PETimer.restart();
-    }
-    DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
+    super.isAlgaeDetected = algaeStallDebouncer.calculate(super.statorCurrentAmps >= 20);
+    super.isCoralDetected = coralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
+    // if (m_BeamBreak2.get()) {
+    //   beamBreakTimer.restart();
+    // }
+    // if (PESensor.get()) {
+    //   PETimer.restart();
+    // }
+    DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
+    DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
+
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
     DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
-    DogLog.log("Rollers/CoralDetected", this.isCoralDetected());
-    DogLog.log("Rollers/AlgaeDetected", this.isAlgaeDetected());
+    DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
+    DogLog.log("Rollers/BeamBreak", m_BeamBreak2.get());
+    // DogLog.log("Rollers/AlgaeDetected", this.isAlgaeDetected());
     DogLog.log("Rollers/CANRangeDistance", super.canrangeDistance);
   }
 
@@ -106,20 +119,16 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void holdCoral() {
-    rollersMotor.setControl(new PositionVoltage(rollersMotor.getPosition().getValueAsDouble()));
-  }
-
-  @Override
-  public void holdCoralAfterIntake() {
+  public void adjustCoralAfterStationIntake() {
     rollersMotor.setControl(
         new PositionVoltage(
-            rollersMotor.getPosition().getValueAsDouble() + RollersConstants.distanceToMove));
+            rollersMotor.getPosition().getValueAsDouble()
+                + RollersConstants.rotationsToMoveAfterDetectingCoral));
   }
 
   @Override
   public void holdAlgae() {
-    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleAlgaeHoldVoltage));
+    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
   }
 
   @Override
@@ -138,11 +147,8 @@ public class RollersIOTalonFX extends RollersIO {
       case ALGAEINTAKE:
         setVelocity(rollersAlgaeIntakeSpeed);
         break;
-      case HOLDCORAL:
-        holdCoral();
-        break;
-      case HOLDCORALAFTERSTATIONINTAKE:
-        holdCoralAfterIntake();
+      case ADJUSTCORALAFTERSTATIONINTAKE:
+        adjustCoralAfterStationIntake();
         break;
       case HOLDALGAE:
         holdAlgae();
@@ -161,8 +167,7 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public boolean isCoralDetected() {
-    DogLog.log("Rollers/isDetected", (beamBreakTimer.get() >= 0.1));
-    return (beamBreakTimer.get() >= 0.1);
+    return super.isCoralDetected;
   }
 
   // @Override

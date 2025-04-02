@@ -6,11 +6,10 @@ public class RollersConstants {
     SCOREALGAE(1),
     CORALSTATIONINTAKE(2),
     ALGAEINTAKE(3),
-    HOLDCORAL(4),
-    HOLDCORALAFTERSTATIONINTAKE(5),
-    HOLDALGAE(6),
-    STOP(7),
-    EJECT(8);
+    ADJUSTCORALAFTERSTATIONINTAKE(4),
+    HOLDALGAE(5),
+    STOP(6),
+    EJECT(7);
 
     private final int index;
 
@@ -48,13 +47,13 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersCoralScoreSpeed = 0.25;
-  public static final double rollersCoralStationIntakeSpeed = 0.09;
-  public static final double rollersEjectSpeed = rollersCoralScoreSpeed;
-  public static final double rollersAlgaeIntakeSpeed = -rollersCoralScoreSpeed * 2;
-  public static final double rollersAlgaeScoreSpeed = rollersCoralScoreSpeed * 2;
+  public static final double rollersCoralScoreSpeed = -0.65;
+  public static final double rollersCoralStationIntakeSpeed = -0.15;
+  public static final double rollersEjectSpeed = -0.8;
+  public static final double rollersAlgaeIntakeSpeed = 0.5;
+  public static final double rollersAlgaeScoreSpeed = -0.1;
 
-  public static final double rollersDutyCycleAlgaeHoldVoltage = -0.2;
+  public static final double rollersDutyCycleOutHoldAlgae = 0.2;
 
   public static final double centerOffset = 0.0;
   public static final double algaeIntakeStalling = 65;
@@ -68,7 +67,7 @@ public class RollersConstants {
   public static final int PESensorPort = 5;
   public static final double beamBreakDebounce = 0.0;
 
-  public static final double distanceToMove = 0.5;
+  public static final double rotationsToMoveAfterDetectingCoral = 6.0;
 
   // public static final double[] velocitys = {
   //   0.25, // score

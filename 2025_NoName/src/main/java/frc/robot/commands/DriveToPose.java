@@ -283,17 +283,16 @@ public class DriveToPose extends Command {
     DogLog.log("DriveToPose/Execute/InterpolatedThetaVelocity", thetaVelocity);
 
     // --- Command chassis speeds ---
-    if (thetaErrorAbs > Units.degreesToRadians(20)) {
-      ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, thetaVelocity);
-      DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
-      drive.runVelocity(chassisSpeeds);
-    } else {
-      ChassisSpeeds chassisSpeeds =
-          new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
-      DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
-
-      drive.runVelocity(chassisSpeeds);
-    }
+    // if (thetaErrorAbs > Units.degreesToRadians(20)) {
+    //   ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, thetaVelocity);
+    //   DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
+    //   drive.runVelocity(chassisSpeeds);
+    // } else {
+    ChassisSpeeds chassisSpeeds =
+        new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+    DogLog.log("DriveToPose/Execute/ChassisSpeeds", chassisSpeeds);
+    drive.runVelocity(chassisSpeeds);
+    // }
 
     // --- Log additional state info ---
     Pose2d setpointPose =

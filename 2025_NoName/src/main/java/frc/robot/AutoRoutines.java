@@ -41,7 +41,7 @@ public class AutoRoutines {
                 Commands.parallel(
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
-                        // new WaitCommand(0.1),
+                        new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
@@ -99,7 +99,7 @@ public class AutoRoutines {
                 Commands.parallel(
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
-                        // new WaitCommand(0.1),
+                        new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(3))),
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), EtoHP.cmd())));

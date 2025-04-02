@@ -53,10 +53,6 @@ public class Rollers extends SubsystemBase {
             }));
   }
 
-  public Command runHoldCoral() {
-    return Commands.runOnce(() -> io.setState(EndefectorRollerStates.HOLDCORAL));
-  }
-
   public Command runCoralStationIntake() {
     return Commands.sequence(
         Commands.run(
@@ -66,7 +62,7 @@ public class Rollers extends SubsystemBase {
             .until(() -> io.isCoralDetected()),
         Commands.runOnce(
             () -> {
-              io.setState(EndefectorRollerStates.HOLDCORALAFTERSTATIONINTAKE);
+              io.setState(EndefectorRollerStates.ADJUSTCORALAFTERSTATIONINTAKE);
             }));
   }
 
@@ -83,7 +79,7 @@ public class Rollers extends SubsystemBase {
             }));
   }
 
-  public Command ejectCoral() {
+  public Command ejectGamePiece() {
     return Commands.runOnce(
         () -> {
           io.setState(EndefectorRollerStates.EJECT);

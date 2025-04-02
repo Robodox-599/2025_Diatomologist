@@ -122,10 +122,10 @@ public class RealConstants {
   public static final double camera1PoseX = Units.inchesToMeters(9.14686966);
 
   // CAMERA 1 POSE (Z)
-  public static final double camera1PoseZ = Units.inchesToMeters(7.22884392);
+  public static final double camera1PoseZ = Units.inchesToMeters(7.8473);
 
   // CAMERA 1 POSE (Y)
-  public static final double camera1PoseY = Units.inchesToMeters(7.89826112);
+  public static final double camera1PoseY = Units.inchesToMeters(7.22884392 );
 
   // CAMERA 1 POSE (ROLL)
   public static final double camera1PoseRoll = Units.degreesToRadians(0);
@@ -139,13 +139,13 @@ public class RealConstants {
   public static final String camera2Name = "FR_Camera";
 
   // CAMERA 2 POSE (X)
-  public static final double camera2PoseX = Units.inchesToMeters(9.14686966);
+  public static final double camera2PoseX = Units.inchesToMeters(9.2379);
 
   // CAMERA 2 POSE (Z)
-  public static final double camera2PoseZ = Units.inchesToMeters(7.22884392);
+  public static final double camera2PoseZ = Units.inchesToMeters(7.8473);
 
   // CAMERA 2 POSE (Y)
-  public static final double camera2PoseY = Units.inchesToMeters(-7.89826112);
+  public static final double camera2PoseY = Units.inchesToMeters(-7.0619);
 
   // CAMERA 2 POSE (ROLL)
   public static final double camera2PoseRoll = Units.degreesToRadians(0);
@@ -154,24 +154,24 @@ public class RealConstants {
   public static final double camera2PosePitch = Units.degreesToRadians(-15);
 
   // CAMERA 2 POSE (YAW)
-  public static final double camera2PoseYaw = Units.degreesToRadians(28.61);
+  public static final double camera2PoseYaw = Units.degreesToRadians(32.01);
 
   public static final String camera3Name = "B_Camera";
 
   // CAMERA 3 POSE (X)
-  public static final double camera3PoseX = Units.inchesToMeters(0.9375);
+  public static final double camera3PoseX = Units.inchesToMeters(0);
 
   // CAMERA 3 POSE (Z)
-  public static final double camera3PoseZ = Units.inchesToMeters(38.1957);
+  public static final double camera3PoseZ = Units.inchesToMeters(40.93245 );
 
   // CAMERA 3 POSE (Y)
-  public static final double camera3PoseY = Units.inchesToMeters(3.849);
+  public static final double camera3PoseY = Units.inchesToMeters(0.63967);
 
   // CAMERA 3 POSE (ROLL)
   public static final double camera3PoseRoll = Units.degreesToRadians(0);
 
   // CAMERA 3 POSE (PITCH)
-  public static final double camera3PosePitch = Units.degreesToRadians(38.38914299);
+  public static final double camera3PosePitch = Units.degreesToRadians(-33.3);
 
   // CAMERA 3 POSE (YAW)
   public static final double camera3PoseYaw = Units.degreesToRadians(0);

@@ -39,7 +39,6 @@ public abstract class ModuleIO {
 
   /** Updates the set of loggable inputs. */
   public void updateInputs() {}
-  ;
 
   /** Run the drive motor at the specified voltage. */
   public void setDriveVoltage(final double volts) {
@@ -48,25 +47,20 @@ public abstract class ModuleIO {
 
   /** Run the drive motor at the specified voltage. */
   public void setDriveVoltage(final double volts, final boolean focEnabled) {}
-  ;
 
   /** Use onboard PID to run the drive motor at the specified speed */
   public void setDriveSetpoint(final double metersPerSecond) {}
-  ;
 
   /** Run the turn motor at the specified voltage. */
   public void setTurnVoltage(final double volts) {}
-  ;
 
   /** Use onboard PID to run the turn motor to the specified rotation */
   public void setTurnSetpoint(final Rotation2d rotation) {}
-  ;
 
   /** Gets the name of the swerve module for logging purposes, should be constant per-module. */
   public String getModuleName() {
     return "";
   }
-  ;
 
   public void setBrake() {}
 }

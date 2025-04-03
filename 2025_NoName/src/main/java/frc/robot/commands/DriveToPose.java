@@ -62,7 +62,7 @@ public class DriveToPose extends Command {
         thetakD = 0.0;
         driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * 0.75;
         driveMaxVelocitySlow = 0.0;
-        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * 0.15;
+        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * 0.3;
         thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
         thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
         driveTolerance = 0.03;

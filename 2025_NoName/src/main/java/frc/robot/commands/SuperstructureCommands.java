@@ -96,7 +96,7 @@ public class SuperstructureCommands {
   public Command autoIntakeFromStart() {
     return Commands.sequence(
         wrist.moveToState(WristStates.CORALSTATIONINTAKE),
-        // LEDs.runStationIntake().withTimeout(0.1), // white
+        LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runCoralStationIntake(),
         rumbleControllers().withTimeout(0.25),
         LEDs.runIntaked().withTimeout(0.1), // green

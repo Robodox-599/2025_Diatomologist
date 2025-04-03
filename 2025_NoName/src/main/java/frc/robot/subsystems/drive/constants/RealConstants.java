@@ -119,13 +119,13 @@ public class RealConstants {
   public static final String camera1Name = "FL_Camera";
 
   // CAMERA 1 POSE (X)
-  public static final double camera1PoseX = Units.inchesToMeters(9.14686966);
+  public static final double camera1PoseX = Units.inchesToMeters(9.2197);
 
   // CAMERA 1 POSE (Z)
-  public static final double camera1PoseZ = Units.inchesToMeters(7.8473);
+  public static final double camera1PoseZ = Units.inchesToMeters(7.8575);
 
   // CAMERA 1 POSE (Y)
-  public static final double camera1PoseY = Units.inchesToMeters(7.22884392 );
+  public static final double camera1PoseY = Units.inchesToMeters(7.0953);
 
   // CAMERA 1 POSE (ROLL)
   public static final double camera1PoseRoll = Units.degreesToRadians(0);
@@ -162,7 +162,7 @@ public class RealConstants {
   public static final double camera3PoseX = Units.inchesToMeters(0);
 
   // CAMERA 3 POSE (Z)
-  public static final double camera3PoseZ = Units.inchesToMeters(40.93245 );
+  public static final double camera3PoseZ = Units.inchesToMeters(40.93245);
 
   // CAMERA 3 POSE (Y)
   public static final double camera3PoseY = Units.inchesToMeters(0.63967);
@@ -171,7 +171,7 @@ public class RealConstants {
   public static final double camera3PoseRoll = Units.degreesToRadians(0);
 
   // CAMERA 3 POSE (PITCH)
-  public static final double camera3PosePitch = Units.degreesToRadians(-33.3);
+  public static final double camera3PosePitch = Units.degreesToRadians(-33.03);
 
   // CAMERA 3 POSE (YAW)
   public static final double camera3PoseYaw = Units.degreesToRadians(0);

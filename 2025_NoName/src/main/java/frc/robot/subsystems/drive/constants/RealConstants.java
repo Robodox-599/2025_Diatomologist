@@ -29,8 +29,8 @@ public class RealConstants {
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
 
   public static final double MAX_LINEAR_SPEED = 4.69;
-  public static final double TRACK_WIDTH_X = Units.inchesToMeters(20.75);
-  public static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.75);
+  public static final double TRACK_WIDTH_X = Units.inchesToMeters(21.75);
+  public static final double TRACK_WIDTH_Y = Units.inchesToMeters(21.75);
   public static final double DRIVE_BASE_RADIUS =
       Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
   public static final double MAX_ANGULAR_SPEED = (MAX_LINEAR_SPEED * 0.5) / DRIVE_BASE_RADIUS;
@@ -134,7 +134,7 @@ public class RealConstants {
   public static final double camera1PosePitch = Units.degreesToRadians(-15);
 
   // CAMERA 1 POSE (YAW)
-  public static final double camera1PoseYaw = Units.degreesToRadians(-28.61);
+  public static final double camera1PoseYaw = Units.degreesToRadians(-28.6588);
 
   public static final String camera2Name = "FR_Camera";
 
@@ -154,7 +154,7 @@ public class RealConstants {
   public static final double camera2PosePitch = Units.degreesToRadians(-15);
 
   // CAMERA 2 POSE (YAW)
-  public static final double camera2PoseYaw = Units.degreesToRadians(32.01);
+  public static final double camera2PoseYaw = Units.degreesToRadians(28.6588);
 
   public static final String camera3Name = "B_Camera";
 
@@ -174,7 +174,7 @@ public class RealConstants {
   public static final double camera3PosePitch = Units.degreesToRadians(-33.03);
 
   // CAMERA 3 POSE (YAW)
-  public static final double camera3PoseYaw = Units.degreesToRadians(0);
+  public static final double camera3PoseYaw = Units.degreesToRadians(180);
   //   public static final String camera4Name = "BR_Camera";
 
   //   // CAMERA 4 POSE (X)

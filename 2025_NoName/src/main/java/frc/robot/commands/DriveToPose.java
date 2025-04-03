@@ -54,21 +54,21 @@ public class DriveToPose extends Command {
   static {
     switch (Constants.getMode()) {
       case REAL:
-        drivekP = 1.5;
+        drivekP = 0.8;
         drivekD = 0.0;
         drivekI = 0.0;
         thetakP = 0.7;
-        thetakI = 0.05;
-        thetakD = 0.01;
-        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED;
+        thetakI = 0.0;
+        thetakD = 0.0;
+        driveMaxVelocity = RealConstants.MAX_LINEAR_SPEED * 0.75;
         driveMaxVelocitySlow = 0.0;
-        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION;
+        driveMaxAcceleration = RealConstants.MAX_LINEAR_ACCELERATION * 0.15;
         thetaMaxVelocity = RealConstants.MAX_ANGULAR_SPEED;
         thetaMaxAcceleration = RealConstants.MAX_ANGULAR_ACCELERATION;
-        driveTolerance = 0.02;
+        driveTolerance = 0.03;
         thetaTolerance = Units.degreesToRadians(5);
-        ffMinRadius = 0.1;
-        ffMaxRadius = 0.15;
+        ffMinRadius = 0.15;
+        ffMaxRadius = 0.40;
         break;
       case SIM:
         drivekP = 0.6;

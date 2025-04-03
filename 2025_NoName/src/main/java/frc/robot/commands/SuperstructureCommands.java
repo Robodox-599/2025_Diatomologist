@@ -310,8 +310,8 @@ public class SuperstructureCommands {
     driver.y().onTrue(drive.zeroGyroCommand());
     drive.zeroGyroCommand().runsWhenDisabled();
     // AUTO ALIGN
-    // driver.povLeft().whileTrue(autoAlignToLeft());
-    // driver.povRight().whileTrue(autoAlignToRight());
+    driver.povLeft().whileTrue(autoAlignToLeft());
+    driver.povRight().whileTrue(autoAlignToRight());
     // driver.leftBumper().onTrue(autoAlignToReefFace());
     // INTAKE ALGAE FLOOR
     driver.leftTrigger().onTrue(algaeIntake(ElevatorStates.ALGAEGROUNDINTAKE));

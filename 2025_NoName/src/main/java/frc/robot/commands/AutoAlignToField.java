@@ -32,8 +32,8 @@ public class AutoAlignToField {
       }
     }
 
-    double adjustX = Units.inchesToMeters((33 / 2.0));
-    double adjustY = Units.inchesToMeters(6.469);
+    double adjustX = Units.inchesToMeters(37 / 2); // inches from reef
+    double adjustY = Units.inchesToMeters(6.469); // inches from center
 
     // Apply the transformation based on left/right boolean
     Pose2d branchPosition =

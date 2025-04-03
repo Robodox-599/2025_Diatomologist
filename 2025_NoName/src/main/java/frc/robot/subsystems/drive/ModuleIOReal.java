@@ -138,7 +138,7 @@ public class ModuleIOReal extends ModuleIO {
     /* ************ TURN VOLTAGE-PID CONFIGS ************ */
     turnConfig.Slot0.kS = 0.27; // 0.215
     turnConfig.Slot0.kP = 50; // 95
-    turnConfig.Slot0.kD = 0;
+    turnConfig.Slot0.kD = 0.0;
 
     /* ************ INVERTS ************ */
     driveConfig.MotorOutput.Inverted =

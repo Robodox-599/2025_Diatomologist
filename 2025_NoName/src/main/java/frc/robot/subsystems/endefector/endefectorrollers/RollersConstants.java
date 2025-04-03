@@ -67,7 +67,7 @@ public class RollersConstants {
   public static final int PESensorPort = 5;
   public static final double beamBreakDebounce = 0.0;
 
-  public static final double rotationsToMoveAfterDetectingCoral = 6.0;
+  public static final double rotationsToMoveAfterDetectingCoral = 0.0;
 
   // public static final double[] velocitys = {
   //   0.25, // score

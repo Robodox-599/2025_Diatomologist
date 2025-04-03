@@ -43,10 +43,9 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreGamePieceWithoutIntaking(),
-                Commands.parallel(superstructureCommands.coralStationIntake(), JtoHP.cmd())));
+                Commands.parallel(superstructureCommands.scoreGamePiece(), JtoHP.cmd())));
 
-    JtoHP.done().onTrue(HPtoL.cmd());
+    JtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoL.cmd()));
 
     HPtoL.done()
         .onTrue(
@@ -56,10 +55,9 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreGamePieceWithoutIntaking(),
-                Commands.parallel(superstructureCommands.coralStationIntake(), LtoHP.cmd())));
+                Commands.parallel(superstructureCommands.scoreGamePiece(), LtoHP.cmd())));
 
-    LtoHP.done().onTrue(HPtoK.cmd());
+    LtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoK.cmd()));
 
     HPtoK.done()
         .onTrue(
@@ -69,8 +67,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(3))),
-                superstructureCommands.scoreGamePiece(),
-                superstructureCommands.prepareToScore()));
+                superstructureCommands.scoreGamePiece()));
 
     return routine;
   }
@@ -104,7 +101,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), EtoHP.cmd())));
 
-    EtoHP.done().onTrue(HPtoC.cmd());
+    EtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoC.cmd()));
 
     HPtoC.done()
         .onTrue(
@@ -117,7 +114,7 @@ public class AutoRoutines {
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
                 Commands.parallel(superstructureCommands.coralStationIntake(), CtoHP.cmd())));
 
-    CtoHP.done().onTrue(HPtoD.cmd());
+    CtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoD.cmd()));
 
     HPtoD.done()
         .onTrue(

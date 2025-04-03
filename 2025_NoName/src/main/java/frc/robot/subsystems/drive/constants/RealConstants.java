@@ -29,8 +29,8 @@ public class RealConstants {
   public static final double TURN_GEAR_RATIO = (150.0 / 7.0);
 
   public static final double MAX_LINEAR_SPEED = 4.69;
-  public static final double TRACK_WIDTH_X = Units.inchesToMeters(21.75);
-  public static final double TRACK_WIDTH_Y = Units.inchesToMeters(21.75);
+  public static final double TRACK_WIDTH_X = 0.55245; // 21.75 inches to meters, i hate wpilib stupid conversion at compile time
+  public static final double TRACK_WIDTH_Y = 0.55245; // 21.75 inches to meters, i hate wpilib stupid conversion at compile time
   public static final double DRIVE_BASE_RADIUS =
       Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
   public static final double MAX_ANGULAR_SPEED = (MAX_LINEAR_SPEED * 0.5) / DRIVE_BASE_RADIUS;
@@ -42,7 +42,7 @@ public class RealConstants {
   public static final double TURN_STATOR_CURRENT_LIMIT = 40.0;
   public static final double DRIVE_ROTOR_TO_METERS =
       (RealConstants.DRIVE_GEAR_RATIO) / (WHEEL_RADIUS * 2 * Math.PI);
-
+      
   // Both sets of gains need to be tuned to our robot. make sure we tune this with torque control
   // foc for both modules.
   private static final Slot0Configs steerGains =

@@ -75,40 +75,56 @@ public class AutoAlignToField {
     return targetPose;
   }
 
+  // public static Command alignToNearestLeftReef(Drive drive) {
+
+  //   var driveToPose =
+  //       new DriveToPose(
+  //           drive,
+  //           () ->
+  //               getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
+  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+
+  //   return Commands.parallel(driveToPose)
+  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+  // }
+
+  // public static Command alignToNearestRightReef(Drive drive) {
+  //   var driveToPose =
+  //       new DriveToPose(
+  //           drive,
+  //           () ->
+  //               getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
+  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+
+  //   return Commands.parallel(driveToPose)
+  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+  // }
+
+  // public static Command alignToNearestReefFace(Drive drive) {
+  //   var driveToPose =
+  //       new DriveToPose(
+  //           drive,
+  //           () ->
+  //               getNearestReefFacePosition(() -> drive.getPose())
+  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+
+  //   return Commands.parallel(driveToPose)
+  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+  // }
+
   public static Command alignToNearestLeftReef(Drive drive) {
-
-    var driveToPose =
-        new DriveToPose(
-            drive,
-            () ->
-                getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-    return Commands.parallel(driveToPose)
-        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+    return drive.moveToPoint(() ->
+    getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
+        .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 
   public static Command alignToNearestRightReef(Drive drive) {
-    var driveToPose =
-        new DriveToPose(
-            drive,
-            () ->
-                getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-    return Commands.parallel(driveToPose)
-        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+    return drive.moveToPoint(() ->
+    getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
+        .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
-
   public static Command alignToNearestReefFace(Drive drive) {
-    var driveToPose =
-        new DriveToPose(
-            drive,
-            () ->
-                getNearestReefFacePosition(() -> drive.getPose())
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-    return Commands.parallel(driveToPose)
-        .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
+    return drive.moveToPoint(() -> getNearestReefFacePosition(() -> drive.getPose()).plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
+  
 }

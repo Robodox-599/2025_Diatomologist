@@ -74,16 +74,22 @@ public class Drive extends SubsystemBase {
   private final PIDController choreoPathYController;
   private final PIDController choreoPathAngleController;
   private ChassisSpeeds maxMeasuredSpeed = new ChassisSpeeds();
-  ProfiledPIDController angleController =
-      new ProfiledPIDController(
-          CommandConstants.angle_kp,
-          0.0,
-          CommandConstants.angle_kd,
-          new TrapezoidProfile.Constraints(
-              CommandConstants.angle_max_velocity, CommandConstants.angle_max_acceleration));
+
+  ProfiledPIDController thetaController =
+              new ProfiledPIDController(
+                  0.0,
+                  0.0,
+                  0.0,
+                  new TrapezoidProfile.Constraints(RealConstants.MAX_ANGULAR_SPEED, RealConstants.MAX_ANGULAR_ACCELERATION));
+  private final PIDController translationController = new PIDController(0.0, 0.0, 0.0);
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
     SmartDashboard.putData("Field", field);
+
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.setTolerance(Units.degreesToRadians(5));
+    translationController.setTolerance(0.03);
+  
     switch (Constants.currentMode) {
       case REAL: // in meters
         choreoPathXController = new PIDController(1.5, 0.0, 0.0); // 0.3
@@ -436,4 +442,26 @@ public class Drive extends SubsystemBase {
       new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
     };
   }
+
+  public Command moveToPoint(Supplier<Pose2d> targetPose) {
+    return this.run(
+        () -> {
+          Pose2d setpoint = targetPose.get();
+          Pose2d currentPose = getPose();
+          double x_velo = translationController.calculate(currentPose.getX(), setpoint.getX());
+          double y_velo = translationController.calculate(currentPose.getY(), setpoint.getY());
+          double theta_velo = thetaController.calculate(currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
+
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  x_velo,
+                  y_velo,
+                  theta_velo);
+
+          this.runVelocity(speeds);
+
+        }).until(
+        ()-> (thetaController.atGoal() && translationController.atSetpoint())
+        );
+    }
 }

@@ -58,7 +58,7 @@ public class WristConstants {
     0.66, // stow
     0.79, // PREPARE
     0.91, // algae reef intake
-    0.99, // algae ground intake
+    0.97, // algae ground intake
     0.664, // coral station intake
   };
 }

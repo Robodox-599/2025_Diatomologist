@@ -98,7 +98,6 @@ public class SuperstructureCommands {
         wrist.moveToState(WristStates.CORALSTATIONINTAKE),
         LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runCoralStationIntake(),
-        rumbleControllers().withTimeout(0.25),
         LEDs.runIntaked().withTimeout(0.1), // green
         prepareToScore());
   }
@@ -257,13 +256,15 @@ public class SuperstructureCommands {
                 LEDs.runScoring().withTimeout(0.1), // red
                 rollers.runScoreAlgae(),
                 LEDs.runScored().withTimeout(0.1), // yellow
-                rumbleControllers().withTimeout(0.1)),
+                rumbleControllers().withTimeout(0.1),
+                new WaitCommand(0.5)),
             Commands.none(),
             () -> isReadyToScoreAlgae()),
         Commands.either( // if coral, check if ready to score algae
             Commands.sequence(
                 LEDs.runScoring().withTimeout(0.1), // red
                 rollers.runScoreCoral(),
+                new WaitCommand(0.25),
                 LEDs.runScored().withTimeout(0.1), // yellow
                 rumbleControllers().withTimeout(0.1)),
             Commands.none(),

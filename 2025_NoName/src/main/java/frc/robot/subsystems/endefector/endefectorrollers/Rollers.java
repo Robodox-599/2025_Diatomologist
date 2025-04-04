@@ -12,6 +12,7 @@ public class Rollers extends SubsystemBase {
     this.io = io;
   }
 
+  @Override
   public void periodic() {
     io.updateInputs();
   }
@@ -80,7 +81,7 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command ejectGamePiece() {
-    return Commands.runOnce(
+    return Commands.run(
         () -> {
           io.setState(EndefectorRollerStates.EJECT);
         });

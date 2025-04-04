@@ -7,12 +7,10 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -24,15 +22,14 @@ public class RollersIOTalonFX extends RollersIO {
 
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
-  private TorqueCurrentFOC torqueCurrent;
+  // private TorqueCurrentFOC torqueCurrent;
   Debouncer algaeStallDebouncer = new Debouncer(0.5);
   Debouncer coralBeamBreakDebouncer = new Debouncer(0.3);
   // private Timer beamBreakTimer = new Timer();
   // private Timer PETimer = new Timer();
   private DigitalInput m_BeamBreak2;
-  private DigitalInput PESensor;
+  // private DigitalInput PESensor;
 
-  private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> statorCurrent;
@@ -44,8 +41,8 @@ public class RollersIOTalonFX extends RollersIO {
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreakPort);
-    PESensor = new DigitalInput(RollersConstants.PESensorPort);
-    torqueCurrent = new TorqueCurrentFOC(65);
+    // PESensor = new DigitalInput(RollersConstants.PESensorPort);
+    // torqueCurrent = new TorqueCurrentFOC(65);
     rollersConfig = new TalonFXConfiguration();
 
     rollersMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -63,20 +60,18 @@ public class RollersIOTalonFX extends RollersIO {
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
-    position = rollersMotor.getPosition();
     velocity = rollersMotor.getVelocity();
     appliedVolts = rollersMotor.getMotorVoltage();
     statorCurrent = rollersMotor.getStatorCurrent();
     temperature = rollersMotor.getDeviceTemp();
     supplyCurrent = rollersMotor.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, velocity, temperature, supplyCurrent, position, statorCurrent, appliedVolts);
+        50.0, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
   }
 
   @Override
   public void updateInputs() {
-    BaseStatusSignal.refreshAll(
-        velocity, temperature, position, statorCurrent, supplyCurrent, appliedVolts);
+    BaseStatusSignal.refreshAll(velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();
     super.statorCurrentAmps = statorCurrent.getValueAsDouble();
     super.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
@@ -98,13 +93,11 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
-    DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+    // DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
     DogLog.log("Rollers/BeamBreak", m_BeamBreak2.get());
-    // DogLog.log("Rollers/AlgaeDetected", this.isAlgaeDetected());
-    DogLog.log("Rollers/CANRangeDistance", super.canrangeDistance);
   }
 
   @Override

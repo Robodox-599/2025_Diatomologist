@@ -33,15 +33,15 @@ public final class ElevatorConstants {
   // Setpoint positions in inches
   public static final double[] heights = {
     14, // CORAL L1
-    18, // CORAL L2
-    37.5, // CORAL L3
-    62.25, // CORAL L4
+    16, // CORAL L2
+    33, // CORAL L3
+    60, // CORAL L4
     5.5, // STOW
     0, // CORAL STATION INTAKE
     7, // ALGAE GROUND INTAKE
     28, // ALGAE L2
     42, // ALGAE L3
-    90, // ALGAE SCORE
+    92, // ALGAE SCORE
     12.0, // PREP
     1.0 // PROCESSOR
   };
@@ -70,8 +70,8 @@ public final class ElevatorConstants {
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
   public static final double kS = 0.08;
   public static final double kG = 0.4;
-  public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
-  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec;
+  public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV * 0.85;
+  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec * 0.85;
 
   // Add these for better PID tuning
   public static final double simkP = 8;

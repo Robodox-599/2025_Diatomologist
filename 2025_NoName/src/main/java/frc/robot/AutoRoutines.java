@@ -18,7 +18,7 @@ public class AutoRoutines {
   }
 
   public AutoRoutine leftAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("testingAuto");
+    AutoRoutine routine = autoFactory.newRoutine("leftAuto");
 
     AutoTrajectory LEFTtoJ = routine.trajectory("LEFTtoJ");
     AutoTrajectory JtoHP = routine.trajectory("JtoHP");
@@ -43,7 +43,12 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                Commands.parallel(superstructureCommands.scoreGamePiece(), JtoHP.cmd())));
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
+                Commands.parallel(
+                    Commands.sequence(
+                        superstructureCommands.prepareToScore(),
+                        superstructureCommands.coralStationIntake()),
+                    JtoHP.cmd())));
 
     JtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoL.cmd()));
 
@@ -55,7 +60,12 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                Commands.parallel(superstructureCommands.scoreGamePiece(), LtoHP.cmd())));
+                superstructureCommands.scoreGamePieceWithoutIntaking(),
+                Commands.parallel(
+                    Commands.sequence(
+                        superstructureCommands.prepareToScore(),
+                        superstructureCommands.coralStationIntake()),
+                    LtoHP.cmd())));
 
     LtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoK.cmd()));
 
@@ -67,7 +77,8 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(3))),
-                superstructureCommands.scoreGamePiece()));
+                superstructureCommands.scoreGamePiece(),
+                superstructureCommands.prepareToScore()));
 
     return routine;
   }
@@ -97,9 +108,13 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToLeft().withTimeout(3))),
+                        superstructureCommands.autoAlignToRight().withTimeout(3))),
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
-                Commands.parallel(superstructureCommands.coralStationIntake(), EtoHP.cmd())));
+                Commands.parallel(
+                    Commands.sequence(
+                        superstructureCommands.prepareToScore(),
+                        superstructureCommands.coralStationIntake()),
+                    EtoHP.cmd())));
 
     EtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoC.cmd()));
 
@@ -110,9 +125,13 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToLeft().withTimeout(3))),
+                        superstructureCommands.autoAlignToRight().withTimeout(3))),
                 superstructureCommands.scoreGamePieceWithoutIntaking(),
-                Commands.parallel(superstructureCommands.coralStationIntake(), CtoHP.cmd())));
+                Commands.parallel(
+                    Commands.sequence(
+                        superstructureCommands.prepareToScore(),
+                        superstructureCommands.coralStationIntake()),
+                    CtoHP.cmd())));
 
     CtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoD.cmd()));
 
@@ -123,7 +142,7 @@ public class AutoRoutines {
                     superstructureCommands.moveToL4().withTimeout(0.8),
                     Commands.sequence(
                         new WaitCommand(0.1),
-                        superstructureCommands.autoAlignToRight().withTimeout(3))),
+                        superstructureCommands.autoAlignToLeft().withTimeout(3))),
                 superstructureCommands.scoreGamePiece(),
                 superstructureCommands.prepareToScore()));
 
@@ -131,7 +150,7 @@ public class AutoRoutines {
   }
 
   public AutoRoutine middleAutoRoutineWithAlgae() {
-    AutoRoutine routine = autoFactory.newRoutine("middleAuto");
+    AutoRoutine routine = autoFactory.newRoutine("middleAutoWithAlgae");
 
     AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
     AutoTrajectory GtoS4 = routine.trajectory("GtoS4");
@@ -204,8 +223,7 @@ public class AutoRoutines {
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(3))),
-                superstructureCommands.scoreGamePiece(),
-                superstructureCommands.prepareToScore()));
+                superstructureCommands.scoreGamePiece()));
 
     return routine;
   }

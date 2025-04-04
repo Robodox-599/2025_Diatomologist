@@ -123,12 +123,12 @@ public class RobotContainer {
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
     autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
     autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
-    autoChooser.addRoutine(
-        "DONOTUSE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
-    autoChooser.addRoutine("startTo15FeetAutoRoutine", autoRoutines::startTo15FeetAutoRoutine);
+    // autoChooser.addRoutine(
+    // "DO NOT USE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
 
     // TESTING ONLY
-    autoChooser.addRoutine("testingAutoRoutine", autoRoutines::testingAutoRoutine);
+    // autoChooser.addRoutine("DO NOT USE - testingAutoRoutine", autoRoutines::testingAutoRoutine);
+    // autoChooser.addRoutine("startTo15FeetAutoRoutine", autoRoutines::startTo15FeetAutoRoutine);
     SmartDashboard.putData("AutoChooser", autoChooser);
     DogLog.setOptions(
         new DogLogOptions()

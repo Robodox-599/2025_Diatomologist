@@ -456,20 +456,7 @@ public class Drive extends SubsystemBase {
                   thetaController.calculate(
                       currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
               ChassisSpeeds speeds = new ChassisSpeeds(x_velo, y_velo, theta_velo);
-
-              // Calculate module setpoints
-              // ChassisSpeeds allianceSpeeds =
-              // ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
-              ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-              SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-              SwerveDriveKinematics.desaturateWheelSpeeds(
-                  setpointStates, RealConstants.MAX_AUTOALIGN_LINEAR_SPEED);
-
-              DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
-              DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-              for (int i = 0; i < modules.length; i++) {
-                modules[i].runSetpoint(setpointStates[i]);
-              }
+              runVelocity(speeds);
             })
         .until(() -> (thetaController.atGoal() && translationController.atSetpoint()));
   }

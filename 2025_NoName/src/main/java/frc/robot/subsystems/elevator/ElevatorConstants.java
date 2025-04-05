@@ -39,7 +39,7 @@ public final class ElevatorConstants {
     5.5, // STOW
     0, // CORAL STATION INTAKE
     7, // ALGAE GROUND INTAKE
-    28, // ALGAE L2
+    27.5, // ALGAE L2
     42, // ALGAE L3
     92, // ALGAE SCORE
     12.0, // PREP

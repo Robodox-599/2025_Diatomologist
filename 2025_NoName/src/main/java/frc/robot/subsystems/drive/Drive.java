@@ -76,19 +76,19 @@ public class Drive extends SubsystemBase {
 
   ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          0.8,
+          1.5,
           0.0,
           0.0,
           new TrapezoidProfile.Constraints(
               RealConstants.MAX_ANGULAR_SPEED, RealConstants.MAX_ANGULAR_ACCELERATION));
-  private final PIDController translationController = new PIDController(0.6, 0.0, 0.0);
+  private final PIDController translationController = new PIDController(1.7, 0.0, 0.0);
 
   public Drive(GyroIO gyroIO, ModuleIO[] moduleIOs) {
     SmartDashboard.putData("Field", field);
 
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    thetaController.setTolerance(Units.degreesToRadians(5));
-    translationController.setTolerance(0.03);
+    thetaController.setTolerance(Units.degreesToRadians(3));
+    translationController.setTolerance(0.02);
 
     switch (Constants.currentMode) {
       case REAL: // in meters
@@ -456,7 +456,18 @@ public class Drive extends SubsystemBase {
                   thetaController.calculate(
                       currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
               ChassisSpeeds speeds = new ChassisSpeeds(x_velo, y_velo, theta_velo);
-              runVelocity(speeds);
+              ChassisSpeeds allianceSpeeds =
+                  ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+              ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
+              SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+              SwerveDriveKinematics.desaturateWheelSpeeds(
+                  setpointStates, RealConstants.MAX_LINEAR_SPEED);
+
+              DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+              DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+              for (int i = 0; i < modules.length; i++) {
+                modules[i].runSetpoint(setpointStates[i]);
+              }
             })
         .until(() -> (thetaController.atGoal() && translationController.atSetpoint()));
   }

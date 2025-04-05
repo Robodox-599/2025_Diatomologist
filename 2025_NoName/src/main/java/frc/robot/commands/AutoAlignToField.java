@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class AutoAlignToField {
   public static Pose2d getNearestBranchPosition(
-      Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch, Translation2d coralOffset) {
+      Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch) {
     Pose2d robotPose = robotPoseSupplier.get();
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
@@ -114,14 +114,14 @@ public class AutoAlignToField {
   public static Command alignToNearestLeftReef(Drive drive) {
     return drive.moveToPoint(
         () ->
-            getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
+            getNearestBranchPosition(() -> drive.getPose(), true)
                 .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 
   public static Command alignToNearestRightReef(Drive drive) {
     return drive.moveToPoint(
         () ->
-            getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
+            getNearestBranchPosition(() -> drive.getPose(), false)
                 .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 

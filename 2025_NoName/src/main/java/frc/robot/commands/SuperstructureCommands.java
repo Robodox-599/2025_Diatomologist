@@ -98,8 +98,9 @@ public class SuperstructureCommands {
         wrist.moveToState(WristStates.CORALSTATIONINTAKE),
         LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runCoralStationIntake(),
-        LEDs.runIntaked().withTimeout(0.1), // green
-        prepareToScore());
+        LEDs.runIntaked().withTimeout(0.1) // green
+        // prepareToScore()
+        );
   }
 
   public Command ejectGamePiece() {

@@ -53,7 +53,7 @@ import java.util.function.Supplier;
 public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
-  private final Module[] modules; // FL, FR, BL, BR
+  private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
@@ -110,9 +110,7 @@ public class Drive extends SubsystemBase {
 
     this.gyroIO = gyroIO;
 
-    modules = new Module[moduleIOs.length];
-
-    for (int i = 0; i < moduleIOs.length; i++) {
+    for (int i = 0; i < 4; i++) {
       modules[i] = new Module(moduleIOs[i]);
     }
     // Start odometry thread
@@ -200,7 +198,7 @@ public class Drive extends SubsystemBase {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-      for (int moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
+      for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
@@ -226,11 +224,11 @@ public class Drive extends SubsystemBase {
       DogLog.log("Odometry/FieldVelocity", getFieldVelocity());
       DogLog.log("Odometry/RobotVelocity", getRobotVelocity());
       DogLog.log("Drive/SwerveStates/Measured", getModuleStates());
-      if (getRobotVelocity().vxMetersPerSecond > maxMeasuredSpeed.vxMetersPerSecond
-          || getRobotVelocity().vyMetersPerSecond > maxMeasuredSpeed.vyMetersPerSecond) {
-        maxMeasuredSpeed = getRobotVelocity();
-      }
-      DogLog.log("Drive/MaxMeasuredSpeed", maxMeasuredSpeed);
+      // if (getRobotVelocity().vxMetersPerSecond > maxMeasuredSpeed.vxMetersPerSecond
+      //     || getRobotVelocity().vyMetersPerSecond > maxMeasuredSpeed.vyMetersPerSecond) {
+      //   maxMeasuredSpeed = getRobotVelocity();
+      // }
+      // DogLog.log("Drive/MaxMeasuredSpeed", maxMeasuredSpeed);
     }
   }
 
@@ -253,9 +251,39 @@ public class Drive extends SubsystemBase {
 
     DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
     DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-    for (int i = 0; i < modules.length; i++) {
+    for (int i = 0; i < 4; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
+  }
+
+  public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> joystickSpeeds) {
+    return this.run(
+        () -> {
+          // Calculate module setpoints
+          ChassisSpeeds speeds =
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  joystickSpeeds.get(),
+                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                      ? rawGyroRotation
+                      : rawGyroRotation.plus(Rotation2d.fromDegrees(180)));
+          ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+          SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+          SwerveDriveKinematics.desaturateWheelSpeeds(
+              setpointStates, RealConstants.MAX_LINEAR_SPEED);
+
+          DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+          DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+          for (int i = 0; i < 4; i++) {
+            modules[i].runSetpoint(setpointStates[i]);
+          }
+        });
+  }
+
+  public Command zeroGyroCommand() {
+    return new InstantCommand(
+        () -> {
+          overrideGyroAngle(0);
+        });
   }
 
   public void followChoreoPath(SwerveSample sample) {
@@ -282,40 +310,38 @@ public class Drive extends SubsystemBase {
 
     DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
     DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-    for (int i = 0; i < modules.length; i++) {
+    for (int i = 0; i < 4; i++) {
       modules[i].runSetpoint(setpointStates[i]);
     }
   }
 
-  public Command runVelocityTeleopFieldRelative(Supplier<ChassisSpeeds> joystickSpeeds // ,
-      ) {
+  public Command moveToPoint(Supplier<Pose2d> targetPose) {
     return this.run(
-        () -> {
-          // Calculate module setpoints
-          ChassisSpeeds speeds =
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  joystickSpeeds.get(),
-                  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-                      ? rawGyroRotation
-                      : rawGyroRotation.plus(Rotation2d.fromDegrees(180)));
-          ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-          SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-          SwerveDriveKinematics.desaturateWheelSpeeds(
-              setpointStates, RealConstants.MAX_LINEAR_SPEED);
+            () -> {
+              Pose2d setpoint = targetPose.get();
+              DogLog.log("DriveToPose/Setpoint", setpoint);
+              Pose2d currentPose = getPose();
+              DogLog.log("DriveToPose/CurrentPose", currentPose);
+              double x_velo = translationController.calculate(currentPose.getX(), setpoint.getX());
+              double y_velo = translationController.calculate(currentPose.getY(), setpoint.getY());
+              double theta_velo =
+                  thetaController.calculate(
+                      currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
+              ChassisSpeeds speeds = new ChassisSpeeds(x_velo, y_velo, theta_velo);
+              ChassisSpeeds allianceSpeeds =
+                  ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+              ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
+              SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+              SwerveDriveKinematics.desaturateWheelSpeeds(
+                  setpointStates, RealConstants.MAX_LINEAR_SPEED);
 
-          DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
-          DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-          for (int i = 0; i < modules.length; i++) {
-            modules[i].runSetpoint(setpointStates[i]);
-          }
-        });
-  }
-
-  public Command zeroGyroCommand() {
-    return new InstantCommand(
-        () -> {
-          overrideGyroAngle(0);
-        });
+              DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
+              DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
+              for (int i = 0; i < 4; i++) {
+                modules[i].runSetpoint(setpointStates[i]);
+              }
+            })
+        .until(() -> (thetaController.atGoal() && translationController.atSetpoint()));
   }
 
   /**
@@ -325,12 +351,12 @@ public class Drive extends SubsystemBase {
   public Command stopWithXCmd() {
     return this.run(
         () -> {
-          Rotation2d[] headings = new Rotation2d[modules.length];
-          for (int i = 0; i < modules.length; i++) {
+          Rotation2d[] headings = new Rotation2d[4];
+          for (int i = 0; i < 4; i++) {
             headings[i] = getModuleTranslations()[i].getAngle();
           }
           kinematics.resetHeadings(headings);
-          for (int i = 0; i < modules.length; i++) {
+          for (int i = 0; i < 4; i++) {
             modules[i].runSetpoint(new SwerveModuleState(0.0, headings[i]));
           }
         });
@@ -342,16 +368,16 @@ public class Drive extends SubsystemBase {
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */
   private SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] states = new SwerveModulePosition[modules.length];
-    for (int i = 0; i < modules.length; i++) {
+    SwerveModulePosition[] states = new SwerveModulePosition[4];
+    for (int i = 0; i < 4; i++) {
       states[i] = modules[i].getPosition();
     }
     return states;
   }
 
   private SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
       states[i] = modules[i].getState();
     }
     return states;
@@ -359,8 +385,8 @@ public class Drive extends SubsystemBase {
 
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
-    double[] values = new double[modules.length];
-    for (int i = 0; i < modules.length; i++) {
+    double[] values = new double[4];
+    for (int i = 0; i < 4; i++) {
       values[i] = modules[i].getWheelRadiusCharacterizationPosition();
     }
     return values;
@@ -369,15 +395,15 @@ public class Drive extends SubsystemBase {
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
-    for (int i = 0; i < modules.length; i++) {
-      output += modules[i].getFFCharacterizationVelocity() / modules.length;
+    for (int i = 0; i < 4; i++) {
+      output += modules[i].getFFCharacterizationVelocity() / 4;
     }
     return output;
   }
 
   public ChassisSpeeds getFieldVelocity() {
-    SwerveModuleState[] states = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
       states[i] = modules[i].getState();
     }
     var speeds =
@@ -392,7 +418,7 @@ public class Drive extends SubsystemBase {
 
   /** Runs the drive in a straight line with the specified drive output. */
   public void runCharacterization(double output) {
-    for (int i = 0; i < modules.length; i++) {
+    for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
     }
   }
@@ -441,34 +467,5 @@ public class Drive extends SubsystemBase {
       new Translation2d(-TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
       new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0)
     };
-  }
-
-  public Command moveToPoint(Supplier<Pose2d> targetPose) {
-    return this.run(
-            () -> {
-              Pose2d setpoint = targetPose.get();
-              DogLog.log("DriveToPose/Setpoint", setpoint);
-              Pose2d currentPose = getPose();
-              DogLog.log("DriveToPose/CurrentPose", currentPose);
-              double x_velo = translationController.calculate(currentPose.getX(), setpoint.getX());
-              double y_velo = translationController.calculate(currentPose.getY(), setpoint.getY());
-              double theta_velo =
-                  thetaController.calculate(
-                      currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
-              ChassisSpeeds speeds = new ChassisSpeeds(x_velo, y_velo, theta_velo);
-              ChassisSpeeds allianceSpeeds =
-                  ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
-              ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
-              SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-              SwerveDriveKinematics.desaturateWheelSpeeds(
-                  setpointStates, RealConstants.MAX_LINEAR_SPEED);
-
-              DogLog.log("Drive/RobotRelativeTargetSpeeds", discreteSpeeds);
-              DogLog.log("Drive/SwerveStates/OptimizedSetpoints", setpointStates);
-              for (int i = 0; i < modules.length; i++) {
-                modules[i].runSetpoint(setpointStates[i]);
-              }
-            })
-        .until(() -> (thetaController.atGoal() && translationController.atSetpoint()));
   }
 }

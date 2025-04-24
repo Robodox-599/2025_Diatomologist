@@ -53,27 +53,27 @@ public class SuperstructureCommands {
             elevator.moveToState(ElevatorStates.STOW),
             wrist.moveToState(WristStates.STOW),
             rollers.stop(),
-            LEDs.runNoState()),
+            LEDs.runLEDNoState()),
         rumbleControllers().withTimeout(0.5));
   }
 
   public Command autoAlignToLeft() {
     return Commands.sequence(
-        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
-        AutoAlignToField.alignToNearestLeftReef(drive),
+        LEDs.runLEDAutoAlign().withTimeout(0.1), // rainbow
+        AutoAlignToField.alignToNearestLeftBranch(drive),
         rumbleControllers().withTimeout(0.25));
   }
 
   public Command autoAlignToRight() {
     return Commands.sequence(
-        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
-        AutoAlignToField.alignToNearestRightReef(drive),
+        LEDs.runLEDAutoAlign().withTimeout(0.1), // rainbow
+        AutoAlignToField.alignToNearestRightBranch(drive),
         rumbleControllers().withTimeout(0.25));
   }
 
   public Command autoAlignToReefFace() {
     return Commands.sequence(
-        LEDs.runAutoAlign().withTimeout(0.1), // rainbow
+        LEDs.runLEDAutoAlign().withTimeout(0.1), // rainbow
         AutoAlignToField.alignToNearestReefFace(drive),
         rumbleControllers().withTimeout(0.25));
   }
@@ -84,10 +84,10 @@ public class SuperstructureCommands {
             wrist.moveToState(WristStates.PREPARE),
             elevator.moveToState(ElevatorStates.CORALSTATIONINTAKE),
             wrist.moveToState(WristStates.CORALSTATIONINTAKE),
-            LEDs.runStationIntake().withTimeout(0.1), // white
+            LEDs.runLEDStationIntake().withTimeout(0.1), // white
             rollers.runCoralStationIntake(),
             rumbleControllers().withTimeout(0.25),
-            LEDs.runIntaked().withTimeout(0.1), // green
+            LEDs.runLEDIntaked().withTimeout(0.1), // green
             prepareToScore()),
         Commands.none(),
         () -> !rollers.isCoralDetected());
@@ -96,18 +96,18 @@ public class SuperstructureCommands {
   public Command autoIntakeFromStart() {
     return Commands.sequence(
         wrist.moveToState(WristStates.CORALSTATIONINTAKE),
-        LEDs.runStationIntake().withTimeout(0.1), // white
+        LEDs.runLEDStationIntake().withTimeout(0.1), // white
         rollers.runCoralStationIntake(),
-        LEDs.runIntaked().withTimeout(0.1) // green
+        LEDs.runLEDIntaked().withTimeout(0.1) // green
         // prepareToScore()
         );
   }
 
   public Command ejectGamePiece() {
     return Commands.sequence(
-        LEDs.runStationIntake().withTimeout(0.1), // white
+        LEDs.runLEDStationIntake().withTimeout(0.1), // white
         rollers.ejectGamePiece(),
-        LEDs.runScoring().withTimeout(0.1) // red
+        LEDs.runLEDScoring().withTimeout(0.1) // red
         );
   }
 
@@ -118,24 +118,24 @@ public class SuperstructureCommands {
         algaeIntakeCommand =
             Commands.sequence(
                 wrist.moveToState(WristStates.PREPARE),
-                LEDs.runPrepared().withTimeout(0.1), // blue
+                LEDs.runLEDPrepared().withTimeout(0.1), // blue
                 elevator.moveToState(ElevatorStates.ALGAEL3),
                 wrist.moveToState(WristStates.ALGAEREEFINTAKE),
-                LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
+                LEDs.runLEDAlgaeIntake().withTimeout(0.1), // cyan
                 rollers.runAlgaeIntake(),
-                LEDs.runIntaked().withTimeout(0.1), // green
+                LEDs.runLEDIntaked().withTimeout(0.1), // green
                 rumbleControllers().withTimeout(0.25),
                 prepareToProcessor()); // blue
       } else if (ElevatorStates.ALGAEL2 == state) {
         algaeIntakeCommand =
             Commands.sequence(
                 wrist.moveToState(WristStates.PREPARE),
-                LEDs.runPrepared().withTimeout(0.1), // blue
+                LEDs.runLEDPrepared().withTimeout(0.1), // blue
                 elevator.moveToState(ElevatorStates.ALGAEL2),
                 wrist.moveToState(WristStates.ALGAEREEFINTAKE),
-                LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
+                LEDs.runLEDAlgaeIntake().withTimeout(0.1), // cyan
                 rollers.runAlgaeIntake(),
-                LEDs.runIntaked().withTimeout(0.1), // green
+                LEDs.runLEDIntaked().withTimeout(0.1), // green
                 rumbleControllers().withTimeout(0.25),
                 prepareToProcessor()); // blue
       } else if (ElevatorStates.ALGAEGROUNDINTAKE == state) {
@@ -144,9 +144,9 @@ public class SuperstructureCommands {
                 Commands.parallel(
                     elevator.moveToState(ElevatorStates.ALGAEGROUNDINTAKE),
                     wrist.moveToState(WristStates.ALGAEGROUNDINTAKE)),
-                LEDs.runAlgaeIntake().withTimeout(0.1), // cyan
+                LEDs.runLEDAlgaeIntake().withTimeout(0.1), // cyan
                 rollers.runAlgaeIntake(),
-                LEDs.runIntaked().withTimeout(0.1), // green
+                LEDs.runLEDIntaked().withTimeout(0.1), // green
                 rumbleControllers().withTimeout(0.25),
                 prepareToProcessor()); // blue
       }
@@ -197,14 +197,14 @@ public class SuperstructureCommands {
     return Commands.sequence(
         Commands.parallel(
             wrist.moveToState(WristStates.PREPARE), elevator.moveToState(ElevatorStates.PROCESSOR)),
-        LEDs.runPrepared().withTimeout(0.1)); // blue
+        LEDs.runLEDPrepared().withTimeout(0.1)); // blue
   }
 
   public Command prepareToScore() {
     return Commands.sequence(
         Commands.parallel(
             wrist.moveToState(WristStates.PREPARE), elevator.moveToState(ElevatorStates.PREP)),
-        LEDs.runPrepared().withTimeout(0.1)); // blue
+        LEDs.runLEDPrepared().withTimeout(0.1)); // blue
   }
 
   public boolean isReadyToScoreCoral() {
@@ -229,9 +229,9 @@ public class SuperstructureCommands {
     return Commands.either( // check if coral or algae
         Commands.either( // if algae, check if ready to score algae
             Commands.sequence(
-                LEDs.runScoring().withTimeout(0.1), // red
+                LEDs.runLEDScoring().withTimeout(0.1), // red
                 rollers.runScoreAlgae(),
-                LEDs.runScored().withTimeout(0.1), // yellow
+                LEDs.runLEDScored().withTimeout(0.1), // yellow
                 rumbleControllers().withTimeout(0.1),
                 new WaitCommand(0.5),
                 coralStationIntake()),
@@ -239,10 +239,10 @@ public class SuperstructureCommands {
             () -> isReadyToScoreAlgae()),
         Commands.either( // if coral, check if ready to score algae
             Commands.sequence(
-                LEDs.runScoring().withTimeout(0.1), // red
+                LEDs.runLEDScoring().withTimeout(0.1), // red
                 rollers.runScoreCoral(),
                 new WaitCommand(0.25),
-                LEDs.runScored().withTimeout(0.1), // yellow
+                LEDs.runLEDScored().withTimeout(0.1), // yellow
                 rumbleControllers().withTimeout(0.1),
                 coralStationIntake()),
             Commands.none(),
@@ -254,19 +254,19 @@ public class SuperstructureCommands {
     return Commands.either( // check if coral or algae
         Commands.either( // if algae, check if ready to score algae
             Commands.sequence(
-                LEDs.runScoring().withTimeout(0.1), // red
+                LEDs.runLEDScoring().withTimeout(0.1), // red
                 rollers.runScoreAlgae(),
-                LEDs.runScored().withTimeout(0.1), // yellow
+                LEDs.runLEDScored().withTimeout(0.1), // yellow
                 rumbleControllers().withTimeout(0.1),
                 new WaitCommand(0.5)),
             Commands.none(),
             () -> isReadyToScoreAlgae()),
         Commands.either( // if coral, check if ready to score algae
             Commands.sequence(
-                LEDs.runScoring().withTimeout(0.1), // red
+                LEDs.runLEDScoring().withTimeout(0.1), // red
                 rollers.runScoreCoral(),
                 new WaitCommand(0.25),
-                LEDs.runScored().withTimeout(0.1), // yellow
+                LEDs.runLEDScored().withTimeout(0.1), // yellow
                 rumbleControllers().withTimeout(0.1)),
             Commands.none(),
             () -> isReadyToScoreCoral()),

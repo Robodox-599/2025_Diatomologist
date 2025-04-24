@@ -5,8 +5,8 @@ public class RollersConstants {
     SCORECORAL(0),
     SCOREALGAE(1),
     CORALSTATIONINTAKE(2),
-    ALGAEINTAKE(3),
-    ADJUSTCORALAFTERSTATIONINTAKE(4),
+    ADJUSTCORALAFTERSTATIONINTAKE(3),
+    ALGAEINTAKE(4),
     HOLDALGAE(5),
     STOP(6),
     EJECT(7);
@@ -21,6 +21,17 @@ public class RollersConstants {
       return index;
     }
   }
+
+  public static final double[] velocitys = {
+    -0.65, // score coral
+    -0.1, // score algae
+    -0.15, // coral station intake
+    0.0, // VELOCITY NOT USED - adjust coral after station intake 
+    0.6, // algae intake
+    0.0, // VELOCITY NOT USED - hold algae
+    0.0, // stop
+    -0.8 // eject
+  };
 
   public static final int rollersMotorID = 16;
   public static final int CANrangeId = 18;
@@ -47,11 +58,11 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersCoralScoreSpeed = -0.65;
-  public static final double rollersCoralStationIntakeSpeed = -0.15;
-  public static final double rollersEjectSpeed = -0.8;
-  public static final double rollersAlgaeIntakeSpeed = 0.5;
-  public static final double rollersAlgaeScoreSpeed = -0.1;
+  // public static final double rollersCoralScoreSpeed = -0.65;
+  // public static final double rollersCoralStationIntakeSpeed = -0.15;
+  // public static final double rollersEjectSpeed = -0.8;
+  // public static final double rollersAlgaeIntakeSpeed = 0.5;
+  // public static final double rollersAlgaeScoreSpeed = -0.1;
 
   public static final double rollersDutyCycleOutHoldAlgae = 0.2;
 
@@ -68,13 +79,4 @@ public class RollersConstants {
   public static final double beamBreakDebounce = 0.0;
 
   public static final double rotationsToMoveAfterDetectingCoral = 0.0;
-
-  // public static final double[] velocitys = {
-  //   0.25, // score
-  //   0.0, // stop
-  //   0.05, // intake
-  //   -0.25, // reef intake
-  //   -0.25, // algae intake
-  //   -0.25 // reverse
-  // };
 }

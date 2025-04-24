@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
 public class SubsystemUtil {
@@ -16,6 +17,10 @@ public class SubsystemUtil {
 
   public static double elevatorStateToHeightInches(ElevatorConstants.ElevatorStates state) {
     return ElevatorConstants.heights[state.getIndex()];
+  }
+
+  public static double rollersStateToVelocity(RollersConstants.EndefectorRollerStates state) {
+    return RollersConstants.velocitys[state.getIndex()];
   }
 
   public static double climbStateToHeight(ClimbConstants.ClimbStates state) {

@@ -20,43 +20,43 @@ public class LEDs extends SubsystemBase {
     disableAction();
   }
 
-  public Command runStationIntake() {
+  public Command runLEDStationIntake() {
     return runOnce(() -> io.enableStationIntake());
   }
 
-  public Command runAlgaeIntake() {
+  public Command runLEDAlgaeIntake() {
     return runOnce(() -> io.enableAlgaeIntake());
   }
 
-  public Command runNoState() {
+  public Command runLEDNoState() {
     return runOnce(() -> io.enableNoState());
   }
 
-  public Command runScored() {
+  public Command runLEDScored() {
     return runOnce(() -> io.enableScored());
   }
 
-  public Command runScoring() {
+  public Command runLEDScoring() {
     return runOnce(() -> io.enableScoring());
   }
 
-  public Command runIntaked() {
+  public Command runLEDIntaked() {
     return runOnce(() -> io.enableIntaked());
   }
 
-  public Command runAutoAlign() {
+  public Command runLEDAutoAlign() {
     return runOnce(() -> io.enableAutoAlign());
   }
 
-  public Command runPrepared() {
+  public Command runLEDPrepared() {
     return runOnce(() -> io.enablePrepared());
   }
 
-  public Command runReadyToScore() {
+  public Command runLEDReadyToScore() {
     return runOnce(() -> io.enableReadyToScore());
   }
 
-  public Command runOverride() {
+  public Command runLEDOverride() {
     return runOnce(() -> io.enableOverride());
   }
 

@@ -31,8 +31,8 @@ public class AutoAlignToField {
       }
     }
 
-    double adjustX = Units.inchesToMeters(37 / 2); // inches from reef
-    double adjustY = Units.inchesToMeters(6.469); // inches from center
+    double adjustX = Units.inchesToMeters(16.75 + 1); // inches from reef face (bot radius + 1 inch)
+    double adjustY = Units.inchesToMeters(6.469); // inches from center (exact)
 
     // Apply the transformation based on left/right boolean
     Pose2d branchPosition =
@@ -64,8 +64,11 @@ public class AutoAlignToField {
       }
     }
 
+    double adjustX = Units.inchesToMeters(16.75 + 1); // inches from reef face (bot radius + 1 inch)
+
     Pose2d nearestReefFacePosition =
-        new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation());
+        new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation())
+            .transformBy(new Transform2d(adjustX, 0, new Rotation2d()));
 
     // The result is now in the same position as the corresponding branchPositions entry
     Pose2d targetPose = nearestReefFacePosition;
@@ -74,51 +77,14 @@ public class AutoAlignToField {
     return targetPose;
   }
 
-  // public static Command alignToNearestLeftReef(Drive drive) {
-
-  //   var driveToPose =
-  //       new DriveToPose(
-  //           drive,
-  //           () ->
-  //               getNearestBranchPosition(() -> drive.getPose(), true, new Translation2d())
-  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-  //   return Commands.parallel(driveToPose)
-  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
-  // }
-
-  // public static Command alignToNearestRightReef(Drive drive) {
-  //   var driveToPose =
-  //       new DriveToPose(
-  //           drive,
-  //           () ->
-  //               getNearestBranchPosition(() -> drive.getPose(), false, new Translation2d())
-  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-  //   return Commands.parallel(driveToPose)
-  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
-  // }
-
-  // public static Command alignToNearestReefFace(Drive drive) {
-  //   var driveToPose =
-  //       new DriveToPose(
-  //           drive,
-  //           () ->
-  //               getNearestReefFacePosition(() -> drive.getPose())
-  //                   .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-
-  //   return Commands.parallel(driveToPose)
-  //       .until(() -> (driveToPose.withinTolerance() || driveToPose.atGoal()));
-  // }
-
-  public static Command alignToNearestLeftReef(Drive drive) {
+  public static Command alignToNearestLeftBranch(Drive drive) {
     return drive.moveToPoint(
         () ->
             getNearestBranchPosition(() -> drive.getPose(), true)
                 .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
   }
 
-  public static Command alignToNearestRightReef(Drive drive) {
+  public static Command alignToNearestRightBranch(Drive drive) {
     return drive.moveToPoint(
         () ->
             getNearestBranchPosition(() -> drive.getPose(), false)

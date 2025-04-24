@@ -112,7 +112,7 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
     // Run no state when disabled
-    RobotModeTriggers.disabled().onTrue(LEDs.runNoState());
+    RobotModeTriggers.disabled().onTrue(LEDs.runLEDNoState());
 
     // Auto chooser setup
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());

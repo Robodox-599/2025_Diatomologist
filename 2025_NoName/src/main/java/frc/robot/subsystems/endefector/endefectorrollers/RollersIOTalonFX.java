@@ -137,6 +137,7 @@ public class RollersIOTalonFX extends RollersIO {
         break;
       default:
         setVelocity(SubsystemUtil.rollersStateToVelocity(state));
+        break;
     }
     // switch (state) {
     //   case SCORECORAL:

@@ -25,6 +25,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
 import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsConstants.LEDStates;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.subsystemvisualizer.SubsystemVisualizer;
@@ -112,7 +113,7 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
     // Run no state when disabled
-    RobotModeTriggers.disabled().onTrue(LEDs.runLEDNoState());
+    RobotModeTriggers.disabled().onTrue(LEDs.setState(LEDStates.IDLE));
 
     // Auto chooser setup
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());

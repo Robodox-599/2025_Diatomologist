@@ -20,49 +20,13 @@ public class LEDs extends SubsystemBase {
     disableAction();
   }
 
-  public Command runLEDStationIntake() {
-    return runOnce(() -> io.enableStationIntake());
-  }
-
-  public Command runLEDAlgaeIntake() {
-    return runOnce(() -> io.enableAlgaeIntake());
-  }
-
-  public Command runLEDNoState() {
-    return runOnce(() -> io.enableNoState());
-  }
-
-  public Command runLEDScored() {
-    return runOnce(() -> io.enableScored());
-  }
-
-  public Command runLEDScoring() {
-    return runOnce(() -> io.enableScoring());
-  }
-
-  public Command runLEDIntaked() {
-    return runOnce(() -> io.enableIntaked());
-  }
-
-  public Command runLEDAutoAlign() {
-    return runOnce(() -> io.enableAutoAlign());
-  }
-
-  public Command runLEDPrepared() {
-    return runOnce(() -> io.enablePrepared());
-  }
-
-  public Command runLEDReadyToScore() {
-    return runOnce(() -> io.enableReadyToScore());
-  }
-
-  public Command runLEDOverride() {
-    return runOnce(() -> io.enableOverride());
+  public Command setState(LEDsConstants.LEDStates state) {
+    return runOnce(() -> io.setState(state));
   }
 
   private void disableAction() {
     if (DriverStation.isDisabled()) {
-      io.enableNoState();
+      io.setState(LEDsConstants.LEDStates.IDLE);
     }
   }
 }

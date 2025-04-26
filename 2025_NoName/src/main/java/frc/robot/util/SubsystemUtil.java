@@ -4,6 +4,7 @@ import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
+import frc.robot.subsystems.leds.LEDsConstants;
 
 public class SubsystemUtil {
 
@@ -21,6 +22,10 @@ public class SubsystemUtil {
 
   public static double rollersStateToVelocity(RollersConstants.EndefectorRollerStates state) {
     return RollersConstants.velocitys[state.getIndex()];
+  }
+
+  public static double[] LEDsStateToColor(LEDsConstants.LEDStates state) {
+    return LEDsConstants.colors[state.getIndex()];
   }
 
   public static double climbStateToHeight(ClimbConstants.ClimbStates state) {

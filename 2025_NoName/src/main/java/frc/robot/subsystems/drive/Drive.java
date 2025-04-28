@@ -76,7 +76,7 @@ public class Drive extends SubsystemBase {
 
   ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          1.5,
+          1.3,
           0.0,
           0.0,
           new TrapezoidProfile.Constraints(
@@ -457,7 +457,7 @@ public class Drive extends SubsystemBase {
                       currentPose.getRotation().getRadians(), setpoint.getRotation().getRadians());
               ChassisSpeeds speeds = new ChassisSpeeds(x_velo, y_velo, theta_velo);
               ChassisSpeeds allianceSpeeds =
-                  ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rawGyroRotation);
+                  ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
               ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(allianceSpeeds, 0.02);
               SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
               SwerveDriveKinematics.desaturateWheelSpeeds(

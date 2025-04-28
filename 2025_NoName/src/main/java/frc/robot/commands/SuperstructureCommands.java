@@ -98,8 +98,8 @@ public class SuperstructureCommands {
         wrist.moveToState(WristStates.CORALSTATIONINTAKE),
         LEDs.runStationIntake().withTimeout(0.1), // white
         rollers.runCoralStationIntake(),
-        LEDs.runIntaked().withTimeout(0.1) // green
-        // prepareToScore()
+        LEDs.runIntaked().withTimeout(0.1), // green
+        prepareToScore()
         );
   }
 
@@ -223,6 +223,11 @@ public class SuperstructureCommands {
             && wrist.isAtTargetPosition(wrist.getState());
     DogLog.log("Superstructure/isReadyToScore", readyToScore);
     return readyToScore;
+  }
+
+  public Command scoreCoralWithoutChecking() {
+    return Commands.sequence(
+        rollers.runScoreCoral(), new WaitCommand(0.25), rumbleControllers().withTimeout(0.1));
   }
 
   public Command scoreGamePiece() {

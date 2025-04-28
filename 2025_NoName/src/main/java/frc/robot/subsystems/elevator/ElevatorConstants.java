@@ -70,8 +70,8 @@ public final class ElevatorConstants {
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
   public static final double kS = 0.08;
   public static final double kG = 0.4;
-  public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV * 0.85;
-  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec * 0.85;
+  public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV * 0.80;
+  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec * 0.80;
 
   // Add these for better PID tuning
   public static final double simkP = 8;

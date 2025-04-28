@@ -33,13 +33,13 @@ public class AutoRoutines {
                 LEFTtoJ.resetOdometry(),
                 // new WaitCommand(0.5),
                 superstructureCommands.autoIntakeFromStart(),
-                Commands.parallel(superstructureCommands.prepareToScore(), LEFTtoJ.cmd())));
+                LEFTtoJ.cmd()));
 
     LEFTtoJ.done()
         .onTrue(
             Commands.sequence(
                 Commands.parallel(
-                    superstructureCommands.moveToL4().withTimeout(0.8),
+                    superstructureCommands.moveToL4().withTimeout(1),
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(5))),
@@ -50,13 +50,13 @@ public class AutoRoutines {
                         superstructureCommands.coralStationIntake()),
                     JtoHP.cmd())));
 
-    JtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.6), HPtoL.cmd()));
+    JtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoL.cmd()));
 
     HPtoL.done()
         .onTrue(
             Commands.sequence(
                 Commands.parallel(
-                    superstructureCommands.moveToL4().withTimeout(0.8),
+                    superstructureCommands.moveToL4().withTimeout(1),
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToRight().withTimeout(5))),
@@ -67,13 +67,13 @@ public class AutoRoutines {
                         superstructureCommands.coralStationIntake()),
                     LtoHP.cmd())));
 
-    LtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.6), HPtoK.cmd()));
+    LtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.75), HPtoK.cmd()));
 
     HPtoK.done()
         .onTrue(
             Commands.sequence(
                 Commands.parallel(
-                    superstructureCommands.moveToL4().withTimeout(0.8),
+                    superstructureCommands.moveToL4().withTimeout(1),
                     Commands.sequence(
                         new WaitCommand(0.1),
                         superstructureCommands.autoAlignToLeft().withTimeout(5))),
@@ -218,8 +218,9 @@ public class AutoRoutines {
     MIDtoG.done()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.moveToL4().withTimeout(1.5),
-                superstructureCommands.scoreGamePiece()));
+                superstructureCommands.moveToL4().withTimeout(5),
+                superstructureCommands.scoreCoralWithoutChecking(),
+                superstructureCommands.moveToL2()));
 
     return routine;
   }

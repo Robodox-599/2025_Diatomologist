@@ -51,7 +51,7 @@ public class RollersConstants {
   public static final double rollersCoralStationIntakeSpeed = -0.15;
   public static final double rollersEjectSpeed = -0.8;
   public static final double rollersAlgaeIntakeSpeed = 0.5;
-  public static final double rollersAlgaeScoreSpeed = -0.1;
+  public static final double rollersAlgaeScoreSpeed = -0.05;
 
   public static final double rollersDutyCycleOutHoldAlgae = 0.2;
 

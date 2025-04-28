@@ -4,16 +4,15 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
-import com.ctre.phoenix.led.ColorFlowAnimation;
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import dev.doglog.DogLog;
-import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
+import frc.robot.subsystems.leds.LEDsConstants.LEDStates;
+import frc.robot.util.SubsystemUtil;
 
 public class LEDsIOReal extends LEDsIO {
   public final CANdle candleReal;
-  private LEDAnim state = LEDAnim.NoState;
+  private LEDStates state = LEDStates.IDLE;
 
   public LEDsIOReal() {
     candleReal = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
@@ -29,100 +28,37 @@ public class LEDsIOReal extends LEDsIO {
   @Override
   public void updateInputs() {
     super.connected = true;
-    super.anim = state;
+    super.currentState = state;
 
     DogLog.log("LEDs/Connected", super.connected);
-    DogLog.log("LEDs/Anim", super.anim);
+    DogLog.log("LEDs/CurrentState", super.currentState);
   }
 
   @Override
-  public void enableStationIntake() {
-    state = LEDAnim.StationIntake;
-    // white
-    candleReal.animate(
-        new StrobeAnimation(255, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+  public void setState(LEDsConstants.LEDStates state) {
+    super.currentState = state;
+    switch (state) {
+      case AUTOALIGN:
+        candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
+        break;
+      default:
+        double[] colors = SubsystemUtil.LEDsStateToColor(state);
+        candleReal.animate(
+            new StrobeAnimation(
+                (int) colors[0],
+                (int) colors[1],
+                (int) colors[2],
+                (int) colors[3],
+                colors[4],
+                LEDsConstants.LEDS_PER_ANIMATION,
+                0),
+            1);
+        break;
+    }
   }
 
   @Override
-  public void enableAlgaeIntake() {
-    // cyan
-    state = LEDAnim.AlgaeIntake;
-    candleReal.animate(
-        new StrobeAnimation(0, 255, 255, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  @Override
-  public void enableIntaked() {
-    state = LEDAnim.AlgaeIntake;
-    // green
-    candleReal.animate(
-        new StrobeAnimation(0, 255, 0, 100, 0.50, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  @Override
-  public void enableNoState() {
-    state = LEDAnim.NoState;
-    // orange
-    candleReal.animate(
-        new ColorFlowAnimation(
-            255, 82, 0, 0, 0.50, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
-        1);
-  }
-
-  @Override
-  public void enableOverride() {
-    state = LEDAnim.Override;
-    // dark red
-    candleReal.animate(
-        new StrobeAnimation(130, 0, 0, 50, 0.5, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  @Override
-  public void enableScored() {
-    // yellow
-    state = LEDAnim.Scored;
-    candleReal.animate(
-        new StrobeAnimation(255, 255, 0, 100, 0.50, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  @Override
-  public void enableScoring() {
-    // red
-    state = LEDAnim.Scored;
-    candleReal.animate(
-        new StrobeAnimation(255, 0, 0, 100, 0.30, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  // @Override
-  // public void enableClimb() {
-  //   // blue
-  //   state = LEDAnim.Climb;
-  //   candleReal.animate(
-  //       new ColorFlowAnimation(
-  //           0, 0, 255, 0, 0.70, LEDsConstants.LEDS_PER_ANIMATION, Direction.Forward, 0),
-  //       1);
-  // }
-
-  @Override
-  public void enableAutoAlign() {
-    // rainbow
-    state = LEDAnim.AutoAlign;
-    candleReal.animate(new RainbowAnimation(1, 1, 64), 1);
-  }
-
-  @Override
-  public void enablePrepared() {
-    state = LEDAnim.Prepared;
-    // blue
-    candleReal.animate(
-        new StrobeAnimation(0, 0, 255, 100, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
-  }
-
-  @Override
-  public void enableReadyToScore() {
-    state = LEDAnim.ReadyToScore;
-    // purple
-    candleReal.animate(
-        new StrobeAnimation(255, 0, 255, 100, 0.55, LEDsConstants.LEDS_PER_ANIMATION, 0), 1);
+  public LEDsConstants.LEDStates getState() {
+    return super.currentState;
   }
 }

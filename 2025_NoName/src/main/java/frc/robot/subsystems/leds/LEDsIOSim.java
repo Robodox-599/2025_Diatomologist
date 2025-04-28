@@ -1,54 +1,29 @@
 package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
-import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
+import frc.robot.subsystems.leds.LEDsConstants.LEDStates;
 
 public class LEDsIOSim extends LEDsIO {
-  private LEDAnim state = LEDAnim.NoState;
+  private LEDStates state = LEDStates.IDLE;
 
   public LEDsIOSim() {}
 
   @Override
   public void updateInputs() {
     super.connected = true;
-    super.anim = state;
+    super.currentState = state;
 
     DogLog.log("LEDs/Connected", super.connected);
-    DogLog.log("LEDs/Anim", super.anim);
+    DogLog.log("LEDs/CurrentState", super.currentState);
   }
 
   @Override
-  public void enableStationIntake() {
-    state = LEDAnim.StationIntake;
+  public void setState(LEDsConstants.LEDStates state) {
+    super.currentState = state;
   }
 
   @Override
-  public void enableAlgaeIntake() {
-    state = LEDAnim.AlgaeIntake;
-  }
-
-  @Override
-  public void enableNoState() {
-    state = LEDAnim.NoState;
-  }
-
-  @Override
-  public void enableScored() {
-    state = LEDAnim.Scored;
-  }
-
-  @Override
-  public void enableClimb() {
-    state = LEDAnim.Climb;
-  }
-
-  @Override
-  public void enableAutoAlign() {
-    state = LEDAnim.AutoAlign;
-  }
-
-  @Override
-  public void enableReadyToScore() {
-    state = LEDAnim.ReadyToScore;
+  public LEDsConstants.LEDStates getState() {
+    return super.currentState;
   }
 }

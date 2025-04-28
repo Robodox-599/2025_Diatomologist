@@ -17,6 +17,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.SubsystemUtil;
 
 public class RollersIOTalonFX extends RollersIO {
 
@@ -128,34 +129,45 @@ public class RollersIOTalonFX extends RollersIO {
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
-      case SCORECORAL:
-        setVelocity(rollersCoralScoreSpeed);
-        break;
-      case SCOREALGAE:
-        setVelocity(rollersAlgaeScoreSpeed);
-        break;
-      case CORALSTATIONINTAKE:
-        setVelocity(rollersCoralStationIntakeSpeed);
-        break;
-      case ALGAEINTAKE:
-        setVelocity(rollersAlgaeIntakeSpeed);
+      case HOLDALGAE:
+        holdAlgae();
         break;
       case ADJUSTCORALAFTERSTATIONINTAKE:
         adjustCoralAfterStationIntake();
         break;
-      case HOLDALGAE:
-        holdAlgae();
-        break;
-      case STOP:
-        setVelocity(0);
-        break;
-      case EJECT:
-        setVelocity(rollersEjectSpeed);
-        break;
       default:
-        setVelocity(0);
+        setVelocity(SubsystemUtil.rollersStateToVelocity(state));
         break;
     }
+    // switch (state) {
+    //   case SCORECORAL:
+    //     setVelocity(rollersCoralScoreSpeed);
+    //     break;
+    //   case SCOREALGAE:
+    //     setVelocity(rollersAlgaeScoreSpeed);
+    //     break;
+    //   case CORALSTATIONINTAKE:
+    //     setVelocity(rollersCoralStationIntakeSpeed);
+    //     break;
+    //   case ADJUSTCORALAFTERSTATIONINTAKE:
+    //     adjustCoralAfterStationIntake();
+    //     break;
+    //   case ALGAEINTAKE:
+    //     setVelocity(rollersAlgaeIntakeSpeed);
+    //     break;
+    //   case HOLDALGAE:
+    //     holdAlgae();
+    //     break;
+    //   case STOP:
+    //     setVelocity(0);
+    //     break;
+    //   case EJECT:
+    //     setVelocity(rollersEjectSpeed);
+    //     break;
+    //   default:
+    //     setVelocity(0);
+    //     break;
+    // }
   }
 
   @Override

@@ -1,32 +1,16 @@
 package frc.robot.subsystems.leds;
 
-import frc.robot.subsystems.leds.LEDsConstants.LEDAnim;
+import frc.robot.subsystems.leds.LEDsConstants.LEDStates;
 
 public abstract class LEDsIO {
   protected boolean connected = false;
-  protected LEDAnim anim = LEDAnim.NoState;
+  protected LEDStates currentState = LEDStates.IDLE;
 
   public void updateInputs() {}
 
-  public void enableStationIntake() {}
+  public void setState(LEDsConstants.LEDStates state) {}
 
-  public void enableAlgaeIntake() {}
-
-  public void enableClimb() {}
-
-  public void enableNoState() {}
-
-  public void enableOverride() {}
-
-  public void enablePrepared() {}
-
-  public void enableReadyToScore() {}
-
-  public void enableScored() {}
-
-  public void enableScoring() {}
-
-  public void enableIntaked() {}
-
-  public void enableAutoAlign() {}
+  public LEDsConstants.LEDStates getState() {
+    return currentState;
+  }
 }

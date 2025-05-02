@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 import java.util.LinkedList;
 import java.util.List;
@@ -129,9 +128,9 @@ public class Vision extends SubsystemBase {
             || simplePose.getY() > FieldConstants.fieldWidth
             || Double.isNaN(simplePose.getX())
             || Double.isNaN(simplePose.getY());
-    boolean extremeJitter =
-        pose.getTranslation().getDistance(previousPose.getTranslation())
-            > time * RealConstants.MAX_LINEAR_SPEED;
+    // boolean extremeJitter =
+    //     pose.getTranslation().getDistance(previousPose.getTranslation())
+    //         > time * RealConstants.MAX_LINEAR_SPEED;
     boolean infeasibleZValue =
         Math.abs(pose.getTranslation().getZ())
             > io[cameraIndex].getVisionConstants().getMaxZError();
@@ -145,7 +144,7 @@ public class Vision extends SubsystemBase {
 
     boolean rejectPose =
         outOfBounds
-            || extremeJitter
+            // || extremeJitter
             || infeasibleZValue
             || infeasiblePitchValue
             || infeasibleRollValue

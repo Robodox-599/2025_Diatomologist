@@ -204,6 +204,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     targetSpeeds.omegaRadiansPerSecond +=
         choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
 
+    DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
+
     setControl(
         m_pathApplyFieldSpeeds
             .withSpeeds(targetSpeeds)
@@ -211,20 +213,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withWheelForceFeedforwardsY(sample.moduleForcesY()));
   }
 
-  /**
-   * Given a destintaion pose, it uses PID to move to that pose. Optimized for auto alignment, so
-   * short distances and small rotations.
-   *
-   * @param destinationPoseOptional Give it a destination to go to, do nothing if empty
-   * @param visionSim visionSim object to get simField from to do sim debugging
-   * @return Returns a command that loops until it gets near
-   */
   public Command moveToPoint(Supplier<Pose2d> targetPose) {
     return this.run(
         () -> {
           Pose2d setpoint = targetPose.get();
+              DogLog.log("Drive/DriveToPose/Setpoint", setpoint);
 
           Pose2d currentPose = getState().Pose;
+          DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
 
           double xSpeed = translationController.calculate(currentPose.getX(), setpoint.getX());
           double ySpeed = translationController.calculate(currentPose.getY(), setpoint.getY());

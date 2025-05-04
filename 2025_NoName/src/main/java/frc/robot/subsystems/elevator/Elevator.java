@@ -20,11 +20,11 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs();
-    safetyChecker.setCurrentElevatorInches(io.getPositionInches());
+    safetyChecker.setCurrentElevatorInches(io.positionInches);
   }
 
   public boolean isAtTargetPosition(ElevatorConstants.ElevatorStates state) {
-    return (Math.abs(io.getPositionInches() - SubsystemUtil.elevatorStateToHeightInches(state))
+    return (Math.abs(io.positionInches - SubsystemUtil.elevatorStateToHeightInches(state))
         < ElevatorConstants.positionToleranceInches);
   }
 

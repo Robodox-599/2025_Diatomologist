@@ -47,8 +47,7 @@ public class RobotContainer {
   private Vision vision;
   private SafetyChecker safetyChecker;
   private final SuperstructureCommands superstructureCommands;
-  private final Telemetry logger =
-      new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+  private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
   private final AutoRoutines autoRoutines;
   private final AutoFactory autoFactory;
   public final AutoChooser autoChooser = new AutoChooser();

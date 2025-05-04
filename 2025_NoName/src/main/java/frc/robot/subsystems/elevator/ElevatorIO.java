@@ -8,7 +8,6 @@ public abstract class ElevatorIO {
   protected double currentAmps = 0.0;
   protected double targetPositionInches = 0.0;
   protected boolean limitSwitchValue = false;
-  // protected double positionRotations = 0.0;
   protected boolean atSetpoint = false;
   protected ElevatorConstants.ElevatorStates state = ElevatorConstants.ElevatorStates.STOW;
 
@@ -27,14 +26,6 @@ public abstract class ElevatorIO {
   public void zeroEncoder() {}
 
   public void setVoltage(double voltage) {}
-
-  public double getPosition() {
-    return 0.0;
-  }
-
-  public double getPositionInches() {
-    return positionInches;
-  }
 
   public ElevatorConstants.ElevatorStates getState() {
     return state;

@@ -33,18 +33,10 @@ public class Wrist extends SubsystemBase {
   public boolean isAtTargetPosition(WristConstants.WristStates state) {
     DogLog.log(
         "Wrist/IsAtTargetPosition",
-        (Math.abs(io.getCurrentPosition() - SubsystemUtil.wristStateToSetpoint(state))
+        (Math.abs(io.currentPositionDegrees - SubsystemUtil.wristStateToSetpoint(state))
             < WristConstants.wristPositionTolerance));
-    return (Math.abs(io.getCurrentPosition() - SubsystemUtil.wristStateToSetpoint(state))
+    return (Math.abs(io.currentPositionDegrees - SubsystemUtil.wristStateToSetpoint(state))
         < WristConstants.wristPositionTolerance);
-  }
-
-  public double getCurrentPosition() {
-    return io.currentPositionDegrees;
-  }
-
-  public void setBrake(boolean brake) {
-    io.setBrake(brake);
   }
 
   public WristConstants.WristStates getState() {

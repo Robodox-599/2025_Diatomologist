@@ -133,17 +133,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   }
 
   @Override
-  public void enableBrakeMode(boolean enable) {
-    PhoenixUtil.tryUntilOk(
-        5,
-        () ->
-            leaderMotor.setNeutralMode(
-                enable
-                    ? com.ctre.phoenix6.signals.NeutralModeValue.Brake
-                    : com.ctre.phoenix6.signals.NeutralModeValue.Coast));
-  }
-
-  @Override
   public void setVoltage(double voltage) {
     leaderMotor.setControl(new VoltageOut(voltage));
   }
@@ -152,10 +141,5 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   public void zeroEncoder() {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
-  }
-
-  @Override
-  public double getPosition() {
-    return super.positionInches;
   }
 }

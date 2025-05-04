@@ -100,9 +100,4 @@ public class ElevatorIOSim extends ElevatorIO {
   public void zeroEncoder() {
     elevatorSim.setAngle(0);
   }
-
-  @Override
-  public double getPosition() {
-    return elevatorSim.getAngularPositionRad() * ElevatorConstants.inchesPerRev;
-  }
 }

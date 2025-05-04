@@ -31,8 +31,4 @@ public abstract class WristIO {
   public double getCurrentVolts() {
     return appliedVolts;
   }
-
-  public double getCurrentPosition() {
-    return currentPositionDegrees;
-  }
 }

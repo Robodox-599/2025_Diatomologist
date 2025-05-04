@@ -34,9 +34,7 @@ public class RollersConstants {
   };
 
   public static final int rollersMotorID = 16;
-  public static final int CANrangeId = 18;
   public static final String rollersMotorCANBus = "rio";
-  public static final String CANrangeCANbus = "rio";
 
   public static final boolean EnableCurrentLimit = true;
   public static final int ContinousCurrentLimit = 50;
@@ -58,25 +56,12 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  // public static final double rollersCoralScoreSpeed = -0.65;
-  // public static final double rollersCoralStationIntakeSpeed = -0.15;
-  // public static final double rollersEjectSpeed = -0.8;
-  // public static final double rollersAlgaeIntakeSpeed = 0.5;
-  // public static final double rollersAlgaeScoreSpeed = -0.1;
-
   public static final double rollersDutyCycleOutHoldAlgae = 0.2;
 
-  public static final double centerOffset = 0.0;
-  public static final double algaeIntakeStalling = 65;
-
-  // This value will be the distance the canrage reads without coral in it, use inches.
-  public static final double noCoralDistance = 11;
-  // This value will be
-  public static final double detectionDistance = noCoralDistance - 3.5;
-
   public static final int beakBreakPort = 3;
-  public static final int PESensorPort = 5;
-  public static final double beamBreakDebounce = 0.0;
+
+  public static final double beamBreakDebounce = 0.3;
+  public static final double algaeDebounce = 0.5;
 
   public static final double rotationsToMoveAfterDetectingCoral = 0.0;
 }

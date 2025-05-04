@@ -15,8 +15,6 @@ public class WristIOSim extends WristIO {
   private static final DCMotor WRIST_GEARBOX = DCMotor.getKrakenX60Foc(1);
   private final DCMotorSim wristSim;
 
-  // private double passedInPositon;
-  // private double currentPosition;
   private PIDController wristPID = new PIDController(simkP, simkI, simkD);
 
   public WristIOSim() {
@@ -61,11 +59,6 @@ public class WristIOSim extends WristIO {
   @Override
   public void setVoltage(double voltage) {
     wristSim.setInputVoltage(voltage);
-  }
-
-  @Override
-  public double getCurrentPosition() {
-    return wristSim.getAngularPositionRad();
   }
 
   @Override

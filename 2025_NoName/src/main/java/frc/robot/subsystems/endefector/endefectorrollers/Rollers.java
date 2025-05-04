@@ -37,7 +37,7 @@ public class Rollers extends SubsystemBase {
                 () -> {
                   io.setState(EndefectorRollerStates.ALGAEINTAKE);
                 })
-            .until(() -> io.isAlgaeDetected()),
+            .until(() -> io.isAlgaeDetected),
         Commands.runOnce(() -> io.setState(EndefectorRollerStates.HOLDALGAE)));
   }
 
@@ -47,7 +47,7 @@ public class Rollers extends SubsystemBase {
                 () -> {
                   io.setState(EndefectorRollerStates.SCOREALGAE);
                 })
-            .until(() -> !io.isAlgaeDetected()),
+            .until(() -> !io.isAlgaeDetected),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);
@@ -60,7 +60,7 @@ public class Rollers extends SubsystemBase {
                 () -> {
                   io.setState(EndefectorRollerStates.CORALSTATIONINTAKE);
                 })
-            .until(() -> io.isCoralDetected()),
+            .until(() -> io.isCoralDetected),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.ADJUSTCORALAFTERSTATIONINTAKE);
@@ -68,12 +68,13 @@ public class Rollers extends SubsystemBase {
   }
 
   public Command runScoreCoral() {
+
     return Commands.sequence(
         Commands.run(
                 () -> {
                   io.setState(EndefectorRollerStates.SCORECORAL);
                 })
-            .until(() -> !io.isCoralDetected()),
+            .until(() -> !io.isCoralDetected),
         Commands.runOnce(
             () -> {
               io.setState(EndefectorRollerStates.STOP);
@@ -88,29 +89,10 @@ public class Rollers extends SubsystemBase {
   }
 
   public boolean isCoralDetected() {
-    return io.isCoralDetected();
+    return io.isCoralDetected;
   }
 
   public boolean isAlgaeDetected() {
-    return io.isAlgaeDetected();
+    return io.isAlgaeDetected;
   }
-
-  public RollersIO getIO() {
-    return io;
-  }
-
-  // public void setBrake(boolean brake) {
-  //   io.setBrake(brake);
-  // }
-
-  //   public double getCoralDistance() {
-  //     return io.getCoralDistance();
-  //   }
-
-  // public Command applyVoltage(double voltage) {
-  //   return Commands.run(
-  //       () -> {
-  //         io.setVoltage(voltage);
-  //       });
-  // }
 }

@@ -20,16 +20,11 @@ import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
 
 public class RollersIOTalonFX extends RollersIO {
-
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
-  // private TorqueCurrentFOC torqueCurrent;
-  Debouncer algaeStallDebouncer = new Debouncer(0.5);
-  Debouncer coralBeamBreakDebouncer = new Debouncer(0.3);
-  // private Timer beamBreakTimer = new Timer();
-  // private Timer PETimer = new Timer();
+  Debouncer algaeStallDebouncer = new Debouncer(algaeDebounce);
+  Debouncer coralBeamBreakDebouncer = new Debouncer(beamBreakDebounce);
   private DigitalInput m_BeamBreak2;
-  // private DigitalInput PESensor;
 
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -42,8 +37,7 @@ public class RollersIOTalonFX extends RollersIO {
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
     m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreakPort);
-    // PESensor = new DigitalInput(RollersConstants.PESensorPort);
-    // torqueCurrent = new TorqueCurrentFOC(65);
+
     rollersConfig = new TalonFXConfiguration();
 
     rollersMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -82,19 +76,14 @@ public class RollersIOTalonFX extends RollersIO {
     super.desiredVelocity = desiredVelocity;
     super.isAlgaeDetected = algaeStallDebouncer.calculate(super.statorCurrentAmps >= 20);
     super.isCoralDetected = coralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
-    // if (m_BeamBreak2.get()) {
-    //   beamBreakTimer.restart();
-    // }
-    // if (PESensor.get()) {
-    //   PETimer.restart();
-    // }
+
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
 
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
-    // DogLog.log("Rollers/VelocitySetpoint", desiredVelocity);
+
     DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
@@ -113,97 +102,22 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void adjustCoralAfterStationIntake() {
-    rollersMotor.setControl(
-        new PositionVoltage(
-            rollersMotor.getPosition().getValueAsDouble()
-                + RollersConstants.rotationsToMoveAfterDetectingCoral));
-  }
-
-  @Override
-  public void holdAlgae() {
-    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
-  }
-
-  @Override
   public void setState(RollersConstants.EndefectorRollerStates state) {
     super.currentState = state;
     switch (state) {
       case HOLDALGAE:
-        holdAlgae();
+        rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
         break;
       case ADJUSTCORALAFTERSTATIONINTAKE:
-        adjustCoralAfterStationIntake();
+        rollersMotor.setControl(
+            new PositionVoltage(
+                rollersMotor.getPosition().getValueAsDouble()
+                    + RollersConstants.rotationsToMoveAfterDetectingCoral));
+        ;
         break;
       default:
         setVelocity(SubsystemUtil.rollersStateToVelocity(state));
         break;
     }
-    // switch (state) {
-    //   case SCORECORAL:
-    //     setVelocity(rollersCoralScoreSpeed);
-    //     break;
-    //   case SCOREALGAE:
-    //     setVelocity(rollersAlgaeScoreSpeed);
-    //     break;
-    //   case CORALSTATIONINTAKE:
-    //     setVelocity(rollersCoralStationIntakeSpeed);
-    //     break;
-    //   case ADJUSTCORALAFTERSTATIONINTAKE:
-    //     adjustCoralAfterStationIntake();
-    //     break;
-    //   case ALGAEINTAKE:
-    //     setVelocity(rollersAlgaeIntakeSpeed);
-    //     break;
-    //   case HOLDALGAE:
-    //     holdAlgae();
-    //     break;
-    //   case STOP:
-    //     setVelocity(0);
-    //     break;
-    //   case EJECT:
-    //     setVelocity(rollersEjectSpeed);
-    //     break;
-    //   default:
-    //     setVelocity(0);
-    //     break;
-    // }
   }
-
-  @Override
-  public boolean isCoralDetected() {
-    return super.isCoralDetected;
-  }
-
-  // @Override
-  // public boolean isAlgaeDetected() {
-  //   return (PETimer.get() >= 0.1);
-  // }
-
-  @Override
-  public boolean isAlgaeDetected() {
-    return super.isAlgaeDetected;
-  }
-
-  // @Override
-  // public boolean isRollersStalling() {
-  //   DogLog.log("Rollers/StatorCurrentAmps", super.currentAmps);
-  //   return (super.currentAmps >= 20);
-  // }
-
-  // @Override
-  // public void setVoltage(double voltage) {
-  //   rollersMotor.setVoltage(voltage);
-  // }
-
-  // @Override
-  // public void setSpeed(double speed) {
-  //   rollersMotor.set(speed);
-  // }
-
-  // @Override
-  // public void setBrake(boolean brake) {
-  //   rollersMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-  // }
-
 }

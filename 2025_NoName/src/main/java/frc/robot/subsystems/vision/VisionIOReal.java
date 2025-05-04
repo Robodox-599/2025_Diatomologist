@@ -4,9 +4,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.AprilTags;
@@ -68,25 +66,7 @@ public class VisionIOReal extends VisionIO {
     DogLog.log("Vision/" + camera.getName() + "/Camera Transform", robotToCamera);
   }
 
-  private Pose3d reproject(PhotonTrackedTarget target, Rotation2d gyroAngle) {
-    Translation3d tagLoc =
-        FieldConstants.AprilTags.TAGS[target.fiducialId - 1].pose.getTranslation();
-    Transform3d cameraToTag = target.getBestCameraToTarget();
-    Translation3d tagToRobotOffset =
-        robotToCameraPoseOffset.transformBy(cameraToTag).getTranslation();
-    tagToRobotOffset = tagToRobotOffset.rotateBy(new Rotation3d(gyroAngle));
-
-    // Update the latestTargetAngle with the tag's x and y rotations
-    Rotation3d tagRotation =
-        FieldConstants.AprilTags.TAGS[target.fiducialId - 1].pose.getRotation();
-    super.latestTargetAngle =
-        new ObservedTargetRotations(
-            new Rotation2d(tagRotation.getX()), new Rotation2d(tagRotation.getY()));
-
-    return new Pose3d(tagLoc.minus(tagToRobotOffset), new Rotation3d(gyroAngle));
-  }
-
-  public Optional<PoseObservation> updateTest(
+  public Optional<PoseObservation> update(
       EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
     if (resultList.size() == 0) {
       return null;
@@ -112,7 +92,7 @@ public class VisionIOReal extends VisionIO {
             .mapToDouble(Double::doubleValue)
             .average()
             .orElseGet(() -> 100.0);
-    // }
+
     PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
     PoseObservation latestUpdate;
     if (latestResult != null) {
@@ -162,7 +142,7 @@ public class VisionIOReal extends VisionIO {
         .map(result -> poseEstimator.update(result))
         .filter(Optional::isPresent)
         .map(Optional::get)
-        .map(estRoboPose -> updateTest(estRoboPose, resultList))
+        .map(estRoboPose -> update(estRoboPose, resultList))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .forEach(poseObservations::add);

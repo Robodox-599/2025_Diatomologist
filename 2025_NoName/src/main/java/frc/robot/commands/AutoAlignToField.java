@@ -4,8 +4,11 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
@@ -75,51 +78,51 @@ public class AutoAlignToField {
   }
 
   /* //     drive.runVelocityTeleopFieldRelative(
-    //         () ->
-    //             new ChassisSpeeds(
-    //                 -joystickDeadbandApply(driver.getLeftY())
-    //                     * RealConstants.MAX_LINEAR_SPEED
-    //                     * 0.85,
-    //                 -joystickDeadbandApply(driver.getLeftX())
-    //                     * RealConstants.MAX_LINEAR_SPEED
-    //                     * 0.85,
-    //                 -joystickDeadbandApply(driver.getRightX()) *
-    // RealConstants.MAX_ANGULAR_SPEED)));
-    */
+  //         () ->
+  //             new ChassisSpeeds(
+  //                 -joystickDeadbandApply(driver.getLeftY())
+  //                     * RealConstants.MAX_LINEAR_SPEED
+  //                     * 0.85,
+  //                 -joystickDeadbandApply(driver.getLeftX())
+  //                     * RealConstants.MAX_LINEAR_SPEED
+  //                     * 0.85,
+  //                 -joystickDeadbandApply(driver.getRightX()) *
+  // RealConstants.MAX_ANGULAR_SPEED)));
+  */
 
-    /* drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        -driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        -driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        -driver.getRightX()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            ));
-             */
-            
-  // public static Command alignToNearestLeftBranch(Drive drive) {
-  //   return drive.moveToPoint(
-  //       () ->
-  //           getNearestBranchPosition(() -> drive.getPose(), true)
-  //               .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-  // }
+  /* drivetrain.setDefaultCommand(
+  // Drivetrain will execute this command periodically
+  drivetrain.applyRequest(
+      () ->
+          drive
+              .withVelocityX(
+                  -driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+              .withVelocityY(
+                  -driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+              .withRotationalRate(
+                  -driver.getRightX()
+                      * MaxAngularRate) // Drive counterclockwise with negative X (left)
+      ));
+       */
 
-  // public static Command alignToNearestRightBranch(Drive drive) {
-  //   return drive.moveToPoint(
-  //       () ->
-  //           getNearestBranchPosition(() -> drive.getPose(), false)
-  //               .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-  // }
+  public static Command alignToNearestLeftBranch(CommandSwerveDrivetrain drive) {
+    return drive.moveToPoint(
+        () ->
+            getNearestBranchPosition(() -> drive.getState().Pose, true)
+                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+  }
 
-  // public static Command alignToNearestReefFace(Drive drive) {
-  //   return drive.moveToPoint(
-  //       () ->
-  //           getNearestReefFacePosition(() -> drive.getPose())
-  //               .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
-  // }
+  public static Command alignToNearestRightBranch(CommandSwerveDrivetrain drive) {
+    return drive.moveToPoint(
+        () ->
+            getNearestBranchPosition(() -> drive.getState().Pose, false)
+                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+  }
+
+  public static Command alignToNearestReefFace(CommandSwerveDrivetrain drive) {
+    return drive.moveToPoint(
+        () ->
+            getNearestReefFacePosition(() -> drive.getState().Pose)
+                .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))));
+  }
 }

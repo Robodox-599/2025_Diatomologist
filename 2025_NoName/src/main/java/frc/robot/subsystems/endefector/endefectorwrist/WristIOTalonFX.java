@@ -33,8 +33,6 @@ public class WristIOTalonFX extends WristIO {
 
   private final CANcoder cancoder;
 
-  private double passedInPosition;
-  private double currentPosition;
   // Inputs from turn motor
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<Angle> position;
@@ -130,13 +128,6 @@ public class WristIOTalonFX extends WristIO {
   }
 
   @Override
-  public void goToPose(double position) {
-    passedInPosition = position;
-    m_request.withPosition(passedInPosition);
-    wristMotor.setControl(m_request);
-  }
-
-  @Override
   public void stop() {
     wristMotor.stopMotor();
   }
@@ -158,10 +149,5 @@ public class WristIOTalonFX extends WristIO {
   @Override
   public WristConstants.WristStates getCurrentState() {
     return super.state;
-  }
-
-  @Override
-  public double getCurrentPosition() {
-    return super.currentPositionDegrees;
   }
 }

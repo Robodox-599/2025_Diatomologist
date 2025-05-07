@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -80,6 +81,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       startSimThread();
     }
     choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.setTolerance(Units.degreesToRadians(3));
+    translationController.setTolerance(0.02);
   }
 
   /**
@@ -169,6 +173,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
   }
 
+  public void setZero() {}
+
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();
 
@@ -213,28 +219,35 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withWheelForceFeedforwardsY(sample.moduleForcesY()));
   }
 
-  public Command moveToPoint(Supplier<Pose2d> targetPose) {
+  public Command moveToPoint(
+      Supplier<Pose2d> targetPose,
+      boolean thetaToleranceEnabled,
+      boolean translationToleranceEnabled) {
     return this.run(
-        () -> {
-          Pose2d setpoint = targetPose.get();
+            () -> {
+              Pose2d setpoint = targetPose.get();
               DogLog.log("Drive/DriveToPose/Setpoint", setpoint);
 
-          Pose2d currentPose = getState().Pose;
-          DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
+              Pose2d currentPose = getState().Pose;
+              DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
 
-          double xSpeed = translationController.calculate(currentPose.getX(), setpoint.getX());
-          double ySpeed = translationController.calculate(currentPose.getY(), setpoint.getY());
-          double thetaSpeed =
-              thetaController.calculate(
-                  currentPose.getRotation().getRadians(),
-                  targetPose.get().getRotation().getRadians());
+              double xSpeed = translationController.calculate(currentPose.getX(), setpoint.getX());
+              double ySpeed = translationController.calculate(currentPose.getY(), setpoint.getY());
+              double thetaSpeed =
+                  thetaController.calculate(
+                      currentPose.getRotation().getRadians(),
+                      targetPose.get().getRotation().getRadians());
 
-          setControl(
-              swreq_drive
-                  .withVelocityX(xSpeed)
-                  .withVelocityY(ySpeed)
-                  .withRotationalRate(thetaSpeed));
-        });
+              setControl(
+                  swreq_drive
+                      .withVelocityX(xSpeed)
+                      .withVelocityY(ySpeed)
+                      .withRotationalRate(thetaSpeed));
+            })
+        .until(
+            () ->
+                ((!thetaToleranceEnabled || thetaController.atGoal())
+                    && (!translationToleranceEnabled || translationController.atSetpoint())));
   }
 
   /**

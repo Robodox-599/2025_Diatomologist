@@ -7,7 +7,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,8 +43,8 @@ public class SuperstructureCommands {
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDeadband(0)
+          .withRotationalDeadband(0) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -320,22 +320,24 @@ public class SuperstructureCommands {
             () ->
                 drive
                     .withVelocityX(
-                        -driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        -joystickDeadbandApply(driver.getLeftY())
+                            * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        -joystickDeadbandApply(driver.getLeftX())
+                            * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(
-                        -driver.getRightX()
+                        joystickDeadbandApply(-driver.getRightX())
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
-    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    driver
-        .b()
-        .whileTrue(
-            drivetrain.applyRequest(
-                () ->
-                    point.withModuleDirection(
-                        new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
+    // driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    // driver
+    //     .b()
+    //     .whileTrue(
+    //         drivetrain.applyRequest(
+    //             () ->
+    //                 point.withModuleDirection(
+    //                     new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -371,5 +373,10 @@ public class SuperstructureCommands {
     operator.povDown().onTrue(algaeIntake(ElevatorStates.ALGAEL2));
     // // INTAKE ALGAE L3
     operator.povUp().onTrue(algaeIntake(ElevatorStates.ALGAEL3));
+  }
+
+  private static double joystickDeadbandApply(double x) {
+    return MathUtil.applyDeadband(
+        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 }

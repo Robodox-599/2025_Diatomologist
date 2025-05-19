@@ -340,8 +340,9 @@ public class SuperstructureCommands {
     //                     new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
     // reset the field-centric heading on left bumper press
-    driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+    driver.y().onTrue(drivetrain.zeroGyroCommand());
     // AUTO ALIGN
     driver.povLeft().whileTrue(autoAlignToLeft());
     driver.povRight().whileTrue(autoAlignToRight());

@@ -36,7 +36,7 @@ public class Telemetry {
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
   /* Robot swerve drive state */
-  private final NetworkTable driveStateTable = inst.getTable("DriveState");
+  private final NetworkTable driveStateTable = inst.getTable("Robot/Drive");
   private final StructPublisher<Pose2d> drivePose =
       driveStateTable.getStructTopic("Pose", Pose2d.struct).publish();
   private final StructPublisher<ChassisSpeeds> driveSpeeds =
@@ -53,8 +53,8 @@ public class Telemetry {
       driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
   /* Robot pose for field positioning */
-  private final NetworkTable table = inst.getTable("Pose");
-  private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
+  private final NetworkTable table = inst.getTable("Robot/Drive/Field");
+  private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("FieldPoseIDk").publish();
   private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
 
   /* Mechanisms to represent the swerve module states */
@@ -121,13 +121,13 @@ public class Telemetry {
       m_moduleTargetsArray[i * 2 + 1] = state.ModuleTargets[i].speedMetersPerSecond;
     }
 
-    SignalLogger.writeDoubleArray("DriveState/Pose", m_poseArray);
-    SignalLogger.writeDoubleArray("DriveState/ModuleStates", m_moduleStatesArray);
-    SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
-    SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+    SignalLogger.writeDoubleArray("Robot/Drive/Pose", m_poseArray);
+    SignalLogger.writeDoubleArray("Robot/Drive/ModuleStates", m_moduleStatesArray);
+    SignalLogger.writeDoubleArray("Robot/Drive/ModuleTargets", m_moduleTargetsArray);
+    SignalLogger.writeDouble("Robot/Drive/OdometryPeriod", state.OdometryPeriod, "seconds");
 
     /* Telemeterize the pose to a Field2d */
-    fieldTypePub.set("Field2d");
+    fieldTypePub.set("Robot/Drive/Field2d");
     fieldPub.set(m_poseArray);
 
     /* Telemeterize the module states to a Mechanism2d */

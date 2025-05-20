@@ -1,12 +1,10 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class VisionIO {
   /**
@@ -28,34 +26,13 @@ public abstract class VisionIO {
   /** An array of IDs corresponding to the AprilTags detected by the vision system. */
   protected int[] tagIds = new int[0];
 
-  /** Stores the latest observed angles of a target as a pair of 2D rotations. */
-  protected ObservedTargetRotations latestTargetAngle =
-      new ObservedTargetRotations(new Rotation2d(), new Rotation2d());
-
-  protected Optional<PoseObservation> previousUpdate = Optional.empty();
+  protected double tagArea = 0;
 
   /**
    * An array containing pose observations made by the camera. Each observation includes metadata
    * such as timestamp, observed pose, ambiguity, and tag information.
    */
   protected PoseObservation[] poseObservations = new PoseObservation[0];
-
-  /**
-   * Represents an observed pose of a target as a pair of 2D rotations (targetX, targetY). This is
-   * used for tracking the orientation or position of a detected target.
-   *
-   * @param targetX the angle around the X-axis
-   * @param targetY the angle around the Y-axis
-   */
-  public static record ObservedTargetRotations(Rotation2d targetX, Rotation2d targetY) {
-    public Rotation2d getTargetX() {
-      return targetX;
-    }
-
-    public Rotation2d getTargetY() {
-      return targetY;
-    }
-  }
 
   /**
    * Represents a single pose observation from the camera. Includes information about the observed
@@ -72,7 +49,8 @@ public abstract class VisionIO {
       Pose3d observedPose,
       double ambiguity,
       List<Integer> tagsList,
-      double averageTagDistance) {
+      double averageTagDistance,
+      double tagArea) {
     public double getAverageTagDistance() {
       return averageTagDistance;
     }
@@ -91,6 +69,10 @@ public abstract class VisionIO {
 
     public double getTimestamp() {
       return timestamp;
+    }
+
+    public double getTagArea() {
+      return tagArea;
     }
   }
 

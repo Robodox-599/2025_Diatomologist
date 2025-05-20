@@ -66,9 +66,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOReal(RealConstants.cam2Constants, drive::getPose),
-                new VisionIOReal(RealConstants.cam1Constants, drive::getPose),
-                new VisionIOReal(RealConstants.cam3Constants, drive::getPose));
+                new VisionIOReal(RealConstants.cam2Constants),
+                new VisionIOReal(RealConstants.cam1Constants),
+                new VisionIOReal(RealConstants.cam3Constants));
         autoFactory =
             new AutoFactory(drive::getPose, drive::resetPose, drive::followChoreoPath, true, drive);
         break;

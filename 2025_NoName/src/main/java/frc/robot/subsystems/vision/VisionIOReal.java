@@ -1,18 +1,15 @@
 package frc.robot.subsystems.vision;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import frc.robot.FieldConstants;
-import frc.robot.FieldConstants.AprilTags;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -26,11 +23,8 @@ public class VisionIOReal extends VisionIO {
   protected final PhotonCamera camera;
   protected final VisionConstants constants;
   protected final Transform3d robotToCamera;
-  private final Pose3d robotToCameraPoseOffset;
-  private final Supplier<Pose2d> poseSupplier;
   private final PhotonPoseEstimator poseEstimator;
 
-  private Optional<PoseObservation> previousUpdate = Optional.empty();
   private ArrayList<Integer> seenTags = new ArrayList<>();
 
   /**
@@ -44,15 +38,13 @@ public class VisionIOReal extends VisionIO {
    *
    * @param The VisionConstants of the camera.
    */
-  public VisionIOReal(VisionConstants cameraConstants, Supplier<Pose2d> poseSupplier) {
-    this.poseSupplier = poseSupplier;
+  public VisionIOReal(VisionConstants cameraConstants) {
     this.constants = cameraConstants;
     super.constants = constants;
 
     camera = new PhotonCamera(cameraConstants.cameraName());
 
     this.robotToCamera = cameraConstants.robotToCameraTransform3d();
-    this.robotToCameraPoseOffset = Pose3d.kZero.transformBy(robotToCamera);
 
     poseEstimator =
         new PhotonPoseEstimator(
@@ -68,16 +60,8 @@ public class VisionIOReal extends VisionIO {
 
   public Optional<PoseObservation> update(
       EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
-    if (resultList.size() == 0) {
-      return null;
-    }
+
     for (PhotonTrackedTarget target : estRoboPose.targetsUsed) {
-      int minId = AprilTags.TAGS[0].ID;
-      int maxId = AprilTags.TAGS[AprilTags.TAGS.length - 1].ID;
-      if (target.fiducialId < minId && target.fiducialId > maxId) {
-        previousUpdate = Optional.empty();
-        return previousUpdate;
-      }
       seenTags.add(target.fiducialId);
     }
 
@@ -94,7 +78,7 @@ public class VisionIOReal extends VisionIO {
             .orElseGet(() -> 100.0);
 
     PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-    PoseObservation latestUpdate;
+    PoseObservation latestUpdate = null;
     if (latestResult != null) {
       latestUpdate =
           new PoseObservation(
@@ -102,15 +86,10 @@ public class VisionIOReal extends VisionIO {
               pose,
               latestResult.getPoseAmbiguity(),
               getSeenTags(),
-              avgDistance);
-    } else {
-      latestUpdate =
-          new PoseObservation(estRoboPose.timestampSeconds, pose, 0.5, getSeenTags(), avgDistance);
+              avgDistance,
+              latestResult.getArea());
     }
-
-    previousUpdate = Optional.of(latestUpdate);
-
-    return previousUpdate;
+    return Optional.of(latestUpdate);
   }
 
   public List<Integer> getSeenTags() {
@@ -135,7 +114,6 @@ public class VisionIOReal extends VisionIO {
     super.numTargets = seenTags.size();
     super.tagIds = seenTags.stream().mapToInt(i -> i).toArray();
     seenTags.clear();
-    super.previousUpdate = previousUpdate;
 
     resultList.stream()
         .filter(result -> result.hasTargets())

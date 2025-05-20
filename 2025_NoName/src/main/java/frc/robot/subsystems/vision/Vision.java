@@ -5,8 +5,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
@@ -14,31 +14,24 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.vision.VisionIO.PoseObservation;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
+  private final SwerveConsumer speedsConsumer;
+
   private final VisionIO[] io;
   private final Alert[] disconnectedAlerts;
 
-  public Vision(VisionConsumer consumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, SwerveConsumer speedsConsumer, VisionIO... io) {
     this.consumer = consumer;
+    this.speedsConsumer = speedsConsumer;
     this.io = io;
+
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < io.length; i++) {
       disconnectedAlerts[i] = new Alert(io[i].getName() + " is disconnected.", AlertType.kWarning);
     }
-  }
-
-  /**
-   * Returns the X angle to the best target, which can be used for simple servoing with vision.
-   *
-   * @param cameraIndex The index of the camera to use.
-   */
-  public Rotation2d getTargetX(int cameraIndex) {
-    return io[cameraIndex].latestTargetAngle.targetX();
   }
 
   @Override
@@ -57,7 +50,7 @@ public class Vision extends SubsystemBase {
       for (var observation : io[cameraIndex].poseObservations) {
         // Check whether to reject pose
         boolean rejectPose = checkPose(observation, cameraIndex);
-        // Add pose to log
+        // Log if pose accepted and add pose to log
         DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
         if (rejectPose) {
           DogLog.log(
@@ -80,7 +73,13 @@ public class Vision extends SubsystemBase {
 
         linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
         angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
-
+        angularStdDev =
+            (observation.getTagArea() > 8
+                    && speedsConsumer.getSpeeds().vxMetersPerSecond < 3
+                    && speedsConsumer.getSpeeds().vyMetersPerSecond < 3
+                    && speedsConsumer.getSpeeds().omegaRadiansPerSecond < 4 * Math.PI)
+                ? angularStdDev + 25
+                : 999999999.0;
         consumer.accept(
             observation.getObservedPose().toPose2d(),
             observation.timestamp(),
@@ -98,33 +97,25 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
+  @FunctionalInterface
+  public static interface SwerveConsumer {
+    public ChassisSpeeds getSpeeds();
+  }
+
   private boolean checkPose(PoseObservation observation, int cameraIndex) {
     Pose3d pose = observation.getObservedPose();
     Translation2d simplePose = pose.getTranslation().toTranslation2d();
-    boolean outOfBounds =
-        simplePose.getX() < 0.0
-            || simplePose.getX() > FieldConstants.fieldLength
-            || simplePose.getY() < 0.0
-            || simplePose.getY() > FieldConstants.fieldWidth
-            || Double.isNaN(simplePose.getX())
-            || Double.isNaN(simplePose.getY());
-
-    boolean infeasibleZValue =
-        ;
-    boolean infeasiblePitchValue =
-        ;
-    boolean infeasibleRollValue =
-        ;
-    boolean outOfRange = 
-
-    boolean rejectPose =
-        outOfBounds
-            || Math.abs(pose.getTranslation().getZ())
+    return simplePose.getX() < 0.0
+        || simplePose.getX() > FieldConstants.fieldLength
+        || simplePose.getY() < 0.0
+        || simplePose.getY() > FieldConstants.fieldWidth
+        || Double.isNaN(simplePose.getX())
+        || Double.isNaN(simplePose.getY())
+        || Math.abs(pose.getTranslation().getZ())
             > io[cameraIndex].getVisionConstants().getMaxZError()
-            || pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError()
-            || pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError()
-            || observation.getAverageTagDistance() > 5.5;    
-    return rejectPose;
+        || pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError()
+        || pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError()
+        || observation.getAverageTagDistance() > 5.5;
   }
 
   public void logValues(int cameraIndex) {

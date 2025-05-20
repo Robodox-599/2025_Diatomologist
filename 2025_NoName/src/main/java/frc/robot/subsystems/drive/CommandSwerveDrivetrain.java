@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -176,7 +177,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("RobotPose", getState().Pose);
   }
 
-  public void setZero() {}
+  public ChassisSpeeds getChassisSpeeds() {
+    return getState().Speeds;
+  }
 
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();

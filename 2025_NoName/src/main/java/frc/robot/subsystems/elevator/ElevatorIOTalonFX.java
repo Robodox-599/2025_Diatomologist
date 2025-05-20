@@ -36,9 +36,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     leaderMotor = new TalonFX(ElevatorConstants.leaderMotorID, ElevatorConstants.leaderMotorCANbus);
     followerMotor =
         new TalonFX(ElevatorConstants.followerMotorID, ElevatorConstants.followerMotorCANbus);
-    /*  This tells the motor encoder where 0 inches is*/
-    // limitSwitch1 = new DigitalInput(ElevatorConstants.limitSwitchDioPort1);
-    // limitSwitch2 = new DigitalInput(ElevatorConstants.limitSwitchDioPort2);
 
     followerMotor.setControl(new Follower(leaderMotor.getDeviceID(), true));
 

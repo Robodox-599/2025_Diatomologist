@@ -21,7 +21,7 @@ public class VisionIOSim extends VisionIOReal {
    * @param The Pose2d supplier for vision odometry.
    */
   public VisionIOSim(VisionConstants constants, Supplier<Pose2d> poseSupplier) {
-    super(constants, poseSupplier);
+    super(constants);
     this.poseSupplier = poseSupplier;
     // Initialize visionSim if still Null
     if (visionSim == null) {

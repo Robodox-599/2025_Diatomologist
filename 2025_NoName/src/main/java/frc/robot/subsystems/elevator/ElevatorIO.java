@@ -7,7 +7,6 @@ public abstract class ElevatorIO {
   protected double appliedVolts = 0.0;
   protected double currentAmps = 0.0;
   protected double targetPositionInches = 0.0;
-  protected boolean limitSwitchValue = false;
   protected boolean atSetpoint = false;
   protected ElevatorConstants.ElevatorStates state = ElevatorConstants.ElevatorStates.STOW;
 

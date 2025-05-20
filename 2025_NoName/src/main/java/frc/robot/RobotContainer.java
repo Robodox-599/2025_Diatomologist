@@ -66,6 +66,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                drive::getChassisSpeeds,
                 new VisionIOReal(RealConstants.cam2Constants),
                 new VisionIOReal(RealConstants.cam1Constants),
                 new VisionIOReal(RealConstants.cam3Constants));
@@ -82,6 +83,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                drive::getChassisSpeeds,
                 new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
                 new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
                 new VisionIOSim(RealConstants.cam3Constants, drive::getPose));
@@ -98,6 +100,7 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
+                drive::getChassisSpeeds,
                 new VisionIOSim(RealConstants.cam2Constants, drive::getPose),
                 new VisionIOSim(RealConstants.cam1Constants, drive::getPose),
                 new VisionIOSim(RealConstants.cam3Constants, drive::getPose));

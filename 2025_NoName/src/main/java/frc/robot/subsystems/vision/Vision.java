@@ -105,7 +105,7 @@ public class Vision extends SubsystemBase {
   private boolean checkPose(PoseObservation observation, int cameraIndex) {
     Pose3d pose = observation.getObservedPose();
     Translation2d simplePose = pose.getTranslation().toTranslation2d();
-    return simplePose.getX() < 0.0
+    return (simplePose.getX() < 0.0
         || simplePose.getX() > FieldConstants.fieldLength
         || simplePose.getY() < 0.0
         || simplePose.getY() > FieldConstants.fieldWidth
@@ -115,7 +115,7 @@ public class Vision extends SubsystemBase {
             > io[cameraIndex].getVisionConstants().getMaxZError()
         || pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError()
         || pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError()
-        || observation.getAverageTagDistance() > 5.5;
+        || observation.getAverageTagDistance() > 5.5);
   }
 
   public void logValues(int cameraIndex) {

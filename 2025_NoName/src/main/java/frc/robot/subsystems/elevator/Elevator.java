@@ -1,26 +1,29 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SafetyChecker;
+import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.util.SubsystemUtil;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final SafetyChecker safetyChecker;
+  private ElevatorStates internalState;
 
   public Elevator(ElevatorIO io, SafetyChecker safetyChecker) {
     this.io = io;
     this.safetyChecker = safetyChecker;
+    this.internalState = ElevatorStates.STOW;
   }
 
   @Override
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentElevatorInches(io.positionInches);
+    if (safetyChecker.isSafeElevator(SubsystemUtil.elevatorStateToHeightInches(internalState))) {
+      io.setState(internalState);
+    }
   }
 
   public boolean isAtTargetPosition(ElevatorConstants.ElevatorStates state) {
@@ -32,7 +35,7 @@ public class Elevator extends SubsystemBase {
   public Command moveToState(ElevatorConstants.ElevatorStates state) {
     return this.run(
             () -> {
-              io.setState(state);
+              this.internalState = state;
             })
         .until(() -> isAtTargetPosition(state));
   }
@@ -46,17 +49,6 @@ public class Elevator extends SubsystemBase {
         () -> {
           io.setVoltage(volt);
         });
-  }
-
-  /*Homes elevator with limit switch, could be rewritten to home with current but hopefully nah*/
-
-  public Command homeElevator() {
-    return Commands.sequence(
-            move(2),
-            new WaitUntilCommand(() -> io.limitSwitchValue),
-            move(0),
-            new InstantCommand(() -> io.zeroEncoder()))
-        .onlyIf(() -> !io.limitSwitchValue);
   }
 
   public ElevatorIO getIO() {

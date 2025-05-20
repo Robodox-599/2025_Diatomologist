@@ -5,27 +5,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.SubsystemUtil;
 
 public class Wrist extends SubsystemBase {
   private final WristIO io;
   private final SafetyChecker safetyChecker;
+  private WristConstants.WristStates internalState;
 
   public Wrist(WristIO io, SafetyChecker safetyChecker) {
     this.io = io;
     this.safetyChecker = safetyChecker;
+    this.internalState = WristStates.STOW;
   }
 
   @Override
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
+    if (safetyChecker.isSafeWrist(SubsystemUtil.wristStateToSetpoint(internalState))) {
+      io.setState(internalState);
+    }
   }
 
   public Command moveToState(WristConstants.WristStates state) {
     return this.run(
             () -> {
-              io.setState(state);
+              this.internalState = state;
             })
         .until(() -> isAtTargetPosition(state));
   }

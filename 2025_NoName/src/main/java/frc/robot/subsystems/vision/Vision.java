@@ -22,8 +22,6 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final Alert[] disconnectedAlerts;
 
-  List<Pose3d> tagPoses = new LinkedList<>();
-
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
@@ -55,24 +53,10 @@ public class Vision extends SubsystemBase {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!io[cameraIndex].cameraConnected);
 
-      // Add tag poses
-      for (int tagId : io[cameraIndex].tagIds) {
-        var tagPose = FieldConstants.AprilTags.aprilTagFieldLayout.getTagPose(tagId);
-        if (tagPose.isPresent()) {
-          tagPoses.add(tagPose.get());
-        }
-      }
-
       // Loop over pose observations
       for (var observation : io[cameraIndex].poseObservations) {
         // Check whether to reject pose
-        PoseObservation[] poseObservationWithPreviousUpdate = new PoseObservation[2];
-        poseObservationWithPreviousUpdate[0] = observation;
-        poseObservationWithPreviousUpdate[1] = io[cameraIndex].previousUpdate.orElse(null);
-        if (poseObservationWithPreviousUpdate[1] == null) {
-          continue;
-        }
-        boolean rejectPose = checkPose(poseObservationWithPreviousUpdate, cameraIndex);
+        boolean rejectPose = checkPose(observation, cameraIndex);
         // Add pose to log
         DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
         if (rejectPose) {
@@ -114,12 +98,8 @@ public class Vision extends SubsystemBase {
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
 
-  private boolean checkPose(PoseObservation[] observations, int cameraIndex) {
-    PoseObservation latestObservation = observations[0];
-    PoseObservation previousPoseObservation = observations[1];
-    Pose3d pose = latestObservation.getObservedPose();
-    Pose3d previousPose = previousPoseObservation.getObservedPose();
-    double time = latestObservation.getTimestamp() - previousPoseObservation.getTimestamp();
+  private boolean checkPose(PoseObservation observation, int cameraIndex) {
+    Pose3d pose = observation.getObservedPose();
     Translation2d simplePose = pose.getTranslation().toTranslation2d();
     boolean outOfBounds =
         simplePose.getX() < 0.0
@@ -128,29 +108,22 @@ public class Vision extends SubsystemBase {
             || simplePose.getY() > FieldConstants.fieldWidth
             || Double.isNaN(simplePose.getX())
             || Double.isNaN(simplePose.getY());
-    // boolean extremeJitter =
-    //     pose.getTranslation().getDistance(previousPose.getTranslation())
-    //         > time * RealConstants.MAX_LINEAR_SPEED;
+
     boolean infeasibleZValue =
-        Math.abs(pose.getTranslation().getZ())
-            > io[cameraIndex].getVisionConstants().getMaxZError();
+        ;
     boolean infeasiblePitchValue =
-        pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError();
+        ;
     boolean infeasibleRollValue =
-        pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError();
-    boolean outOfRange = latestObservation.getAverageTagDistance() > 5.5;
-    boolean noTags = latestObservation.tagsList().size() < 0;
-    boolean sketchyTags = latestObservation.tagsList().stream().anyMatch(List.of()::contains);
+        ;
+    boolean outOfRange = 
 
     boolean rejectPose =
         outOfBounds
-            // || extremeJitter
-            || infeasibleZValue
-            || infeasiblePitchValue
-            || infeasibleRollValue
-            || outOfRange
-            || noTags
-            || sketchyTags;
+            || Math.abs(pose.getTranslation().getZ())
+            > io[cameraIndex].getVisionConstants().getMaxZError()
+            || pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError()
+            || pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError()
+            || observation.getAverageTagDistance() > 5.5;    
     return rejectPose;
   }
 
@@ -161,14 +134,5 @@ public class Vision extends SubsystemBase {
     DogLog.log("Vision/" + io[cameraIndex].getName() + "/HasTargets", io[cameraIndex].hasTargets);
     DogLog.log("Vision/" + io[cameraIndex].getName() + "/NumTargets", io[cameraIndex].numTargets);
     DogLog.log("Vision/" + io[cameraIndex].getName() + "/TagIds", io[cameraIndex].tagIds);
-    DogLog.log(
-        "Vision/" + io[cameraIndex].getName() + "/LatestTargetAngleX",
-        io[cameraIndex].latestTargetAngle.getTargetX());
-    DogLog.log(
-        "Vision/" + io[cameraIndex].getName() + "/LatestTargetAngleY",
-        io[cameraIndex].latestTargetAngle.getTargetY());
-    DogLog.log(
-        "Vision/" + io[cameraIndex].getName() + "/TagPoses",
-        tagPoses.toArray(new Pose3d[tagPoses.size()]));
   }
 }

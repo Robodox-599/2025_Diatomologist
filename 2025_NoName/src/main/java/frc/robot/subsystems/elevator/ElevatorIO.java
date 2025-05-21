@@ -8,13 +8,12 @@ public abstract class ElevatorIO {
   protected double currentAmps = 0.0;
   protected double targetPositionInches = 0.0;
   protected boolean atSetpoint = false;
-  protected ElevatorConstants.ElevatorStates state = ElevatorConstants.ElevatorStates.STOW;
 
   /** Updates the set of loggable inputs */
   public void updateInputs() {}
 
   /** Sets the target height of the elevator */
-  public void setState(ElevatorConstants.ElevatorStates state) {}
+  public void setHeight(ElevatorConstants.ElevatorStates state) {}
 
   /** Stops the elevator */
   public void stop() {}
@@ -25,8 +24,4 @@ public abstract class ElevatorIO {
   public void zeroEncoder() {}
 
   public void setVoltage(double voltage) {}
-
-  public ElevatorConstants.ElevatorStates getState() {
-    return state;
-  }
 }

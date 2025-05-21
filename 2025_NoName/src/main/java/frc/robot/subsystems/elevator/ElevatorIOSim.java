@@ -72,13 +72,10 @@ public class ElevatorIOSim extends ElevatorIO {
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
-    DogLog.log("Elevator/State", super.state.toString());
   }
 
   @Override
-  public void setState(ElevatorConstants.ElevatorStates state) {
-    super.state = state;
-
+  public void setHeight(ElevatorConstants.ElevatorStates state) {
     targetPositionInches =
         MathUtil.clamp(
             SubsystemUtil.elevatorStateToHeightTicks(state),

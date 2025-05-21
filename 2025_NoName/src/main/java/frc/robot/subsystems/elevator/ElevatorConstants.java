@@ -6,18 +6,18 @@ public final class ElevatorConstants {
   /* CHANGE LATER */
 
   public static enum ElevatorStates {
-    CORALL1(0),
-    CORALL2(1),
-    CORALL3(2),
-    CORALL4(3),
+    SCORING_CORAL_L1(0),
+    SCORING_CORAL_L2(1),
+    SCORING_CORAL_L3(2),
+    SCORING_CORAL_L4(3),
     STOW(4),
-    CORALSTATIONINTAKE(5),
-    ALGAEGROUNDINTAKE(6),
-    ALGAEL2(7),
-    ALGAEL3(8),
-    BARGENET(9),
-    PREP(10),
-    PROCESSOR(11);
+    INTAKING_CORAL_STATION(5),
+    INTAKING_ALGAE_GROUND(6),
+    INTAKING_ALGAE_L2(7),
+    INTAKING_ALGAE_L3(8),
+    SCORING_ALGAE_BARGE(9),
+    PREPARED(10),
+    SCORING_ALGAE_PROCESSOR(11);
 
     private final int index;
 

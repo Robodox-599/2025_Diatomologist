@@ -40,9 +40,9 @@ public class WristConstants {
   public static enum WristStates {
     STOW(0),
     PREPARE(1),
-    ALGAEREEFINTAKE(2),
-    ALGAEGROUNDINTAKE(3),
-    CORALSTATIONINTAKE(4);
+    INTAKING_ALGAE_REEF(2),
+    INTAKING_ALGAE_GROUND(3),
+    INTAKING_CORAL_STATION(4);
     private final int index;
 
     WristStates(int index) {

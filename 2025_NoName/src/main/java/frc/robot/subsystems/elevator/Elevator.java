@@ -1,54 +1,114 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
-import frc.robot.util.SubsystemUtil;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final SafetyChecker safetyChecker;
-  private ElevatorStates internalState;
+  private WantedState wantedState = WantedState.STOPPED;
+  private CurrentState currentState = CurrentState.STOPPED;
+
+  public enum WantedState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_L2,
+    INTAKING_ALGAE_L3,
+    PREPARED,
+    SCORING_CORAL_L1,
+    SCORING_CORAL_L2,
+    SCORING_CORAL_L3,
+    SCORING_CORAL_L4,
+    SCORING_ALGAE_PROCESSOR,
+    SCORING_ALGAE_BARGE,
+    STOPPED,
+  }
+
+  public enum CurrentState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_L2,
+    INTAKING_ALGAE_L3,
+    PREPARED,
+    SCORING_CORAL_L1,
+    SCORING_CORAL_L2,
+    SCORING_CORAL_L3,
+    SCORING_CORAL_L4,
+    SCORING_ALGAE_PROCESSOR,
+    SCORING_ALGAE_BARGE,
+    STOPPED,
+  }
 
   public Elevator(ElevatorIO io, SafetyChecker safetyChecker) {
     this.io = io;
     this.safetyChecker = safetyChecker;
-    this.internalState = ElevatorStates.STOW;
   }
 
   @Override
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentElevatorInches(io.positionInches);
-    if (safetyChecker.isSafeElevator(SubsystemUtil.elevatorStateToHeightInches(internalState))) {
-      io.setState(internalState);
+    currentState = handleStateTransitions();
+    applyStates();
+  }
+
+  private CurrentState handleStateTransitions() {
+    if (safetyChecker.isSafeElevator()) {
+      switch (wantedState) {
+        case INTAKING_CORAL_STATION:
+          currentState = CurrentState.INTAKING_CORAL_STATION;
+          break;
+        case INTAKING_ALGAE_GROUND:
+          currentState = CurrentState.INTAKING_ALGAE_GROUND;
+          break;
+        case INTAKING_ALGAE_L2:
+          currentState = CurrentState.INTAKING_ALGAE_L2;
+          break;
+        case INTAKING_ALGAE_L3:
+          currentState = CurrentState.INTAKING_ALGAE_L3;
+          break;
+        case PREPARED:
+          currentState = CurrentState.PREPARED;
+          break;
+        case SCORING_CORAL_L1:
+          currentState = CurrentState.SCORING_CORAL_L1;
+          break;
+        case SCORING_CORAL_L2:
+          currentState = CurrentState.SCORING_CORAL_L2;
+          break;
+        case SCORING_CORAL_L3:
+          currentState = CurrentState.SCORING_CORAL_L3;
+          break;
+        case SCORING_CORAL_L4:
+          currentState = CurrentState.SCORING_CORAL_L4;
+          break;
+        case SCORING_ALGAE_PROCESSOR:
+          currentState = CurrentState.SCORING_ALGAE_PROCESSOR;
+          break;
+        case SCORING_ALGAE_BARGE:
+          currentState = CurrentState.SCORING_ALGAE_BARGE;
+          break;
+        default:
+          break;
+      }
+    }
+    return currentState;
+  }
+
+  private void applyStates() {
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
     }
   }
 
-  public boolean isAtTargetPosition(ElevatorConstants.ElevatorStates state) {
-    return (Math.abs(io.positionInches - SubsystemUtil.elevatorStateToHeightInches(state))
-        < ElevatorConstants.positionToleranceInches);
-  }
-
   /* Moves the elevator to one of the states */
-  public Command moveToState(ElevatorConstants.ElevatorStates state) {
-    return this.run(
-            () -> {
-              this.internalState = state;
-            })
-        .until(() -> isAtTargetPosition(state));
+  public void setHeight(ElevatorStates state) {
+    io.setHeight(state);
   }
 
-  public ElevatorConstants.ElevatorStates getState() {
-    return io.getState();
-  }
-
-  public Command move(double volt) {
-    return this.runOnce(
-        () -> {
-          io.setVoltage(volt);
-        });
+  public void setWantedState(WantedState wantedState) {
+    this.wantedState = wantedState;
   }
 
   public ElevatorIO getIO() {

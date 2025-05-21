@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.commands.SuperstructureCommands;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
@@ -46,7 +46,7 @@ public class RobotContainer {
   private LEDs LEDs;
   private Vision vision;
   private SafetyChecker safetyChecker;
-  private final SuperstructureCommands superstructureCommands;
+  private final Superstructure superstructureCommands;
   private final Telemetry logger =
       new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
   private final AutoRoutines autoRoutines;
@@ -55,7 +55,6 @@ public class RobotContainer {
 
   public RobotContainer() {
     safetyChecker = new SafetyChecker();
-
     switch (Constants.currentMode) {
       case REAL:
         elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
@@ -112,7 +111,7 @@ public class RobotContainer {
     drive.registerTelemetry(logger::telemeterize);
 
     superstructureCommands =
-        new SuperstructureCommands(drive, elevator, wrist, rollers, LEDs, driver, operator);
+        new Superstructure(drive, elevator, wrist, rollers, LEDs, safetyChecker, driver, operator);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
@@ -121,10 +120,10 @@ public class RobotContainer {
 
     // Add auto routines
     // COMPETITION
-    autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
-    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
-    autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
-    autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
+    // autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
+    // autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+    // autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
+    // autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
     // autoChooser.addRoutine(
     // "DO NOT USE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
 
@@ -141,7 +140,7 @@ public class RobotContainer {
             .withNtPublish(true)
             .withCaptureConsole(true));
 
-    superstructureCommands.configureBindings();
+    // superstructureCommands.configureBindings();
   }
 
   public Command getAutonomousCommand() {

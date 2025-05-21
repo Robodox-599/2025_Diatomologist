@@ -24,7 +24,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   private final TalonFX followerMotor;
   // private final DigitalInput limitSwitch1;
   // private final DigitalInput limitSwitch2;
-  private ElevatorConstants.ElevatorStates currentState = ElevatorConstants.ElevatorStates.STOW;
   private final MotionMagicVoltage motionMagicRequest;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
@@ -83,7 +82,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     super.appliedVolts = appliedVolts.getValueAsDouble();
     super.currentAmps = current.getValueAsDouble();
     super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerRev;
-    super.state = currentState;
 
     /* Determines if the elevator is at a setpoint */
     double positionError = Math.abs(super.targetPositionInches - super.positionInches);
@@ -101,14 +99,12 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     /* Log all super */
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/ElevatorAtSetpoint", super.atSetpoint);
-    DogLog.log("Elevator/State", super.state.toString());
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
   }
 
   @Override
-  public void setState(ElevatorConstants.ElevatorStates state) {
-    currentState = state;
+  public void setHeight(ElevatorConstants.ElevatorStates state) {
     double position =
         MathUtil.clamp(
             SubsystemUtil.elevatorStateToHeightTicks(state),
@@ -116,11 +112,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
             ElevatorConstants.elevatorUpperLimit);
     motionMagicRequest.Position = position;
     leaderMotor.setControl(motionMagicRequest);
-  }
-
-  @Override
-  public ElevatorConstants.ElevatorStates getState() {
-    return super.state;
   }
 
   @Override

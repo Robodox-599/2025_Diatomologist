@@ -23,9 +23,9 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
-    if (safetyChecker.isSafeWrist(SubsystemUtil.wristStateToSetpoint(internalState))) {
-      io.setState(internalState);
-    }
+    // if (safetyChecker.isSafeWrist(SubsystemUtil.wristStateToSetpoint(internalState))) {
+    //   io.setState(internalState);
+    // }
   }
 
   public Command moveToState(WristConstants.WristStates state) {

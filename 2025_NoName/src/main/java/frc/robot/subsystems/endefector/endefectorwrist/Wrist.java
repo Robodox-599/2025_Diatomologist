@@ -1,59 +1,129 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
-import frc.robot.util.SubsystemUtil;
 
 public class Wrist extends SubsystemBase {
   private final WristIO io;
   private final SafetyChecker safetyChecker;
-  private WristConstants.WristStates internalState;
+  private WantedState wantedState = WantedState.STOPPED;
+  private CurrentState currentState = CurrentState.STOPPED;
 
   public Wrist(WristIO io, SafetyChecker safetyChecker) {
     this.io = io;
     this.safetyChecker = safetyChecker;
-    this.internalState = WristStates.STOW;
+  }
+
+  public enum WantedState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_REEF,
+    PREPARED,
+    SCORING_CORAL,
+    SCORING_ALGAE,
+    STOPPED,
+  }
+
+  public enum CurrentState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_REEF,
+    PREPARED,
+    SCORING_CORAL,
+    SCORING_ALGAE,
+    STOPPED,
   }
 
   @Override
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
-    // if (safetyChecker.isSafeWrist(SubsystemUtil.wristStateToSetpoint(internalState))) {
-    //   io.setState(internalState);
-    // }
+    safetyChecker.updateIsAtSetpointWrist(isAtSetpoint());
+    currentState = handleStateTransitions();
+    applyStates();
+    DogLog.log("Wrist/CurrentState", currentState);
+    DogLog.log("Wrist/WantedState", wantedState);
   }
 
-  public Command moveToState(WristConstants.WristStates state) {
-    return this.run(
-            () -> {
-              this.internalState = state;
-            })
-        .until(() -> isAtTargetPosition(state));
+  private CurrentState handleStateTransitions() {
+    if (safetyChecker.isSafeWrist()) {
+      switch (wantedState) {
+        case INTAKING_CORAL_STATION:
+          currentState = CurrentState.INTAKING_CORAL_STATION;
+          break;
+        case INTAKING_ALGAE_GROUND:
+          currentState = CurrentState.INTAKING_ALGAE_GROUND;
+          break;
+        case INTAKING_ALGAE_REEF:
+          currentState = CurrentState.INTAKING_ALGAE_REEF;
+          break;
+        case PREPARED:
+          currentState = CurrentState.PREPARED;
+          break;
+        case SCORING_CORAL:
+          currentState = CurrentState.SCORING_CORAL;
+          break;
+        case SCORING_ALGAE:
+          currentState = CurrentState.SCORING_ALGAE;
+          break;
+        case STOPPED:
+          currentState = CurrentState.STOPPED;
+          break;
+        default:
+          currentState = CurrentState.STOPPED;
+          break;
+      }
+    } else {
+      currentState = CurrentState.STOPPED;
+    }
+    return currentState;
   }
 
-  public boolean isAtTargetPosition(WristConstants.WristStates state) {
-    DogLog.log(
-        "Wrist/IsAtTargetPosition",
-        (Math.abs(io.currentPositionDegrees - SubsystemUtil.wristStateToSetpoint(state))
-            < WristConstants.wristPositionTolerance));
-    return (Math.abs(io.currentPositionDegrees - SubsystemUtil.wristStateToSetpoint(state))
-        < WristConstants.wristPositionTolerance);
+  private void applyStates() {
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
+        setAngle(WristStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE_GROUND:
+        setAngle(WristStates.INTAKING_ALGAE_GROUND);
+        break;
+      case INTAKING_ALGAE_REEF:
+        setAngle(WristStates.INTAKING_ALGAE_REEF);
+        break;
+      case PREPARED:
+        setAngle(WristStates.PREPARE);
+        break;
+      case SCORING_CORAL:
+        setAngle(WristStates.SCORING_CORAL);
+        break;
+      case SCORING_ALGAE:
+        setAngle(WristStates.SCORING_ALGAE);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
+    }
   }
 
-  public WristConstants.WristStates getState() {
-    return io.getCurrentState();
+  public void setAngle(WristStates state) {
+    io.setAngle(state);
   }
 
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          io.setVoltage(0);
-        });
+  public void setWantedState(WantedState wantedState) {
+    this.wantedState = wantedState;
+  }
+
+  public boolean isAtSetpoint() {
+    return io.atSetpoint;
+  }
+
+  public void stop() {
+    io.stop();
   }
 
   public WristIO getIO() {

@@ -86,20 +86,14 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     /* Determines if the elevator is at a setpoint */
     double positionError = Math.abs(super.targetPositionInches - super.positionInches);
     super.atSetpoint = positionError < ElevatorConstants.positionToleranceInches;
-    /*Leader motor */
-    DogLog.log("Elevator/ElevatorLeader/StatorCurrentAmps", super.currentAmps);
-    DogLog.log("Elevator/ElevatorLeader/AppliedVoltage", super.appliedVolts);
-    DogLog.log("Elevator/ElevatorLeader/TempCelcius", super.tempCelsius);
 
-    // Follower motor
-    DogLog.log("Elevator/ElevatorFollower/StatorCurrentAmps", super.currentAmps);
-    DogLog.log("Elevator/ElevatorFollower/AppliedVoltage", super.appliedVolts);
-    DogLog.log("Elevator/ElevatorFollower/TempCelcius", super.tempCelsius);
+    DogLog.log("Elevator/StatorCurrentAmps", super.currentAmps);
+    DogLog.log("Elevator/AppliedVoltage", super.appliedVolts);
+    DogLog.log("Elevator/TempCelcius", super.tempCelsius);
 
-    /* Log all super */
+    DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/ElevatorAtSetpoint", super.atSetpoint);
-    DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
   }
 

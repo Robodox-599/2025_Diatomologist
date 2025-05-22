@@ -46,7 +46,7 @@ public class WristIOTalonFX extends WristIO {
     wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
     wristConfig = new TalonFXConfiguration();
     m_request =
-        new MotionMagicVoltage(SubsystemUtil.wristStateToSetpoint(super.state))
+        new MotionMagicVoltage(SubsystemUtil.wristStateToSetpoint(WristStates.PREPARE))
             .withSlot(0)
             .withEnableFOC(true);
 
@@ -106,7 +106,6 @@ public class WristIOTalonFX extends WristIO {
     super.currentAmps = current.getValueAsDouble();
     super.velocity = velocity.getValueAsDouble();
     super.currentPositionDegrees = position.getValueAsDouble();
-    super.targetPosition = SubsystemUtil.wristStateToSetpoint(super.state);
     super.tempCelsius = temperature.getValueAsDouble();
     super.atSetpoint =
         Math.abs(super.currentPositionDegrees - super.targetPosition) < wristPositionTolerance;
@@ -118,7 +117,6 @@ public class WristIOTalonFX extends WristIO {
     DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
     DogLog.log("Wrist/WristAtSetpoint", super.atSetpoint);
     DogLog.log("Wrist/AbsolutePosition", absolutePosition.getValueAsDouble());
-    DogLog.log("Wrist/CurrentState", super.state);
     DogLog.log("Wrist/TargetPosition", targetPosition);
   }
 
@@ -138,16 +136,10 @@ public class WristIOTalonFX extends WristIO {
   }
 
   @Override
-  public void setState(WristStates state) {
+  public void setAngle(WristStates state) {
     double position =
         MathUtil.clamp(SubsystemUtil.wristStateToSetpoint(state), wristMinAngle, wristMaxAngle);
     m_request.withPosition(position);
-    super.state = state;
     wristMotor.setControl(m_request);
-  }
-
-  @Override
-  public WristConstants.WristStates getCurrentState() {
-    return super.state;
   }
 }

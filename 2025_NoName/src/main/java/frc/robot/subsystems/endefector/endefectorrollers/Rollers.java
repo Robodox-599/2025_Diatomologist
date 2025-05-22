@@ -1,93 +1,145 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 
 public class Rollers extends SubsystemBase {
   private final RollersIO io;
-  private RollersConstants.EndefectorRollerStates internalState;
+  private final SafetyChecker safetyChecker;
+  private WantedState wantedState = WantedState.STOPPED;
+  private CurrentState currentState = CurrentState.STOPPED;
 
-  public Rollers(RollersIO io) {
+  public Rollers(RollersIO io, SafetyChecker safetyChecker) {
     this.io = io;
-    this.internalState = EndefectorRollerStates.STOP;
+    this.safetyChecker = safetyChecker;
+  }
+
+  public enum WantedState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE,
+    HOLD_CORAL,
+    HOLD_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE,
+    STOPPED,
+  }
+
+  public enum CurrentState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE,
+    HOLD_CORAL,
+    HOLD_ALGAE,
+    SCORING_CORAL,
+    SCORING_ALGAE,
+    STOPPED,
   }
 
   @Override
   public void periodic() {
     io.updateInputs();
-    io.setState(internalState);
+    currentState = handleStateTransitions();
+    applyStates();
+    DogLog.log("Rollers/CurrentState", currentState);
+    DogLog.log("Rollers/WantedState", wantedState);
   }
 
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          io.stop();
-        });
+  private CurrentState handleStateTransitions() {
+    if (safetyChecker.isAtSetpoints()) {
+      switch (wantedState) {
+        case INTAKING_CORAL_STATION:
+          if (isCoralDetected()) {
+            currentState = CurrentState.HOLD_CORAL;
+            wantedState = WantedState.HOLD_CORAL;
+          } else {
+            currentState = CurrentState.INTAKING_CORAL_STATION;
+          }
+          break;
+        case INTAKING_ALGAE:
+          if (isAlgaeDetected()) {
+            currentState = CurrentState.HOLD_ALGAE;
+            wantedState = WantedState.HOLD_ALGAE;
+          } else {
+            currentState = CurrentState.INTAKING_ALGAE;
+          }
+          break;
+        case HOLD_CORAL:
+          currentState = CurrentState.HOLD_CORAL;
+          break;
+        case HOLD_ALGAE:
+          currentState = CurrentState.HOLD_ALGAE;
+          break;
+        case SCORING_CORAL:
+          if (!isCoralDetected()) {
+            currentState = CurrentState.STOPPED;
+            wantedState = WantedState.STOPPED;
+          }
+          currentState = CurrentState.SCORING_CORAL;
+          break;
+        case SCORING_ALGAE:
+          if (!isAlgaeDetected()) {
+            currentState = CurrentState.STOPPED;
+            wantedState = WantedState.STOPPED;
+          }
+          currentState = CurrentState.SCORING_ALGAE;
+          break;
+        case STOPPED:
+          currentState = CurrentState.STOPPED;
+          break;
+        default:
+          currentState = CurrentState.STOPPED;
+          break;
+      }
+    } else {
+      currentState = CurrentState.STOPPED;
+    }
+    return currentState;
   }
 
-  public Command setVelocity(double velocity) {
-    return Commands.run(
-        () -> {
-          io.setVelocity(velocity);
-        });
+  private void applyStates() {
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
+        setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE:
+        setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
+        break;
+      case HOLD_CORAL:
+        stop();
+        break;
+      case HOLD_ALGAE:
+        holdAlgae();
+        break;
+      case SCORING_CORAL:
+        setVelocity(EndefectorRollerStates.SCORING_CORAL);
+        break;
+      case SCORING_ALGAE:
+        setVelocity(EndefectorRollerStates.SCORING_ALGAE);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
+    }
   }
 
-  public Command runAlgaeIntake() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  this.internalState = EndefectorRollerStates.ALGAEINTAKE;
-                })
-            .until(() -> io.isAlgaeDetected),
-        Commands.runOnce(() -> this.internalState = EndefectorRollerStates.HOLDALGAE));
+  public void setVelocity(EndefectorRollerStates state) {
+    io.setVelocity(state);
   }
 
-  public Command runScoreAlgae() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  this.internalState = EndefectorRollerStates.SCOREALGAE;
-                })
-            .until(() -> !io.isAlgaeDetected),
-        Commands.runOnce(
-            () -> {
-              this.internalState = EndefectorRollerStates.STOP;
-            }));
+  public void holdAlgae() {
+    io.holdAlgae();
   }
 
-  public Command runCoralStationIntake() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  this.internalState = EndefectorRollerStates.CORALSTATIONINTAKE;
-                })
-            .until(() -> io.isCoralDetected),
-        Commands.runOnce(
-            () -> {
-              this.internalState = EndefectorRollerStates.ADJUSTCORALAFTERSTATIONINTAKE;
-            }));
+  public void stop() {
+    io.stop();
   }
 
-  public Command runScoreCoral() {
-    return Commands.sequence(
-        Commands.run(
-                () -> {
-                  this.internalState = EndefectorRollerStates.SCORECORAL;
-                })
-            .until(() -> !io.isCoralDetected),
-        Commands.runOnce(
-            () -> {
-              this.internalState = EndefectorRollerStates.STOP;
-            }));
-  }
-
-  public Command ejectGamePiece() {
-    return Commands.run(
-        () -> {
-          this.internalState = EndefectorRollerStates.EJECT;
-        });
+  public void setWantedState(WantedState wantedState) {
+    this.wantedState = wantedState;
   }
 
   public boolean isCoralDetected() {

@@ -6,7 +6,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
@@ -16,6 +15,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
 
@@ -84,7 +84,6 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
 
-    DogLog.log("Rollers/State", super.currentState);
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
     DogLog.log("Rollers/BeamBreak", m_BeamBreak2.get());
@@ -92,32 +91,17 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public void stop() {
-    setVelocity(0);
+    setVelocity(EndefectorRollerStates.STOPPED);
   }
 
   @Override
-  public void setVelocity(double velocity) {
-    desiredVelocity = velocity;
+  public void setVelocity(EndefectorRollerStates state) {
+    double velocity = SubsystemUtil.rollersStateToVelocity(state);
     rollersMotor.set(velocity);
   }
 
   @Override
-  public void setState(RollersConstants.EndefectorRollerStates state) {
-    super.currentState = state;
-    switch (state) {
-      case HOLDALGAE:
-        rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
-        break;
-      case ADJUSTCORALAFTERSTATIONINTAKE:
-        rollersMotor.setControl(
-            new PositionVoltage(
-                rollersMotor.getPosition().getValueAsDouble()
-                    + RollersConstants.rotationsToMoveAfterDetectingCoral));
-        ;
-        break;
-      default:
-        setVelocity(SubsystemUtil.rollersStateToVelocity(state));
-        break;
-    }
+  public void holdAlgae() {
+    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
   }
 }

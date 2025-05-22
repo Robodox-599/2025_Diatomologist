@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
@@ -49,8 +50,11 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateInputs();
     safetyChecker.setCurrentElevatorInches(io.positionInches);
+    safetyChecker.updateIsAtSetpointElevator(isAtSetpoint());
     currentState = handleStateTransitions();
     applyStates();
+    DogLog.log("Elevator/CurrentState", currentState);
+    DogLog.log("Elevator/WantedState", wantedState);
   }
 
   private CurrentState handleStateTransitions() {
@@ -89,9 +93,15 @@ public class Elevator extends SubsystemBase {
         case SCORING_ALGAE_BARGE:
           currentState = CurrentState.SCORING_ALGAE_BARGE;
           break;
+        case STOPPED:
+          currentState = CurrentState.STOPPED;
+          break;
         default:
+          currentState = CurrentState.STOPPED;
           break;
       }
+    } else {
+      currentState = CurrentState.STOPPED;
     }
     return currentState;
   }
@@ -99,6 +109,44 @@ public class Elevator extends SubsystemBase {
   private void applyStates() {
     switch (currentState) {
       case INTAKING_CORAL_STATION:
+        setHeight(ElevatorStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE_GROUND:
+        setHeight(ElevatorStates.INTAKING_ALGAE_GROUND);
+        break;
+      case INTAKING_ALGAE_L2:
+        setHeight(ElevatorStates.INTAKING_ALGAE_L2);
+        break;
+      case INTAKING_ALGAE_L3:
+        setHeight(ElevatorStates.INTAKING_ALGAE_L3);
+        break;
+      case PREPARED:
+        setHeight(ElevatorStates.PREPARED);
+        break;
+      case SCORING_CORAL_L1:
+        setHeight(ElevatorStates.SCORING_CORAL_L1);
+        break;
+      case SCORING_CORAL_L2:
+        setHeight(ElevatorStates.SCORING_CORAL_L2);
+        break;
+      case SCORING_CORAL_L3:
+        setHeight(ElevatorStates.SCORING_CORAL_L3);
+        break;
+      case SCORING_CORAL_L4:
+        setHeight(ElevatorStates.SCORING_CORAL_L4);
+        break;
+      case SCORING_ALGAE_PROCESSOR:
+        setHeight(ElevatorStates.SCORING_ALGAE_PROCESSOR);
+        break;
+      case SCORING_ALGAE_BARGE:
+        setHeight(ElevatorStates.SCORING_ALGAE_BARGE);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 
@@ -107,8 +155,16 @@ public class Elevator extends SubsystemBase {
     io.setHeight(state);
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   public void setWantedState(WantedState wantedState) {
     this.wantedState = wantedState;
+  }
+
+  public boolean isAtSetpoint() {
+    return io.atSetpoint;
   }
 
   public ElevatorIO getIO() {

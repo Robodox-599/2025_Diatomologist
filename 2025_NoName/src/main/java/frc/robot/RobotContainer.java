@@ -58,7 +58,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        rollers = new Rollers(new RollersIOTalonFX());
+        rollers = new Rollers(new RollersIOTalonFX(), safetyChecker);
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         drive = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOReal());
@@ -75,7 +75,7 @@ public class RobotContainer {
       case SIM:
         DriverStation.silenceJoystickConnectionWarning(true);
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        rollers = new Rollers(new RollersIOSim());
+        rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drive = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOSim());
@@ -92,7 +92,7 @@ public class RobotContainer {
       default:
         DriverStation.silenceJoystickConnectionWarning(true);
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        rollers = new Rollers(new RollersIOSim());
+        rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drive = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOSim());

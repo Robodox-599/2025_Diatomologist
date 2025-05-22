@@ -2,15 +2,18 @@ package frc.robot.subsystems.leds;
 
 public class LEDsConstants {
   public static enum LEDStates {
-    CORALSTATIONINTAKE(0),
-    ALGAEINTAKE(1),
-    INTAKED(2),
-    SCORING(3),
-    SCORED(4),
-    AUTOALIGN(5),
-    PREPARED(6),
-    OVERRIDE(7),
-    IDLE(8);
+    INTAKING_CORAL_STATION(0),
+    INTAKING_ALGAE_GROUND(1),
+    INTAKING_ALGAE_L2(2),
+    INTAKING_ALGAE_L3(3),
+    PREPARED(4),
+    SCORING_CORAL_L1(5),
+    SCORING_CORAL_L2(6),
+    SCORING_CORAL_L3(7),
+    SCORING_CORAL_L4(8),
+    SCORING_ALGAE_PROCESSOR(9),
+    SCORING_ALGAE_BARGE(10),
+    NO_STATE(11);
 
     private final int index;
 

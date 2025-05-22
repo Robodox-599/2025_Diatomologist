@@ -42,7 +42,9 @@ public class WristConstants {
     PREPARE(1),
     INTAKING_ALGAE_REEF(2),
     INTAKING_ALGAE_GROUND(3),
-    INTAKING_CORAL_STATION(4);
+    INTAKING_CORAL_STATION(4),
+    SCORING_CORAL(5),
+    SCORING_ALGAE(6);
     private final int index;
 
     WristStates(int index) {
@@ -60,5 +62,7 @@ public class WristConstants {
     0.91, // algae reef intake
     0.99, // algae ground intake
     0.664, // coral station intake
+    0.79, // scoring coral
+    0.79 // scoring algae
   };
 }

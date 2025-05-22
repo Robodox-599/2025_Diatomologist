@@ -10,7 +10,6 @@ public abstract class WristIO {
   protected double targetPosition = 0.0;
   protected double currentPositionDegrees = 0.0;
   protected boolean atSetpoint = false;
-  protected WristConstants.WristStates state = WristConstants.WristStates.STOW;
 
   public void updateInputs() {}
 
@@ -22,11 +21,7 @@ public abstract class WristIO {
 
   public void setBrake(boolean brake) {}
 
-  public void setState(WristStates state) {}
-
-  public WristConstants.WristStates getCurrentState() {
-    return state;
-  }
+  public void setAngle(WristStates state) {}
 
   public double getCurrentVolts() {
     return appliedVolts;

@@ -21,7 +21,7 @@ public class SubsystemUtil {
   }
 
   public static double rollersStateToVelocity(RollersConstants.EndefectorRollerStates state) {
-    return RollersConstants.velocitys[state.getIndex()];
+    return RollersConstants.rollersVelocities[state.getIndex()];
   }
 
   public static double[] LEDsStateToColor(LEDsConstants.LEDStates state) {

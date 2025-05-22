@@ -49,10 +49,9 @@ public class WristIOSim extends WristIO {
   }
 
   @Override
-  public void setState(WristStates state) {
+  public void setAngle(WristStates state) {
     targetPosition =
         MathUtil.clamp(WristConstants.setpoints[state.getIndex()], wristMinAngle, wristMaxAngle);
-    System.out.println(super.state);
     wristSim.setInputVoltage(wristPID.calculate(targetPosition));
   }
 

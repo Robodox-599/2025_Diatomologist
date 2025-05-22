@@ -2,14 +2,13 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 public class RollersConstants {
   public static enum EndefectorRollerStates {
-    SCORECORAL(0),
-    SCOREALGAE(1),
-    CORALSTATIONINTAKE(2),
-    ADJUSTCORALAFTERSTATIONINTAKE(3),
-    ALGAEINTAKE(4),
-    HOLDALGAE(5),
-    STOP(6),
-    EJECT(7);
+    INTAKING_CORAL_STATION(0),
+    INTAKING_ALGAE(1),
+    HOLD_CORAL(2),
+    HOLD_ALGAE(3),
+    SCORING_CORAL(4),
+    SCORING_ALGAE(5),
+    STOPPED(6);
 
     private final int index;
 
@@ -22,15 +21,13 @@ public class RollersConstants {
     }
   }
 
-  public static final double[] velocitys = {
-    -0.65, // score coral
-    -0.1, // score algae
-    -0.15, // coral station intake
-    0.0, // VELOCITY NOT USED - adjust coral after station intake
-    0.6, // algae intake
-    0.0, // VELOCITY NOT USED - hold algae
-    0.0, // stop
-    -0.8 // eject
+  public static final double[] rollersVelocities = {
+    -0.15, // intaking coral station
+    0.6, // intaking algae
+    0.0, // holding coral
+    0.0, // VELOCITY NOT USED - holding algae
+    -0.65, // scoring coral
+    -0.1, // scoring algae
   };
 
   public static final int rollersMotorID = 16;

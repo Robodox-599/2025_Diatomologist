@@ -61,13 +61,9 @@ public class ElevatorIOSim extends ElevatorIO {
 
     /* Checks if elevator is at setpoint */
     super.atSetpoint = positionController.atSetpoint();
-    DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/CurrentAmps", simElevatorTest.getCurrentDrawAmps());
     DogLog.log("Elevator/AppliedVoltage", simElevatorTest.getInput().get(0, 0));
-
-    // Update state
     DogLog.log("Elevator/PositionErrorInches", super.targetPositionInches - super.positionInches);
-
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);

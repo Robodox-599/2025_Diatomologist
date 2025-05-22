@@ -90,6 +90,7 @@ public class Superstructure extends SubsystemBase {
 
   private void updateWantedSuperState() {
     wantedSuperState = nextSuperState;
+    nextSuperState = WantedSuperState.STOPPED;
   }
 
   private CurrentSuperState handleStateTransitions() {
@@ -131,32 +132,32 @@ public class Superstructure extends SubsystemBase {
         break;
       case SCORING_CORAL_L1:
         if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L1;
         }
         break;
       case SCORING_CORAL_L2:
         if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2;
         }
         break;
       case SCORING_CORAL_L3:
         if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L3;
         }
         break;
       case SCORING_CORAL_L4:
         if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
         }

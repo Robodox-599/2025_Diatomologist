@@ -232,6 +232,7 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+    // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
     // // UPDATE STATE WITH OPERATOR STATE
     driver.rightTrigger().onTrue(superstructureCommands.updateWantedSuperStateCommand());
@@ -284,12 +285,17 @@ public class RobotContainer {
     operator
         .rightBumper()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(
-                WantedSuperState.INTAKING_CORAL_STATION));
+            Commands.sequence(
+                superstructureCommands.setNextSuperStateCommand(
+                    WantedSuperState.INTAKING_CORAL_STATION),
+                superstructureCommands.updateWantedSuperStateCommand()));
     // // PREPARE
     operator
         .leftBumper()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.PREPARED));
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.setNextSuperStateCommand(WantedSuperState.PREPARED),
+                superstructureCommands.updateWantedSuperStateCommand()));
     // // INTAKE ALGAE L2
     operator
         .povDown()

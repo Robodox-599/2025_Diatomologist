@@ -1,24 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import dev.doglog.DogLog;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
@@ -31,24 +17,6 @@ public class Superstructure extends SubsystemBase {
   private final Rollers rollers;
   private final LEDs leds;
   private final SafetyChecker safetyChecker;
-  private final CommandXboxController operator;
-  private final CommandXboxController driver;
-
-  private double MaxSpeed =
-      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-  private double MaxAngularRate =
-      RotationsPerSecond.of(0.75)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-  // Setting up bindings for necessary control of the swerve drive platform
-  private final SwerveRequest.FieldCentric drive =
-      new SwerveRequest.FieldCentric()
-          .withDeadband(0)
-          .withRotationalDeadband(0) // Add a 10% deadband
-          .withDriveRequestType(
-              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
@@ -93,21 +61,21 @@ public class Superstructure extends SubsystemBase {
       Rollers rollers,
       // Climb climb,
       LEDs LEDs,
-      SafetyChecker safetyChecker,
-      CommandXboxController driver,
-      CommandXboxController operator) {
+      SafetyChecker safetyChecker) {
     this.drivetrain = drivetrain;
     this.elevator = elevator;
     this.wrist = wrist;
     this.rollers = rollers;
     this.leds = LEDs;
     this.safetyChecker = safetyChecker;
-    this.operator = operator;
-    this.driver = driver;
   }
 
   @Override
   public void periodic() {
+    elevator.updateInputs();
+    rollers.updateInputs();
+    wrist.updateInputs();
+    leds.updateInputs();
     currentSuperState = handleStateTransitions();
     applyStates();
 
@@ -115,7 +83,6 @@ public class Superstructure extends SubsystemBase {
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
   }
-
 
   private void setNextSuperState(WantedSuperState state) {
     nextSuperState = state;
@@ -362,104 +329,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setNextSuperStateCommand(WantedSuperState nextState) {
-    return new InstantCommand(() -> setNextSuperState(nextState));
+    return this.runOnce(() -> setNextSuperState(nextState));
   }
 
   public Command updateWantedSuperStateCommand() {
-    return new InstantCommand(() -> updateWantedSuperState());
+    return this.runOnce(() -> updateWantedSuperState());
   }
 
-  public Command rumbleControllers() {
-    return new StartEndCommand(
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
-        .alongWith(
-            new StartEndCommand(
-                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
-                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
-        .withTimeout(0.5);
-  }
-
-  public void configureBindings() {
-    //                               DRIVER BINDS
-
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        -joystickDeadbandApply(driver.getLeftY())
-                            * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        -joystickDeadbandApply(driver.getLeftX())
-                            * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        joystickDeadbandApply(-driver.getRightX())
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            ));
-
-    // driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    // driver
-    //     .b()
-    //     .whileTrue(
-    //         drivetrain.applyRequest(
-    //             () ->
-    //                 point.withModuleDirection(
-    //                     new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
-
-    // reset the field-centric heading on left bumper press
-    // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-    driver.y().onTrue(drivetrain.zeroGyroCommand());
-    // // UPDATE STATE WITH OPERATOR STATE
-    driver.rightTrigger().onTrue(updateWantedSuperStateCommand());
-    // // INTAKE ALGAE GROUND
-    driver
-        .leftTrigger()
-        .onTrue(
-            Commands.sequence(
-                setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND),
-                updateWantedSuperStateCommand()));
-    // // SCORE ALGAE
-    driver
-        .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                setNextSuperStateCommand(WantedSuperState.SCORING_ALGAE),
-                updateWantedSuperStateCommand()));
-
-    //                                OPERATOR BINDS
-    // // MOVE TO L1
-    operator.x().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L1));
-    // // MOVE TO L2
-    operator.a().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L2));
-    // // MOVE TO L3
-    operator.b().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L3));
-    // // MOVE TO L4
-    operator.y().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L4));
-    // // MOVE TO BARGE
-    operator.povLeft().onTrue(setNextSuperStateCommand(WantedSuperState.MOVING_TO_ALGAE_BARGE));
-    // // MOVE TO PROCESSOR
-    operator
-        .povRight()
-        .onTrue(setNextSuperStateCommand(WantedSuperState.MOVING_TO_ALGAE_PROCESSOR));
-    // // CORAL STATION INTAKE
-    operator
-        .rightBumper()
-        .onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
-    // // PREPARE
-    operator.leftBumper().onTrue(setNextSuperStateCommand(WantedSuperState.PREPARED));
-    // // INTAKE ALGAE L2
-    operator.povDown().onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
-    // // INTAKE ALGAE L3
-    operator.povUp().onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
-  }
-
-  private static double joystickDeadbandApply(double x) {
-    return MathUtil.applyDeadband(
-        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
+  public Command zeroGyroCommand() {
+    return this.runOnce(() -> drivetrain.zeroGyro());
   }
 }

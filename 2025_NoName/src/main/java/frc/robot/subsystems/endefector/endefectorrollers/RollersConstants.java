@@ -28,6 +28,7 @@ public class RollersConstants {
     0.0, // VELOCITY NOT USED - holding algae
     -0.65, // scoring coral
     -0.1, // scoring algae
+    0.0, // stopped
   };
 
   public static final int rollersMotorID = 16;

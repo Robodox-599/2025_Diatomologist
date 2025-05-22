@@ -2,9 +2,8 @@ package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LEDs extends SubsystemBase {
+public class LEDs {
   private final LEDsIO io;
   private CurrentState currentState = CurrentState.NO_STATE;
 
@@ -30,8 +29,7 @@ public class LEDs extends SubsystemBase {
     NO_STATE,
   }
 
-  @Override
-  public void periodic() {
+  public void updateInputs() {
     io.updateInputs();
     disableAction();
     applyStates();

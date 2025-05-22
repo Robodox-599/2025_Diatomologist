@@ -1,11 +1,10 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 
-public class Wrist extends SubsystemBase {
+public class Wrist {
   private final WristIO io;
   private final SafetyChecker safetyChecker;
   private WantedState wantedState = WantedState.STOPPED;
@@ -36,8 +35,7 @@ public class Wrist extends SubsystemBase {
     STOPPED,
   }
 
-  @Override
-  public void periodic() {
+  public void updateInputs() {
     io.updateInputs();
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
     safetyChecker.updateIsAtSetpointWrist(isAtSetpoint());

@@ -1,11 +1,10 @@
 package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 
-public class Elevator extends SubsystemBase {
+public class Elevator {
   private final ElevatorIO io;
   private final SafetyChecker safetyChecker;
   private WantedState wantedState = WantedState.STOPPED;
@@ -46,8 +45,7 @@ public class Elevator extends SubsystemBase {
     this.safetyChecker = safetyChecker;
   }
 
-  @Override
-  public void periodic() {
+  public void updateInputs() {
     io.updateInputs();
     safetyChecker.setCurrentElevatorInches(io.positionInches);
     safetyChecker.updateIsAtSetpointElevator(isAtSetpoint());

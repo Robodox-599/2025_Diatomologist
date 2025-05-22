@@ -6,9 +6,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -50,6 +54,38 @@ public class Superstructure extends SubsystemBase {
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
   private WantedSuperState nextSuperState = WantedSuperState.STOPPED;
 
+  public enum CurrentSuperState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_L2,
+    INTAKING_ALGAE_L3,
+    PREPARED,
+    SCORING_CORAL_L1,
+    SCORING_CORAL_L2,
+    SCORING_CORAL_L3,
+    SCORING_CORAL_L4,
+    MOVING_TO_ALGAE_PROCESSOR,
+    MOVING_TO_ALGAE_BARGE,
+    SCORING_ALGAE,
+    STOPPED,
+  }
+
+  public enum WantedSuperState {
+    INTAKING_CORAL_STATION,
+    INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_L2,
+    INTAKING_ALGAE_L3,
+    PREPARED,
+    SCORING_CORAL_L1,
+    SCORING_CORAL_L2,
+    SCORING_CORAL_L3,
+    SCORING_CORAL_L4,
+    MOVING_TO_ALGAE_PROCESSOR,
+    MOVING_TO_ALGAE_BARGE,
+    SCORING_ALGAE,
+    STOPPED,
+  }
+
   public Superstructure(
       CommandSwerveDrivetrain drivetrain,
       Elevator elevator,
@@ -70,41 +106,22 @@ public class Superstructure extends SubsystemBase {
     this.driver = driver;
   }
 
-  public enum CurrentSuperState {
-    INTAKING_CORAL_STATION,
-    INTAKING_ALGAE_GROUND,
-    INTAKING_ALGAE_L2,
-    INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    SCORING_ALGAE_PROCESSOR,
-    SCORING_ALGAE_BARGE,
-    STOPPED,
+  @Override
+  public void periodic() {
+    currentSuperState = handleStateTransitions();
+    applyStates();
+
+    DogLog.log("Superstructure/NextSuperState", nextSuperState);
+    DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
+    DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
   }
 
-  public enum WantedSuperState {
-    INTAKING_CORAL_STATION,
-    INTAKING_ALGAE_GROUND,
-    INTAKING_ALGAE_L2,
-    INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    SCORING_ALGAE_PROCESSOR,
-    SCORING_ALGAE_BARGE,
-    STOPPED,
-  }
 
-  private void setNextState(WantedSuperState state) {
+  private void setNextSuperState(WantedSuperState state) {
     nextSuperState = state;
   }
 
-  private void updateWantedState() {
+  private void updateWantedSuperState() {
     wantedSuperState = nextSuperState;
   }
 
@@ -120,24 +137,24 @@ public class Superstructure extends SubsystemBase {
         break;
       case INTAKING_ALGAE_GROUND:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_GROUND;
         }
         break;
       case INTAKING_ALGAE_L2:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
         }
         break;
       case INTAKING_ALGAE_L3:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
         }
@@ -177,20 +194,28 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
         }
         break;
-      case SCORING_ALGAE_PROCESSOR:
+      case MOVING_TO_ALGAE_PROCESSOR:
         if (!rollers.isAlgaeDetected()) {
           currentSuperState = CurrentSuperState.PREPARED;
           wantedSuperState = WantedSuperState.PREPARED;
         } else {
-          currentSuperState = CurrentSuperState.SCORING_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
         }
         break;
-      case SCORING_ALGAE_BARGE:
+      case MOVING_TO_ALGAE_BARGE:
         if (!rollers.isAlgaeDetected()) {
           currentSuperState = CurrentSuperState.PREPARED;
           wantedSuperState = WantedSuperState.PREPARED;
         } else {
-          currentSuperState = CurrentSuperState.SCORING_ALGAE_BARGE;
+          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_BARGE;
+        }
+        break;
+      case SCORING_ALGAE:
+        if (!rollers.isAlgaeDetected()) {
+          currentSuperState = CurrentSuperState.PREPARED;
+          wantedSuperState = WantedSuperState.PREPARED;
+        } else {
+          currentSuperState = CurrentSuperState.SCORING_ALGAE;
         }
         break;
       case STOPPED:
@@ -232,11 +257,14 @@ public class Superstructure extends SubsystemBase {
       case SCORING_CORAL_L4:
         scoreCoralL4();
         break;
-      case SCORING_ALGAE_PROCESSOR:
-        scoreAlgaeProcessor();
+      case MOVING_TO_ALGAE_PROCESSOR:
+        moveToAlgaeProcessor();
         break;
-      case SCORING_ALGAE_BARGE:
-        scoreAlgaeBarge();
+      case MOVING_TO_ALGAE_BARGE:
+        moveToAlgaeBarge();
+        break;
+      case SCORING_ALGAE:
+        scoreAlgae();
         break;
       case STOPPED:
         stop();
@@ -310,18 +338,20 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL_L4);
   }
 
-  private void scoreAlgaeProcessor() {
+  private void moveToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.SCORING_ALGAE_PROCESSOR);
-    rollers.setWantedState(Rollers.WantedState.SCORING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE_PROCESSOR);
   }
 
-  private void scoreAlgaeBarge() {
+  private void moveToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.SCORING_ALGAE_BARGE);
-    rollers.setWantedState(Rollers.WantedState.SCORING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE_BARGE);
+  }
+
+  private void scoreAlgae() {
+    rollers.setWantedState(Rollers.WantedState.SCORING_ALGAE);
   }
 
   private void stop() {
@@ -329,6 +359,14 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.STOPPED);
     leds.setCurrentState(LEDs.CurrentState.NO_STATE);
+  }
+
+  public Command setNextSuperStateCommand(WantedSuperState nextState) {
+    return new InstantCommand(() -> setNextSuperState(nextState));
+  }
+
+  public Command updateWantedSuperStateCommand() {
+    return new InstantCommand(() -> updateWantedSuperState());
   }
 
   public Command rumbleControllers() {
@@ -376,32 +414,48 @@ public class Superstructure extends SubsystemBase {
     // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     driver.y().onTrue(drivetrain.zeroGyroCommand());
-    
-    // driver.rightTrigger().onTrue(updateWantedState());
+    // // UPDATE STATE WITH OPERATOR STATE
+    driver.rightTrigger().onTrue(updateWantedSuperStateCommand());
+    // // INTAKE ALGAE GROUND
+    driver
+        .leftTrigger()
+        .onTrue(
+            Commands.sequence(
+                setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND),
+                updateWantedSuperStateCommand()));
+    // // SCORE ALGAE
+    driver
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                setNextSuperStateCommand(WantedSuperState.SCORING_ALGAE),
+                updateWantedSuperStateCommand()));
 
     //                                OPERATOR BINDS
     // // MOVE TO L1
-    // operator.x().onTrue(moveToL1());
-    // // // MOVE TO L2
-    // operator.a().onTrue(moveToL2());
-    // // // MOVE TO L3
-    // operator.b().onTrue(moveToL3());
-    // // // MOVE TO L4
-    // operator.y().onTrue(moveToL4());
-    // // // MOVE TO NET
-    // operator.povLeft().onTrue(extendToNet());
-    // operator.povRight().onTrue(extendToNet());
+    operator.x().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L1));
+    // // MOVE TO L2
+    operator.a().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L2));
+    // // MOVE TO L3
+    operator.b().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L3));
+    // // MOVE TO L4
+    operator.y().onTrue(setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L4));
+    // // MOVE TO BARGE
+    operator.povLeft().onTrue(setNextSuperStateCommand(WantedSuperState.MOVING_TO_ALGAE_BARGE));
+    // // MOVE TO PROCESSOR
+    operator
+        .povRight()
+        .onTrue(setNextSuperStateCommand(WantedSuperState.MOVING_TO_ALGAE_PROCESSOR));
     // // CORAL STATION INTAKE
-    // operator.rightBumper().onTrue(coralStationIntake());
+    operator
+        .rightBumper()
+        .onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
     // // PREPARE
-    // operator.leftBumper().onTrue(prepareToScore());
-    // // // EJECT CORAL
-    // operator.leftTrigger().whileTrue(ejectGamePiece());
-    // operator.leftTrigger().onFalse(rollers.stop());
-    // // // INTAKE ALGAE L2
-    // operator.povDown().onTrue(algaeIntake(ElevatorStates.ALGAEL2));
-    // // // INTAKE ALGAE L3
-    // operator.povUp().onTrue(algaeIntake(ElevatorStates.ALGAEL3));
+    operator.leftBumper().onTrue(setNextSuperStateCommand(WantedSuperState.PREPARED));
+    // // INTAKE ALGAE L2
+    operator.povDown().onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
+    // // INTAKE ALGAE L3
+    operator.povUp().onTrue(setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
   }
 
   private static double joystickDeadbandApply(double x) {

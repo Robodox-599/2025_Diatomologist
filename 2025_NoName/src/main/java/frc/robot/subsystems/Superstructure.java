@@ -84,15 +84,6 @@ public class Superstructure extends SubsystemBase {
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
   }
 
-  private void setNextSuperState(WantedSuperState state) {
-    nextSuperState = state;
-  }
-
-  private void updateWantedSuperState() {
-    wantedSuperState = nextSuperState;
-    nextSuperState = WantedSuperState.STOPPED;
-  }
-
   private CurrentSuperState handleStateTransitions() {
     switch (wantedSuperState) {
       case INTAKING_CORAL_STATION:
@@ -332,9 +323,27 @@ public class Superstructure extends SubsystemBase {
   public Command setNextSuperStateCommand(WantedSuperState nextState) {
     return this.runOnce(() -> setNextSuperState(nextState));
   }
+  
+  private void setNextSuperState(WantedSuperState state) {
+    nextSuperState = state;
+  }
 
   public Command updateWantedSuperStateCommand() {
     return this.runOnce(() -> updateWantedSuperState());
+  }
+
+  private void updateWantedSuperState() {
+    wantedSuperState = nextSuperState;
+    nextSuperState = WantedSuperState.STOPPED;
+  }
+
+  public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
+    return this.runOnce(() -> setWantedSuperState(wantedState));
+  }
+
+  private void setWantedSuperState(WantedSuperState state) {
+    wantedSuperState = state;
+    nextSuperState = WantedSuperState.STOPPED;
   }
 
   public Command zeroGyroCommand() {

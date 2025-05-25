@@ -240,17 +240,12 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setNextSuperStateCommand(
-                    WantedSuperState.INTAKING_ALGAE_GROUND),
-                superstructureCommands.updateWantedSuperStateCommand()));
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.INTAKING_ALGAE_GROUND));
     // // SCORE ALGAE
     driver
         .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                superstructureCommands.setNextSuperStateCommand(WantedSuperState.SCORING_ALGAE),
-                superstructureCommands.updateWantedSuperStateCommand()));
+        .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
 
     //                                OPERATOR BINDS
     // // MOVE TO L1
@@ -285,17 +280,15 @@ public class RobotContainer {
     operator
         .rightBumper()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setNextSuperStateCommand(
-                    WantedSuperState.INTAKING_CORAL_STATION),
-                superstructureCommands.updateWantedSuperStateCommand()));
+            
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.INTAKING_CORAL_STATION));
     // // PREPARE
     operator
         .leftBumper()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setNextSuperStateCommand(WantedSuperState.PREPARED),
-                superstructureCommands.updateWantedSuperStateCommand()));
+            
+                superstructureCommands.setWantedSuperStateCommand(WantedSuperState.PREPARED));
     // // INTAKE ALGAE L2
     operator
         .povDown()

@@ -242,6 +242,8 @@ public class RobotContainer {
         .onTrue(
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.INTAKING_ALGAE_GROUND));
+    // // SCORE CORAL
+    driver.leftBumper().onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL));
     // // SCORE ALGAE
     driver
         .leftBumper()
@@ -251,31 +253,31 @@ public class RobotContainer {
     // // MOVE TO L1
     operator
         .x()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L1));
+        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
     // // MOVE TO L2
     operator
         .a()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L2));
+        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
     // // MOVE TO L3
     operator
         .b()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L3));
+        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
     // // MOVE TO L4
     operator
         .y()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.SCORING_CORAL_L4));
+        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
     // // MOVE TO BARGE
     operator
         .povLeft()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(
-                WantedSuperState.MOVING_TO_ALGAE_BARGE));
+                WantedSuperState.POSITION_ALGAE_BARGE));
     // // MOVE TO PROCESSOR
     operator
         .povRight()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(
-                WantedSuperState.MOVING_TO_ALGAE_PROCESSOR));
+                WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // CORAL STATION INTAKE
     operator
         .rightBumper()
@@ -288,7 +290,7 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             
-                superstructureCommands.setWantedSuperStateCommand(WantedSuperState.PREPARED));
+                superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
     // // INTAKE ALGAE L2
     operator
         .povDown()

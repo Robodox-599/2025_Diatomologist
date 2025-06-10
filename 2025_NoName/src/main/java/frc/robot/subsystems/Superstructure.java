@@ -27,13 +27,14 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    MOVING_TO_ALGAE_PROCESSOR,
-    MOVING_TO_ALGAE_BARGE,
+    POSITION_PREPARED,
+    POSITION_CORAL_L1,
+    POSITION_CORAL_L2,
+    POSITION_CORAL_L3,
+    POSITION_CORAL_L4,
+    POSITION_ALGAE_PROCESSOR,
+    POSITION_ALGAE_BARGE,
+    SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
   }
@@ -43,13 +44,14 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    MOVING_TO_ALGAE_PROCESSOR,
-    MOVING_TO_ALGAE_BARGE,
+    POSITION_PREPARED,
+    POSITION_CORAL_L1,
+    POSITION_CORAL_L2,
+    POSITION_CORAL_L3,
+    POSITION_CORAL_L4,
+    POSITION_ALGAE_PROCESSOR,
+    POSITION_ALGAE_BARGE,
+    SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
   }
@@ -88,91 +90,69 @@ public class Superstructure extends SubsystemBase {
     switch (wantedSuperState) {
       case INTAKING_CORAL_STATION:
         if (rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.POSITION_PREPARED;
+          wantedSuperState = WantedSuperState.POSITION_PREPARED;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
         }
         break;
       case INTAKING_ALGAE_GROUND:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
-          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_GROUND;
         }
         break;
       case INTAKING_ALGAE_L2:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
-          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
         }
         break;
       case INTAKING_ALGAE_L3:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
-          wantedSuperState = WantedSuperState.MOVING_TO_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
         }
         break;
-      case PREPARED:
-        currentSuperState = CurrentSuperState.PREPARED;
+      case POSITION_PREPARED:
+        currentSuperState = CurrentSuperState.POSITION_PREPARED;
         break;
-      case SCORING_CORAL_L1:
+      case POSITION_CORAL_L1:
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
+        break;
+      case POSITION_CORAL_L2:
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
+        break;
+      case POSITION_CORAL_L3:
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
+        break;
+      case POSITION_CORAL_L4:
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
+        break;
+      case POSITION_ALGAE_PROCESSOR:
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+        break;
+      case POSITION_ALGAE_BARGE:
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_BARGE;
+        break;
+      case SCORING_CORAL:
         if (!rollers.isCoralDetected()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_L1;
-        }
-        break;
-      case SCORING_CORAL_L2:
-        if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_L2;
-        }
-        break;
-      case SCORING_CORAL_L3:
-        if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_L3;
-        }
-        break;
-      case SCORING_CORAL_L4:
-        if (!rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
-        }
-        break;
-      case MOVING_TO_ALGAE_PROCESSOR:
-        if (!rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
-        } else {
-          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_PROCESSOR;
-        }
-        break;
-      case MOVING_TO_ALGAE_BARGE:
-        if (!rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
-        } else {
-          currentSuperState = CurrentSuperState.MOVING_TO_ALGAE_BARGE;
+          currentSuperState = CurrentSuperState.SCORING_CORAL;
         }
         break;
       case SCORING_ALGAE:
         if (!rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.PREPARED;
-          wantedSuperState = WantedSuperState.PREPARED;
+          currentSuperState = CurrentSuperState.POSITION_PREPARED;
+          wantedSuperState = WantedSuperState.POSITION_PREPARED;
         } else {
           currentSuperState = CurrentSuperState.SCORING_ALGAE;
         }
@@ -201,26 +181,29 @@ public class Superstructure extends SubsystemBase {
       case INTAKING_ALGAE_L3:
         intakeAlgaeL3();
         break;
-      case PREPARED:
+      case POSITION_PREPARED:
         prepare();
         break;
-      case SCORING_CORAL_L1:
-        scoreCoralL1();
+      case POSITION_CORAL_L1:
+        positionToCoralL1();
         break;
-      case SCORING_CORAL_L2:
-        scoreCoralL2();
+      case POSITION_CORAL_L2:
+        positionToCoralL2();
         break;
-      case SCORING_CORAL_L3:
-        scoreCoralL3();
+      case POSITION_CORAL_L3:
+        positionToCoralL3();
         break;
-      case SCORING_CORAL_L4:
-        scoreCoralL4();
+      case POSITION_CORAL_L4:
+        positionToCoralL4();
         break;
-      case MOVING_TO_ALGAE_PROCESSOR:
-        moveToAlgaeProcessor();
+      case POSITION_ALGAE_PROCESSOR:
+        positionToAlgaeProcessor();
         break;
-      case MOVING_TO_ALGAE_BARGE:
-        moveToAlgaeBarge();
+      case POSITION_ALGAE_BARGE:
+        positionToAlgaeBarge();
+        break;
+      case SCORING_CORAL:
+        scoreCoral();
         break;
       case SCORING_ALGAE:
         scoreAlgae();
@@ -263,54 +246,56 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void prepare() {
-    elevator.setWantedState(Elevator.WantedState.PREPARED);
+    elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.PREPARED);
-    leds.setCurrentState(LEDs.CurrentState.PREPARED);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
   }
 
-  private void scoreCoralL1() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_CORAL_L1);
-    rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
+  private void positionToCoralL1() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL_L1);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L1);
   }
 
-  private void scoreCoralL2() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_CORAL_L2);
-    rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
+  private void positionToCoralL2() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL_L2);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L2);
   }
 
-  private void scoreCoralL3() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_CORAL_L3);
-    rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
+  private void positionToCoralL3() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL_L3);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L3);
   }
 
-  private void scoreCoralL4() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_CORAL_L4);
-    rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
+  private void positionToCoralL4() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL_L4);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
   }
 
-  private void moveToAlgaeProcessor() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_ALGAE_PROCESSOR);
+  private void positionToAlgaeProcessor() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE_PROCESSOR);
+    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
   }
 
-  private void moveToAlgaeBarge() {
-    elevator.setWantedState(Elevator.WantedState.SCORING_ALGAE_BARGE);
+  private void positionToAlgaeBarge() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE_BARGE);
+    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
+  }
+
+  private void scoreCoral() {
+    rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
+    leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL);
   }
 
   private void scoreAlgae() {
     rollers.setWantedState(Rollers.WantedState.SCORING_ALGAE);
+    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
   }
 
   private void stop() {

@@ -6,18 +6,17 @@ public final class ElevatorConstants {
   /* CHANGE LATER */
 
   public static enum ElevatorStates {
-    SCORING_CORAL_L1(0),
-    SCORING_CORAL_L2(1),
-    SCORING_CORAL_L3(2),
-    SCORING_CORAL_L4(3),
-    STOW(4),
-    INTAKING_CORAL_STATION(5),
-    INTAKING_ALGAE_GROUND(6),
-    INTAKING_ALGAE_L2(7),
-    INTAKING_ALGAE_L3(8),
-    SCORING_ALGAE_BARGE(9),
-    PREPARED(10),
-    SCORING_ALGAE_PROCESSOR(11);
+    INTAKING_CORAL_STATION(0),
+    INTAKING_ALGAE_GROUND(1),
+    INTAKING_ALGAE_L2(2),
+    INTAKING_ALGAE_L3(3),
+    POSITION_PREPARED(4),
+    POSITION_CORAL_L1(5),
+    POSITION_CORAL_L2(6),
+    POSITION_CORAL_L3(7),
+    POSITION_CORAL_L4(8),
+    POSITION_ALGAE_PROCESSOR(9),
+    POSITION_ALGAE_BARGE(10);
 
     private final int index;
 
@@ -32,18 +31,17 @@ public final class ElevatorConstants {
 
   // Setpoint positions in inches
   public static final double[] heights = {
-    14, // CORAL L1
-    16, // CORAL L2
-    33, // CORAL L3
-    60, // CORAL L4
-    5.5, // STOW
-    0, // CORAL STATION INTAKE
-    7, // ALGAE GROUND INTAKE
-    27.5, // ALGAE L2
-    42, // ALGAE L3
-    92, // ALGAE SCORE
-    12.0, // PREP
-    1.0 // PROCESSOR
+    0, // INTAKING CORAL STATION
+    7, // INTAKING ALGAE GROUND
+    27.5, // INTAKING ALGAE L2
+    42, // INTAKING ALGAE L3
+    12.0, // POSITION PREPARED
+    14, // POSITION CORAL L1
+    16, // POSITION CORAL L2
+    33, // POSITION CORAL L3
+    60, // POSITION CORAL L4
+    1.0, // POSITION ALGAE PROCESSOR
+    92, // POSITION ALGAE BARGE
   };
 
   public static final int leaderMotorID = 13;

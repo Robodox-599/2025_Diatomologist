@@ -24,10 +24,6 @@ public class SubsystemUtil {
     return RollersConstants.rollersVelocities[state.getIndex()];
   }
 
-  public static double[] LEDsStateToColor(LEDsConstants.LEDStates state) {
-    return LEDsConstants.colors[state.getIndex()];
-  }
-
   public static double climbStateToHeight(ClimbConstants.ClimbStates state) {
     return (ClimbConstants.setpoint[state.getIndex()]);
   }

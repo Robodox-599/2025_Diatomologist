@@ -15,13 +15,13 @@ public class Elevator {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    SCORING_ALGAE_PROCESSOR,
-    SCORING_ALGAE_BARGE,
+    POSITION_PREPARED,
+    POSITION_CORAL_L1,
+    POSITION_CORAL_L2,
+    POSITION_CORAL_L3,
+    POSITION_CORAL_L4,
+    POSITION_ALGAE_PROCESSOR,
+    POSITION_ALGAE_BARGE,
     STOPPED,
   }
 
@@ -30,13 +30,13 @@ public class Elevator {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
-    PREPARED,
-    SCORING_CORAL_L1,
-    SCORING_CORAL_L2,
-    SCORING_CORAL_L3,
-    SCORING_CORAL_L4,
-    SCORING_ALGAE_PROCESSOR,
-    SCORING_ALGAE_BARGE,
+    POSITION_PREPARED,
+    POSITION_CORAL_L1,
+    POSITION_CORAL_L2,
+    POSITION_CORAL_L3,
+    POSITION_CORAL_L4,
+    POSITION_ALGAE_PROCESSOR,
+    POSITION_ALGAE_BARGE,
     STOPPED,
   }
 
@@ -70,26 +70,26 @@ public class Elevator {
         case INTAKING_ALGAE_L3:
           currentState = CurrentState.INTAKING_ALGAE_L3;
           break;
-        case PREPARED:
-          currentState = CurrentState.PREPARED;
+        case POSITION_PREPARED:
+          currentState = CurrentState.POSITION_PREPARED;
           break;
-        case SCORING_CORAL_L1:
-          currentState = CurrentState.SCORING_CORAL_L1;
+        case POSITION_CORAL_L1:
+          currentState = CurrentState.POSITION_CORAL_L1;
           break;
-        case SCORING_CORAL_L2:
-          currentState = CurrentState.SCORING_CORAL_L2;
+        case POSITION_CORAL_L2:
+          currentState = CurrentState.POSITION_CORAL_L2;
           break;
-        case SCORING_CORAL_L3:
-          currentState = CurrentState.SCORING_CORAL_L3;
+        case POSITION_CORAL_L3:
+          currentState = CurrentState.POSITION_CORAL_L3;
           break;
-        case SCORING_CORAL_L4:
-          currentState = CurrentState.SCORING_CORAL_L4;
+        case POSITION_CORAL_L4:
+          currentState = CurrentState.POSITION_CORAL_L4;
           break;
-        case SCORING_ALGAE_PROCESSOR:
-          currentState = CurrentState.SCORING_ALGAE_PROCESSOR;
+        case POSITION_ALGAE_PROCESSOR:
+          currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
           break;
-        case SCORING_ALGAE_BARGE:
-          currentState = CurrentState.SCORING_ALGAE_BARGE;
+        case POSITION_ALGAE_BARGE:
+          currentState = CurrentState.POSITION_ALGAE_BARGE;
           break;
         case STOPPED:
           currentState = CurrentState.STOPPED;
@@ -118,26 +118,26 @@ public class Elevator {
       case INTAKING_ALGAE_L3:
         setHeight(ElevatorStates.INTAKING_ALGAE_L3);
         break;
-      case PREPARED:
-        setHeight(ElevatorStates.PREPARED);
+      case POSITION_PREPARED:
+        setHeight(ElevatorStates.POSITION_PREPARED);
         break;
-      case SCORING_CORAL_L1:
-        setHeight(ElevatorStates.SCORING_CORAL_L1);
+      case POSITION_CORAL_L1:
+        setHeight(ElevatorStates.POSITION_CORAL_L1);
         break;
-      case SCORING_CORAL_L2:
-        setHeight(ElevatorStates.SCORING_CORAL_L2);
+      case POSITION_CORAL_L2:
+        setHeight(ElevatorStates.POSITION_CORAL_L2);
         break;
-      case SCORING_CORAL_L3:
-        setHeight(ElevatorStates.SCORING_CORAL_L3);
+      case POSITION_CORAL_L3:
+        setHeight(ElevatorStates.POSITION_CORAL_L3);
         break;
-      case SCORING_CORAL_L4:
-        setHeight(ElevatorStates.SCORING_CORAL_L4);
+      case POSITION_CORAL_L4:
+        setHeight(ElevatorStates.POSITION_CORAL_L4);
         break;
-      case SCORING_ALGAE_PROCESSOR:
-        setHeight(ElevatorStates.SCORING_ALGAE_PROCESSOR);
+      case POSITION_ALGAE_PROCESSOR:
+        setHeight(ElevatorStates.POSITION_ALGAE_PROCESSOR);
         break;
-      case SCORING_ALGAE_BARGE:
-        setHeight(ElevatorStates.SCORING_ALGAE_BARGE);
+      case POSITION_ALGAE_BARGE:
+        setHeight(ElevatorStates.POSITION_ALGAE_BARGE);
         break;
       case STOPPED:
         stop();

@@ -19,7 +19,7 @@ public class Wrist {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
-    PREPARED,
+    POSITION_PREPARED,
     SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
@@ -29,7 +29,7 @@ public class Wrist {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
-    PREPARED,
+    POSITION_PREPARED,
     SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
@@ -57,8 +57,8 @@ public class Wrist {
         case INTAKING_ALGAE_REEF:
           currentState = CurrentState.INTAKING_ALGAE_REEF;
           break;
-        case PREPARED:
-          currentState = CurrentState.PREPARED;
+        case POSITION_PREPARED:
+          currentState = CurrentState.POSITION_PREPARED;
           break;
         case SCORING_CORAL:
           currentState = CurrentState.SCORING_CORAL;
@@ -90,8 +90,8 @@ public class Wrist {
       case INTAKING_ALGAE_REEF:
         setAngle(WristStates.INTAKING_ALGAE_REEF);
         break;
-      case PREPARED:
-        setAngle(WristStates.PREPARE);
+      case POSITION_PREPARED:
+        setAngle(WristStates.POSITION_PREPARED);
         break;
       case SCORING_CORAL:
         setAngle(WristStates.SCORING_CORAL);

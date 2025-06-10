@@ -46,7 +46,7 @@ public class WristIOTalonFX extends WristIO {
     wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
     wristConfig = new TalonFXConfiguration();
     m_request =
-        new MotionMagicVoltage(SubsystemUtil.wristStateToSetpoint(WristStates.PREPARE))
+        new MotionMagicVoltage(SubsystemUtil.wristStateToSetpoint(WristStates.POSITION_PREPARED))
             .withSlot(0)
             .withEnableFOC(true);
 

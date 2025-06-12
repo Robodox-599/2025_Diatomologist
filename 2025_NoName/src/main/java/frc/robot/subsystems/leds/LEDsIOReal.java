@@ -53,20 +53,8 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
-  public void LEDsIntakingAlgaeGround() {
-    candleReal.setControl(new ColorFlowAnimation(0, (LEDsConstants.MAX_LEDS / 3))
-        .withColor(kIntakingAlgae));
-  }
-
-  @Override
-  public void LEDsIntakingAlgaeL2() {
-    candleReal.setControl(new ColorFlowAnimation(0, ((LEDsConstants.MAX_LEDS / 3) * 2))
-        .withColor(kIntakingAlgae));
-  }
-
-  @Override
-  public void LEDsIntakingAlgaeL3() {
-    candleReal.setControl(new ColorFlowAnimation(0, (LEDsConstants.MAX_LEDS))
+  public void LEDsIntakingAlgae() {
+    candleReal.setControl(new ColorFlowAnimation(0, LEDsConstants.MAX_LEDS)
         .withColor(kIntakingAlgae));
   }
 
@@ -76,37 +64,13 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
-  public void LEDsPositionCoralL1() {
-    candleReal.setControl(new SolidColor(0, (LEDsConstants.MAX_LEDS / 4))
-        .withColor(kPositionCoral));
-  }
-
-  @Override
-  public void LEDsPositionCoralL2() {
-    candleReal.setControl(new SolidColor(0, ((LEDsConstants.MAX_LEDS / 4) * 2))
-        .withColor(kPositionCoral));
-  }
-
-  @Override
-  public void LEDsPositionCoralL3() {
-    candleReal.setControl(new SolidColor(0, ((LEDsConstants.MAX_LEDS / 4) * 3))
-        .withColor(kPositionCoral));
-  }
-
-  @Override
-  public void LEDsPositionCoralL4() {
+  public void LEDsPositionCoral() {
     candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS)
         .withColor(kPositionCoral));
   }
 
   @Override
-  public void LEDsPositionAlgaeProcessor() {
-    candleReal.setControl(new SolidColor(0, (LEDsConstants.MAX_LEDS / 2))
-        .withColor(kPositionAlgae));
-  }
-
-  @Override
-  public void LEDsPositionAlgaeBarge() {
+  public void LEDsPositionAlgae() {
     candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS)
         .withColor(kPositionAlgae));
   }

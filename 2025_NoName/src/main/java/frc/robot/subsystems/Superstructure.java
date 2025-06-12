@@ -331,6 +331,10 @@ public class Superstructure extends SubsystemBase {
     nextSuperState = WantedSuperState.STOPPED;
   }
 
+  private boolean isAtWantedState() {
+    return (wantedSuperState.name().equals(currentSuperState.name())) && safetyChecker.isAtSetpoints();
+  }
+
   public Command zeroGyroCommand() {
     return this.runOnce(() -> drivetrain.zeroGyro());
   }

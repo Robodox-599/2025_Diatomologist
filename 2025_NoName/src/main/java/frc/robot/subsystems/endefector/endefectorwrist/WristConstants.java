@@ -56,16 +56,6 @@ public class WristConstants {
     }
   }
 
-  // public static final double[] setpoints = {
-  //   0.66, // stow
-  //   0.79, // PREPARE
-  //   0.91, // algae reef intake
-  //   0.99, // algae ground intake
-  //   0.664, // coral station intake
-  //   0.79, // scoring coral
-  //   0.79 // scoring algae
-  // };
-
   public static final double[] setpoints = {
     0.664, // INTAKING CORAL STATION
     0.99, // INTAKING ALGAE GROUND

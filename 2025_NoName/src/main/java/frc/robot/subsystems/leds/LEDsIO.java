@@ -13,7 +13,7 @@ public abstract class LEDsIO {
 
   public void LEDsIntakingAlgaeL3() {}
 
-  public void LEDsPrepared() {}
+  public void LEDsPositionPrepared() {}
 
   public void LEDsPositionCoralL1() {}
 

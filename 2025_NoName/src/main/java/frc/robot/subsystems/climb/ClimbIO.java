@@ -1,45 +1,41 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.climb;
 
+import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
+
 public abstract class ClimbIO {
-  protected double tempCelsius = 0.0;
-  protected double positionInches = 0.0;
-  protected double velocityInchesPerSec = 0.0;
-  protected double appliedVolts = 0.0;
-  protected double currentAmps = 0.0;
-  protected double targetPositionInches = 0.0;
-  protected boolean limitSwitchValue = false;
+  protected double rollersTempCelsius = 0.0;
+  protected double rollersVelocity = 0.0;
+  protected double rollersAppliedVolts = 0.0;
+  protected double rollersCurrentAmps = 0.0;
+  protected double rollersStatorCurrent = 0.0;
+  
+  protected double climbTempCelsius = 0.0;
+  protected double climbPositionDegrees = 0.0;
+  protected double climbVelocity = 0.0;
+  protected double climbAppliedVolts = 0.0;
+  protected double climbCurrentAmps = 0.0;
+  protected double targetPositionDegrees = 0.0;
+  
+  protected boolean isCageDetected = false;
+
   protected boolean atSetpoint = false;
-  protected ClimbConstants.ClimbStates state = ClimbConstants.ClimbStates.STOW;
 
-  /** Updates the set of loggable inputs */
   public void updateInputs() {}
+  
+  public void setClimb(ClimbStates state) {}
 
-  /** Sets the target height of the elevator */
-  public void setState(ClimbConstants.ClimbStates state) {}
+  public void setRollers(double velocity) {}
 
-  /** Stops the elevator */
   public void stop() {}
 
-  /** Sets brake mode */
   public void enableBrakeMode(boolean enable) {}
-
-  public void zeroEncoder() {}
 
   public void setVoltage(double voltage) {}
 
-  public double getPositionInches() {
-    return positionInches;
+  public double GetClimbCurrentVolts() {
+    return climbAppliedVolts;
   }
-
-  public ClimbConstants.ClimbStates getCurrentState() {
-    return state;
-  }
-
-  public double GetCurrentVolts() {
-    return appliedVolts;
+  public double GetRollersCurrentVolts() {
+    return rollersAppliedVolts;
   }
 }

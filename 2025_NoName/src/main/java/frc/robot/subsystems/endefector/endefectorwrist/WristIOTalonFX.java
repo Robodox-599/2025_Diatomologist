@@ -98,7 +98,6 @@ public class WristIOTalonFX extends WristIO {
         50.0, absolutePosition, temperature, velocity, position, current, appliedVolts);
   }
 
-  @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(
         absolutePosition, temperature, velocity, position, current, appliedVolts);
@@ -139,6 +138,7 @@ public class WristIOTalonFX extends WristIO {
   public void setAngle(WristStates state) {
     double position =
         MathUtil.clamp(SubsystemUtil.wristStateToSetpoint(state), wristMinAngle, wristMaxAngle);
+    super.targetPosition = position;
     m_request.withPosition(position);
     wristMotor.setControl(m_request);
   }

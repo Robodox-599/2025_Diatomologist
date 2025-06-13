@@ -52,11 +52,7 @@ public class SafetyChecker {
   }
 
   public boolean isSafeWrist() {
-    if (!isBehindElevator(wristDegrees)
-        || isUnderElevator(
-            elevatorInches)) { // if the wrist is NOT behind the elevator or if the endefector is
-      // BELOW
-      // the elevator swing through height, wrist is safe
+    if (isUnderElevator(elevatorInches)) {
       DogLog.log("SafetyChecker/isSafeWrist", true);
       return true;
     }

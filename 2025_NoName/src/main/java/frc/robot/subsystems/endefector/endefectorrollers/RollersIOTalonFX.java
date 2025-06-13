@@ -64,7 +64,6 @@ public class RollersIOTalonFX extends RollersIO {
         50.0, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
   }
 
-  @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();

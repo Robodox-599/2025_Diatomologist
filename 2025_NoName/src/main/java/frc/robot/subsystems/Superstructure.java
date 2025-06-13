@@ -124,22 +124,22 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_PREPARED;
         break;
       case POSITION_CORAL_L1:
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
         break;
       case POSITION_CORAL_L2:
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
         break;
       case POSITION_CORAL_L3:
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
         break;
       case POSITION_CORAL_L4:
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         break;
       case POSITION_ALGAE_PROCESSOR:
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+        currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         break;
       case POSITION_ALGAE_BARGE:
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_BARGE;
+        currentSuperState = CurrentSuperState.POSITION_ALGAE_BARGE;
         break;
       case SCORING_CORAL:
         if (!rollers.isCoralDetected()) {
@@ -254,36 +254,42 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToCoralL1() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L1);
   }
 
   private void positionToCoralL2() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L2);
   }
 
   private void positionToCoralL3() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L3);
   }
 
   private void positionToCoralL4() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
   }
 
   private void positionToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
   }
 
   private void positionToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
   }
@@ -308,7 +314,7 @@ public class Superstructure extends SubsystemBase {
   public Command setNextSuperStateCommand(WantedSuperState nextState) {
     return this.runOnce(() -> setNextSuperState(nextState));
   }
-  
+
   private void setNextSuperState(WantedSuperState state) {
     nextSuperState = state;
   }
@@ -332,7 +338,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   private boolean isAtWantedState() {
-    return (wantedSuperState.name().equals(currentSuperState.name())) && safetyChecker.isAtSetpoints();
+    return (wantedSuperState.name().equals(currentSuperState.name()))
+        && safetyChecker.isAtSetpoints();
   }
 
   public Command zeroGyroCommand() {

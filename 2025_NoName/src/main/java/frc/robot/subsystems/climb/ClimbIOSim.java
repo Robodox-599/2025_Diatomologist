@@ -6,17 +6,19 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.util.SubsystemUtil;
+import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 
 public class ClimbIOSim extends ClimbIO {
   private final DCMotorSim climbSim;
+  private final DCMotorSim rollersSim;
   private final PIDController positionController;
   private double targetPositionInches = 0.0;
-  // private boolean brakeMode = true;
   private final PIDController simPidController =
       new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
 
   private static final DCMotor CLIMB_GEARBOX = DCMotor.getKrakenX60Foc(2);
+  private static final DCMotor ROLLERS_GEARBOX = DCMotor.getKrakenX60Foc(1);
+
 
   public ClimbIOSim() {
     climbSim =
@@ -24,45 +26,59 @@ public class ClimbIOSim extends ClimbIO {
             LinearSystemId.createDCMotorSystem(
                 CLIMB_GEARBOX, ClimbConstants.climbMOI, ClimbConstants.gearRatio),
             CLIMB_GEARBOX);
+    rollersSim = new DCMotorSim(
+      LinearSystemId.createDCMotorSystem(
+        ROLLERS_GEARBOX, ClimbConstants.rollersMOI, 0),
+        ROLLERS_GEARBOX);
 
     positionController =
         new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
-    // positionController.setTolerance(ClimbConstants.positionToleranceInches);
-  }
+    }
 
   @Override
   public void updateInputs() {
     climbSim.update(0.02);
+    super.climbPositionDegrees = climbSim.getAngularPositionRotations();
+    super.climbVelocity =
+        climbSim.getAngularVelocityRPM() / 60.0;
+    super.climbAppliedVolts = climbSim.getCurrentDrawAmps();
+    super.climbCurrentAmps = climbSim.getCurrentDrawAmps();
+    super.targetPositionDegrees = targetPositionDegrees;
+    super.climbTempCelsius = 25.0; // setting
+    super.rollersVelocity =
+        rollersSim.getAngularVelocityRPM() / 60.0;
+    super.rollersAppliedVolts = rollersSim.getCurrentDrawAmps();
+    super.rollersCurrentAmps = rollersSim.getCurrentDrawAmps();
+    super.rollersTempCelsius = 25.0; // setting
 
-    // Update inputs structure
-    // super.climbPositionInches = climbSim.getAngularPositionRad() * ClimbConstants.inchesPerRev;
-    // super.velocityInchesPerSec =
-    //     climbSim.getAngularAccelerationRadPerSecSq() * ClimbConstants.inchesPerRev;
-    // super.appliedVolts = climbSim.getCurrentDrawAmps();
-    // super.currentAmps = climbSim.getCurrentDrawAmps();
-    // super.targetPositionInches = targetPositionInches;
-    // super.tempCelsius = 25.0; // setting
+    climbSim.setInputVoltage(
+        positionController.calculate(super.climbPositionDegrees, super.targetPositionDegrees));
 
-    // climbSim.setInputVoltage(
-    //     positionController.calculate(super.positionInches, super.targetPositionInches));
+    super.atSetpoint = positionController.atSetpoint();
 
-    // /* Checks if elevator is at setpoint */
-    // super.atSetpoint = positionController.atSetpoint();
+    DogLog.log("Climb/IsCageDetected", super.isCageDetected);
+    DogLog.log("Climb/StatorCurrentAmps", super.climbCurrentAmps);
+    DogLog.log("Climb/AppliedVoltage", super.climbAppliedVolts);
+    DogLog.log("Climb/Velocity", super.climbVelocity);
+    DogLog.log("Climb/Temperature", super.climbTempCelsius);
+    DogLog.log("Climb/CurrentPosition", super.climbPositionDegrees);
+    DogLog.log("Climb/TargetPositon", super.targetPositionDegrees);
+    DogLog.log("Climb/Rollers/StatorCurrentAmps", super.rollersCurrentAmps);
+    DogLog.log("Climb/Rollers/AppliedVoltage", super.rollersAppliedVolts);
+    DogLog.log("Climb/Rollers/Velocity", super.rollersVelocity);
+    DogLog.log("Climb/Rollers/Temperature", super.rollersTempCelsius);
+  }
 
-    // Update state
-    // DogLog.log("Climb/PositionInches", super.positionInches);
-    // DogLog.log("Climb/VelocityInchesPerSecond", super.velocityInchesPerSec);
-    // DogLog.log("Climb/CurrentAmps", super.currentAmps);
-    // DogLog.log("Climb/AppliedVoltage", super.appliedVolts);
+  @Override
+  public void setClimb(ClimbStates state) {
+    targetPositionDegrees =
+        MathUtil.clamp(ClimbConstants.setpoint[state.getIndex()], ClimbConstants.climbLowerLimit, ClimbConstants.climbUpperLimit);
+    climbSim.setInputVoltage(simPidController.calculate(targetPositionDegrees));
+  }
 
-    // DogLog.log("Climb/PositionInches", super.positionInches);
-    // DogLog.log("Climb/VelocityInchesPerSec", super.velocityInchesPerSec);
-    // DogLog.log("Climb/AppliedVolts", super.appliedVolts);
-    // DogLog.log("Climb/TargetPositionInches", super.targetPositionInches);
-    // DogLog.log("Climb/AtSetpoint", super.atSetpoint);
-    // DogLog.log("Climb/State", super.state.toString());
-
-    // System.out.println(super.positionInches);
+  @Override
+  public void setRollers(double velocity) {
+    rollersSim.setAngularVelocity(velocity);
   }
 
   @Override
@@ -73,5 +89,6 @@ public class ClimbIOSim extends ClimbIO {
   @Override
   public void setVoltage(double voltage) {
     climbSim.setInputVoltage(voltage);
+    rollersSim.setInputVoltage(voltage);
   }
 }

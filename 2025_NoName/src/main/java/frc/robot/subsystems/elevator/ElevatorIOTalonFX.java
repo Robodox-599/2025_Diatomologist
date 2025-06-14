@@ -74,7 +74,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     zeroEncoder();
   }
 
-  @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(velocity, temperature, position, current, appliedVolts);
     super.positionInches = position.getValueAsDouble() * ElevatorConstants.inchesPerRev;

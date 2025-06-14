@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -240,10 +239,12 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.INTAKING_ALGAE_GROUND));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.INTAKING_ALGAE_GROUND));
     // // SCORE CORAL
-    driver.leftBumper().onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL));
+    driver
+        .rightBumper()
+        .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL));
     // // SCORE ALGAE
     driver
         .leftBumper()
@@ -253,28 +254,31 @@ public class RobotContainer {
     // // MOVE TO L1
     operator
         .x()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
     // // MOVE TO L2
     operator
         .a()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
     // // MOVE TO L3
     operator
         .b()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
     // // MOVE TO L4
     operator
         .y()
-        .onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
     // // MOVE TO BARGE
     operator
-        .povLeft()
+        .povUp()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(
-                WantedSuperState.POSITION_ALGAE_BARGE));
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_ALGAE_BARGE));
     // // MOVE TO PROCESSOR
     operator
-        .povRight()
+        .povDown()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_PROCESSOR));
@@ -282,23 +286,21 @@ public class RobotContainer {
     operator
         .rightBumper()
         .onTrue(
-            
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.INTAKING_CORAL_STATION));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.INTAKING_CORAL_STATION));
     // // PREPARE
     operator
         .leftBumper()
         .onTrue(
-            
-                superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
     // // INTAKE ALGAE L2
     operator
-        .povDown()
+        .povLeft()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
     // // INTAKE ALGAE L3
     operator
-        .povUp()
+        .povRight()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
   }

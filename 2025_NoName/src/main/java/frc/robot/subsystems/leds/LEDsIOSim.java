@@ -6,7 +6,6 @@ public class LEDsIOSim extends LEDsIO {
 
   public LEDsIOSim() {}
 
-  @Override
   public void updateInputs() {
     super.connected = true;
 

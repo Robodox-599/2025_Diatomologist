@@ -33,8 +33,9 @@ public class LEDs {
 
   public void updateInputs() {
     io.updateInputs();
-    disableAction();
-    applyStates();
+    if (DriverStation.isDisabled()) {
+      setCurrentState(CurrentState.NO_STATE);
+    }
     DogLog.log("LEDs/CurrentState", currentState);
   }
 
@@ -44,34 +45,34 @@ public class LEDs {
         io.LEDsIntakingCoralStation();
         break;
       case INTAKING_ALGAE_GROUND:
-        io.LEDsIntakingAlgaeGround();
+        io.LEDsIntakingAlgae();
         break;
       case INTAKING_ALGAE_L2:
-        io.LEDsIntakingAlgaeL2();
+        io.LEDsIntakingAlgae();
         break;
       case INTAKING_ALGAE_L3:
-        io.LEDsIntakingAlgaeL3();
+        io.LEDsIntakingAlgae();
         break;
       case POSITION_PREPARED:
         io.LEDsPositionPrepared();
         break;
       case POSITION_CORAL_L1:
-        io.LEDsPositionCoralL1();
+        io.LEDsPositionCoral();
         break;
       case POSITION_CORAL_L2:
-        io.LEDsPositionCoralL2();
+        io.LEDsPositionCoral();
         break;
       case POSITION_CORAL_L3:
-        io.LEDsPositionCoralL3();
+        io.LEDsPositionCoral();
         break;
       case POSITION_CORAL_L4:
-        io.LEDsPositionCoralL4();
+        io.LEDsPositionCoral();
         break;
       case POSITION_ALGAE_PROCESSOR:
-        io.LEDsPositionAlgaeProcessor();
+        io.LEDsPositionAlgae();
         break;
       case POSITION_ALGAE_BARGE:
-        io.LEDsPositionAlgaeBarge();
+        io.LEDsPositionAlgae();
         break;
       case SCORING_CORAL:
         io.LEDsScoringGamePiece();
@@ -89,12 +90,9 @@ public class LEDs {
   }
 
   public void setCurrentState(CurrentState currentState) {
-    this.currentState = currentState;
-  }
-
-  private void disableAction() {
-    if (DriverStation.isDisabled()) {
-      setCurrentState(CurrentState.NO_STATE);
+    if (currentState != this.currentState) {
+      this.currentState = currentState;
+      applyStates();
     }
   }
 }

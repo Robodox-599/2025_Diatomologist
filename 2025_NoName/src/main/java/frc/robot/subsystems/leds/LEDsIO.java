@@ -13,7 +13,7 @@ public abstract class LEDsIO {
 
   public void LEDsPositionCoral() {}
 
-  public void LEDsPositionAlgae () {}
+  public void LEDsPositionAlgae() {}
 
   public void LEDsScoringGamePiece() {}
 

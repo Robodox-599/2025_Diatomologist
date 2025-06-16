@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -35,9 +34,6 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOReal;
-import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -52,7 +48,7 @@ public class RobotContainer {
   private Wrist wrist;
   private Rollers rollers;
   private LEDs LEDs;
-  private Vision vision;
+  // private Vision vision;
   private SafetyChecker safetyChecker;
   private final Superstructure superstructureCommands;
   private final Telemetry logger =
@@ -86,13 +82,13 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOReal());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOReal(RealConstants.cam2Constants),
-                new VisionIOReal(RealConstants.cam1Constants),
-                new VisionIOReal(RealConstants.cam3Constants));
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOReal(RealConstants.cam2Constants),
+        //         new VisionIOReal(RealConstants.cam1Constants),
+        //         new VisionIOReal(RealConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -108,13 +104,13 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOSim());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -130,13 +126,13 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         LEDs = new LEDs(new LEDsIOSim());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -234,20 +230,20 @@ public class RobotContainer {
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
     // // UPDATE STATE WITH OPERATOR STATE
-    driver.rightTrigger().onTrue(superstructureCommands.updateWantedSuperStateCommand());
+    driver.rightBumper().onTrue(superstructureCommands.updateWantedSuperStateCommand());
     // // INTAKE ALGAE GROUND
     driver
-        .leftTrigger()
+        .leftBumper()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.INTAKING_ALGAE_GROUND));
     // // SCORE CORAL
     driver
-        .rightBumper()
+        .rightTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL));
     // // SCORE ALGAE
     driver
-        .leftBumper()
+        .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
 
     //                                OPERATOR BINDS

@@ -98,6 +98,7 @@ public class WristIOTalonFX extends WristIO {
         50.0, absolutePosition, temperature, velocity, position, current, appliedVolts);
   }
 
+  @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(
         absolutePosition, temperature, velocity, position, current, appliedVolts);

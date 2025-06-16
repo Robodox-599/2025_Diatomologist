@@ -36,6 +36,7 @@ public class LEDs {
     if (DriverStation.isDisabled()) {
       setCurrentState(CurrentState.NO_STATE);
     }
+    applyStates();
     DogLog.log("LEDs/CurrentState", currentState);
   }
 
@@ -90,9 +91,6 @@ public class LEDs {
   }
 
   public void setCurrentState(CurrentState currentState) {
-    if (currentState != this.currentState) {
-      this.currentState = currentState;
-      applyStates();
-    }
+    this.currentState = currentState;
   }
 }

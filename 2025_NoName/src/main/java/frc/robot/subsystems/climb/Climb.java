@@ -27,8 +27,7 @@ public class Climb extends SubsystemBase {
     STOPPED;
   }
 
-  @Override
-  public void periodic() {
+  public void updateInputs() {
     io.updateInputs();
     currentState = handleStateTransitions();
     applyStates();
@@ -36,31 +35,31 @@ public class Climb extends SubsystemBase {
     DogLog.log("Climb/WantedState", wantedState);
   }
 
-   private CurrentState handleStateTransitions() {
+  private CurrentState handleStateTransitions() {
     switch (wantedState) {
-        case CLIMB_READY:
+      case CLIMB_READY:
         if (isCageDetected()) {
           currentState = CurrentState.CLIMB;
           wantedState = WantedState.CLIMB;
         } else {
           currentState = CurrentState.CLIMB_READY;
         }
-          break;
-        case CLIMB:
+        break;
+      case CLIMB:
         if (isCageDetected()) {
           currentState = CurrentState.CLIMB;
           wantedState = WantedState.CLIMB;
         } else {
           currentState = CurrentState.CLIMB_READY;
         }
-          break;
-        case STOPPED:
-        default:
-          currentState = CurrentState.STOPPED;
-          break;
-        }
-      return currentState;
+        break;
+      case STOPPED:
+      default:
+        currentState = CurrentState.STOPPED;
+        break;
     }
+    return currentState;
+  }
 
   private void applyStates() {
     switch (currentState) {
@@ -79,7 +78,7 @@ public class Climb extends SubsystemBase {
   }
 
   public void setClimb(ClimbStates state) {
-     io.setClimb(state);
+    io.setClimb(state);
   }
 
   public void setRollers(double velocity) {

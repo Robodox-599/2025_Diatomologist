@@ -76,4 +76,8 @@ public class SafetyChecker {
     DogLog.log("SafetyChecker/isAtSetpoints", isAtSetpointElevator && isAtSetpointWrist);
     return isAtSetpointElevator && isAtSetpointWrist;
   }
+
+  public boolean isAtSetpointElevator() {
+    return isAtSetpointElevator;
+  }
 }

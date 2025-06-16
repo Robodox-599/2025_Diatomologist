@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.BangBangController;
@@ -27,17 +26,17 @@ public class ClimbIOTalonFX extends ClimbIO {
   private final TalonFX rollersMotor;
   private final BangBangController bangBangController;
 
-   private final StatusSignal<Angle> climbPosition;
-   private final StatusSignal<AngularVelocity> climbVelocity;
-   private final StatusSignal<Voltage> climbAppliedVolts;
-   private final StatusSignal<Current> climbCurrent;
-   private final StatusSignal<Temperature> climbTemperature;
+  private final StatusSignal<Angle> climbPosition;
+  private final StatusSignal<AngularVelocity> climbVelocity;
+  private final StatusSignal<Voltage> climbAppliedVolts;
+  private final StatusSignal<Current> climbCurrent;
+  private final StatusSignal<Temperature> climbTemperature;
 
-   private final StatusSignal<AngularVelocity> rollersVelocity;
-   private final StatusSignal<Voltage> rollersAppliedVolts;
-   private final StatusSignal<Current> rollersCurrent;
-   private final StatusSignal<Temperature> rollersTemperature;
-   private final StatusSignal<Current> rollersStatorCurrent;
+  private final StatusSignal<AngularVelocity> rollersVelocity;
+  private final StatusSignal<Voltage> rollersAppliedVolts;
+  private final StatusSignal<Current> rollersCurrent;
+  private final StatusSignal<Temperature> rollersTemperature;
+  private final StatusSignal<Current> rollersStatorCurrent;
 
   public ClimbIOTalonFX() {
     climbMotor = new TalonFX(ClimbConstants.climbMotorID, ClimbConstants.climbMotorCANbus);
@@ -51,7 +50,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     climbConfig.Slot0.kD = ClimbConstants.kD;
     climbConfig.Slot0.kV = ClimbConstants.kV;
     climbConfig.Slot0.kS = ClimbConstants.kS;
-    
+
     climbConfig.CurrentLimits.SupplyCurrentLimit = 3;
     climbConfig.CurrentLimits.StatorCurrentLimit = 3;
     climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -81,31 +80,46 @@ public class ClimbIOTalonFX extends ClimbIO {
     rollersStatorCurrent = rollersMotor.getStatorCurrent();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, climbTemperature, climbVelocity, climbPosition, climbCurrent, climbAppliedVolts,  
-        rollersTemperature, rollersVelocity, rollersCurrent, rollersAppliedVolts);
+        50.0,
+        climbTemperature,
+        climbVelocity,
+        climbPosition,
+        climbCurrent,
+        climbAppliedVolts,
+        rollersTemperature,
+        rollersVelocity,
+        rollersCurrent,
+        rollersAppliedVolts);
   }
 
   @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(
-      climbTemperature, climbVelocity, climbPosition, climbCurrent, climbAppliedVolts,  
-      rollersTemperature, rollersVelocity, rollersCurrent, rollersAppliedVolts);
-      
-      super.climbAppliedVolts = climbAppliedVolts.getValueAsDouble();
-      super.climbCurrentAmps = climbCurrent.getValueAsDouble();
-      super.climbVelocity = climbVelocity.getValueAsDouble();
-      super.climbPositionDegrees = climbPosition.getValueAsDouble();
-      super.climbTempCelsius = climbTemperature.getValueAsDouble();
-      super.rollersAppliedVolts = rollersAppliedVolts.getValueAsDouble();
-      super.rollersCurrentAmps = rollersCurrent.getValueAsDouble();
-      super.rollersVelocity = rollersVelocity.getValueAsDouble();
-      super.rollersTempCelsius = rollersTemperature.getValueAsDouble();
-      super.rollersStatorCurrent = rollersStatorCurrent.getValueAsDouble();
-      super.isCageDetected = super.rollersStatorCurrent >= 20;
+        climbTemperature,
+        climbVelocity,
+        climbPosition,
+        climbCurrent,
+        climbAppliedVolts,
+        rollersTemperature,
+        rollersVelocity,
+        rollersCurrent,
+        rollersAppliedVolts);
+
+    super.climbAppliedVolts = climbAppliedVolts.getValueAsDouble();
+    super.climbCurrentAmps = climbCurrent.getValueAsDouble();
+    super.climbVelocity = climbVelocity.getValueAsDouble();
+    super.climbPositionDegrees = climbPosition.getValueAsDouble();
+    super.climbTempCelsius = climbTemperature.getValueAsDouble();
+    super.rollersAppliedVolts = rollersAppliedVolts.getValueAsDouble();
+    super.rollersCurrentAmps = rollersCurrent.getValueAsDouble();
+    super.rollersVelocity = rollersVelocity.getValueAsDouble();
+    super.rollersTempCelsius = rollersTemperature.getValueAsDouble();
+    super.rollersStatorCurrent = rollersStatorCurrent.getValueAsDouble();
+    super.isCageDetected = super.rollersStatorCurrent >= 20;
     // super.atSetpoint =
     //     positionError < ClimbConstants.positionToleranceInches
     //         && velocityError < ClimbConstants.velocityToleranceInchesPerSec;
- 
+
     DogLog.log("Climb/IsCageDetected", super.isCageDetected);
     DogLog.log("Climb/StatorCurrentAmps", super.climbCurrentAmps);
     DogLog.log("Climb/AppliedVoltage", super.climbAppliedVolts);

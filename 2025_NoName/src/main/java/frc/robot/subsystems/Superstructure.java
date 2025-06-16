@@ -284,14 +284,14 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
     rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
   }
 
   private void positionToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
     rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
-    leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_BARGE);
   }
 
   private void scoreCoral() {
@@ -305,9 +305,6 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void stop() {
-    elevator.setWantedState(Elevator.WantedState.STOPPED);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.STOPPED);
     leds.setCurrentState(LEDs.CurrentState.NO_STATE);
   }
 

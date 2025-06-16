@@ -19,34 +19,31 @@ public class ClimbIOSim extends ClimbIO {
   private static final DCMotor CLIMB_GEARBOX = DCMotor.getKrakenX60Foc(2);
   private static final DCMotor ROLLERS_GEARBOX = DCMotor.getKrakenX60Foc(1);
 
-
   public ClimbIOSim() {
     climbSim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 CLIMB_GEARBOX, ClimbConstants.climbMOI, ClimbConstants.gearRatio),
             CLIMB_GEARBOX);
-    rollersSim = new DCMotorSim(
-      LinearSystemId.createDCMotorSystem(
-        ROLLERS_GEARBOX, ClimbConstants.rollersMOI, 0),
-        ROLLERS_GEARBOX);
+    rollersSim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(ROLLERS_GEARBOX, ClimbConstants.rollersMOI, 0),
+            ROLLERS_GEARBOX);
 
     positionController =
         new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
-    }
+  }
 
   @Override
   public void updateInputs() {
     climbSim.update(0.02);
     super.climbPositionDegrees = climbSim.getAngularPositionRotations();
-    super.climbVelocity =
-        climbSim.getAngularVelocityRPM() / 60.0;
+    super.climbVelocity = climbSim.getAngularVelocityRPM() / 60.0;
     super.climbAppliedVolts = climbSim.getCurrentDrawAmps();
     super.climbCurrentAmps = climbSim.getCurrentDrawAmps();
     super.targetPositionDegrees = targetPositionDegrees;
     super.climbTempCelsius = 25.0; // setting
-    super.rollersVelocity =
-        rollersSim.getAngularVelocityRPM() / 60.0;
+    super.rollersVelocity = rollersSim.getAngularVelocityRPM() / 60.0;
     super.rollersAppliedVolts = rollersSim.getCurrentDrawAmps();
     super.rollersCurrentAmps = rollersSim.getCurrentDrawAmps();
     super.rollersTempCelsius = 25.0; // setting
@@ -72,7 +69,10 @@ public class ClimbIOSim extends ClimbIO {
   @Override
   public void setClimb(ClimbStates state) {
     targetPositionDegrees =
-        MathUtil.clamp(ClimbConstants.setpoint[state.getIndex()], ClimbConstants.climbLowerLimit, ClimbConstants.climbUpperLimit);
+        MathUtil.clamp(
+            ClimbConstants.setpoint[state.getIndex()],
+            ClimbConstants.climbLowerLimit,
+            ClimbConstants.climbUpperLimit);
     climbSim.setInputVoltage(simPidController.calculate(targetPositionDegrees));
   }
 

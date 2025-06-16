@@ -20,6 +20,7 @@ public class Wrist {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
     POSITION_PREPARED,
+    HOLDING_ALGAE,
     SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
@@ -30,6 +31,7 @@ public class Wrist {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
     POSITION_PREPARED,
+    HOLDING_ALGAE,
     SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
@@ -46,35 +48,39 @@ public class Wrist {
   }
 
   private CurrentState handleStateTransitions() {
-    if (safetyChecker.isSafeWrist()) {
-      switch (wantedState) {
-        case INTAKING_CORAL_STATION:
+    switch (wantedState) {
+      case INTAKING_CORAL_STATION:
+        if (safetyChecker.isSafeWrist()) {
           currentState = CurrentState.INTAKING_CORAL_STATION;
-          break;
-        case INTAKING_ALGAE_GROUND:
-          currentState = CurrentState.INTAKING_ALGAE_GROUND;
-          break;
-        case INTAKING_ALGAE_REEF:
+        }
+        break;
+      case INTAKING_ALGAE_GROUND:
+        currentState = CurrentState.INTAKING_ALGAE_GROUND;
+        break;
+      case INTAKING_ALGAE_REEF:
+        if (safetyChecker.isAtSetpointElevator()) {
           currentState = CurrentState.INTAKING_ALGAE_REEF;
-          break;
-        case POSITION_PREPARED:
-          currentState = CurrentState.POSITION_PREPARED;
-          break;
-        case SCORING_CORAL:
-          currentState = CurrentState.SCORING_CORAL;
-          break;
-        case SCORING_ALGAE:
+        } else {
           currentState = CurrentState.SCORING_ALGAE;
-          break;
-        case STOPPED:
-          currentState = CurrentState.STOPPED;
-          break;
-        default:
-          currentState = CurrentState.STOPPED;
-          break;
-      }
-    } else {
-      currentState = CurrentState.STOPPED;
+        }
+        break;
+      case POSITION_PREPARED:
+        if (safetyChecker.isSafeWrist()) {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
+        break;
+      case SCORING_CORAL:
+        currentState = CurrentState.SCORING_CORAL;
+        break;
+      case SCORING_ALGAE:
+        currentState = CurrentState.SCORING_ALGAE;
+        break;
+      case STOPPED:
+        currentState = CurrentState.STOPPED;
+        break;
+      default:
+        currentState = CurrentState.STOPPED;
+        break;
     }
     return currentState;
   }

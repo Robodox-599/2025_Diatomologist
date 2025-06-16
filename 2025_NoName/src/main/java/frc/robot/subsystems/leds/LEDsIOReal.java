@@ -1,8 +1,6 @@
 package frc.robot.subsystems.leds;
 
 import com.ctre.phoenix6.configs.CANdleConfiguration;
-import com.ctre.phoenix6.controls.ColorFlowAnimation;
-import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.controls.StrobeAnimation;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
@@ -20,7 +18,7 @@ public class LEDsIOReal extends LEDsIO {
   private static final RGBWColor kPrepared = new RGBWColor(0, 255, 0, 64); // green
   private static final RGBWColor kPositionCoral = new RGBWColor(255, 0, 255, 127); // light purple
   private static final RGBWColor kPositionAlgae = new RGBWColor(0, 255, 255, 127); // cyan
-  private static final RGBWColor kScoringGamePiece = new RGBWColor(252, 15, 192, 127); // pink
+  private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 127); // pink
   private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 0); // dark red
 
   public LEDsIOReal() {
@@ -45,38 +43,46 @@ public class LEDsIOReal extends LEDsIO {
   @Override
   public void LEDsIntakingCoralStation() {
     candleReal.setControl(
-        new ColorFlowAnimation(0, LEDsConstants.MAX_LEDS).withColor(kIntakingCoralStation));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
+            .withColor(kIntakingCoralStation)
+            .withFrameRate(20));
   }
 
   @Override
   public void LEDsIntakingAlgae() {
     candleReal.setControl(
-        new ColorFlowAnimation(0, LEDsConstants.MAX_LEDS).withColor(kIntakingAlgae));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kIntakingAlgae).withFrameRate(20));
   }
 
   @Override
   public void LEDsPositionPrepared() {
-    candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS).withColor(kPrepared));
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPrepared).withFrameRate(20));
   }
 
   @Override
   public void LEDsPositionCoral() {
-    candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS).withColor(kPositionCoral));
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionCoral).withFrameRate(20));
   }
 
   @Override
   public void LEDsPositionAlgae() {
-    candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS).withColor(kPositionAlgae));
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionAlgae).withFrameRate(20));
   }
 
   @Override
   public void LEDsScoringGamePiece() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kScoringGamePiece));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
+            .withColor(kScoringGamePiece)
+            .withFrameRate(20));
   }
 
   @Override
   public void LEDsNoState() {
-    candleReal.setControl(new SolidColor(0, LEDsConstants.MAX_LEDS).withColor(kNoState));
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kNoState).withFrameRate(20));
   }
 }

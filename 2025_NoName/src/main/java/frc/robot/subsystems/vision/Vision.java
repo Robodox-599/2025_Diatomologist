@@ -2,7 +2,6 @@ package frc.robot.subsystems.vision;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -34,60 +33,60 @@ public class Vision extends SubsystemBase {
     }
   }
 
-  @Override
-  public void periodic() {
-    for (int i = 0; i < io.length; i++) {
-      io[i].updateInputs();
-    }
+  // @Override
+  // public void periodic() {
+  //   for (int i = 0; i < io.length; i++) {
+  //     io[i].updateInputs();
+  //   }
 
-    // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+  //   // Loop over cameras
+  //   for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
 
-      // Update disconnected alert
-      disconnectedAlerts[cameraIndex].set(!io[cameraIndex].cameraConnected);
+  //     // Update disconnected alert
+  //     disconnectedAlerts[cameraIndex].set(!io[cameraIndex].cameraConnected);
 
-      // Loop over pose observations
-      for (var observation : io[cameraIndex].poseObservations) {
-        // Check whether to reject pose
-        boolean rejectPose = checkPose(observation, cameraIndex);
-        // Log if pose accepted and add pose to log
-        DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
-        if (rejectPose) {
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
-              observation.observedPose());
-          continue;
-        } else {
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
-              observation.getObservedPose());
-        }
+  //     // Loop over pose observations
+  //     for (var observation : io[cameraIndex].poseObservations) {
+  //       // Check whether to reject pose
+  //       boolean rejectPose = checkPose(observation, cameraIndex);
+  //       // Log if pose accepted and add pose to log
+  //       DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
+  //       if (rejectPose) {
+  //         DogLog.log(
+  //             "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
+  //             observation.observedPose());
+  //         continue;
+  //       } else {
+  //         DogLog.log(
+  //             "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
+  //             observation.getObservedPose());
+  //       }
 
-        // Calculate standard deviations for selected pose
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
-        double linearStdDev =
-            io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
-        double angularStdDev =
-            io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
+  //       // Calculate standard deviations for selected pose
+  //       double stdDevFactor =
+  //           Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
+  //       double linearStdDev =
+  //           io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
+  //       double angularStdDev =
+  //           io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
 
-        linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
-        angularStdDev =
-            (observation.getTagArea() > 8
-                    && speedsConsumer.getSpeeds().vxMetersPerSecond < 3
-                    && speedsConsumer.getSpeeds().vyMetersPerSecond < 3
-                    && speedsConsumer.getSpeeds().omegaRadiansPerSecond < 4 * Math.PI)
-                ? angularStdDev + 25
-                : 999999999.0;
-        consumer.accept(
-            observation.getObservedPose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
-      }
-      logValues(cameraIndex);
-    }
-  }
+  //       linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
+  //       angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
+  //       angularStdDev =
+  //           (observation.getTagArea() > 8
+  //                   && speedsConsumer.getSpeeds().vxMetersPerSecond < 3
+  //                   && speedsConsumer.getSpeeds().vyMetersPerSecond < 3
+  //                   && speedsConsumer.getSpeeds().omegaRadiansPerSecond < 4 * Math.PI)
+  //               ? angularStdDev + 25
+  //               : 999999999.0;
+  //       consumer.accept(
+  //           observation.getObservedPose().toPose2d(),
+  //           observation.timestamp(),
+  //           VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+  //     }
+  //     logValues(cameraIndex);
+  //   }
+  // }
 
   @FunctionalInterface
   public static interface VisionConsumer {

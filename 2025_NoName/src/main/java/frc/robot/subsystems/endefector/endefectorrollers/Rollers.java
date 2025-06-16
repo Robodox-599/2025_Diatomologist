@@ -44,53 +44,53 @@ public class Rollers {
   }
 
   private CurrentState handleStateTransitions() {
-    if (safetyChecker.isAtSetpoints()) {
-      switch (wantedState) {
-        case INTAKING_CORAL_STATION:
-          if (isCoralDetected()) {
-            currentState = CurrentState.HOLD_CORAL;
-            wantedState = WantedState.HOLD_CORAL;
-          } else {
-            currentState = CurrentState.INTAKING_CORAL_STATION;
-          }
-          break;
-        case INTAKING_ALGAE:
-          if (isAlgaeDetected()) {
-            currentState = CurrentState.HOLD_ALGAE;
-            wantedState = WantedState.HOLD_ALGAE;
-          } else {
-            currentState = CurrentState.INTAKING_ALGAE;
-          }
-          break;
-        case HOLD_CORAL:
+    switch (wantedState) {
+      case INTAKING_CORAL_STATION:
+        if (isCoralDetected()) {
           currentState = CurrentState.HOLD_CORAL;
-          break;
-        case HOLD_ALGAE:
+          wantedState = WantedState.HOLD_CORAL;
+        } else {
+          currentState = CurrentState.INTAKING_CORAL_STATION;
+        }
+        break;
+      case INTAKING_ALGAE:
+        if (isAlgaeDetected()) {
           currentState = CurrentState.HOLD_ALGAE;
-          break;
-        case SCORING_CORAL:
+          wantedState = WantedState.HOLD_ALGAE;
+        } else {
+          currentState = CurrentState.INTAKING_ALGAE;
+        }
+        break;
+      case HOLD_CORAL:
+        currentState = CurrentState.HOLD_CORAL;
+        break;
+      case HOLD_ALGAE:
+        currentState = CurrentState.HOLD_ALGAE;
+        break;
+      case SCORING_CORAL:
+        if (safetyChecker.isAtSetpoints()) {
           if (!isCoralDetected()) {
             currentState = CurrentState.STOPPED;
             wantedState = WantedState.STOPPED;
           }
           currentState = CurrentState.SCORING_CORAL;
-          break;
-        case SCORING_ALGAE:
+        }
+        break;
+      case SCORING_ALGAE:
+        if (safetyChecker.isAtSetpoints()) {
           if (!isAlgaeDetected()) {
             currentState = CurrentState.STOPPED;
             wantedState = WantedState.STOPPED;
           }
           currentState = CurrentState.SCORING_ALGAE;
-          break;
-        case STOPPED:
-          currentState = CurrentState.STOPPED;
-          break;
-        default:
-          currentState = CurrentState.STOPPED;
-          break;
-      }
-    } else {
-      currentState = CurrentState.STOPPED;
+        }
+        break;
+      case STOPPED:
+        currentState = CurrentState.STOPPED;
+        break;
+      default:
+        currentState = CurrentState.STOPPED;
+        break;
     }
     return currentState;
   }

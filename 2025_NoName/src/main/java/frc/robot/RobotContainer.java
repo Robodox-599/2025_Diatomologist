@@ -146,7 +146,7 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     superstructureCommands =
-        new Superstructure(drivetrain, elevator, wrist, rollers, LEDs, safetyChecker);
+        new Superstructure(drivetrain, elevator, wrist, rollers, LEDs, safetyChecker, driver, operator);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
@@ -181,17 +181,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommandScheduler();
-  }
-
-  public Command rumbleControllers() {
-    return new StartEndCommand(
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
-        .alongWith(
-            new StartEndCommand(
-                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
-                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
-        .withTimeout(0.5);
   }
 
   public void configureBindings() {

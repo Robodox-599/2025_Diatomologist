@@ -33,8 +33,8 @@ public final class ElevatorConstants {
   public static final double[] heights = {
     0.0, // INTAKING CORAL STATION
     7.0, // INTAKING ALGAE GROUND
-    29.5, // INTAKING ALGAE L2 // 27.5
-    44.0, // INTAKING ALGAE L3 // 42
+    28.5, // INTAKING ALGAE L2 // 27.5
+    42.0, // INTAKING ALGAE L3 // 42
     12.0, // POSITION PREPARED
     12.0, // POSITION CORAL L1 // 14
     18.0, // POSITION CORAL L2 // 16

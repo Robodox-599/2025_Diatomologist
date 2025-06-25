@@ -1,8 +1,14 @@
 package frc.robot.subsystems;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
@@ -17,6 +23,8 @@ public class Superstructure extends SubsystemBase {
   private final Rollers rollers;
   private final LEDs leds;
   private final SafetyChecker safetyChecker;
+  private final CommandXboxController driver;
+  private final CommandXboxController operator;
 
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
@@ -54,6 +62,7 @@ public class Superstructure extends SubsystemBase {
     SCORING_CORAL,
     SCORING_ALGAE,
     STOPPED,
+    NO_STATE,
   }
 
   public Superstructure(
@@ -63,13 +72,17 @@ public class Superstructure extends SubsystemBase {
       Rollers rollers,
       // Climb climb,
       LEDs LEDs,
-      SafetyChecker safetyChecker) {
+      SafetyChecker safetyChecker,
+      CommandXboxController driver,
+      CommandXboxController operator) {
     this.drivetrain = drivetrain;
     this.elevator = elevator;
     this.wrist = wrist;
     this.rollers = rollers;
     this.leds = LEDs;
     this.safetyChecker = safetyChecker;
+    this.driver = driver;
+    this.operator = operator;
   }
 
   @Override
@@ -151,8 +164,8 @@ public class Superstructure extends SubsystemBase {
         break;
       case SCORING_ALGAE:
         if (!rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.POSITION_PREPARED;
-          wantedSuperState = WantedSuperState.POSITION_PREPARED;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.SCORING_ALGAE;
         }
@@ -309,7 +322,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setNextSuperStateCommand(WantedSuperState nextState) {
-    return this.runOnce(() -> setNextSuperState(nextState));
+    return Commands.parallel(this.runOnce(() -> setNextSuperState(nextState)), rumbleControllers().withTimeout(0.1));
   }
 
   private void setNextSuperState(WantedSuperState state) {
@@ -317,12 +330,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command updateWantedSuperStateCommand() {
-    return this.runOnce(() -> updateWantedSuperState());
+    if (nextSuperState == WantedSuperState.NO_STATE) {
+      return Commands.sequence(rumbleControllers().withTimeout(0.1), new WaitCommand(0.05), rumbleControllers().withTimeout(0.5));
+    }
+    return Commands.parallel(this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.25));
   }
 
   private void updateWantedSuperState() {
     wantedSuperState = nextSuperState;
-    nextSuperState = WantedSuperState.STOPPED;
+    nextSuperState = WantedSuperState.NO_STATE;
   }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
@@ -331,7 +347,7 @@ public class Superstructure extends SubsystemBase {
 
   private void setWantedSuperState(WantedSuperState state) {
     wantedSuperState = state;
-    nextSuperState = WantedSuperState.STOPPED;
+    nextSuperState = WantedSuperState.NO_STATE;
   }
 
   private boolean isAtWantedState() {
@@ -341,5 +357,28 @@ public class Superstructure extends SubsystemBase {
 
   public Command zeroGyroCommand() {
     return this.runOnce(() -> drivetrain.zeroGyro());
+  }
+
+  public Command rumbleDriverController() {
+    return new StartEndCommand(
+            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
+            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0)).withTimeout(0.5);
+  }
+
+  public Command rumbleOperatorController() {
+    return new StartEndCommand(
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)).withTimeout(0.5);
+  }
+
+  public Command rumbleControllers() {
+    return new StartEndCommand(
+            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
+            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
+        .alongWith(
+            new StartEndCommand(
+                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
+                () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
+        .withTimeout(0.5);
   }
 }

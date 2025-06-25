@@ -69,7 +69,7 @@ public class RobotContainer {
           .withDeadband(0)
           .withRotationalDeadband(0) // Add a 10% deadband
           .withDriveRequestType(
-              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+              DriveRequestType.Velocity); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 

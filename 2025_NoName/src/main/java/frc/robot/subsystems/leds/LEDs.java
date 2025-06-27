@@ -16,6 +16,7 @@ public class LEDs {
 
   public enum CurrentState {
     INTAKING_CORAL_STATION,
+    ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
@@ -44,6 +45,9 @@ public class LEDs {
     switch (currentState) {
       case INTAKING_CORAL_STATION:
         io.LEDsIntakingCoralStation();
+        break;
+      case ENSURING_CORAL:
+        io.LEDsEnsuringCoral();
         break;
       case INTAKING_ALGAE_GROUND:
         io.LEDsIntakingAlgae();

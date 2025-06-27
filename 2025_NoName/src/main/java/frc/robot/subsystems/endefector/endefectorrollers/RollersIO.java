@@ -11,6 +11,7 @@ public abstract class RollersIO {
   protected boolean atSetpoint = false;
   protected boolean isAlgaeDetected = false;
   protected boolean isCoralDetected = false;
+  protected boolean isCoralEnsured = false;
 
   public void updateInputs() {}
 

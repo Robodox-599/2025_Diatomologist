@@ -12,14 +12,14 @@ import dev.doglog.DogLog;
 public class LEDsIOReal extends LEDsIO {
   public final CANdle candleReal;
 
-  private static final RGBWColor kIntakingCoralStation =
-      new RGBWColor(255, 165, 0, 127); // light orange
-  private static final RGBWColor kIntakingAlgae = new RGBWColor(0, 0, 255, 64); // blue
-  private static final RGBWColor kPrepared = new RGBWColor(0, 255, 0, 64); // green
-  private static final RGBWColor kPositionCoral = new RGBWColor(255, 0, 255, 127); // light purple
-  private static final RGBWColor kPositionAlgae = new RGBWColor(0, 255, 255, 127); // cyan
-  private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 127); // pink
-  private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 0); // dark red
+  private static final RGBWColor kIntakingCoralStation = new RGBWColor(255, 60, 0, 0); // orange
+  private static final RGBWColor kEnsuringCoral = new RGBWColor(255, 255, 255, 255); // white
+  private static final RGBWColor kIntakingAlgae = new RGBWColor(0, 0, 255, 0); // blue
+  private static final RGBWColor kPrepared = new RGBWColor(0, 255, 0, 0); // green
+  private static final RGBWColor kPositionCoral = new RGBWColor(255, 0, 255, 0); // purple
+  private static final RGBWColor kPositionAlgae = new RGBWColor(0, 255, 255, 0); // cyan
+  private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 0); // pink
+  private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 0); // red
 
   public LEDsIOReal() {
     candleReal = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
@@ -46,6 +46,12 @@ public class LEDsIOReal extends LEDsIO {
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(kIntakingCoralStation)
             .withFrameRate(20));
+  }
+
+  @Override
+  public void LEDsEnsuringCoral() {
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kEnsuringCoral).withFrameRate(20));
   }
 
   @Override

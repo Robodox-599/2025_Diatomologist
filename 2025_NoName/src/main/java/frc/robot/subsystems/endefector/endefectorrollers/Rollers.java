@@ -17,6 +17,7 @@ public class Rollers {
 
   public enum WantedState {
     INTAKING_CORAL_STATION,
+    ENSURING_CORAL,
     INTAKING_ALGAE,
     HOLD_CORAL,
     HOLD_ALGAE,
@@ -27,6 +28,7 @@ public class Rollers {
 
   public enum CurrentState {
     INTAKING_CORAL_STATION,
+    ENSURING_CORAL,
     INTAKING_ALGAE,
     HOLD_CORAL,
     HOLD_ALGAE,
@@ -46,20 +48,13 @@ public class Rollers {
   private CurrentState handleStateTransitions() {
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (isCoralDetected()) {
-          currentState = CurrentState.HOLD_CORAL;
-          wantedState = WantedState.HOLD_CORAL;
-        } else {
-          currentState = CurrentState.INTAKING_CORAL_STATION;
-        }
+        currentState = CurrentState.INTAKING_CORAL_STATION;
+        break;
+      case ENSURING_CORAL:
+        currentState = CurrentState.ENSURING_CORAL;
         break;
       case INTAKING_ALGAE:
-        if (isAlgaeDetected()) {
-          currentState = CurrentState.HOLD_ALGAE;
-          wantedState = WantedState.HOLD_ALGAE;
-        } else {
-          currentState = CurrentState.INTAKING_ALGAE;
-        }
+        currentState = CurrentState.INTAKING_ALGAE;
         break;
       case HOLD_CORAL:
         currentState = CurrentState.HOLD_CORAL;
@@ -69,19 +64,11 @@ public class Rollers {
         break;
       case SCORING_CORAL:
         if (safetyChecker.isAtSetpoints()) {
-          if (!isCoralDetected()) {
-            currentState = CurrentState.STOPPED;
-            wantedState = WantedState.STOPPED;
-          }
           currentState = CurrentState.SCORING_CORAL;
         }
         break;
       case SCORING_ALGAE:
         if (safetyChecker.isAtSetpoints()) {
-          if (!isAlgaeDetected()) {
-            currentState = CurrentState.STOPPED;
-            wantedState = WantedState.STOPPED;
-          }
           currentState = CurrentState.SCORING_ALGAE;
         }
         break;
@@ -99,6 +86,9 @@ public class Rollers {
     switch (currentState) {
       case INTAKING_CORAL_STATION:
         setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
+        break;
+      case ENSURING_CORAL:
+        stop();
         break;
       case INTAKING_ALGAE:
         setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
@@ -142,6 +132,10 @@ public class Rollers {
 
   public boolean isCoralDetected() {
     return io.isCoralDetected;
+  }
+
+  public boolean isCoralEnsured() {
+    return io.isCoralEnsured;
   }
 
   public boolean isAlgaeDetected() {

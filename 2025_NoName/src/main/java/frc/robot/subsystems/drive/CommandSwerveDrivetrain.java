@@ -12,6 +12,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -211,12 +213,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/Choreo/SwerveSample/ChoreoPosition", sample.getPose());
     DogLog.log("Drive/Choreo/RealRobotPosition", pose);
 
-    targetSpeeds.vxMetersPerSecond += choreoTranslationPID.calculate(pose.getX(), sample.x);
-    targetSpeeds.vyMetersPerSecond += choreoTranslationPID.calculate(pose.getY(), sample.y);
-    targetSpeeds.omegaRadiansPerSecond +=
-        choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
+    // targetSpeeds.vxMetersPerSecond += choreoTranslationPID.calculate(pose.getX(), sample.x);
+    // targetSpeeds.vyMetersPerSecond += choreoTranslationPID.calculate(pose.getY(), sample.y);
+    // targetSpeeds.omegaRadiansPerSecond +=
+    //     choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
 
-    DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
+    // DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
 
     setControl(
         m_pathApplyFieldSpeeds
@@ -233,6 +235,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return new InstantCommand(
         () -> {
           resetRotation(new Rotation2d(0.0));
+        });
+  }
+
+  public Command move3mForward() {
+    return this.run(
+        () -> {
+          Pose2d setpoint =
+              (getState().Pose)
+                  .plus(new Transform2d(new Translation2d(1.0, 0.0), new Rotation2d()));
         });
   }
 

@@ -12,10 +12,8 @@ import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
@@ -94,7 +92,7 @@ public class RobotContainer {
                 drivetrain::getPose,
                 drivetrain::resetPose,
                 drivetrain::followChoreoPath,
-                true,
+                false,
                 drivetrain);
         break;
       case SIM:
@@ -116,7 +114,7 @@ public class RobotContainer {
                 drivetrain::getPose,
                 drivetrain::resetPose,
                 drivetrain::followChoreoPath,
-                true,
+                false,
                 drivetrain);
         break;
       default:
@@ -138,7 +136,7 @@ public class RobotContainer {
                 drivetrain::getPose,
                 drivetrain::resetPose,
                 drivetrain::followChoreoPath,
-                true,
+                false,
                 drivetrain);
         break;
     }
@@ -146,7 +144,8 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     superstructureCommands =
-        new Superstructure(drivetrain, elevator, wrist, rollers, LEDs, safetyChecker, driver, operator);
+        new Superstructure(
+            drivetrain, elevator, wrist, rollers, LEDs, safetyChecker, driver, operator);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
@@ -165,6 +164,7 @@ public class RobotContainer {
     // TESTING ONLY
     // autoChooser.addRoutine("DO NOT USE - testingAutoRoutine", autoRoutines::testingAutoRoutine);
     // autoChooser.addRoutine("startTo15FeetAutoRoutine", autoRoutines::startTo15FeetAutoRoutine);
+    autoChooser.addRoutine("MoveForward", autoRoutines::moveForward);
 
     SmartDashboard.putData("AutoChooser", autoChooser);
 
@@ -234,6 +234,8 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
+
+    driver.a().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(0.5)));
 
     //                                OPERATOR BINDS
     // // MOVE TO L1

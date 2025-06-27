@@ -1,6 +1,9 @@
 package frc.robot;
 
 import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Superstructure;
 
 public class AutoRoutines {
@@ -10,6 +13,16 @@ public class AutoRoutines {
   public AutoRoutines(AutoFactory autoFactory, Superstructure superstructureCommands) {
     this.autoFactory = autoFactory;
     this.superstructureCommands = superstructureCommands;
+  }
+
+  public AutoRoutine moveForward() {
+    AutoRoutine routine = autoFactory.newRoutine("MoveForward");
+
+    AutoTrajectory MoveForward = routine.trajectory("MoveForward");
+
+    routine.active().onTrue(Commands.sequence(MoveForward.resetOdometry(), MoveForward.cmd()));
+
+    return routine;
   }
 
   //   public AutoRoutine leftAutoRoutine() {

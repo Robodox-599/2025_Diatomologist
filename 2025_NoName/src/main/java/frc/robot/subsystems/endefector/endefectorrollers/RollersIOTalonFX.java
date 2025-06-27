@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -24,6 +25,7 @@ public class RollersIOTalonFX extends RollersIO {
   TalonFXConfiguration rollersConfig;
   Debouncer algaeStallDebouncer = new Debouncer(algaeDebounce);
   Debouncer coralBeamBreakDebouncer = new Debouncer(beamBreakDebounce);
+  Debouncer ensureCoralBeamBreakDebouncer = new Debouncer(ensureCoralDebounce);
   private DigitalInput m_BeamBreak2;
 
   private final StatusSignal<AngularVelocity> velocity;
@@ -53,6 +55,9 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
+    coralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
+    ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
+
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
     velocity = rollersMotor.getVelocity();
@@ -76,6 +81,7 @@ public class RollersIOTalonFX extends RollersIO {
     super.desiredVelocity = desiredVelocity;
     super.isAlgaeDetected = algaeStallDebouncer.calculate(super.statorCurrentAmps >= 20);
     super.isCoralDetected = coralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
+    super.isCoralEnsured = ensureCoralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
 
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
@@ -86,6 +92,7 @@ public class RollersIOTalonFX extends RollersIO {
 
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
+    DogLog.log("Rollers/CoralEnsured", super.isCoralEnsured);
     DogLog.log("Rollers/BeamBreak", m_BeamBreak2.get());
   }
 

@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -32,6 +31,7 @@ public class Superstructure extends SubsystemBase {
 
   public enum CurrentSuperState {
     INTAKING_CORAL_STATION,
+    ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
@@ -49,6 +49,7 @@ public class Superstructure extends SubsystemBase {
 
   public enum WantedSuperState {
     INTAKING_CORAL_STATION,
+    ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
@@ -103,10 +104,21 @@ public class Superstructure extends SubsystemBase {
     switch (wantedSuperState) {
       case INTAKING_CORAL_STATION:
         if (rollers.isCoralDetected()) {
-          currentSuperState = CurrentSuperState.POSITION_PREPARED;
-          wantedSuperState = WantedSuperState.POSITION_PREPARED;
+          currentSuperState = CurrentSuperState.ENSURING_CORAL;
+          wantedSuperState = WantedSuperState.ENSURING_CORAL;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+        }
+        break;
+      case ENSURING_CORAL:
+        if (rollers.isCoralEnsured()) {
+          currentSuperState = CurrentSuperState.POSITION_PREPARED;
+          wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        } else if (!rollers.isCoralDetected()) {
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+        } else {
+          currentSuperState = CurrentSuperState.ENSURING_CORAL;
         }
         break;
       case INTAKING_ALGAE_GROUND:
@@ -185,6 +197,9 @@ public class Superstructure extends SubsystemBase {
       case INTAKING_CORAL_STATION:
         intakeCoralStation();
         break;
+      case ENSURING_CORAL:
+        ensureCoral();
+        break;
       case INTAKING_ALGAE_GROUND:
         intakeAlgaeGround();
         break;
@@ -235,6 +250,13 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_CORAL_STATION);
+  }
+
+  private void ensureCoral() {
+    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
+    rollers.setWantedState(Rollers.WantedState.ENSURING_CORAL);
+    wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
+    leds.setCurrentState(LEDs.CurrentState.ENSURING_CORAL);
   }
 
   private void intakeAlgaeGround() {
@@ -322,7 +344,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setNextSuperStateCommand(WantedSuperState nextState) {
-    return Commands.parallel(this.runOnce(() -> setNextSuperState(nextState)), rumbleControllers().withTimeout(0.1));
+    return Commands.parallel(
+        this.runOnce(() -> setNextSuperState(nextState)), rumbleControllers().withTimeout(0.2));
   }
 
   private void setNextSuperState(WantedSuperState state) {
@@ -330,10 +353,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command updateWantedSuperStateCommand() {
-    if (nextSuperState == WantedSuperState.NO_STATE) {
-      return Commands.sequence(rumbleControllers().withTimeout(0.1), new WaitCommand(0.05), rumbleControllers().withTimeout(0.5));
-    }
-    return Commands.parallel(this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.25));
+    return Commands.either(
+        Commands.sequence(
+            rumbleControllers().withTimeout(0.1),
+            new WaitCommand(0.2),
+            rumbleControllers().withTimeout(0.1)),
+        Commands.parallel(
+            this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.3)),
+        (() -> nextSuperState == WantedSuperState.NO_STATE));
   }
 
   private void updateWantedSuperState() {
@@ -362,13 +389,15 @@ public class Superstructure extends SubsystemBase {
   public Command rumbleDriverController() {
     return new StartEndCommand(
             () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0)).withTimeout(0.5);
+            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
+        .withTimeout(0.5);
   }
 
   public Command rumbleOperatorController() {
     return new StartEndCommand(
             () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)).withTimeout(0.5);
+            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0))
+        .withTimeout(0.5);
   }
 
   public Command rumbleControllers() {

@@ -7,6 +7,8 @@ public abstract class LEDsIO {
 
   public void LEDsIntakingCoralStation() {}
 
+  public void LEDsEnsuringCoral() {}
+
   public void LEDsIntakingAlgae() {}
 
   public void LEDsPositionPrepared() {}

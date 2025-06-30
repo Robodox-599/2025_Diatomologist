@@ -5,6 +5,7 @@ import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -144,12 +145,17 @@ public class ClimbIOTalonFX extends ClimbIO {
   }
 
   @Override
-  public void setRollers(double velocity) {
+  public void setRollersVelocity(double velocity) {
     rollersMotor.set(velocity);
   }
 
   @Override
-  public void setVoltage(double voltage) {
+  public void stallRollers() {
+      rollersMotor.setControl(new DutyCycleOut(ClimbConstants.stallRollersVoltage));
+  }
+
+  @Override
+  public void setClimbVoltage(double voltage) {
     climbMotor.setControl(new VoltageOut(voltage));
   }
 

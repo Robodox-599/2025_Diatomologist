@@ -11,10 +11,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
+import frc.robot.util.SubsystemUtil;
 
 public class RollersIOSim extends RollersIO {
   private final DCMotorSim rollersSim;
-  private PIDController rollerController = new PIDController(simkP, simkI, simkD);
+  private PIDController rollersController = new PIDController(simkP, simkI, simkD);
   private static final DCMotor ROLLERS_GEARBOX = DCMotor.getKrakenX60Foc(1);
 
   public RollersIOSim() {
@@ -22,6 +24,8 @@ public class RollersIOSim extends RollersIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(ROLLERS_GEARBOX, rollersMOI, gearRatio),
             ROLLERS_GEARBOX);
+    rollersController = new PIDController(RollersConstants.simkP, RollersConstants.simkI, RollersConstants.simkD);
+
   }
 
   @Override
@@ -38,5 +42,21 @@ public class RollersIOSim extends RollersIO {
     DogLog.log("Rollers/Voltage", super.appliedVolts);
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/Temp", 60);
+  }
+
+  @Override
+  public void stop() {
+    rollersSim.setAngularVelocity(0);
+  }
+
+  @Override
+  public void setVelocity(EndefectorRollerStates state) {
+    double velocity = SubsystemUtil.rollersStateToVelocity(state);
+    rollersSim.setAngularVelocity(velocity);
+  }
+
+  @Override
+  public void holdAlgae() {
+    rollersSim.setInputVoltage(RollersConstants.rollersDutyCycleOutHoldAlgae);
   }
 }

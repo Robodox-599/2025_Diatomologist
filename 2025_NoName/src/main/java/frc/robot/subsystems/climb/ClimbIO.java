@@ -24,13 +24,15 @@ public abstract class ClimbIO {
 
   public void setClimb(ClimbStates state) {}
 
-  public void setRollers(double velocity) {}
+  public void setRollersVelocity(double velocity) {}
+
+  public void stallRollers() {}
 
   public void stop() {}
 
   public void enableBrakeMode(boolean enable) {}
 
-  public void setVoltage(double voltage) {}
+  public void setClimbVoltage(double voltage) {}
 
   public double GetClimbCurrentVolts() {
     return climbAppliedVolts;

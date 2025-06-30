@@ -69,7 +69,7 @@ public class Climb extends SubsystemBase {
         break;
       case CLIMB:
         setClimb(ClimbStates.CLIMB);
-        setRollers(0);
+        io.stallRollers();
         break;
       case STOPPED:
         stop();
@@ -82,24 +82,17 @@ public class Climb extends SubsystemBase {
   }
 
   public void setRollers(double velocity) {
-    io.setRollers(velocity);
+    io.setRollersVelocity(velocity);
   }
 
   public boolean isAtTargetPosition() {
     return io.atSetpoint;
   }
 
-  // public Command move(double volt) {
-  //   return Commands.run(
-  //       () -> {
-  //         io.setVoltage(volt);
-  //       });
-  // }
-
   public Command stop() {
     return Commands.run(
         () -> {
-          io.setVoltage(0);
+          io.setClimbVoltage(0);
         });
   }
 

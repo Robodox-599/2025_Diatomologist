@@ -4,20 +4,16 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.util.SubsystemUtil;
 
 public class ElevatorIOSim extends ElevatorIO {
-  private final DCMotorSim elevatorSim;
-  // private final ElevatorSim =
   private final PIDController positionController;
   private double targetPositionInches = 0.0;
-
+ 
   private static final DCMotor ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(2);
-  private static final ElevatorSim simElevatorTest =
+  private static final ElevatorSim elevatorSim =
       new ElevatorSim(
           ELEVATOR_GEARBOX,
           6,
@@ -29,13 +25,6 @@ public class ElevatorIOSim extends ElevatorIO {
           0);
 
   public ElevatorIOSim() {
-
-    elevatorSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                ELEVATOR_GEARBOX, ElevatorConstants.elevatorMOI, ElevatorConstants.gearRatio),
-            ELEVATOR_GEARBOX);
-
     positionController =
         new PIDController(
             ElevatorConstants.simkP, ElevatorConstants.simkI, ElevatorConstants.simkD);
@@ -44,26 +33,18 @@ public class ElevatorIOSim extends ElevatorIO {
 
   @Override
   public void updateInputs() {
-    simElevatorTest.update(0.02);
+    elevatorSim.update(0.02);
 
-    // Update inputs structure
-    super.positionInches = (Units.metersToInches(simElevatorTest.getPositionMeters()));
-    super.velocityInchesPerSec =
-        (Units.metersToInches(simElevatorTest.getVelocityMetersPerSecond()));
-
-    super.appliedVolts = simElevatorTest.getInput().get(0, 0);
-    super.currentAmps = simElevatorTest.getCurrentDrawAmps();
+    super.positionInches = (Units.metersToInches(elevatorSim.getPositionMeters()));
+    super.velocityInchesPerSec =(Units.metersToInches(elevatorSim.getVelocityMetersPerSecond()));
+    super.appliedVolts = elevatorSim.getInput().get(0, 0);
+    super.currentAmps = elevatorSim.getCurrentDrawAmps();
     super.targetPositionInches = targetPositionInches;
-    super.tempCelsius = 25.0; // setting
-
-    simElevatorTest.setInputVoltage(
-        positionController.calculate(super.positionInches, super.targetPositionInches));
-
-    /* Checks if elevator is at setpoint */
+    super.tempCelsius = 25.0;
     super.atSetpoint = positionController.atSetpoint();
-    DogLog.log("Elevator/CurrentAmps", simElevatorTest.getCurrentDrawAmps());
-    DogLog.log("Elevator/AppliedVoltage", simElevatorTest.getInput().get(0, 0));
-    DogLog.log("Elevator/PositionErrorInches", super.targetPositionInches - super.positionInches);
+    
+    DogLog.log("Elevator/CurrentAmps", elevatorSim.getCurrentDrawAmps());
+    DogLog.log("Elevator/AppliedVoltage", elevatorSim.getInput().get(0, 0));
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
@@ -87,10 +68,5 @@ public class ElevatorIOSim extends ElevatorIO {
   @Override
   public void setVoltage(double voltage) {
     elevatorSim.setInputVoltage(voltage);
-  }
-
-  @Override
-  public void zeroEncoder() {
-    elevatorSim.setAngle(0);
   }
 }

@@ -12,7 +12,6 @@ public class ClimbIOSim extends ClimbIO {
   private final DCMotorSim climbSim;
   private final DCMotorSim rollersSim;
   private final PIDController positionController;
-  private double targetPositionInches = 0.0;
   private final PIDController simPidController =
       new PIDController(ClimbConstants.simkP, ClimbConstants.simkI, ClimbConstants.simkD);
 
@@ -77,7 +76,7 @@ public class ClimbIOSim extends ClimbIO {
   }
 
   @Override
-  public void setRollers(double velocity) {
+  public void setRollersVelocity(double velocity) {
     rollersSim.setAngularVelocity(velocity);
   }
 
@@ -87,7 +86,7 @@ public class ClimbIOSim extends ClimbIO {
   }
 
   @Override
-  public void setVoltage(double voltage) {
+  public void setClimbVoltage(double voltage) {
     climbSim.setInputVoltage(voltage);
     rollersSim.setInputVoltage(voltage);
   }

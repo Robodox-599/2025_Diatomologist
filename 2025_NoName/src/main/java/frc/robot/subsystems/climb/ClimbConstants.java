@@ -32,6 +32,8 @@ public class ClimbConstants {
   public static final double climbLowerLimit = 0.0;
   public static final double climbUpperLimit = 48.0;
   public static final double homePositionOffset = 1.0;
+  public static final double stallRollersVoltage = 0.2;
+
 
   // climb states
   public static enum ClimbStates {

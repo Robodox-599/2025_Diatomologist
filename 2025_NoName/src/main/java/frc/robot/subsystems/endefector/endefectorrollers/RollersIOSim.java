@@ -24,8 +24,8 @@ public class RollersIOSim extends RollersIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(ROLLERS_GEARBOX, rollersMOI, gearRatio),
             ROLLERS_GEARBOX);
-    rollersController = new PIDController(RollersConstants.simkP, RollersConstants.simkI, RollersConstants.simkD);
-
+    rollersController =
+        new PIDController(RollersConstants.simkP, RollersConstants.simkI, RollersConstants.simkD);
   }
 
   @Override

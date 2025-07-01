@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
@@ -52,6 +53,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final SwerveRequest.FieldCentric swreq_drive =
       new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
+  private final SwerveRequest.FieldCentric drive_openLoop =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(0)
+          .withRotationalDeadband(0) // Add a 10% deadband
+          .withDriveRequestType(
+              DriveRequestType.Velocity); // Use open-loop control for drive motors
   private final PIDController choreoTranslationPID = new PIDController(10, 0, 0);
   private final ProfiledPIDController choreoThetaPID =
       new ProfiledPIDController(
@@ -221,10 +228,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
 
     setControl(
-        m_pathApplyFieldSpeeds
-            .withSpeeds(targetSpeeds)
-            .withWheelForceFeedforwardsX(sample.moduleForcesX())
-            .withWheelForceFeedforwardsY(sample.moduleForcesY()));
+        m_pathApplyFieldSpeeds.withSpeeds(targetSpeeds)
+        // .withWheelForceFeedforwardsX(sample.moduleForcesX())
+        // .withWheelForceFeedforwardsY(sample.moduleForcesY())
+        );
   }
 
   public void zeroGyro() {

@@ -151,7 +151,7 @@ public class ClimbIOTalonFX extends ClimbIO {
 
   @Override
   public void stallRollers() {
-      rollersMotor.setControl(new DutyCycleOut(ClimbConstants.stallRollersVoltage));
+    rollersMotor.setControl(new DutyCycleOut(ClimbConstants.stallRollersVoltage));
   }
 
   @Override

@@ -49,7 +49,7 @@ public class Elevator {
     io.updateInputs();
     safetyChecker.setCurrentElevatorInches(io.positionInches);
     safetyChecker.updateIsAtSetpointElevator(isAtSetpoint());
-    currentState = handleStateTransitions();
+    handleStateTransitions();
     applyStates();
     DogLog.log("Elevator/CurrentState", currentState);
     DogLog.log("Elevator/WantedState", wantedState);

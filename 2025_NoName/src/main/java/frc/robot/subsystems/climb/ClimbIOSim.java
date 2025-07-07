@@ -66,7 +66,7 @@ public class ClimbIOSim extends ClimbIO {
   }
 
   @Override
-  public void setClimb(ClimbStates state) {
+  public void setClimbPosition(ClimbStates state) {
     targetPositionDegrees =
         MathUtil.clamp(
             ClimbConstants.setpoint[state.getIndex()],

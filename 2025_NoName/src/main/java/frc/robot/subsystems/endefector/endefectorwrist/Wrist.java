@@ -41,7 +41,7 @@ public class Wrist {
     io.updateInputs();
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
     safetyChecker.updateIsAtSetpointWrist(isAtSetpoint());
-    currentState = handleStateTransitions();
+    handleStateTransitions();
     applyStates();
     DogLog.log("Wrist/CurrentState", currentState);
     DogLog.log("Wrist/WantedState", wantedState);

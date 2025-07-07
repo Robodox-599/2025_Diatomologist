@@ -39,7 +39,7 @@ public class Rollers {
 
   public void updateInputs() {
     io.updateInputs();
-    currentState = handleStateTransitions();
+    handleStateTransitions();
     applyStates();
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);

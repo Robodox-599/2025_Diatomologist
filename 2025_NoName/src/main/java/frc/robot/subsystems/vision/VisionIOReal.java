@@ -61,6 +61,7 @@ public class VisionIOReal extends VisionIO {
   public Optional<PoseObservation> update(
       EstimatedRobotPose estRoboPose, List<PhotonPipelineResult> resultList) {
 
+    // adds detected tags' IDs to the seenTags list
     for (PhotonTrackedTarget target : estRoboPose.targetsUsed) {
       seenTags.add(target.fiducialId);
     }

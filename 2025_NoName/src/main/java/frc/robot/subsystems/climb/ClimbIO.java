@@ -22,7 +22,7 @@ public abstract class ClimbIO {
 
   public void updateInputs() {}
 
-  public void setClimb(ClimbStates state) {}
+  public void setClimbPosition(ClimbStates state) {}
 
   public void setRollersVelocity(double velocity) {}
 

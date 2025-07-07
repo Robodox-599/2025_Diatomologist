@@ -18,7 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -32,6 +36,9 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOReal;
+import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -42,11 +49,12 @@ public class RobotContainer {
 
   // Subsystems
   private CommandSwerveDrivetrain drivetrain;
-  private Elevator elevator;
-  private Wrist wrist;
-  private Rollers rollers;
-  private LEDs LEDs;
-  // private Vision vision;
+  private final Elevator elevator;
+  private final Wrist wrist;
+  private final Rollers rollers;
+  private final LEDs leds;
+  private final Climb climb;
+  private final Vision vision;
   private SafetyChecker safetyChecker;
   private final Superstructure superstructureCommands;
   private final Telemetry logger =
@@ -79,14 +87,15 @@ public class RobotContainer {
         rollers = new Rollers(new RollersIOTalonFX(), safetyChecker);
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
-        LEDs = new LEDs(new LEDsIOReal());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOReal(RealConstants.cam2Constants),
-        //         new VisionIOReal(RealConstants.cam1Constants),
-        //         new VisionIOReal(RealConstants.cam3Constants));
+        leds = new LEDs(new LEDsIOReal());
+        climb = new Climb(new ClimbIOTalonFX());
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                drivetrain::getChassisSpeeds,
+                new VisionIOReal(RealConstants.cam2Constants),
+                new VisionIOReal(RealConstants.cam1Constants),
+                new VisionIOReal(RealConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -101,14 +110,15 @@ public class RobotContainer {
         rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
-        LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        leds = new LEDs(new LEDsIOSim());
+        climb = new Climb(new ClimbIOSim());
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                drivetrain::getChassisSpeeds,
+                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -123,14 +133,15 @@ public class RobotContainer {
         rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
-        LEDs = new LEDs(new LEDsIOSim());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        leds = new LEDs(new LEDsIOSim());
+        climb = new Climb(new ClimbIOSim());
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                drivetrain::getChassisSpeeds,
+                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -145,7 +156,7 @@ public class RobotContainer {
 
     superstructureCommands =
         new Superstructure(
-            drivetrain, elevator, wrist, rollers, LEDs, safetyChecker, driver, operator);
+            drivetrain, elevator, wrist, rollers, leds, climb, vision, safetyChecker, driver, operator);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
@@ -204,16 +215,7 @@ public class RobotContainer {
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
-    // driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    // driver
-    //     .b()
-    //     .whileTrue(
-    //         drivetrain.applyRequest(
-    //             () ->
-    //                 point.withModuleDirection(
-    //                     new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
-
-    // reset the field-centric heading on left bumper press
+    // // reset the field-centric heading on left bumper press
     // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // ZERO GYRO
@@ -234,8 +236,6 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
-
-    driver.a().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(0.5)));
 
     //                                OPERATOR BINDS
     // // MOVE TO L1
@@ -258,17 +258,6 @@ public class RobotContainer {
         .y()
         .onTrue(
             superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
-    // // MOVE TO BARGE
-    operator
-        .povUp()
-        .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_ALGAE_BARGE));
-    // // MOVE TO PROCESSOR
-    operator
-        .povDown()
-        .onTrue(
-            superstructureCommands.setNextSuperStateCommand(
-                WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // CORAL STATION INTAKE
     operator
         .rightBumper()
@@ -280,6 +269,19 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
+    // // CLIMB
+    operator.rightTrigger().and(operator.leftTrigger()).onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED));
+    // // MOVE TO BARGE
+    operator
+        .povUp()
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_ALGAE_BARGE));
+    // // MOVE TO PROCESSOR
+    operator
+        .povDown()
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(
+                WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // INTAKE ALGAE L2
     operator
         .povLeft()

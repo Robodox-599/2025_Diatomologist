@@ -16,20 +16,22 @@ public class Climb extends SubsystemBase {
   }
 
   public enum WantedState {
-    CLIMB_READY,
-    CLIMB,
+    CLIMB_PREPARED,
+    CLIMBING,
+    STOWED,
     STOPPED;
   }
 
   public enum CurrentState {
-    CLIMB_READY,
-    CLIMB,
+    CLIMB_PREPARED,
+    CLIMBING,
+    STOWED,
     STOPPED;
   }
 
   public void updateInputs() {
     io.updateInputs();
-    currentState = handleStateTransitions();
+    handleStateTransitions();
     applyStates();
     DogLog.log("Climb/CurrentState", currentState);
     DogLog.log("Climb/WantedState", wantedState);
@@ -37,23 +39,18 @@ public class Climb extends SubsystemBase {
 
   private CurrentState handleStateTransitions() {
     switch (wantedState) {
-      case CLIMB_READY:
-        if (isCageDetected()) {
-          currentState = CurrentState.CLIMB;
-          wantedState = WantedState.CLIMB;
-        } else {
-          currentState = CurrentState.CLIMB_READY;
-        }
+      case CLIMB_PREPARED:
+        currentState = CurrentState.CLIMB_PREPARED;
         break;
-      case CLIMB:
-        if (isCageDetected()) {
-          currentState = CurrentState.CLIMB;
-          wantedState = WantedState.CLIMB;
-        } else {
-          currentState = CurrentState.CLIMB_READY;
-        }
+      case CLIMBING:
+        currentState = CurrentState.CLIMB_PREPARED;
+        break;
+      case STOWED:
+        currentState = CurrentState.STOWED;
         break;
       case STOPPED:
+        currentState = CurrentState.STOPPED;
+        break;
       default:
         currentState = CurrentState.STOPPED;
         break;
@@ -63,13 +60,17 @@ public class Climb extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
-      case CLIMB_READY:
-        setClimb(ClimbStates.CLIMB_READY);
-        setRollers(0.5);
+      case CLIMB_PREPARED:
+        setClimbPosition(ClimbStates.CLIMB_PREPARED);
+        setRollersVelocity(0.5);
         break;
-      case CLIMB:
-        setClimb(ClimbStates.CLIMB);
+      case CLIMBING:
+        setClimbPosition(ClimbStates.CLIMBING);
         io.stallRollers();
+        break;
+      case STOWED:
+        setClimbPosition(ClimbStates.STOWED);
+        setRollersVelocity(0);
         break;
       case STOPPED:
         stop();
@@ -77,11 +78,11 @@ public class Climb extends SubsystemBase {
     }
   }
 
-  public void setClimb(ClimbStates state) {
-    io.setClimb(state);
+  public void setClimbPosition(ClimbStates state) {
+    io.setClimbPosition(state);
   }
 
-  public void setRollers(double velocity) {
+  public void setRollersVelocity(double velocity) {
     io.setRollersVelocity(velocity);
   }
 

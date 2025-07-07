@@ -17,7 +17,11 @@ public abstract class LEDsIO {
 
   public void LEDsPositionAlgae() {}
 
+  public void LEDsPositionClimbPrepared() {}
+
   public void LEDsScoringGamePiece() {}
+
+  public void LEDsClimbing() {}
 
   public void LEDsNoState() {}
 }

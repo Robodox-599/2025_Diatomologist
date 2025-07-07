@@ -12,14 +12,16 @@ import dev.doglog.DogLog;
 public class LEDsIOReal extends LEDsIO {
   public final CANdle candleReal;
 
-  private static final RGBWColor kIntakingCoralStation = new RGBWColor(255, 60, 0, 0); // orange
+  private static final RGBWColor kIntakingCoralStation = new RGBWColor(255, 60, 0, 255); // orange
   private static final RGBWColor kEnsuringCoral = new RGBWColor(255, 255, 255, 255); // white
-  private static final RGBWColor kIntakingAlgae = new RGBWColor(0, 0, 255, 0); // blue
-  private static final RGBWColor kPrepared = new RGBWColor(0, 255, 0, 0); // green
-  private static final RGBWColor kPositionCoral = new RGBWColor(255, 0, 255, 0); // purple
-  private static final RGBWColor kPositionAlgae = new RGBWColor(0, 255, 255, 0); // cyan
-  private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 0); // pink
-  private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 0); // red
+  private static final RGBWColor kIntakingAlgae = new RGBWColor(0, 0, 255, 255); // blue
+  private static final RGBWColor kPrepared = new RGBWColor(0, 255, 0, 255); // green
+  private static final RGBWColor kPositionCoral = new RGBWColor(255, 0, 255, 255); // purple
+  private static final RGBWColor kPositionAlgae = new RGBWColor(0, 255, 255, 255); // cyan
+  private static final RGBWColor KPositionClimbPrepared = new RGBWColor(200, 255, 0, 255); // lime
+  private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 255); // pink
+  private static final RGBWColor kClimbing = new RGBWColor(255, 255, 0, 255); // yellow
+  private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 255); // red
 
   public LEDsIOReal() {
     candleReal = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
@@ -79,11 +81,23 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
+  public void LEDsPositionClimbPrepared() {
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(KPositionClimbPrepared).withFrameRate(20));
+  }
+
+  @Override
   public void LEDsScoringGamePiece() {
     candleReal.setControl(
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(kScoringGamePiece)
             .withFrameRate(20));
+  }
+
+  @Override
+  public void LEDsClimbing() {
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kClimbing).withFrameRate(20));
   }
 
   @Override

@@ -36,9 +36,9 @@ public class ClimbConstants {
 
   // climb states
   public static enum ClimbStates {
-    CLIMB_READY(0),
-    CLIMB(1),
-    STOPPED(2);
+    CLIMB_PREPARED(0),
+    CLIMBING(1),
+    STOWED(2);
 
     private final int index;
 
@@ -57,7 +57,7 @@ public class ClimbConstants {
   public static final double[] setpoint = {
     3.5, // ready to climb
     10.5, // climb
-    30.0 // stopped
+    30.0 // stowed
   };
 
   // public static final double maxVelocityInchesPerSec = 60.0;

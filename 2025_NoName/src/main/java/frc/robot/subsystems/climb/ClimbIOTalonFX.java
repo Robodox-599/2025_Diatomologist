@@ -135,7 +135,7 @@ public class ClimbIOTalonFX extends ClimbIO {
   }
 
   @Override
-  public void setClimb(ClimbStates state) {
+  public void setClimbPosition(ClimbStates state) {
     double targetPositionDegrees =
         MathUtil.clamp(
             SubsystemUtil.climbStateToHeight(state),

@@ -27,8 +27,10 @@ public class LEDs {
     POSITION_CORAL_L4,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
+    POSITION_CLIMB_PREPARED,
     SCORING_CORAL,
     SCORING_ALGAE,
+    CLIMBING,
     NO_STATE,
   }
 
@@ -79,11 +81,17 @@ public class LEDs {
       case POSITION_ALGAE_BARGE:
         io.LEDsPositionAlgae();
         break;
+      case POSITION_CLIMB_PREPARED:
+        io.LEDsPositionClimbPrepared();
+        break;
       case SCORING_CORAL:
         io.LEDsScoringGamePiece();
         break;
       case SCORING_ALGAE:
         io.LEDsScoringGamePiece();
+        break;
+      case CLIMBING:
+        io.LEDsClimbing();
         break;
       case NO_STATE:
         io.LEDsNoState();

@@ -53,12 +53,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final SwerveRequest.FieldCentric swreq_drive =
       new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
-  private final SwerveRequest.FieldCentric drive_openLoop =
-      new SwerveRequest.FieldCentric()
-          .withDeadband(0)
-          .withRotationalDeadband(0) // Add a 10% deadband
-          .withDriveRequestType(
-              DriveRequestType.Velocity); // Use open-loop control for drive motors
   private final PIDController choreoTranslationPID = new PIDController(10, 0, 0);
   private final ProfiledPIDController choreoThetaPID =
       new ProfiledPIDController(
@@ -75,6 +69,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           new TrapezoidProfile.Constraints(
               TunerConstants.MAX_ANGULAR_SPEED, TunerConstants.MAX_ANGULAR_ACCELERATION));
   private final PIDController translationController = new PIDController(0.0, 0.0, 0.0);
+
+  private CurrentState currentState = CurrentState.TELEOP_DRIVE;
+  private WantedState wantedState = WantedState.TELEOP_DRIVE;
+
+  private Pose2d desiredPoseForDriveToPoint = new Pose2d();
+
+  public enum WantedState {
+    TELEOP_DRIVE,
+    DRIVE_TO_POINT,
+  }
+
+  public enum CurrentState {
+    TELEOP_DRIVE,
+    DRIVE_TO_POINT,
+  }
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -162,8 +171,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return run(() -> this.setControl(requestSupplier.get()));
   }
 
-  @Override
-  public void periodic() {
+  public void updateInputs() {
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -181,9 +189,53 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
               });
+    
+    handleStateTransitions();
     }
 
     DogLog.log("RobotPose", getState().Pose);
+  }
+
+  private CurrentState handleStateTransitions() {
+    switch (wantedState) {
+      case TELEOP_DRIVE:
+        currentState = CurrentState.TELEOP_DRIVE;
+        break;
+      case DRIVE_TO_POINT:
+        currentState = CurrentState.DRIVE_TO_POINT;
+        break;
+      default:
+        currentState = CurrentState.TELEOP_DRIVE;
+        break;
+    }
+    return currentState;
+  }
+
+  private void applyStates() {
+    switch (currentState) {
+      case TELEOP_DRIVE:
+        break;
+      case DRIVE_TO_POINT:
+        DogLog.log("Drive/DriveToPose/DesiredPoseForDriveToPoint", desiredPoseForDriveToPoint);
+
+        Pose2d currentPose = getState().Pose;
+        DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
+
+        double xSpeed = translationController.calculate(currentPose.getX(), desiredPoseForDriveToPoint.getX());
+        double ySpeed = translationController.calculate(currentPose.getY(), desiredPoseForDriveToPoint.getY());
+        double thetaSpeed =
+          thetaController.calculate(
+              currentPose.getRotation().getRadians(),
+              desiredPoseForDriveToPoint.getRotation().getRadians());
+        setControl(
+          swreq_drive
+              .withVelocityX(xSpeed)
+              .withVelocityY(ySpeed)
+              .withRotationalRate(thetaSpeed));
+        break;
+      default:
+        break;
+    }
   }
 
   public ChassisSpeeds getChassisSpeeds() {
@@ -220,17 +272,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/Choreo/SwerveSample/ChoreoPosition", sample.getPose());
     DogLog.log("Drive/Choreo/RealRobotPosition", pose);
 
-    // targetSpeeds.vxMetersPerSecond += choreoTranslationPID.calculate(pose.getX(), sample.x);
-    // targetSpeeds.vyMetersPerSecond += choreoTranslationPID.calculate(pose.getY(), sample.y);
-    // targetSpeeds.omegaRadiansPerSecond +=
-    //     choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
+    targetSpeeds.vxMetersPerSecond += choreoTranslationPID.calculate(pose.getX(), sample.x);
+    targetSpeeds.vyMetersPerSecond += choreoTranslationPID.calculate(pose.getY(), sample.y);
+    targetSpeeds.omegaRadiansPerSecond +=
+        choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
 
-    // DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
+    DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
 
     setControl(
         m_pathApplyFieldSpeeds.withSpeeds(targetSpeeds)
-        // .withWheelForceFeedforwardsX(sample.moduleForcesX())
-        // .withWheelForceFeedforwardsY(sample.moduleForcesY())
+        .withWheelForceFeedforwardsX(sample.moduleForcesX())
+        .withWheelForceFeedforwardsY(sample.moduleForcesY())
         );
   }
 
@@ -283,6 +335,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             () ->
                 ((!thetaToleranceEnabled || thetaController.atGoal())
                     && (!translationToleranceEnabled || translationController.atSetpoint())));
+  }
+
+  public void setDesiredPoseForDriveToPoint(Pose2d desiredPose) {
+    this.desiredPoseForDriveToPoint = desiredPose;
   }
 
   /**

@@ -3,7 +3,6 @@ package frc.robot.subsystems.drive;
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
@@ -189,8 +188,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
               });
-    
-    handleStateTransitions();
+
+      handleStateTransitions();
     }
 
     DogLog.log("RobotPose", getState().Pose);
@@ -221,17 +220,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Pose2d currentPose = getState().Pose;
         DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
 
-        double xSpeed = translationController.calculate(currentPose.getX(), desiredPoseForDriveToPoint.getX());
-        double ySpeed = translationController.calculate(currentPose.getY(), desiredPoseForDriveToPoint.getY());
+        double xSpeed =
+            translationController.calculate(currentPose.getX(), desiredPoseForDriveToPoint.getX());
+        double ySpeed =
+            translationController.calculate(currentPose.getY(), desiredPoseForDriveToPoint.getY());
         double thetaSpeed =
-          thetaController.calculate(
-              currentPose.getRotation().getRadians(),
-              desiredPoseForDriveToPoint.getRotation().getRadians());
+            thetaController.calculate(
+                currentPose.getRotation().getRadians(),
+                desiredPoseForDriveToPoint.getRotation().getRadians());
         setControl(
-          swreq_drive
-              .withVelocityX(xSpeed)
-              .withVelocityY(ySpeed)
-              .withRotationalRate(thetaSpeed));
+            swreq_drive.withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(thetaSpeed));
         break;
       default:
         break;
@@ -280,10 +278,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
 
     setControl(
-        m_pathApplyFieldSpeeds.withSpeeds(targetSpeeds)
-        .withWheelForceFeedforwardsX(sample.moduleForcesX())
-        .withWheelForceFeedforwardsY(sample.moduleForcesY())
-        );
+        m_pathApplyFieldSpeeds
+            .withSpeeds(targetSpeeds)
+            .withWheelForceFeedforwardsX(sample.moduleForcesX())
+            .withWheelForceFeedforwardsY(sample.moduleForcesY()));
   }
 
   public void zeroGyro() {
@@ -350,7 +348,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   @Override
   public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-    // super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
   }
 
   /**
@@ -371,7 +369,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    // super.addVisionMeasurement(
-    // visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    super.addVisionMeasurement(
+        visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
   }
 }

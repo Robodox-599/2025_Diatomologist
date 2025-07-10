@@ -18,11 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
-import frc.robot.subsystems.climb.Climb;
-import frc.robot.subsystems.climb.ClimbIOSim;
-import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drive.constants.RealConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -36,9 +32,6 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOReal;
-import frc.robot.subsystems.vision.VisionIOSim;
 
 public class RobotContainer {
   // Controllers
@@ -53,8 +46,8 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Rollers rollers;
   private final LEDs leds;
-  private final Climb climb;
-  private final Vision vision;
+  //   private final Climb climb;
+  //   private final Vision vision;
   private SafetyChecker safetyChecker;
   private final Superstructure superstructureCommands;
   private final Telemetry logger =
@@ -88,14 +81,14 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOReal());
-        climb = new Climb(new ClimbIOTalonFX());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOReal(RealConstants.cam2Constants),
-                new VisionIOReal(RealConstants.cam1Constants),
-                new VisionIOReal(RealConstants.cam3Constants));
+        // climb = new Climb(new ClimbIOTalonFX());
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOReal(RealConstants.cam2Constants),
+        //         new VisionIOReal(RealConstants.cam1Constants),
+        //         new VisionIOReal(RealConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -111,14 +104,14 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOSim());
-        climb = new Climb(new ClimbIOSim());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        // climb = new Climb(new ClimbIOSim());
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -134,14 +127,14 @@ public class RobotContainer {
         wrist = new Wrist(new WristIOSim(), safetyChecker);
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOSim());
-        climb = new Climb(new ClimbIOSim());
-        vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                drivetrain::getChassisSpeeds,
-                new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-                new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        // climb = new Climb(new ClimbIOSim());
+        // vision =
+        //     new Vision(
+        //         drivetrain::addVisionMeasurement,
+        //         drivetrain::getChassisSpeeds,
+        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
+        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -156,7 +149,16 @@ public class RobotContainer {
 
     superstructureCommands =
         new Superstructure(
-            drivetrain, elevator, wrist, rollers, leds, climb, vision, safetyChecker, driver, operator);
+            drivetrain,
+            elevator,
+            wrist,
+            rollers,
+            leds,
+            // climb,
+            // vision,
+            safetyChecker,
+            driver,
+            operator);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructureCommands);
 
@@ -270,7 +272,12 @@ public class RobotContainer {
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
     // // CLIMB
-    operator.rightTrigger().and(operator.leftTrigger()).onTrue(superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED));
+    operator
+        .rightTrigger()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setNextSuperStateCommand(
+                WantedSuperState.POSITION_CLIMB_PREPARED));
     // // MOVE TO BARGE
     operator
         .povUp()

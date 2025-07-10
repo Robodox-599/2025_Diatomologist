@@ -9,13 +9,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
-import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
-import frc.robot.subsystems.vision.Vision;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -23,8 +21,8 @@ public class Superstructure extends SubsystemBase {
   private final Wrist wrist;
   private final Rollers rollers;
   private final LEDs leds;
-  private final Climb climb;
-  private final Vision vision;
+  // private final Climb climb;
+  // private final Vision vision;
   private final SafetyChecker safetyChecker;
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -80,8 +78,8 @@ public class Superstructure extends SubsystemBase {
       Wrist wrist,
       Rollers rollers,
       LEDs LEDs,
-      Climb climb,
-      Vision vision,
+      // Climb climb,
+      // Vision vision,
       SafetyChecker safetyChecker,
       CommandXboxController driver,
       CommandXboxController operator) {
@@ -90,8 +88,8 @@ public class Superstructure extends SubsystemBase {
     this.wrist = wrist;
     this.rollers = rollers;
     this.leds = LEDs;
-    this.climb = climb;
-    this.vision = vision;
+    // this.climb = climb;
+    // this.vision = vision;
     this.safetyChecker = safetyChecker;
     this.driver = driver;
     this.operator = operator;
@@ -104,8 +102,8 @@ public class Superstructure extends SubsystemBase {
     rollers.updateInputs();
     wrist.updateInputs();
     leds.updateInputs();
-    climb.updateInputs();
-    vision.updateInputs();
+    // climb.updateInputs();
+    // vision.updateInputs();
     currentSuperState = handleStateTransitions();
     applyStates();
 
@@ -180,14 +178,14 @@ public class Superstructure extends SubsystemBase {
       case POSITION_ALGAE_BARGE:
         currentSuperState = CurrentSuperState.POSITION_ALGAE_BARGE;
         break;
-      case POSITION_CLIMB_PREPARED:
-        if (climb.isCageDetected()) {
-          currentSuperState = CurrentSuperState.CLIMBING;
-          wantedSuperState = WantedSuperState.CLIMBING;
-        } else {
-          currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
-        }
-        break;
+        // case POSITION_CLIMB_PREPARED:
+        //   if (climb.isCageDetected()) {
+        //     currentSuperState = CurrentSuperState.CLIMBING;
+        //     wantedSuperState = WantedSuperState.CLIMBING;
+        //   } else {
+        //     currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
+        //   }
+        //   break;
       case SCORING_CORAL:
         if (!rollers.isCoralDetected()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
@@ -198,19 +196,19 @@ public class Superstructure extends SubsystemBase {
         break;
       case SCORING_ALGAE:
         if (!rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
-          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
           currentSuperState = CurrentSuperState.SCORING_ALGAE;
         }
         break;
-      case CLIMBING:
-      if (!climb.isCageDetected()) {
-        currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
-        wantedSuperState = WantedSuperState.POSITION_CLIMB_PREPARED;
-      } else {
-        currentSuperState = CurrentSuperState.CLIMBING;
-      }
+        // case CLIMBING:
+        //   if (!climb.isCageDetected()) {
+        //     currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
+        //     wantedSuperState = WantedSuperState.POSITION_CLIMB_PREPARED;
+        //   } else {
+        //     currentSuperState = CurrentSuperState.CLIMBING;
+        //   }
       case STOPPED:
         currentSuperState = CurrentSuperState.STOPPED;
         break;
@@ -285,7 +283,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_CORAL_STATION);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void ensureCoral() {
@@ -293,7 +291,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.ENSURING_CORAL);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
     leds.setCurrentState(LEDs.CurrentState.ENSURING_CORAL);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void intakeAlgaeGround() {
@@ -301,7 +299,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_GROUND);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_GROUND);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void intakeAlgaeL2() {
@@ -309,7 +307,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L2);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void intakeAlgaeL3() {
@@ -317,7 +315,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L3);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void prepare() {
@@ -325,7 +323,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToCoralL1() {
@@ -333,7 +331,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L1);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToCoralL2() {
@@ -341,7 +339,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L2);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToCoralL3() {
@@ -349,7 +347,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L3);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToCoralL4() {
@@ -357,30 +355,30 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
-    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
-    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_BARGE);
-    climb.setWantedState(Climb.WantedState.STOWED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
   private void positionToClimbPrepared() {
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
-    climb.setWantedState(Climb.WantedState.CLIMB_PREPARED);
+    // climb.setWantedState(Climb.WantedState.CLIMB_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
@@ -395,7 +393,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void climbing() {
-    climb.setWantedState(Climb.WantedState.CLIMBING);
+    // climb.setWantedState(Climb.WantedState.CLIMBING);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 
@@ -404,7 +402,7 @@ public class Superstructure extends SubsystemBase {
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.STOPPED);
     leds.setCurrentState(LEDs.CurrentState.NO_STATE);
-    climb.setWantedState(Climb.WantedState.STOPPED);
+    // climb.setWantedState(Climb.WantedState.STOPPED);
   }
 
   public Command setNextSuperStateCommand(WantedSuperState nextState) {

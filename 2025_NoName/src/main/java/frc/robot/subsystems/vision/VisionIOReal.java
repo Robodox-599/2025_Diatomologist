@@ -77,19 +77,22 @@ public class VisionIOReal extends VisionIO {
             .mapToDouble(Double::doubleValue)
             .average()
             .orElseGet(() -> 100.0);
-
-    PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-    PoseObservation latestUpdate = null;
-    if (latestResult != null) {
-      latestUpdate =
-          new PoseObservation(
-              estRoboPose.timestampSeconds,
-              pose,
-              latestResult.getPoseAmbiguity(),
-              getSeenTags(),
-              avgDistance,
-              latestResult.getArea());
+    if (resultList.get(resultList.size() - 1).hasTargets()) {
+      PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
+      PoseObservation latestUpdate = null;
+      if (latestResult != null) {
+        latestUpdate =
+            new PoseObservation(
+                estRoboPose.timestampSeconds,
+                pose,
+                latestResult.getPoseAmbiguity(),
+                getSeenTags(),
+                avgDistance,
+                latestResult.getArea());
+      }
+      return Optional.of(latestUpdate);
     }
+    PoseObservation latestUpdate = null;
     return Optional.of(latestUpdate);
   }
 

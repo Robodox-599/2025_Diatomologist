@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -295,14 +296,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
   }
 
-  public Command move3mForward() {
-    return this.run(
-        () -> {
-          Pose2d setpoint =
-              (getState().Pose)
-                  .plus(new Transform2d(new Translation2d(1.0, 0.0), new Rotation2d()));
-        });
-  }
 
   public Command moveToPoint(
       Supplier<Pose2d> targetPose,

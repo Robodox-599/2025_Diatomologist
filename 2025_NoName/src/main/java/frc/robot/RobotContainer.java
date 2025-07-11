@@ -220,6 +220,15 @@ public class RobotContainer {
     // // reset the field-centric heading on left bumper press
     // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+    // SET DRIVE VELOCITY (FOR PID TUNING)
+    driver.x().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(1).withVelocityY(0).withRotationalRate(0)));
+
+    // SET TURN VELOCITY (FOR PID TUNING)
+    driver.a().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(0).withVelocityY(0).withRotationalRate(1)));
+
+    // BRAKE (FOR PID TUNING)
+    driver.b().onTrue(drivetrain.applyRequest(() -> brake));
+
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
     // // UPDATE STATE WITH OPERATOR STATE

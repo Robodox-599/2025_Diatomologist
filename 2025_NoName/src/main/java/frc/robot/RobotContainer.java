@@ -217,17 +217,28 @@ public class RobotContainer {
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
-    // // reset the field-centric heading on left bumper press
-    // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    // // // reset the field-centric heading on left bumper press
+    // // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // SET DRIVE VELOCITY (FOR PID TUNING)
-    driver.x().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(1).withVelocityY(0).withRotationalRate(0)));
-
-    // SET TURN VELOCITY (FOR PID TUNING)
-    driver.a().whileTrue(drivetrain.applyRequest(() -> drive.withVelocityX(0).withVelocityY(0).withRotationalRate(1)));
+    driver
+        .x()
+        .whileTrue(
+            drivetrain.applyRequest(
+                () -> drive.withVelocityX(1.5).withVelocityY(0).withRotationalRate(0)));
 
     // BRAKE (FOR PID TUNING)
-    driver.b().onTrue(drivetrain.applyRequest(() -> brake));
+    driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
+
+    // // Run SysId routines when holding back/start and X/Y.
+    // // Note that each routine ssdx hould be run exactly once in a single log.
+    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    // start is the right button with 3 lines
+    // back is the left button with two squares
 
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());

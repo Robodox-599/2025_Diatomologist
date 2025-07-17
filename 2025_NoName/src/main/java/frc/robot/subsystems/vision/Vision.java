@@ -47,38 +47,42 @@ public class Vision extends SubsystemBase {
 
       // Loop over pose observations
       for (var observation : io[cameraIndex].poseObservations) {
-        // Check whether to reject pose
-        boolean rejectPose = checkPose(observation, cameraIndex);
-        // Log if pose accepted and add pose to log
-        DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", !rejectPose);
-        if (rejectPose) {
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
-              observation.observedPose());
-          continue;
-        } else {
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
-              observation.getObservedPose());
-        }
-
         // Calculate standard deviations for selected pose
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
+
         double linearStdDev =
             io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
         double angularStdDev =
             io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
 
         linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        angularStdDev *= io[cameraIndex].getVisionConstants().angularStdDevBaseline();
-        angularStdDev =
-            (observation.getTagArea() > 8
-                    && speedsConsumer.getSpeeds().vxMetersPerSecond < 3
-                    && speedsConsumer.getSpeeds().vyMetersPerSecond < 3
-                    && speedsConsumer.getSpeeds().omegaRadiansPerSecond < 4 * Math.PI)
-                ? angularStdDev + 25
-                : 999999999.0;
+        angularStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
+        
+        // Check whether to reject pose
+        boolean rejectPose = checkPose(observation, cameraIndex);
+
+        var speeds = speedsConsumer.getSpeeds();
+
+        if (observation.getTagArea() > 8
+        && speeds.vxMetersPerSecond < 3
+        && speeds.vyMetersPerSecond < 3
+        && speeds.omegaRadiansPerSecond < 4 * Math.PI && !rejectPose) {
+          DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", true);
+          DogLog.log(
+          "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
+          observation.getObservedPose());
+
+          angularStdDev += 25;
+        } else {
+          DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", false);
+          DogLog.log(
+              "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
+              observation.observedPose());
+
+          continue;
+        }
+
         consumer.accept(
             observation.getObservedPose().toPose2d(),
             observation.timestamp(),

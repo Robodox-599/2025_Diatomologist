@@ -77,23 +77,26 @@ public class VisionIOReal extends VisionIO {
             .mapToDouble(Double::doubleValue)
             .average()
             .orElseGet(() -> 100.0);
-    if (resultList.get(resultList.size() - 1).hasTargets()) {
-      PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
-      PoseObservation latestUpdate = null;
-      if (latestResult != null) {
-        latestUpdate =
-            new PoseObservation(
-                estRoboPose.timestampSeconds,
-                pose,
-                latestResult.getPoseAmbiguity(),
-                getSeenTags(),
-                avgDistance,
-                latestResult.getArea());
-      }
-      return Optional.of(latestUpdate);
+
+    if (resultList.isEmpty() || !resultList.get(resultList.size() - 1).hasTargets()) {
+      return Optional.empty();
     }
+
+    PhotonTrackedTarget latestResult = resultList.get(resultList.size() - 1).getBestTarget();
+    if (latestResult == null) {
+      return Optional.empty();
+    }
+
     PoseObservation latestUpdate = null;
-    return Optional.of(latestUpdate);
+    latestUpdate =
+        new PoseObservation(
+            estRoboPose.timestampSeconds,
+            pose,
+            latestResult.getPoseAmbiguity(),
+            getSeenTags(),
+            avgDistance,
+            latestResult.getArea());
+      return Optional.of(latestUpdate);
   }
 
   public List<Integer> getSeenTags() {
@@ -102,14 +105,19 @@ public class VisionIOReal extends VisionIO {
 
   @Override
   public void updateInputs() {
+    if (camera == null) {
+      super.cameraConnected = false;
+      return;
+    }
+
     super.cameraConnected = camera.isConnected();
     if (!super.cameraConnected) {
       return;
     }
-    List<PoseObservation> poseObservations = new LinkedList<>();
+    ArrayList<PoseObservation> poseObservations = new ArrayList<>();
     List<PhotonPipelineResult> resultList = camera.getAllUnreadResults();
 
-    if (camera == null || !camera.isConnected() || resultList == null || resultList.isEmpty()) {
+    if (!(resultList.size() > 0)) {
       super.hasTargets = false;
       return;
     }
@@ -120,14 +128,14 @@ public class VisionIOReal extends VisionIO {
     seenTags.clear();
 
     resultList.stream()
-        .filter(result -> result.hasTargets())
-        .map(result -> poseEstimator.update(result))
-        .filter(Optional::isPresent)
+        .filter(result -> result.hasTargets()) // filters results to only those that have targets
+        .map(result -> poseEstimator.update(result)) // gets an estimated robot pose for each result
+        .filter(Optional::isPresent) // filters out any empty optionals
         .map(Optional::get)
-        .map(estRoboPose -> update(estRoboPose, resultList))
-        .filter(Optional::isPresent)
+        .map(estRoboPose -> update(estRoboPose, resultList)) // calls update which returns pose observation
+        .filter(Optional::isPresent) // filters out any empty optionals
         .map(Optional::get)
-        .forEach(poseObservations::add);
+        .forEach(poseObservations::add); // adds pose observations to list
 
     // Determine the possible robot pose results the camera has determined
     super.poseObservations = new PoseObservation[poseObservations.size()];

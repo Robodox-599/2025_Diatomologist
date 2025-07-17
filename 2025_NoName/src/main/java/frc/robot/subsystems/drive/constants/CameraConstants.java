@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.VisionConstants;
 
-public class RealConstants {
+public class CameraConstants {
   /* VISION */
   public static final String camera1Name = "FL_Camera";
 

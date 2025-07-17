@@ -58,20 +58,21 @@ public class Vision extends SubsystemBase {
 
         linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
         angularStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        
+
         // Check whether to reject pose
         boolean rejectPose = checkPose(observation, cameraIndex);
 
         var speeds = speedsConsumer.getSpeeds();
 
         if (observation.getTagArea() > 8
-        && speeds.vxMetersPerSecond < 3
-        && speeds.vyMetersPerSecond < 3
-        && speeds.omegaRadiansPerSecond < 4 * Math.PI && !rejectPose) {
+            && speeds.vxMetersPerSecond < 3
+            && speeds.vyMetersPerSecond < 3
+            && speeds.omegaRadiansPerSecond < 4 * Math.PI
+            && !rejectPose) {
           DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", true);
           DogLog.log(
-          "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
-          observation.getObservedPose());
+              "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
+              observation.getObservedPose());
 
           angularStdDev += 25;
         } else {

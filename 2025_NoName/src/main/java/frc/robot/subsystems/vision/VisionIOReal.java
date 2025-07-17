@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import frc.robot.FieldConstants;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
@@ -96,7 +95,7 @@ public class VisionIOReal extends VisionIO {
             getSeenTags(),
             avgDistance,
             latestResult.getArea());
-      return Optional.of(latestUpdate);
+    return Optional.of(latestUpdate);
   }
 
   public List<Integer> getSeenTags() {
@@ -132,7 +131,9 @@ public class VisionIOReal extends VisionIO {
         .map(result -> poseEstimator.update(result)) // gets an estimated robot pose for each result
         .filter(Optional::isPresent) // filters out any empty optionals
         .map(Optional::get)
-        .map(estRoboPose -> update(estRoboPose, resultList)) // calls update which returns pose observation
+        .map(
+            estRoboPose ->
+                update(estRoboPose, resultList)) // calls update which returns pose observation
         .filter(Optional::isPresent) // filters out any empty optionals
         .map(Optional::get)
         .forEach(poseObservations::add); // adds pose observations to list

@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import java.util.List;
+import java.util.ArrayList;
 
 public abstract class VisionIO {
   /**
@@ -48,7 +48,7 @@ public abstract class VisionIO {
       double timestamp,
       Pose3d observedPose,
       double ambiguity,
-      List<Integer> tagsList,
+      ArrayList<Integer> tagsList,
       double averageTagDistance,
       double tagArea) {
     public double getAverageTagDistance() {

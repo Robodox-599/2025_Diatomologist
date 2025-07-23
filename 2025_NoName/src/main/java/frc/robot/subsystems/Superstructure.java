@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
+import frc.robot.commands.AutoAlignPoseGenerator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain.WantedState;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
@@ -42,9 +44,19 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
+    AUTO_SCORE_L1_LEFT,
+    AUTO_SCORE_L1_RIGHT,
+    AUTO_SCORE_L2_LEFT,
+    AUTO_SCORE_L2_RIGHT,
+    AUTO_SCORE_L3_LEFT,
+    AUTO_SCORE_L3_RIGHT,
+    AUTO_SCORE_L4_LEFT,
+    AUTO_SCORE_L4_RIGHT,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     POSITION_CLIMB_PREPARED,
+    AUTO_ALIGN_LEFT_BRANCH,
+    AUTO_ALIGN_RIGHT_BRANCH,
     SCORING_CORAL,
     SCORING_ALGAE,
     CLIMBING,
@@ -62,6 +74,8 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
+    AUTO_SCORE_LEFT,
+    AUTO_SCORE_RIGHT,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     POSITION_CLIMB_PREPARED,
@@ -172,6 +186,42 @@ public class Superstructure extends SubsystemBase {
       case POSITION_CORAL_L4:
         currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         break;
+      case AUTO_SCORE_LEFT:
+        switch (wantedSuperState) {
+          case POSITION_CORAL_L1:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L1_LEFT;
+            break;
+          case POSITION_CORAL_L2:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L2_LEFT;
+            break;
+          case POSITION_CORAL_L3:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L3_LEFT;
+            break;
+          case POSITION_CORAL_L4:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L4_LEFT;
+            break;
+          default:
+            currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
+            break;
+        }
+      case AUTO_SCORE_RIGHT:
+        switch (wantedSuperState) {
+          case POSITION_CORAL_L1:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L1_RIGHT;
+            break;
+          case POSITION_CORAL_L2:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L2_RIGHT;
+            break;
+          case POSITION_CORAL_L3:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L3_RIGHT;
+            break;
+          case POSITION_CORAL_L4:
+            currentSuperState = CurrentSuperState.AUTO_SCORE_L4_RIGHT;
+            break;
+          default:
+            currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+            break;
+        }
       case POSITION_ALGAE_PROCESSOR:
         currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         break;
@@ -251,6 +301,30 @@ public class Superstructure extends SubsystemBase {
       case POSITION_CORAL_L4:
         positionToCoralL4();
         break;
+      case AUTO_SCORE_L1_LEFT:
+        autoScoreL1(true);
+        break;
+      case AUTO_SCORE_L1_RIGHT:
+        autoScoreL1(false);
+        break;
+      case AUTO_SCORE_L2_LEFT:
+        autoScoreL2(true);
+        break; 
+      case AUTO_SCORE_L2_RIGHT:
+        autoScoreL2(false);
+        break;
+      case AUTO_SCORE_L3_LEFT:
+        autoScoreL3(true);
+        break;
+      case AUTO_SCORE_L3_RIGHT: 
+        autoScoreL3(false);
+        break;
+      case AUTO_SCORE_L4_LEFT:
+        autoScoreL4(true);
+        break;
+      case AUTO_SCORE_L4_RIGHT:
+        autoScoreL4(false);
+        break;
       case POSITION_ALGAE_PROCESSOR:
         positionToAlgaeProcessor();
         break;
@@ -259,6 +333,12 @@ public class Superstructure extends SubsystemBase {
         break;
       case POSITION_CLIMB_PREPARED:
         positionToClimbPrepared();
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH:
+        autoAlignToBranch(true);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH:
+        autoAlignToBranch(false);
         break;
       case SCORING_CORAL:
         scoreCoral();
@@ -279,6 +359,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void intakeCoralStation() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
@@ -287,6 +368,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void ensureCoral() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.ENSURING_CORAL);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
@@ -295,6 +377,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void intakeAlgaeGround() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_GROUND);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_GROUND);
@@ -303,6 +386,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void intakeAlgaeL2() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
@@ -311,6 +395,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void intakeAlgaeL3() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_L3);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
@@ -319,6 +404,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void prepare() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
@@ -327,6 +413,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToCoralL1() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
@@ -335,6 +422,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToCoralL2() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
@@ -343,6 +431,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToCoralL3() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
@@ -351,6 +440,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToCoralL4() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.SCORING_CORAL);
@@ -358,7 +448,84 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
+  /** Automatically drives to a branch and scores L1
+   * 
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+   */
+  private void autoScoreL1(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isWithinRaiseDistance()) {
+      positionToCoralL1();
+      if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
+        scoreCoral();
+      }
+    }
+    if (!rollers.isCoralDetected()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
+  /** Automatically drives to a branch and scores L2
+   * 
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+   */
+  private void autoScoreL2(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isWithinRaiseDistance()) {
+      positionToCoralL2();
+      if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
+        scoreCoral();
+      }
+    }
+    if (!rollers.isCoralDetected()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
+  /** Automatically drives to a branch and scores L3
+   * 
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+   */
+  private void autoScoreL3(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isWithinRaiseDistance()) {
+      positionToCoralL3();
+      if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
+        scoreCoral();
+      }
+    }
+    if (!rollers.isCoralDetected()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
+  /** Automatically drives to a branch and scores L4
+   * 
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+   */
+  private void autoScoreL4(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isWithinRaiseDistance()) {
+      positionToCoralL4();
+      if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
+        scoreCoral();
+      }
+    }
+    if (!rollers.isCoralDetected()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
   private void positionToAlgaeProcessor() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
     // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
@@ -367,6 +534,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToAlgaeBarge() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
     // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
@@ -375,6 +543,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void positionToClimbPrepared() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
@@ -382,22 +551,39 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
+  /** Automatically drives to a branch
+   * 
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+   */
+  private void autoAlignToBranch(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (!rollers.isCoralDetected()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
   private void scoreCoral() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     rollers.setWantedState(Rollers.WantedState.SCORING_CORAL);
     leds.setCurrentState(LEDs.CurrentState.SCORING_CORAL);
   }
 
   private void scoreAlgae() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     rollers.setWantedState(Rollers.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.SCORING_ALGAE);
   }
 
   private void climbing() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     // climb.setWantedState(Climb.WantedState.CLIMBING);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 
   private void stop() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.STOPPED);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.STOPPED);
@@ -439,13 +625,12 @@ public class Superstructure extends SubsystemBase {
     nextSuperState = WantedSuperState.NO_STATE;
   }
 
-  private boolean isAtWantedState() {
-    return (wantedSuperState.name().equals(currentSuperState.name()))
-        && safetyChecker.isAtSetpoints();
-  }
-
   public Command zeroGyroCommand() {
     return this.runOnce(() -> drivetrain.zeroGyro());
+  }
+
+  public Command setTeleopDriveState() {
+    return this.runOnce(() -> drivetrain.setWantedState(WantedState.TELEOP_DRIVE));
   }
 
   public Command rumbleDriverController() {

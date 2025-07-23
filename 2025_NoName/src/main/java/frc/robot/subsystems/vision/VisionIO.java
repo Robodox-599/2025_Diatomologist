@@ -41,7 +41,6 @@ public abstract class VisionIO {
    * @param timestamp the time the pose was observed
    * @param observedPose the 3D pose detected by the camera
    * @param ambiguity a measure of how uncertain the observation is
-   * @param tagCount the number of tags detected contributing to this pose
    * @param averageTagDistance the average distance to the detected tags
    */
   public static record PoseObservation(

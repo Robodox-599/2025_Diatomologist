@@ -98,7 +98,7 @@ public class VisionIOReal extends VisionIO {
     return Optional.of(latestUpdate);
   }
 
-  public List<Integer> getSeenTags() {
+  public ArrayList<Integer> getSeenTags() {
     return seenTags;
   }
 

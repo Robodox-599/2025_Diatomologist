@@ -72,8 +72,8 @@ public class SafetyChecker {
     return (elevatorSupplyInches < maximumElevatorSwingThroughHeight);
   }
 
-  public boolean isAtSetpoints() {
-    DogLog.log("SafetyChecker/isAtSetpoints", isAtSetpointElevator && isAtSetpointWrist);
+  public boolean isReadyToScore() {
+    DogLog.log("SafetyChecker/readyToScore", isAtSetpointElevator && isAtSetpointWrist);
     return isAtSetpointElevator && isAtSetpointWrist;
   }
 

@@ -13,12 +13,15 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
-public class AutoAlignToField {
+public class AutoAlignPoseGenerator {
 
-  public static double awayFromReefDistance = 15.0; // inches from reef face
-
+  /** Finds nearest branch position
+   * 
+   * @param robotPoseSupplier robot pose
+   * @param useLeftBranch true if left branch, false if right branch
+   */
   public static Pose2d getNearestBranchPosition(
-      Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch, boolean awayFromReef) {
+      Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch) {
     Pose2d robotPose = robotPoseSupplier.get();
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
@@ -39,9 +42,6 @@ public class AutoAlignToField {
         Units.inchesToMeters(16.75 + 1.0); // inches from reef face (bot radius + 1 inch)
     double adjustY = Units.inchesToMeters(6.469); // inches from center (exact)
 
-    if (awayFromReef) {
-      adjustX += Units.inchesToMeters(awayFromReefDistance);
-    }
     // Apply the transformation based on left/right boolean
     Pose2d branchPosition =
         new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation())
@@ -56,7 +56,7 @@ public class AutoAlignToField {
   }
 
   public static Pose2d getNearestReefFacePosition(
-      Supplier<Pose2d> robotPoseSupplier, boolean awayFromReef) {
+      Supplier<Pose2d> robotPoseSupplier) {
     Pose2d robotPose = robotPoseSupplier.get();
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
@@ -75,10 +75,6 @@ public class AutoAlignToField {
 
     double adjustX = Units.inchesToMeters(16.75 + 1); // inches from reef face (bot radius + 1 inch)
 
-    if (awayFromReef) {
-      adjustX += Units.inchesToMeters(awayFromReefDistance);
-    }
-
     Pose2d nearestReefFacePosition =
         new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation())
             .transformBy(new Transform2d(adjustX, 0, new Rotation2d()));
@@ -88,53 +84,5 @@ public class AutoAlignToField {
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
     return targetPose;
-  }
-
-  public static Command alignToNearestLeftBranch(CommandSwerveDrivetrain drive) {
-    return Commands.sequence(
-        drive.moveToPoint(
-            () ->
-                getNearestBranchPosition(() -> drive.getState().Pose, true, true)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            false),
-        drive.moveToPoint(
-            () ->
-                getNearestBranchPosition(() -> drive.getState().Pose, true, false)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            true));
-  }
-
-  public static Command alignToNearestRightBranch(CommandSwerveDrivetrain drive) {
-    return Commands.sequence(
-        drive.moveToPoint(
-            () ->
-                getNearestBranchPosition(() -> drive.getState().Pose, false, true)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            false),
-        drive.moveToPoint(
-            () ->
-                getNearestBranchPosition(() -> drive.getState().Pose, false, false)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            true));
-  }
-
-  public static Command alignToNearestReefFace(CommandSwerveDrivetrain drive) {
-    return Commands.sequence(
-        drive.moveToPoint(
-            () ->
-                getNearestReefFacePosition(() -> drive.getState().Pose, true)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            false),
-        drive.moveToPoint(
-            () ->
-                getNearestReefFacePosition(() -> drive.getState().Pose, false)
-                    .plus(new Transform2d(new Translation2d(), new Rotation2d(Math.PI))),
-            true,
-            true));
   }
 }

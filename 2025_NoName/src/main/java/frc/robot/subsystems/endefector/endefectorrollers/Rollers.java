@@ -63,12 +63,12 @@ public class Rollers {
         currentState = CurrentState.HOLD_ALGAE;
         break;
       case SCORING_CORAL:
-        if (safetyChecker.isAtSetpoints()) {
+        if (safetyChecker.isReadyToScore()) {
           currentState = CurrentState.SCORING_CORAL;
         }
         break;
       case SCORING_ALGAE:
-        if (safetyChecker.isAtSetpoints()) {
+        if (safetyChecker.isReadyToScore()) {
           currentState = CurrentState.SCORING_ALGAE;
         }
         break;

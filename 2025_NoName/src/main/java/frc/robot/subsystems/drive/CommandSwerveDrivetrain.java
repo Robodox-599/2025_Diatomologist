@@ -42,18 +42,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final double DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT = 0.1;
   private final double DRIVE_TO_POINT_RAISE_RADIUS_INCHES = 24.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
-  protected boolean withinRaiseDistance = false;
+  private static boolean withinCoralRaiseDistance = false;
+  private static boolean withinAlgaeRaiseDistance = false;
 
   private final PIDController choreoXController = new PIDController(10, 0, 0);
   private final PIDController choreoYController = new PIDController(10, 0, 0);
-  private final PIDController choreoThetaPID =
-      new PIDController(
-          10,
-          0,
-          0);
+  private final PIDController choreoThetaPID = new PIDController(10, 0, 0);
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
-  private final ProfiledPIDController driveToPointTranslationalController = new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(TunerConstants.MAX_LINEAR_SPEED, TunerConstants.MAX_LINEAR_ACCELERATION));
+  private final ProfiledPIDController driveToPointTranslationalController =
+      new ProfiledPIDController(
+          0.0,
+          0.0,
+          0.0,
+          new TrapezoidProfile.Constraints(
+              TunerConstants.MAX_LINEAR_SPEED, TunerConstants.MAX_LINEAR_ACCELERATION));
   ProfiledPIDController driveToPointAngularController =
       new ProfiledPIDController(
           0.0,
@@ -74,7 +77,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     TELEOP_DRIVE,
     DRIVE_TO_POINT,
   }
-
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -316,35 +318,49 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       case DRIVE_TO_POINT:
         Pose2d currentPose = getState().Pose;
 
-        Translation2d translationToTarget = targetPoseForDriveToPoint.getTranslation().minus(currentPose.getTranslation());
+        Translation2d translationToTarget =
+            targetPoseForDriveToPoint.getTranslation().minus(currentPose.getTranslation());
         Rotation2d direction = translationToTarget.getAngle();
 
         double linearDistance = translationToTarget.getNorm();
         if (linearDistance <= Units.feetToMeters(2)) {
-          withinRaiseDistance = true;
+          withinCoralRaiseDistance = true;
         } else {
-          withinRaiseDistance = false;
+          withinCoralRaiseDistance = false;
+        }
+        if (linearDistance <= Units.feetToMeters(3)) {
+          withinAlgaeRaiseDistance = true;
+        } else {
+          withinAlgaeRaiseDistance = false;
         }
         double frictionConstant = 0.0;
         if (linearDistance >= Units.inchesToMeters(DRIVE_TO_POINT_RAISE_RADIUS_INCHES)) {
           frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT;
         }
 
-        double velocityOutput = Math.abs(driveToPointTranslationalController.calculate(linearDistance, 0) + frictionConstant);
+        double velocityOutput =
+            Math.abs(
+                driveToPointTranslationalController.calculate(linearDistance, 0)
+                    + frictionConstant);
 
         double xSpeed = velocityOutput * direction.getCos();
         double ySpeed = velocityOutput * direction.getSin();
-        double angularSpeed = driveToPointAngularController.calculate(
+        double angularSpeed =
+            driveToPointAngularController.calculate(
                 currentPose.getRotation().getRadians(),
                 targetPoseForDriveToPoint.getRotation().getRadians());
 
         setControl(
-            swreq_drive.withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(angularSpeed));
+            swreq_drive
+                .withVelocityX(xSpeed)
+                .withVelocityY(ySpeed)
+                .withRotationalRate(angularSpeed));
 
         DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
         DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
         DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
-        DogLog.log("Drive/DriveToPose/WithinRaiseDistance", withinRaiseDistance);
+        DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
+        DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
         break;
       default:
         break;
@@ -355,8 +371,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.targetPoseForDriveToPoint = targetPose;
   }
 
-  public boolean isWithinRaiseDistance() {
-    return withinRaiseDistance;
+  public boolean isWithinCoralRaiseDistance() {
+    return withinCoralRaiseDistance;
+  }
+
+  public boolean isWithinAlgaeRaiseDistance() {
+    return withinAlgaeRaiseDistance;
   }
 
   public boolean isAtDriveToPointSetpoints() {
@@ -367,7 +387,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public boolean isAtDriveToPointTranslationSetpoint() {
-    double distance = targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation()).getNorm();
+    double distance =
+        targetPoseForDriveToPoint
+            .getTranslation()
+            .minus(getState().Pose.getTranslation())
+            .getNorm();
     return MathUtil.isNear(0.0, distance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
   }
 

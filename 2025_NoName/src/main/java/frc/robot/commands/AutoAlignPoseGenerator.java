@@ -4,19 +4,17 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.util.AllianceFlipUtil;
 import java.util.function.Supplier;
 
 public class AutoAlignPoseGenerator {
+  private static int reefFaceIndex = 0;
 
-  /** Finds nearest branch position
-   * 
+  /**
+   * Finds nearest branch position
+   *
    * @param robotPoseSupplier robot pose
    * @param useLeftBranch true if left branch, false if right branch
    */
@@ -55,8 +53,15 @@ public class AutoAlignPoseGenerator {
     return targetPose;
   }
 
-  public static Pose2d getNearestReefFacePosition(
-      Supplier<Pose2d> robotPoseSupplier) {
+  /**
+   * Finds nearest reef face position for algae
+   *
+   * @param robotPoseSupplier robot pose
+   * @param moveBack true if the target pose should be moved back from the reef face (used when
+   *     algae is already grabbed)
+   */
+  public static Pose2d getNearestAlgaeReefFacePosition(
+      Supplier<Pose2d> robotPoseSupplier, boolean moveBack) {
     Pose2d robotPose = robotPoseSupplier.get();
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
@@ -70,10 +75,15 @@ public class AutoAlignPoseGenerator {
       if (distance < minDistance) {
         minDistance = distance;
         nearestFace = centerFace;
+        reefFaceIndex = i;
       }
     }
 
     double adjustX = Units.inchesToMeters(16.75 + 1); // inches from reef face (bot radius + 1 inch)
+
+    if (moveBack) {
+      adjustX += Units.inchesToMeters(20); // move back 20 inches
+    }
 
     Pose2d nearestReefFacePosition =
         new Pose2d(nearestFace.getTranslation(), nearestFace.getRotation())
@@ -84,5 +94,9 @@ public class AutoAlignPoseGenerator {
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
     return targetPose;
+  }
+
+  public static int getReefFaceIndex() {
+    return reefFaceIndex;
   }
 }

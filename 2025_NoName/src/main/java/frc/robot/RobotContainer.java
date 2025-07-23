@@ -203,7 +203,11 @@ public class RobotContainer {
 
     // Set the teleop drive state when any of the joysticks are moved
     // This is used to ensure that the robot is in teleop drive mode when the joysticks are moved
-    new Trigger(() -> joystickDeadbandApply(driver.getLeftY()) != 0 || joystickDeadbandApply(driver.getLeftX()) != 0 || joystickDeadbandApply(driver.getRightX()) != 0)
+    new Trigger(
+            () ->
+                joystickDeadbandApply(driver.getLeftY()) != 0
+                    || joystickDeadbandApply(driver.getLeftX()) != 0
+                    || joystickDeadbandApply(driver.getRightX()) != 0)
         .onTrue(new InstantCommand(() -> superstructureCommands.setTeleopDriveState()));
 
     // Note that X is defined as forward according to WPILib convention,
@@ -263,10 +267,19 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
     // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF NO STATE IS SET)
-    driver.povLeft().onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
+    driver
+        .povLeft()
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
     // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF NO STATE IS SET)
-    driver.povRight().onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
+    driver
+        .povRight()
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
 
+    driver.a().or(driver.b()).or(driver.x()).or(driver.y())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
 
     //                                OPERATOR BINDS
     // // MOVE TO L1

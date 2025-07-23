@@ -11,7 +11,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -94,19 +93,19 @@ public class CameraReal {
         double averageDistance = 0.0;
         double averageTagArea = 0.0;
         double ambiguity = 0.0;
-          for (PhotonTrackedTarget target : estimatedRobotPose.targetsUsed) {
-            targets.add(target.getFiducialId());
-            Transform3d transform = target.getBestCameraToTarget();
-            Translation3d translation = transform.getTranslation();
-            double distance = Math.hypot(translation.getX(), translation.getY());
-            totalDistance += distance;
-            totalArea += target.getArea();
-            ambiguity = target.getPoseAmbiguity();
-          }
-          averageDistance =
-              estimatedRobotPose.targetsUsed.isEmpty() ? 100.0 : totalDistance / targets.size();
-          averageTagArea =
-              estimatedRobotPose.targetsUsed.isEmpty() ? 0.0 : totalArea / targets.size();
+        for (PhotonTrackedTarget target : estimatedRobotPose.targetsUsed) {
+          targets.add(target.getFiducialId());
+          Transform3d transform = target.getBestCameraToTarget();
+          Translation3d translation = transform.getTranslation();
+          double distance = Math.hypot(translation.getX(), translation.getY());
+          totalDistance += distance;
+          totalArea += target.getArea();
+          ambiguity = target.getPoseAmbiguity();
+        }
+        averageDistance =
+            estimatedRobotPose.targetsUsed.isEmpty() ? 100.0 : totalDistance / targets.size();
+        averageTagArea =
+            estimatedRobotPose.targetsUsed.isEmpty() ? 0.0 : totalArea / targets.size();
 
         DogLog.log(key + "/Tags Used", targets.size());
         DogLog.log(key + "/Tags Used/Tag IDs", targets.toString());

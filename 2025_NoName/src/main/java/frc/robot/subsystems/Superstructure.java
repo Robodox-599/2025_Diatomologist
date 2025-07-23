@@ -39,6 +39,7 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
+    AUTO_INTAKE_ALGAE,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
@@ -57,6 +58,7 @@ public class Superstructure extends SubsystemBase {
     POSITION_CLIMB_PREPARED,
     AUTO_ALIGN_LEFT_BRANCH,
     AUTO_ALIGN_RIGHT_BRANCH,
+    AUTO_ALIGN_ALGAE,
     SCORING_CORAL,
     SCORING_ALGAE,
     CLIMBING,
@@ -69,6 +71,7 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
+    AUTO_INTAKE_ALGAE,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
@@ -171,6 +174,18 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
         }
         break;
+      case AUTO_INTAKE_ALGAE:
+        switch (nextSuperState) {
+          case INTAKING_ALGAE_L2:
+            currentSuperState = CurrentSuperState.AUTO_INTAKE_ALGAE;
+            break;
+          case INTAKING_ALGAE_L3:
+            currentSuperState = CurrentSuperState.AUTO_INTAKE_ALGAE;
+            break;
+          default:
+            currentSuperState = CurrentSuperState.AUTO_ALIGN_ALGAE;
+            break;
+        }
       case POSITION_PREPARED:
         currentSuperState = CurrentSuperState.POSITION_PREPARED;
         break;
@@ -187,7 +202,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         break;
       case AUTO_SCORE_LEFT:
-        switch (wantedSuperState) {
+        switch (nextSuperState) {
           case POSITION_CORAL_L1:
             currentSuperState = CurrentSuperState.AUTO_SCORE_L1_LEFT;
             break;
@@ -204,8 +219,9 @@ public class Superstructure extends SubsystemBase {
             currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
             break;
         }
+        break;
       case AUTO_SCORE_RIGHT:
-        switch (wantedSuperState) {
+        switch (nextSuperState) {
           case POSITION_CORAL_L1:
             currentSuperState = CurrentSuperState.AUTO_SCORE_L1_RIGHT;
             break;
@@ -222,6 +238,7 @@ public class Superstructure extends SubsystemBase {
             currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
             break;
         }
+        break;
       case POSITION_ALGAE_PROCESSOR:
         currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         break;
@@ -286,6 +303,9 @@ public class Superstructure extends SubsystemBase {
       case INTAKING_ALGAE_L3:
         intakeAlgaeL3();
         break;
+      case AUTO_INTAKE_ALGAE:
+        autoIntakeAlgae();
+        break;
       case POSITION_PREPARED:
         prepare();
         break;
@@ -309,14 +329,14 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L2_LEFT:
         autoScoreL2(true);
-        break; 
+        break;
       case AUTO_SCORE_L2_RIGHT:
         autoScoreL2(false);
         break;
       case AUTO_SCORE_L3_LEFT:
         autoScoreL3(true);
         break;
-      case AUTO_SCORE_L3_RIGHT: 
+      case AUTO_SCORE_L3_RIGHT:
         autoScoreL3(false);
         break;
       case AUTO_SCORE_L4_LEFT:
@@ -339,6 +359,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_ALIGN_RIGHT_BRANCH:
         autoAlignToBranch(false);
+        break;
+      case AUTO_ALIGN_ALGAE:
+        autoAlignToAlgaeReefFace();
         break;
       case SCORING_CORAL:
         scoreCoral();
@@ -403,6 +426,30 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
+  private void autoIntakeAlgae() {
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
+            drivetrain.getPoseSupplier(), false));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isWithinAlgaeRaiseDistance()) {
+      if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
+        intakeAlgaeL3();
+      } else {
+        intakeAlgaeL2();
+      }
+    }
+    if (rollers.isAlgaeDetected()) {
+      drivetrain.setTargetPoseForDriveToPoint(
+          AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
+              drivetrain.getPoseSupplier(), true));
+      positionToAlgaeProcessor();
+      if (drivetrain.isAtDriveToPointSetpoints()) {
+        drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+        setNextSuperState(WantedSuperState.POSITION_ALGAE_PROCESSOR);
+      }
+    }
+  }
+
   private void prepare() {
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
@@ -448,14 +495,18 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  /** Automatically drives to a branch and scores L1
-   * 
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+  /**
+   * Automatically drives to a branch and scores L1
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
    */
   private void autoScoreL1(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestBranchPosition(
+            drivetrain.getPoseSupplier(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isWithinRaiseDistance()) {
+    if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL1();
       if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
         scoreCoral();
@@ -467,14 +518,18 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  /** Automatically drives to a branch and scores L2
-   * 
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+  /**
+   * Automatically drives to a branch and scores L2
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
    */
   private void autoScoreL2(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestBranchPosition(
+            drivetrain.getPoseSupplier(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isWithinRaiseDistance()) {
+    if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL2();
       if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
         scoreCoral();
@@ -486,14 +541,18 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  /** Automatically drives to a branch and scores L3
-   * 
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+  /**
+   * Automatically drives to a branch and scores L3
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
    */
   private void autoScoreL3(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestBranchPosition(
+            drivetrain.getPoseSupplier(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isWithinRaiseDistance()) {
+    if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL3();
       if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
         scoreCoral();
@@ -505,14 +564,18 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  /** Automatically drives to a branch and scores L4
-   * 
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+  /**
+   * Automatically drives to a branch and scores L4
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
    */
   private void autoScoreL4(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestBranchPosition(
+            drivetrain.getPoseSupplier(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isWithinRaiseDistance()) {
+    if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL4();
       if (drivetrain.isAtDriveToPointSetpoints() && safetyChecker.isReadyToScore()) {
         scoreCoral();
@@ -551,16 +614,30 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
-  /** Automatically drives to a branch
-   * 
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right branch
+  /**
+   * Automatically drives to a branch
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
    */
   private void autoAlignToBranch(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPoseSupplier(), useLeftBranch));
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestBranchPosition(
+            drivetrain.getPoseSupplier(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (!rollers.isCoralDetected()) {
+    if (drivetrain.isAtDriveToPointSetpoints()) {
       drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
-      setNextSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    }
+  }
+
+  /** Automatically drives to a reef face */
+  private void autoAlignToAlgaeReefFace() {
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
+            drivetrain.getPoseSupplier(), false));
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
+    if (drivetrain.isAtDriveToPointSetpoints()) {
+      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     }
   }
 

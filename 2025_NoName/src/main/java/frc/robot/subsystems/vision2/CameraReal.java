@@ -10,6 +10,8 @@ import frc.robot.FieldConstants;
 import frc.robot.subsystems.vision.VisionConstants;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -51,14 +53,14 @@ public class CameraReal {
 
   public PoseObservation[] update() {
     // Example: update disconnected alert based on connection
-    PoseObservation[] observations = new PoseObservation[0];
+    // PoseObservation[] observations = new PoseObservation[0];
+    ArrayList<PoseObservation> observations = new ArrayList<PoseObservation>();
     boolean isConnected = camera.isConnected();
-    ArrayList<Integer> targets = new ArrayList<Integer>();
     String key = "Vision/" + constants.cameraName();
     DogLog.log(key + "/Connected?", isConnected);
     disconnectedAlert.set(!isConnected);
     if (!isConnected) {
-      return observations; // Skip processing if camera is disconnected
+      return new PoseObservation[0]; // Skip processing if camera is disconnected
     }
 
     // Optionally, estimate global pose
@@ -66,7 +68,7 @@ public class CameraReal {
 
     if (resultList.isEmpty()) {
       DogLog.log(key + "/Results", "No unread results available.");
-      return observations; // No results to process
+      return new PoseObservation[0]; // No results to process
     }
 
     DogLog.log(key + "/Results", resultList.size() + " unread results found.");
@@ -74,21 +76,24 @@ public class CameraReal {
     int i = 0;
 
     for (PhotonPipelineResult result : resultList) {
+      ArrayList<Integer> targets = new ArrayList<Integer>();
       i++;
       if (result.hasTargets()) {
         key = key + "/Results/Result " + i + " /Targets";
         DogLog.log(key, "Targets in Result");
-        EstimatedRobotPose estimatedRobotPose = poseEstimator.update(result).get();
+        Optional<EstimatedRobotPose> optionalRobotPose = poseEstimator.update(result);
+        if (optionalRobotPose.isEmpty()) {
+          DogLog.log(key + "/Targets Used", false);
+          continue;
+        }
+        DogLog.log(key + "/Targets Used", true);
+        EstimatedRobotPose estimatedRobotPose = optionalRobotPose.get();
         Pose3d estimatedPose = estimatedRobotPose.estimatedPose;
         double totalDistance = 0.0;
         double totalArea = 0.0;
         double averageDistance = 0.0;
         double averageTagArea = 0.0;
         double ambiguity = 0.0;
-        if (estimatedRobotPose.targetsUsed.isEmpty()) {
-          DogLog.log(key + "/No Targets Used", true);
-        } else {
-          DogLog.log(key + "/No Targets Used", false);
           for (PhotonTrackedTarget target : estimatedRobotPose.targetsUsed) {
             targets.add(target.getFiducialId());
             Transform3d transform = target.getBestCameraToTarget();
@@ -102,7 +107,6 @@ public class CameraReal {
               estimatedRobotPose.targetsUsed.isEmpty() ? 100.0 : totalDistance / targets.size();
           averageTagArea =
               estimatedRobotPose.targetsUsed.isEmpty() ? 0.0 : totalArea / targets.size();
-        }
 
         DogLog.log(key + "/Tags Used", targets.size());
         DogLog.log(key + "/Tags Used/Tag IDs", targets.toString());
@@ -119,21 +123,12 @@ public class CameraReal {
                 targets,
                 averageDistance,
                 averageTagArea);
-        observations = appendObservation(observations, observation);
+        observations.add(observation);
       } else {
         DogLog.log("Vision/Results/" + constants.cameraName() + "Targets", "No Targets in results");
       }
     }
-    return observations;
-  }
-
-  public static PoseObservation[] appendObservation(
-      PoseObservation[] observations, PoseObservation newObservation) {
-    int oldLength = observations.length;
-    PoseObservation[] newArray = new PoseObservation[oldLength + 1];
-    System.arraycopy(observations, 0, newArray, 0, oldLength);
-    newArray[oldLength] = newObservation;
-    return newArray;
+    return observations.toArray(new PoseObservation[0]);
   }
 
   public VisionConstants getConstants() {

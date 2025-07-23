@@ -62,6 +62,7 @@ public class Vision {
               observation.getObservedPose());
           continue;
         }
+        
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
 

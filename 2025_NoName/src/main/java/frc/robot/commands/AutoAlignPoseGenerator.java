@@ -15,12 +15,11 @@ public class AutoAlignPoseGenerator {
   /**
    * Finds nearest branch position
    *
-   * @param robotPoseSupplier robot pose
+   * @param robotPose robot pose
    * @param useLeftBranch true if left branch, false if right branch
    */
   public static Pose2d getNearestBranchPosition(
-      Supplier<Pose2d> robotPoseSupplier, boolean useLeftBranch) {
-    Pose2d robotPose = robotPoseSupplier.get();
+      Pose2d robotPose, boolean useLeftBranch) {
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
 
@@ -56,13 +55,12 @@ public class AutoAlignPoseGenerator {
   /**
    * Finds nearest reef face position for algae
    *
-   * @param robotPoseSupplier robot pose
+   * @param robotPose robot pose
    * @param moveBack true if the target pose should be moved back from the reef face (used when
    *     algae is already grabbed)
    */
   public static Pose2d getNearestAlgaeReefFacePosition(
-      Supplier<Pose2d> robotPoseSupplier, boolean moveBack) {
-    Pose2d robotPose = robotPoseSupplier.get();
+      Pose2d robotPose, boolean moveBack) {
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
 

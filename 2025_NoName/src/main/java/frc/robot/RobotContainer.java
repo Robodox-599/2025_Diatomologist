@@ -201,15 +201,6 @@ public class RobotContainer {
   public void configureBindings() {
     //                               DRIVER BINDS
 
-    // Set the teleop drive state when any of the joysticks are moved
-    // This is used to ensure that the robot is in teleop drive mode when the joysticks are moved
-    new Trigger(
-            () ->
-                joystickDeadbandApply(driver.getLeftY()) != 0
-                    || joystickDeadbandApply(driver.getLeftX()) != 0
-                    || joystickDeadbandApply(driver.getRightX()) != 0)
-        .onTrue(new InstantCommand(() -> superstructureCommands.setTeleopDriveState()));
-
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -269,17 +260,24 @@ public class RobotContainer {
     // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF NO STATE IS SET)
     driver
         .povLeft()
-        .onTrue(
+        .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
     // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF NO STATE IS SET)
     driver
         .povRight()
-        .onTrue(
+        .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
 
     driver.a().or(driver.b()).or(driver.x()).or(driver.y())
-        .onTrue(
+        .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
+
+    // Set the teleop drive state when any auto align command is not active
+    driver.povLeft().onFalse(superstructureCommands.setTeleopDriveState());
+    driver.povRight().onFalse(superstructureCommands.setTeleopDriveState());
+    driver.a().and(driver.b()).and(driver.x()).and(driver.y())
+        .onFalse(
+            superstructureCommands.setTeleopDriveState());
 
     //                                OPERATOR BINDS
     // // MOVE TO L1

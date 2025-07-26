@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
 import frc.robot.commands.AutoAlignPoseGenerator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain.WantedState;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
@@ -31,7 +30,7 @@ public class Superstructure extends SubsystemBase {
 
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
-  private WantedSuperState nextSuperState = WantedSuperState.STOPPED;
+  private WantedSuperState queuedSuperState = WantedSuperState.STOPPED;
 
   public enum CurrentSuperState {
     INTAKING_CORAL_STATION,
@@ -124,7 +123,7 @@ public class Superstructure extends SubsystemBase {
     currentSuperState = handleStateTransitions();
     applyStates();
 
-    DogLog.log("Superstructure/NextSuperState", nextSuperState);
+    DogLog.log("Superstructure/QueuedSuperState", queuedSuperState);
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
   }
@@ -192,7 +191,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         break;
       case AUTO_SCORE_LEFT:
-        switch (nextSuperState) {
+        switch (queuedSuperState) {
           case POSITION_CORAL_L1:
             currentSuperState = CurrentSuperState.AUTO_SCORE_L1_LEFT;
             break;
@@ -211,7 +210,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_RIGHT:
-        switch (nextSuperState) {
+        switch (queuedSuperState) {
           case POSITION_CORAL_L1:
             currentSuperState = CurrentSuperState.AUTO_SCORE_L1_RIGHT;
             break;
@@ -414,8 +413,7 @@ public class Superstructure extends SubsystemBase {
   private void autoIntakeAlgae() {
     if (rollers.isAlgaeDetected()) {
       drivetrain.setTargetPoseForDriveToPoint(
-          AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
-              drivetrain.getPose(), true));
+          AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), true));
       positionToAlgaeProcessor();
       if (drivetrain.isAtDriveToPointSetpoints()) {
         drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
@@ -423,8 +421,7 @@ public class Superstructure extends SubsystemBase {
       }
     }
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
-            drivetrain.getPose(), false));
+        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), false));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isWithinAlgaeRaiseDistance()) {
       if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
@@ -487,8 +484,7 @@ public class Superstructure extends SubsystemBase {
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(
-            drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL1();
@@ -510,8 +506,7 @@ public class Superstructure extends SubsystemBase {
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(
-            drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL2();
@@ -533,8 +528,7 @@ public class Superstructure extends SubsystemBase {
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(
-            drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL3();
@@ -556,8 +550,7 @@ public class Superstructure extends SubsystemBase {
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(
-            drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isWithinCoralRaiseDistance()) {
       positionToCoralL4();
@@ -599,8 +592,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoAlignToBranch(boolean useLeftBranch) {
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(
-            drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isAtDriveToPointSetpoints()) {
       drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
@@ -610,8 +602,7 @@ public class Superstructure extends SubsystemBase {
   /** Automatically drives to a reef face */
   private void autoAlignToAlgaeReefFace() {
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
-            drivetrain.getPose(), false));
+        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), false));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
     if (drivetrain.isAtDriveToPointSetpoints()) {
       drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
@@ -641,13 +632,13 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
 
-  public Command setNextSuperStateCommand(WantedSuperState nextState) {
+  public Command setQueuedSuperStateCommand(WantedSuperState nextState) {
     return Commands.parallel(
-        this.runOnce(() -> setNextSuperState(nextState)), rumbleControllers().withTimeout(0.2));
+        this.runOnce(() -> setQueuedSuperState(nextState)), rumbleControllers().withTimeout(0.2));
   }
 
-  private void setNextSuperState(WantedSuperState state) {
-    nextSuperState = state;
+  private void setQueuedSuperState(WantedSuperState state) {
+    queuedSuperState = state;
   }
 
   public Command updateWantedSuperStateCommand() {
@@ -658,12 +649,12 @@ public class Superstructure extends SubsystemBase {
             rumbleControllers().withTimeout(0.1)),
         Commands.parallel(
             this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.3)),
-        (() -> nextSuperState == WantedSuperState.NO_STATE));
+        (() -> queuedSuperState == WantedSuperState.NO_STATE));
   }
 
   private void updateWantedSuperState() {
-    wantedSuperState = nextSuperState;
-    nextSuperState = WantedSuperState.NO_STATE;
+    wantedSuperState = queuedSuperState;
+    queuedSuperState = WantedSuperState.NO_STATE;
   }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
@@ -678,8 +669,18 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> drivetrain.zeroGyro());
   }
 
-  public Command setTeleopDriveState() {
-    return this.runOnce(() -> drivetrain.setWantedState(WantedState.TELEOP_DRIVE));
+  public void setTeleopDriveStateAndPrepare() {
+    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
+    wantedSuperState = WantedSuperState.POSITION_PREPARED;
+  }
+
+  public Command setTeleopDriveStateAndPrepareCommand() {
+    return this.runOnce(() -> setTeleopDriveStateAndPrepare());
+  }
+
+  public Command setTeleopDriveStateCommand() {
+    return this.runOnce(
+        () -> drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE));
   }
 
   public Command rumbleDriverController() {

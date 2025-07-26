@@ -160,4 +160,8 @@ public class GeomUtil {
   public static Pose2d withRotation(Pose2d pose, Rotation2d rotation) {
     return new Pose2d(pose.getTranslation(), rotation);
   }
+
+  public static Pose2d averagePose(Pose2d pose1, Pose2d pose2) {
+    return pose1.interpolate(pose2, 0.5);
+  }
 }

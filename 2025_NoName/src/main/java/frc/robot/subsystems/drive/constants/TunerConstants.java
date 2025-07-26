@@ -49,6 +49,8 @@ public class TunerConstants {
   public static final double MAX_ANGULAR_SPEED = (MAX_LINEAR_SPEED * 0.5) / DRIVE_BASE_RADIUS;
   public static final double MAX_LINEAR_ACCELERATION = 8.0;
   public static final double MAX_ANGULAR_ACCELERATION = MAX_LINEAR_ACCELERATION / DRIVE_BASE_RADIUS;
+  public static final double BUMPER_TO_BUMPER_LENGTH =
+      0.8509; // 33.5 inches to meters, i hate wpilib stupid conversion at compile time
 
   // Both sets of gains need to be tuned to your individual robot.
 

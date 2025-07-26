@@ -14,10 +14,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
@@ -268,38 +266,45 @@ public class RobotContainer {
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
 
-    driver.a().or(driver.b()).or(driver.x()).or(driver.y())
+    driver
+        .a()
+        .or(driver.b())
+        .or(driver.x())
+        .or(driver.y())
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
 
     // Set the teleop drive state when any auto align command is not active
-    driver.povLeft().onFalse(superstructureCommands.setTeleopDriveState());
-    driver.povRight().onFalse(superstructureCommands.setTeleopDriveState());
-    driver.a().and(driver.b()).and(driver.x()).and(driver.y())
-        .onFalse(
-            superstructureCommands.setTeleopDriveState());
+    driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
+    driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
+    driver
+        .a()
+        .and(driver.b())
+        .and(driver.x())
+        .and(driver.y())
+        .onFalse(superstructureCommands.setTeleopDriveStateCommand());
 
     //                                OPERATOR BINDS
     // // MOVE TO L1
     operator
         .x()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
     // // MOVE TO L2
     operator
         .a()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
     // // MOVE TO L3
     operator
         .b()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
     // // MOVE TO L4
     operator
         .y()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
     // // CORAL STATION INTAKE
     operator
         .rightBumper()
@@ -316,29 +321,30 @@ public class RobotContainer {
         .rightTrigger()
         .and(operator.leftTrigger())
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(
+            superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_CLIMB_PREPARED));
     // // MOVE TO BARGE
     operator
         .povUp()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.POSITION_ALGAE_BARGE));
+            superstructureCommands.setQueuedSuperStateCommand(
+                WantedSuperState.POSITION_ALGAE_BARGE));
     // // MOVE TO PROCESSOR
     operator
         .povDown()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(
+            superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // INTAKE ALGAE L2
     operator
         .povLeft()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
     // // INTAKE ALGAE L3
     operator
         .povRight()
         .onTrue(
-            superstructureCommands.setNextSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
   }
 
   private static double joystickDeadbandApply(double x) {

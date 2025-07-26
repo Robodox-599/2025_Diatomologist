@@ -7,10 +7,14 @@
 
 package frc.robot;
 
+import static frc.robot.util.GeomUtil.averagePose;
+
+import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drive.constants.TunerConstants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +30,112 @@ public class FieldConstants {
   public static final double fieldWidth = Units.inchesToMeters(317);
   public static final double startingLineX =
       Units.inchesToMeters(299.438); // Measured from the inside of starting line
+
+  private static final Transform2d BRANCH_TRANSFORM =
+      new Transform2d(0.33 + (TunerConstants.BUMPER_TO_BUMPER_LENGTH / 2), 0.01, new Rotation2d(0));
+
+  public static Pose2d REEF_BLUE_A =
+      new Pose2d(3.95, 4.20, Rotation2d.fromDegrees(180))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_B =
+      new Pose2d(3.95, 3.87, Rotation2d.fromDegrees(180))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_C =
+      new Pose2d(4.07, 3.66, Rotation2d.fromDegrees(240))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_D =
+      new Pose2d(4.35, 3.49, Rotation2d.fromDegrees(240))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_E =
+      new Pose2d(4.60 + 0.01, 3.50 - 0.02, Rotation2d.fromDegrees(300))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_F =
+      new Pose2d(4.88 + 0.01, 3.66 - 0.02, Rotation2d.fromDegrees(300))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_G =
+      new Pose2d(5.00 + 0.02, 3.86, Rotation2d.fromDegrees(0))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_H =
+      new Pose2d(5.00 + 0.02, 4.18, Rotation2d.fromDegrees(0))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_I =
+      new Pose2d(4.88 + 0.025, 4.41 - 0.01, Rotation2d.fromDegrees(60))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_J =
+      new Pose2d(4.60 + 0.025, 4.57 - 0.01, Rotation2d.fromDegrees(60))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_K =
+      new Pose2d(4.36 + 0.015, 4.57 + 0.005, Rotation2d.fromDegrees(120))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+  public static Pose2d REEF_BLUE_L =
+      new Pose2d(4.06 + 0.03, 4.41, Rotation2d.fromDegrees(120))
+          .transformBy(BRANCH_TRANSFORM)
+          .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
+
+  public static final Pose2d REEF_RED_A = ChoreoAllianceFlipUtil.flip(REEF_BLUE_A);
+  public static final Pose2d REEF_RED_B = ChoreoAllianceFlipUtil.flip(REEF_BLUE_B);
+  public static final Pose2d REEF_RED_C = ChoreoAllianceFlipUtil.flip(REEF_BLUE_C);
+  public static final Pose2d REEF_RED_D = ChoreoAllianceFlipUtil.flip(REEF_BLUE_D);
+  public static final Pose2d REEF_RED_E = ChoreoAllianceFlipUtil.flip(REEF_BLUE_E);
+  public static final Pose2d REEF_RED_F = ChoreoAllianceFlipUtil.flip(REEF_BLUE_F);
+  public static final Pose2d REEF_RED_G = ChoreoAllianceFlipUtil.flip(REEF_BLUE_G);
+  public static final Pose2d REEF_RED_H = ChoreoAllianceFlipUtil.flip(REEF_BLUE_H);
+  public static final Pose2d REEF_RED_I = ChoreoAllianceFlipUtil.flip(REEF_BLUE_I);
+  public static final Pose2d REEF_RED_J = ChoreoAllianceFlipUtil.flip(REEF_BLUE_J);
+  public static final Pose2d REEF_RED_K = ChoreoAllianceFlipUtil.flip(REEF_BLUE_K);
+  public static final Pose2d REEF_RED_L = ChoreoAllianceFlipUtil.flip(REEF_BLUE_L);
+
+  public static final Pose2d REEF_BLUE_MIDDLE_AB = averagePose(REEF_BLUE_A, REEF_BLUE_B);
+  public static final Pose2d REEF_BLUE_MIDDLE_CD = averagePose(REEF_BLUE_C, REEF_BLUE_D);
+  public static final Pose2d REEF_BLUE_MIDDLE_EF = averagePose(REEF_BLUE_E, REEF_BLUE_F);
+  public static final Pose2d REEF_BLUE_MIDDLE_GH = averagePose(REEF_BLUE_G, REEF_BLUE_H);
+  public static final Pose2d REEF_BLUE_MIDDLE_IJ = averagePose(REEF_BLUE_I, REEF_BLUE_J);
+  public static final Pose2d REEF_BLUE_MIDDLE_KL = averagePose(REEF_BLUE_K, REEF_BLUE_L);
+
+  public static final Pose2d REEF_RED_MIDDLE_AB = averagePose(REEF_RED_A, REEF_RED_B);
+  public static final Pose2d REEF_RED_MIDDLE_CD = averagePose(REEF_RED_C, REEF_RED_D);
+  public static final Pose2d REEF_RED_MIDDLE_EF = averagePose(REEF_RED_E, REEF_RED_F);
+  public static final Pose2d REEF_RED_MIDDLE_GH = averagePose(REEF_RED_G, REEF_RED_H);
+  public static final Pose2d REEF_RED_MIDDLE_IJ = averagePose(REEF_RED_I, REEF_RED_J);
+  public static final Pose2d REEF_RED_MIDDLE_KL = averagePose(REEF_RED_K, REEF_RED_L);
+
+  public static final Pose2d[] REEF_BLUE_MIDDLE = {
+    FieldConstants.REEF_BLUE_MIDDLE_AB,
+    FieldConstants.REEF_BLUE_MIDDLE_CD,
+    FieldConstants.REEF_BLUE_MIDDLE_EF,
+    FieldConstants.REEF_BLUE_MIDDLE_GH,
+    FieldConstants.REEF_BLUE_MIDDLE_IJ,
+    FieldConstants.REEF_BLUE_MIDDLE_KL
+  };
+
+  public static final Pose2d[] REEF_BLUE_LEFT = {
+    FieldConstants.REEF_BLUE_A,
+    FieldConstants.REEF_BLUE_C,
+    FieldConstants.REEF_BLUE_E,
+    FieldConstants.REEF_BLUE_G,
+    FieldConstants.REEF_BLUE_I,
+    FieldConstants.REEF_BLUE_K
+  };
+
+  public static final Pose2d[] REEF_BLUE_RIGHT = {
+    FieldConstants.REEF_BLUE_B,
+    FieldConstants.REEF_BLUE_D,
+    FieldConstants.REEF_BLUE_F,
+    FieldConstants.REEF_BLUE_H,
+    FieldConstants.REEF_BLUE_J,
+    FieldConstants.REEF_BLUE_L
+  };
 
   public static class Processor {
     public static final Pose2d centerFace =

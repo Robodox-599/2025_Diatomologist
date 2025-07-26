@@ -334,9 +334,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           withinAlgaeRaiseDistance = false;
         }
         double frictionConstant = 0.0;
-        if (linearDistance >= Units.inchesToMeters(DRIVE_TO_POINT_RAISE_RADIUS_INCHES)) {
-          frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT;
-        }
+        // if (linearDistance >= Units.inchesToMeters(DRIVE_TO_POINT_RAISE_RADIUS_INCHES)) {
+        //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT;
+        // }
 
         double velocityOutput =
             Math.abs(

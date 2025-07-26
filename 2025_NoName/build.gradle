@@ -116,3 +116,13 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
+
+tasks.register("writePosesToChoreo") {
+    doLast {
+        def classLoader = new URLClassLoader(sourceSets.main.runtimeClasspath.files.collect { it.toURI().toURL() } as URL[])
+        def myClass = classLoader.loadClass("frc.robot.util.ChoreoVariableWriter") // Load the class dynamically
+
+        def method = myClass.getDeclaredMethod("writeToChoreo") // Get the method
+        method.invoke(null)
+    }
+}

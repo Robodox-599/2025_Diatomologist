@@ -165,18 +165,14 @@ public class RobotContainer {
     // Auto chooser setup
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
 
-    // Add auto routines
+    /** AUTO ROUTINES - DO NOT TOUCH */
     // COMPETITION
-    // autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
-    // autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
-    // autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
-    // autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
-    // autoChooser.addRoutine(
-    // "DO NOT USE - middleAutoRoutineWithAlgae", autoRoutines::middleAutoRoutineWithAlgae);
+    autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
+    autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
+    autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
+    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
 
     // TESTING ONLY
-    // autoChooser.addRoutine("DO NOT USE - testingAutoRoutine", autoRoutines::testingAutoRoutine);
-    // autoChooser.addRoutine("startTo15FeetAutoRoutine", autoRoutines::startTo15FeetAutoRoutine);
     autoChooser.addRoutine("MoveForward", autoRoutines::moveForward);
 
     SmartDashboard.putData("AutoChooser", autoChooser);

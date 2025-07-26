@@ -281,7 +281,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-
+    updateRaiseDistances();
     handleStateTransitions();
     applyStates();
     DogLog.log("Drive/CurrentState", currentState);
@@ -302,6 +302,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         currentState = CurrentState.TELEOP_DRIVE;
         break;
       case DRIVE_TO_POINT:
+        if (isAtDriveToPointSetpoints()) {
+          wantedState = WantedState.TELEOP_DRIVE;
+          currentState = CurrentState.TELEOP_DRIVE;
+        }
         currentState = CurrentState.DRIVE_TO_POINT;
         break;
       default:
@@ -323,16 +327,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Rotation2d direction = translationToTarget.getAngle();
 
         double linearDistance = translationToTarget.getNorm();
-        if (linearDistance <= Units.feetToMeters(2)) {
-          withinCoralRaiseDistance = true;
-        } else {
-          withinCoralRaiseDistance = false;
-        }
-        if (linearDistance <= Units.feetToMeters(3)) {
-          withinAlgaeRaiseDistance = true;
-        } else {
-          withinAlgaeRaiseDistance = false;
-        }
         double frictionConstant = 0.0;
         // if (linearDistance >= Units.inchesToMeters(DRIVE_TO_POINT_RAISE_RADIUS_INCHES)) {
         //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT;
@@ -369,6 +363,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
     this.targetPoseForDriveToPoint = targetPose;
+  }
+
+  public void updateRaiseDistances() {
+    double linearDistance =
+        targetPoseForDriveToPoint
+            .getTranslation()
+            .minus(getState().Pose.getTranslation())
+            .getNorm();
+
+    if (linearDistance <= Units.feetToMeters(2)) {
+      withinCoralRaiseDistance = true;
+    } else {
+      withinCoralRaiseDistance = false;
+    }
+    if (linearDistance <= Units.feetToMeters(3)) {
+      withinAlgaeRaiseDistance = true;
+    } else {
+      withinAlgaeRaiseDistance = false;
+    }
   }
 
   public boolean isWithinCoralRaiseDistance() {

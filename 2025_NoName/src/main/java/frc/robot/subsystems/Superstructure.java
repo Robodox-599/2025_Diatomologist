@@ -416,7 +416,6 @@ public class Superstructure extends SubsystemBase {
           AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), true));
       positionToAlgaeProcessor();
       if (drivetrain.isAtDriveToPointSetpoints()) {
-        drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
         setWantedSuperState(WantedSuperState.POSITION_ALGAE_PROCESSOR);
       }
     }
@@ -480,7 +479,6 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL1(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
@@ -502,7 +500,6 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL2(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
@@ -524,7 +521,6 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL3(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
@@ -546,7 +542,6 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL4(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
       setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     }
     drivetrain.setTargetPoseForDriveToPoint(
@@ -594,9 +589,6 @@ public class Superstructure extends SubsystemBase {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isAtDriveToPointSetpoints()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
-    }
   }
 
   /** Automatically drives to a reef face */
@@ -604,9 +596,6 @@ public class Superstructure extends SubsystemBase {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), false));
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
-    if (drivetrain.isAtDriveToPointSetpoints()) {
-      drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
-    }
   }
 
   private void scoreCoral() {
@@ -654,7 +643,6 @@ public class Superstructure extends SubsystemBase {
 
   private void updateWantedSuperState() {
     wantedSuperState = queuedSuperState;
-    queuedSuperState = WantedSuperState.NO_STATE;
   }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
@@ -681,6 +669,18 @@ public class Superstructure extends SubsystemBase {
   public Command setTeleopDriveStateCommand() {
     return this.runOnce(
         () -> drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE));
+  }
+
+  public boolean isWithinCoralRaiseDistance() {
+    return drivetrain.isWithinCoralRaiseDistance();
+  }
+
+  public boolean isWithinAlgaeRaiseDistance() {
+    return drivetrain.isWithinAlgaeRaiseDistance();
+  }
+
+  public boolean hasCoral() {
+    return rollers.isCoralDetected();
   }
 
   public Command rumbleDriverController() {

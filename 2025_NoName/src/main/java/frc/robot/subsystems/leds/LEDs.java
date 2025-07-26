@@ -1,7 +1,6 @@
 package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDs {
   private final LEDsIO io;

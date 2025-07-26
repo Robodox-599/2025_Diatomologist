@@ -422,7 +422,7 @@ public class Superstructure extends SubsystemBase {
           AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose(), true));
       positionToAlgaeProcessor();
       if (drivetrain.isAtDriveToPointSetpoints()) {
-        setWantedSuperState(WantedSuperState.POSITION_ALGAE_PROCESSOR);
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
       }
     }
     drivetrain.setTargetPoseForDriveToPoint(

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDs {
   private final LEDsIO io;
-  private CurrentState currentState = CurrentState.NO_STATE;
+  private CurrentState currentState = CurrentState.STOPPED;
 
   public LEDs(
       LEDsIO
@@ -31,14 +31,11 @@ public class LEDs {
     SCORING_CORAL,
     SCORING_ALGAE,
     CLIMBING,
-    NO_STATE,
+    STOPPED,
   }
 
   public void updateInputs() {
     io.updateInputs();
-    if (DriverStation.isDisabled()) {
-      setCurrentState(CurrentState.NO_STATE);
-    }
     applyStates();
     DogLog.log("LEDs/CurrentState", currentState);
   }
@@ -93,11 +90,11 @@ public class LEDs {
       case CLIMBING:
         io.LEDsClimbing();
         break;
-      case NO_STATE:
-        io.LEDsNoState();
+      case STOPPED:
+        io.LEDsStopped();
         break;
       default:
-        io.LEDsNoState();
+        io.LEDsStopped();
         break;
     }
   }

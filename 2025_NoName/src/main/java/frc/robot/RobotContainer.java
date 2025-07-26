@@ -264,21 +264,13 @@ public class RobotContainer {
 
     driver
         .a()
-        .or(driver.b())
-        .or(driver.x())
-        .or(driver.y())
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
 
     // Set the teleop drive state when any auto align command is not active
     driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
-    driver
-        .a()
-        .and(driver.b())
-        .and(driver.x())
-        .and(driver.y())
-        .onFalse(superstructureCommands.setTeleopDriveStateCommand());
+    driver.a().onFalse(superstructureCommands.setTeleopDriveStateCommand());
 
     //                                OPERATOR BINDS
     // // MOVE TO L1

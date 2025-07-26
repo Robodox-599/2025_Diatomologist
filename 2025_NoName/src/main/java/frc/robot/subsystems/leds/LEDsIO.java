@@ -23,5 +23,5 @@ public abstract class LEDsIO {
 
   public void LEDsClimbing() {}
 
-  public void LEDsNoState() {}
+  public void LEDsStopped() {}
 }

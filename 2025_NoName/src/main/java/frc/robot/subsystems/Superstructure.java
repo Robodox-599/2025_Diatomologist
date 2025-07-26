@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -113,6 +114,11 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (DriverStation.isDisabled()) {
+      currentSuperState = CurrentSuperState.STOPPED;
+      wantedSuperState = WantedSuperState.STOPPED;
+      queuedSuperState = WantedSuperState.STOPPED;
+    }
     drivetrain.updateInputs();
     elevator.updateInputs();
     rollers.updateInputs();
@@ -479,7 +485,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL1(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+      wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
     }
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
@@ -500,7 +506,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL2(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+      wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
     }
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
@@ -521,7 +527,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL3(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+      wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
     }
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
@@ -542,7 +548,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoScoreL4(boolean useLeftBranch) {
     if (!rollers.isCoralDetected()) {
-      setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+      wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
     }
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
@@ -617,7 +623,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.STOPPED);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.STOPPED);
-    leds.setCurrentState(LEDs.CurrentState.NO_STATE);
+    leds.setCurrentState(LEDs.CurrentState.STOPPED);
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
 

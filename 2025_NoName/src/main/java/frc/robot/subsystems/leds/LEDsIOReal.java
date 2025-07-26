@@ -21,7 +21,7 @@ public class LEDsIOReal extends LEDsIO {
   private static final RGBWColor KPositionClimbPrepared = new RGBWColor(200, 255, 0, 255); // lime
   private static final RGBWColor kScoringGamePiece = new RGBWColor(255, 15, 122, 255); // pink
   private static final RGBWColor kClimbing = new RGBWColor(255, 255, 0, 255); // yellow
-  private static final RGBWColor kNoState = new RGBWColor(255, 0, 0, 255); // red
+  private static final RGBWColor kStopped = new RGBWColor(255, 0, 0, 255); // red
 
   public LEDsIOReal() {
     candleReal = new CANdle(LEDsConstants.canID, LEDsConstants.CANbus);
@@ -103,8 +103,8 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
-  public void LEDsNoState() {
+  public void LEDsStopped() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kNoState).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kStopped).withFrameRate(10));
   }
 }

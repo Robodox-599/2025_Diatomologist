@@ -37,7 +37,9 @@ public class AutoRoutines {
                 LEFTtoJ.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                LEFTtoJ.cmd()));
+                LEFTtoJ.cmd(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4)));
 
     LEFTtoJ.active()
         .and(withinCoralRaiseDistance)
@@ -46,11 +48,7 @@ public class AutoRoutines {
 
     LEFTtoJ.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_RIGHT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
 
     LEFTtoJ.recentlyDone().and(hasNoCoral).onTrue(JtoHP.cmd());
 
@@ -63,11 +61,7 @@ public class AutoRoutines {
 
     HPtoL.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_RIGHT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
 
     HPtoL.recentlyDone().and(hasNoCoral).onTrue(LtoHP.cmd());
 
@@ -80,11 +74,7 @@ public class AutoRoutines {
 
     HPtoK.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_LEFT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
     return routine;
   }
 
@@ -108,7 +98,9 @@ public class AutoRoutines {
                 RIGHTtoE.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                RIGHTtoE.cmd()));
+                RIGHTtoE.cmd(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4)));
 
     RIGHTtoE.active()
         .and(withinCoralRaiseDistance)
@@ -117,11 +109,7 @@ public class AutoRoutines {
 
     RIGHTtoE.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_LEFT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
 
     RIGHTtoE.recentlyDone().and(hasNoCoral).onTrue(EtoHP.cmd());
 
@@ -134,11 +122,7 @@ public class AutoRoutines {
 
     HPtoC.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_LEFT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
 
     HPtoC.recentlyDone().and(hasNoCoral).onTrue(CtoHP.cmd());
 
@@ -151,11 +135,7 @@ public class AutoRoutines {
 
     HPtoD.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_RIGHT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_RIGHT));
     return routine;
   }
 
@@ -174,7 +154,9 @@ public class AutoRoutines {
                 MIDtoG.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                MIDtoG.cmd()));
+                MIDtoG.cmd(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4)));
 
     MIDtoG.active()
         .and(withinCoralRaiseDistance)
@@ -183,11 +165,7 @@ public class AutoRoutines {
 
     MIDtoG.done()
         .onTrue(
-            Commands.sequence(
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
-                superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_LEFT)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_LEFT));
 
     return routine;
   }
@@ -198,16 +176,6 @@ public class AutoRoutines {
     AutoTrajectory MIDtoTaxi = routine.trajectory("MIDtoTaxi");
 
     routine.active().onTrue(Commands.sequence(MIDtoTaxi.resetOdometry(), MIDtoTaxi.cmd()));
-
-    return routine;
-  }
-
-  public AutoRoutine moveForward() {
-    AutoRoutine routine = autoFactory.newRoutine("MoveForward");
-
-    AutoTrajectory MoveForward = routine.trajectory("MoveForward");
-
-    routine.active().onTrue(Commands.sequence(MoveForward.resetOdometry(), MoveForward.cmd()));
 
     return routine;
   }

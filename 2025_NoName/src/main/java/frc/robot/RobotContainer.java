@@ -173,7 +173,6 @@ public class RobotContainer {
     autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
 
     // TESTING ONLY
-    autoChooser.addRoutine("MoveForward", autoRoutines::moveForward);
 
     SmartDashboard.putData("AutoChooser", autoChooser);
 

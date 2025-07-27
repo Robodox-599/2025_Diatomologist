@@ -1,6 +1,9 @@
 package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.Superstructure.CurrentSuperState;
+import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class LEDs {
   private final LEDsIO io;
@@ -34,6 +37,9 @@ public class LEDs {
   }
 
   public void updateInputs() {
+    if (DriverStation.isDisabled()) {
+      currentState = CurrentState.STOPPED;
+    }
     io.updateInputs();
     applyStates();
     DogLog.log("LEDs/CurrentState", currentState);

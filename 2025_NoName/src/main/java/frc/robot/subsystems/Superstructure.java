@@ -114,11 +114,6 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.isDisabled()) {
-      currentSuperState = CurrentSuperState.STOPPED;
-      wantedSuperState = WantedSuperState.STOPPED;
-      queuedSuperState = WantedSuperState.STOPPED;
-    }
     drivetrain.updateInputs();
     elevator.updateInputs();
     rollers.updateInputs();

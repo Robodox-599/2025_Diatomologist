@@ -83,6 +83,13 @@ public class FieldConstants {
           .transformBy(BRANCH_TRANSFORM)
           .plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
 
+  public static final Pose2d REEF_BLUE_MIDDLE_AB = averagePose(REEF_BLUE_A, REEF_BLUE_B);
+  public static final Pose2d REEF_BLUE_MIDDLE_CD = averagePose(REEF_BLUE_C, REEF_BLUE_D);
+  public static final Pose2d REEF_BLUE_MIDDLE_EF = averagePose(REEF_BLUE_E, REEF_BLUE_F);
+  public static final Pose2d REEF_BLUE_MIDDLE_GH = averagePose(REEF_BLUE_G, REEF_BLUE_H);
+  public static final Pose2d REEF_BLUE_MIDDLE_IJ = averagePose(REEF_BLUE_I, REEF_BLUE_J);
+  public static final Pose2d REEF_BLUE_MIDDLE_KL = averagePose(REEF_BLUE_K, REEF_BLUE_L);
+
   public static final Pose2d REEF_RED_A = ChoreoAllianceFlipUtil.flip(REEF_BLUE_A);
   public static final Pose2d REEF_RED_B = ChoreoAllianceFlipUtil.flip(REEF_BLUE_B);
   public static final Pose2d REEF_RED_C = ChoreoAllianceFlipUtil.flip(REEF_BLUE_C);
@@ -96,28 +103,12 @@ public class FieldConstants {
   public static final Pose2d REEF_RED_K = ChoreoAllianceFlipUtil.flip(REEF_BLUE_K);
   public static final Pose2d REEF_RED_L = ChoreoAllianceFlipUtil.flip(REEF_BLUE_L);
 
-  public static final Pose2d REEF_BLUE_MIDDLE_AB = averagePose(REEF_BLUE_A, REEF_BLUE_B);
-  public static final Pose2d REEF_BLUE_MIDDLE_CD = averagePose(REEF_BLUE_C, REEF_BLUE_D);
-  public static final Pose2d REEF_BLUE_MIDDLE_EF = averagePose(REEF_BLUE_E, REEF_BLUE_F);
-  public static final Pose2d REEF_BLUE_MIDDLE_GH = averagePose(REEF_BLUE_G, REEF_BLUE_H);
-  public static final Pose2d REEF_BLUE_MIDDLE_IJ = averagePose(REEF_BLUE_I, REEF_BLUE_J);
-  public static final Pose2d REEF_BLUE_MIDDLE_KL = averagePose(REEF_BLUE_K, REEF_BLUE_L);
-
   public static final Pose2d REEF_RED_MIDDLE_AB = averagePose(REEF_RED_A, REEF_RED_B);
   public static final Pose2d REEF_RED_MIDDLE_CD = averagePose(REEF_RED_C, REEF_RED_D);
   public static final Pose2d REEF_RED_MIDDLE_EF = averagePose(REEF_RED_E, REEF_RED_F);
   public static final Pose2d REEF_RED_MIDDLE_GH = averagePose(REEF_RED_G, REEF_RED_H);
   public static final Pose2d REEF_RED_MIDDLE_IJ = averagePose(REEF_RED_I, REEF_RED_J);
   public static final Pose2d REEF_RED_MIDDLE_KL = averagePose(REEF_RED_K, REEF_RED_L);
-
-  public static final Pose2d[] REEF_BLUE_MIDDLE = {
-    FieldConstants.REEF_BLUE_MIDDLE_AB,
-    FieldConstants.REEF_BLUE_MIDDLE_CD,
-    FieldConstants.REEF_BLUE_MIDDLE_EF,
-    FieldConstants.REEF_BLUE_MIDDLE_GH,
-    FieldConstants.REEF_BLUE_MIDDLE_IJ,
-    FieldConstants.REEF_BLUE_MIDDLE_KL
-  };
 
   public static final Pose2d[] REEF_BLUE_LEFT = {
     FieldConstants.REEF_BLUE_A,
@@ -135,6 +126,42 @@ public class FieldConstants {
     FieldConstants.REEF_BLUE_H,
     FieldConstants.REEF_BLUE_J,
     FieldConstants.REEF_BLUE_L
+  };
+
+  public static final Pose2d[] REEF_BLUE_MIDDLE = {
+    FieldConstants.REEF_BLUE_MIDDLE_AB,
+    FieldConstants.REEF_BLUE_MIDDLE_CD,
+    FieldConstants.REEF_BLUE_MIDDLE_EF,
+    FieldConstants.REEF_BLUE_MIDDLE_GH,
+    FieldConstants.REEF_BLUE_MIDDLE_IJ,
+    FieldConstants.REEF_BLUE_MIDDLE_KL
+  };
+
+  public static final Pose2d[] REEF_RED_LEFT = {
+    FieldConstants.REEF_BLUE_A,
+    FieldConstants.REEF_BLUE_C,
+    FieldConstants.REEF_BLUE_E,
+    FieldConstants.REEF_BLUE_G,
+    FieldConstants.REEF_BLUE_I,
+    FieldConstants.REEF_BLUE_K
+  };
+
+  public static final Pose2d[] REEF_RED_RIGHT = {
+    FieldConstants.REEF_BLUE_B,
+    FieldConstants.REEF_BLUE_D,
+    FieldConstants.REEF_BLUE_F,
+    FieldConstants.REEF_BLUE_H,
+    FieldConstants.REEF_BLUE_J,
+    FieldConstants.REEF_BLUE_L
+  };
+
+  public static final Pose2d[] REEF_RED_MIDDLE = {
+    FieldConstants.REEF_RED_MIDDLE_AB,
+    FieldConstants.REEF_RED_MIDDLE_CD,
+    FieldConstants.REEF_RED_MIDDLE_EF,
+    FieldConstants.REEF_RED_MIDDLE_GH,
+    FieldConstants.REEF_RED_MIDDLE_IJ,
+    FieldConstants.REEF_RED_MIDDLE_KL
   };
 
   public static class Processor {

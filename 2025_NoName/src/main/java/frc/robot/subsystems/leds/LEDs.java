@@ -2,8 +2,6 @@ package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.Superstructure.CurrentSuperState;
-import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class LEDs {
   private final LEDsIO io;

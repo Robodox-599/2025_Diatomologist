@@ -6,6 +6,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -79,7 +80,7 @@ public class AutoAlignPoseGenerator {
     }
 
     if (shiftBackFromReefFace) {
-      nearestFace = nearestFace.transformBy(new Transform2d(0.45, 0, new Rotation2d(0)));
+      nearestFace = nearestFace.transformBy(new Transform2d(0.3, 0, new Rotation2d(0)));
     }
 
     DogLog.log("ClosestFace/TargetPose", nearestFace);

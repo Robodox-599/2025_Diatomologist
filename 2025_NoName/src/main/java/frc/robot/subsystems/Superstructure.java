@@ -184,7 +184,10 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_INTAKE_ALGAE:
-        if (rollers.isAlgaeDetected()) {
+        if (rollers.isAlgaeDetected() && drivetrain.isAtDriveToPointSetpoints() && currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR) {
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+        } else if (rollers.isAlgaeDetected()) {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE
@@ -737,18 +740,50 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> drivetrain.zeroGyro());
   }
 
-  public void setTeleopDriveStateAndPrepare() {
+  public void setTeleopDriveState() {
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
-    wantedSuperState = WantedSuperState.POSITION_PREPARED;
-  }
-
-  public Command setTeleopDriveStateAndPrepareCommand() {
-    return this.runOnce(() -> setTeleopDriveStateAndPrepare());
+    switch (currentSuperState) {
+      case AUTO_ALIGN_LEFT_BRANCH:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_MIDDLE_ALGAE:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+        break;
+      case POSITION_CORAL_L1:
+        wantedSuperState = WantedSuperState.POSITION_CORAL_L1;
+        break;
+      case POSITION_CORAL_L2:
+        wantedSuperState = WantedSuperState.POSITION_CORAL_L2;
+        break;
+      case POSITION_CORAL_L3:
+        wantedSuperState = WantedSuperState.POSITION_CORAL_L3;
+        break;
+      case POSITION_CORAL_L4:
+        wantedSuperState = WantedSuperState.POSITION_CORAL_L4;
+        break;
+      case INTAKING_ALGAE_L2:
+        wantedSuperState = WantedSuperState.INTAKING_ALGAE_L2;
+        break;
+      case INTAKING_ALGAE_L3:
+        wantedSuperState = WantedSuperState.INTAKING_ALGAE_L3;
+        break;
+      case SCORING_CORAL:
+        wantedSuperState = WantedSuperState.SCORING_CORAL;
+        break;
+      default:
+        break; 
+    }
   }
 
   public Command setTeleopDriveStateCommand() {
     return this.runOnce(
-        () -> drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE));
+        () -> setTeleopDriveState());
   }
 
   public boolean isWithinCoralRaiseDistance() {

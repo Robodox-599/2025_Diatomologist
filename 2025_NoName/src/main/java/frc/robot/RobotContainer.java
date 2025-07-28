@@ -267,9 +267,9 @@ public class RobotContainer {
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
-    driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateAndPrepareCommand());
-    driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateAndPrepareCommand());
-    driver.a().onFalse(superstructureCommands.setTeleopDriveStateAndPrepareCommand());
+    driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
+    driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
+    driver.a().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     // SET AUTOMATION LEVEL TO AUTO SCORE
     driver
         .povUp()

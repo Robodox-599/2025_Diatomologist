@@ -89,9 +89,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drivetrain::addVisionMeasurement,
-                new CameraReal(CameraConstants.cam1Constants),
-                new CameraReal(CameraConstants.cam2Constants),
-                new CameraReal(CameraConstants.cam3Constants));
+                new CameraReal(CameraConstants.frontLeftCameraConstants),
+                new CameraReal(CameraConstants.frontRightCameraConstants),
+                new CameraReal(CameraConstants.backCameraConstants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -111,9 +111,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drivetrain::addVisionMeasurement,
-                new CameraReal(CameraConstants.cam1Constants),
-                new CameraReal(CameraConstants.cam2Constants),
-                new CameraReal(CameraConstants.cam3Constants));
+                new CameraReal(CameraConstants.frontLeftCameraConstants),
+                new CameraReal(CameraConstants.frontRightCameraConstants),
+                new CameraReal(CameraConstants.backCameraConstants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -133,9 +133,9 @@ public class RobotContainer {
         vision =
             new Vision(
                 drivetrain::addVisionMeasurement,
-                new CameraReal(CameraConstants.cam1Constants),
-                new CameraReal(CameraConstants.cam2Constants),
-                new CameraReal(CameraConstants.cam3Constants));
+                new CameraReal(CameraConstants.frontLeftCameraConstants),
+                new CameraReal(CameraConstants.frontRightCameraConstants),
+                new CameraReal(CameraConstants.backCameraConstants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,

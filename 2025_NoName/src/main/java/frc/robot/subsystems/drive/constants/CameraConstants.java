@@ -12,46 +12,49 @@ import frc.robot.subsystems.vision.VisionConstants;
 
 public class CameraConstants {
   /* VISION */
-  public static final String camera1Name = "FL_Camera";
+  // FRONT LEFT CAMERA
+  public static final String frontLeftCameraName = "FL_Camera";
 
   // CAMERA 1 POSE (X)
-  public static final double camera1PoseX = Units.inchesToMeters(3.906); // 3.906
+  public static final double frontLeftCameraPoseX = Units.inchesToMeters(3.906); // 3.906
 
   // CAMERA 1 POSE (Y)
-  public static final double camera1PoseY = Units.inchesToMeters(10.737); // -10.737
+  public static final double frontLeftCameraPoseY = Units.inchesToMeters(10.737); // 10.737 (should be positive)
 
   // CAMERA 1 POSE (Z)
-  public static final double camera1PoseZ = Units.inchesToMeters(6.429 + 0.625); // 6.429 + 0.625
+  public static final double frontLeftCameraPoseZ = Units.inchesToMeters(6.429 + 0.625); // 6.429 + 0.625
 
   // CAMERA 1 POSE (ROLL)
-  public static final double camera1PoseRoll = Units.degreesToRadians(0); // 0
+  public static final double frontLeftCameraPoseRoll = Units.degreesToRadians(0); // 0
 
   // CAMERA 1 POSE (PITCH)
-  public static final double camera1PosePitch = Units.degreesToRadians(-15); // -15
+  public static final double frontLeftCameraPosePitch = Units.degreesToRadians(-15); // -15
 
   // CAMERA 1 POSE (YAW)
-  public static final double camera1PoseYaw = Units.degreesToRadians(-28.659); // 28.659
+  public static final double frontLeftCameraPoseYaw = Units.degreesToRadians(-28.659); // -28.659 (should be negative)
 
-  public static final String camera2Name = "FR_Camera";
+  // FRONT RIGHT CAMERA
+  public static final String frontRightCameraName = "FR_Camera";
 
   // CAMERA 2 POSE (X)
-  public static final double camera2PoseX = Units.inchesToMeters(3.906); // 3.906
+  public static final double frontRightCameraPoseX = Units.inchesToMeters(3.906); // 3.906
 
   // CAMERA 2 POSE (Y)
-  public static final double camera2PoseY = Units.inchesToMeters(-10.737); // 10.737
+  public static final double frontRightCameraPoseY = Units.inchesToMeters(-10.737); // -10.737 (should be negative)
 
   // CAMERA 2 POSE (Z)
-  public static final double camera2PoseZ = Units.inchesToMeters(6.429 + 0.625); // 6.429 + 0.625
+  public static final double frontRightCameraPoseZ = Units.inchesToMeters(6.429 + 0.625); // 6.429 + 0.625
 
   // CAMERA 2 POSE (ROLL)
-  public static final double camera2PoseRoll = Units.degreesToRadians(0);
+  public static final double frontRightCameraPoseRoll = Units.degreesToRadians(0);
 
   // CAMERA 2 POSE (PITCH)
-  public static final double camera2PosePitch = Units.degreesToRadians(-15); // -15
+  public static final double frontRightCameraPosePitch = Units.degreesToRadians(-15); // -15
 
   // CAMERA 2 POSE (YAW)
-  public static final double camera2PoseYaw = Units.degreesToRadians(28.659); // -28.659
+  public static final double frontRightCameraPoseYaw = Units.degreesToRadians(28.659); // 28.659 (should be positive)
 
+  // BACK CAMERA
   public static final String camera3Name = "B_Camera";
 
   // CAMERA 3 POSE (X)
@@ -91,22 +94,22 @@ public class CameraConstants {
   //   // CAMERA 4 POSE (YAW)
   //   public static final double camera4PoseYaw = Units.degreesToRadians(-28.6588);
 
-  public static final VisionConstants cam1Constants =
+  public static final VisionConstants frontLeftCameraConstants =
       new VisionConstants(
-          camera1Name,
+          frontLeftCameraName,
           new Transform3d(
-              new Translation3d(camera1PoseX, camera1PoseY, camera1PoseZ),
-              new Rotation3d(camera1PoseRoll, camera1PosePitch, camera1PoseYaw)),
+              new Translation3d(frontLeftCameraPoseX, frontLeftCameraPoseY, frontLeftCameraPoseZ),
+              new Rotation3d(frontLeftCameraPoseRoll, frontLeftCameraPosePitch, frontLeftCameraPoseYaw)),
           1.0);
 
-  public static final VisionConstants cam2Constants =
+  public static final VisionConstants frontRightCameraConstants =
       new VisionConstants(
-          camera2Name,
+          frontRightCameraName,
           new Transform3d(
-              new Translation3d(camera2PoseX, camera2PoseY, camera2PoseZ),
-              new Rotation3d(camera2PoseRoll, camera2PosePitch, camera2PoseYaw)),
+              new Translation3d(frontRightCameraPoseX, frontRightCameraPoseY, frontRightCameraPoseZ),
+              new Rotation3d(frontRightCameraPoseRoll, frontRightCameraPosePitch, frontRightCameraPoseYaw)),
           1.0);
-  public static final VisionConstants cam3Constants =
+  public static final VisionConstants backCameraConstants =
       new VisionConstants(
           camera3Name,
           new Transform3d(

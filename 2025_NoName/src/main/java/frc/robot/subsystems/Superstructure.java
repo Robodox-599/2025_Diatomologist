@@ -134,9 +134,10 @@ public class Superstructure extends SubsystemBase {
     currentSuperState = handleStateTransitions();
     applyStates();
 
-    DogLog.log("Superstructure/QueuedSuperState", queuedSuperState);
-    DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
+    DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
+    DogLog.log("Superstructure/QueuedSuperState", queuedSuperState);
+    DogLog.log("Superstructure/AutomationLevel", automationLevel);
   }
 
   private CurrentSuperState handleStateTransitions() {
@@ -587,7 +588,11 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
-    // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    if (rollers.isAlgaeDetected()) {
+      rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    } else {
+      rollers.setWantedState(Rollers.WantedState.STOPPED);
+    }
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -595,7 +600,11 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
-    // rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    if (rollers.isAlgaeDetected()) {
+      rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    } else {
+      rollers.setWantedState(Rollers.WantedState.STOPPED);
+    }
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_BARGE);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -684,25 +693,47 @@ public class Superstructure extends SubsystemBase {
     wantedSuperState = state;
   }
 
-  public WantedSuperState returnCoralState(WantedSuperState state) {
+  // public WantedSuperState returnCoralState(WantedSuperState state) {
+  //   if (automationLevel == AutomationLevel.AUTO_SCORE) {
+  //     switch (state) {
+  //       case POSITION_CORAL_L1:
+  //         return WantedSuperState.AUTO_SCORE_L1;
+  //       case POSITION_CORAL_L2:
+  //         return WantedSuperState.AUTO_SCORE_L2;
+  //       case POSITION_CORAL_L3:
+  //         return WantedSuperState.AUTO_SCORE_L3;
+  //       case POSITION_CORAL_L4:
+  //         return WantedSuperState.AUTO_SCORE_L4;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  //   return state;
+  // }
+
+  public void setCoralState() {
     if (automationLevel == AutomationLevel.AUTO_SCORE) {
-      switch (state) {
+      switch (queuedSuperState) {
         case POSITION_CORAL_L1:
-          return WantedSuperState.AUTO_SCORE_L1;
+          queuedSuperState = WantedSuperState.AUTO_SCORE_L1;
+          break;
         case POSITION_CORAL_L2:
-          return WantedSuperState.AUTO_SCORE_L2;
+          queuedSuperState = WantedSuperState.AUTO_SCORE_L2;
+          break;
         case POSITION_CORAL_L3:
-          return WantedSuperState.AUTO_SCORE_L3;
+          queuedSuperState = WantedSuperState.AUTO_SCORE_L3;
+          break;
         case POSITION_CORAL_L4:
-          return WantedSuperState.AUTO_SCORE_L4;
+          queuedSuperState = WantedSuperState.AUTO_SCORE_L4;
+          break;
         default:
           break;
       }
     }
-    return state;
   }
 
   public WantedSuperState returnAutoScoreState(boolean alignLeft) {
+    setCoralState();
     if (alignLeft) {
       switch (queuedSuperState) {
         case AUTO_SCORE_L1:

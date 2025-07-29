@@ -60,6 +60,11 @@ public class SafetyChecker {
     return false;
   }
 
+  public boolean isEndefectorBehindElevator() {
+    DogLog.log("SafetyChecker/isEndefectorBehindElevator", isBehindElevator(wristDegrees));
+    return isBehindElevator(wristDegrees);
+  }
+
   public boolean isBehindElevator(double wristSupplyDegrees) {
     return (endefectorBehindElevatorDegrees > wristSupplyDegrees);
   }

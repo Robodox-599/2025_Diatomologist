@@ -65,9 +65,7 @@ public class Wrist {
         }
         break;
       case POSITION_PREPARED:
-        if (safetyChecker.isSafeWrist()) {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
+        currentState = CurrentState.POSITION_PREPARED;
         break;
       case SCORING_CORAL:
         currentState = CurrentState.SCORING_CORAL;

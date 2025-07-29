@@ -341,9 +341,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, angularSpeed);
         setControl(m_pathApplyFieldSpeeds.withSpeeds(speeds));
-
-        DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
+        
         DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
+        DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
         DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
         DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
         DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);

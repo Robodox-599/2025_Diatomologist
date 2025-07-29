@@ -241,6 +241,11 @@ public class RobotContainer {
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.INTAKING_ALGAE_GROUND));
+    driver
+        .leftBumper()
+        .onFalse(
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SCORE CORAL
     driver
         .rightTrigger()
@@ -270,11 +275,11 @@ public class RobotContainer {
     driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.a().onFalse(superstructureCommands.setTeleopDriveStateCommand());
-    // SET AUTOMATION LEVEL TO AUTO SCORE
+    // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
     driver
         .povUp()
         .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_SCORE));
-    // SET AUTOMATION LEVEL TO MANUAL
+    // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
     driver
         .povDown()
         .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.MANUAL));
@@ -284,26 +289,22 @@ public class RobotContainer {
     operator
         .x()
         .onTrue(
-            superstructureCommands.setQueuedSuperStateCommand(
-                superstructureCommands.returnCoralState(WantedSuperState.POSITION_CORAL_L1)));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
     // // MOVE TO L2
     operator
         .a()
         .onTrue(
-            superstructureCommands.setQueuedSuperStateCommand(
-                superstructureCommands.returnCoralState(WantedSuperState.POSITION_CORAL_L2)));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
     // // MOVE TO L3
     operator
         .b()
         .onTrue(
-            superstructureCommands.setQueuedSuperStateCommand(
-                superstructureCommands.returnCoralState(WantedSuperState.POSITION_CORAL_L3)));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
     // // MOVE TO L4
     operator
         .y()
         .onTrue(
-            superstructureCommands.setQueuedSuperStateCommand(
-                superstructureCommands.returnCoralState(WantedSuperState.POSITION_CORAL_L4)));
+            superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
     // // CORAL STATION INTAKE
     operator
         .rightBumper()

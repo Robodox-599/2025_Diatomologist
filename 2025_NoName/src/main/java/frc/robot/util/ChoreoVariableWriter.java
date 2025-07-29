@@ -30,6 +30,12 @@ public final class ChoreoVariableWriter {
     for (int i = 0; i < REEF_BLUE_RIGHT.length; i++) {
       namedPosesMap.put(blueRightNames[i], REEF_BLUE_RIGHT[i]);
     }
+    String[] blueMiddleNames = {
+      "REEF_BLUE_AB", "REEF_BLUE_CD", "REEF_BLUE_EF", "REEF_BLUE_GH", "REEF_BLUE_IJ", "REEF_BLUE_KL"
+    };
+    for (int i = 0; i < REEF_BLUE_MIDDLE.length; i++) {
+      namedPosesMap.put(blueMiddleNames[i], REEF_BLUE_MIDDLE[i]);
+    }
 
     try (FileReader reader = new FileReader(filePath)) {
       System.out.println("[ChoreoVariableWriter]: " + filePath + " read successfully.");

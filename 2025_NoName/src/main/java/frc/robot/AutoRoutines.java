@@ -49,7 +49,7 @@ public class AutoRoutines {
     LEFTtoJ.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(false)));
+                superstructureCommands.returnAutoCoralScoreState(false)));
 
     LEFTtoJ.recentlyDone().and(hasNoCoral).onTrue(JtoHP.cmd());
 
@@ -63,7 +63,7 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(false)));
+                superstructureCommands.returnAutoCoralScoreState(false)));
 
     HPtoL.recentlyDone().and(hasNoCoral).onTrue(LtoHP.cmd());
 
@@ -77,7 +77,7 @@ public class AutoRoutines {
     HPtoK.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(true)));
+                superstructureCommands.returnAutoCoralScoreState(true)));
     return routine;
   }
 
@@ -113,7 +113,7 @@ public class AutoRoutines {
     RIGHTtoE.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(true)));
+                superstructureCommands.returnAutoCoralScoreState(true)));
 
     RIGHTtoE.recentlyDone().and(hasNoCoral).onTrue(EtoHP.cmd());
 
@@ -127,7 +127,7 @@ public class AutoRoutines {
     HPtoC.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(true)));
+                superstructureCommands.returnAutoCoralScoreState(true)));
 
     HPtoC.recentlyDone().and(hasNoCoral).onTrue(CtoHP.cmd());
 
@@ -141,14 +141,55 @@ public class AutoRoutines {
     HPtoD.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(false)));
+                superstructureCommands.returnAutoCoralScoreState(false)));
+    return routine;
+  }
+
+  public AutoRoutine middleAutoAndGrabAlgaeRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("middleAutoAndGrabAlgae");
+
+    AutoTrajectory MIDtoG = routine.trajectory("MIDDLEtoG");
+    AutoTrajectory GtoGH = routine.trajectory("GtoGH");
+
+    Trigger withinCoralRaiseDistance =
+        new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
+    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.hasCoral());
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                MIDtoG.resetOdometry(),
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.POSITION_PREPARED),
+                MIDtoG.cmd(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4)));
+
+    MIDtoG.active()
+        .and(withinCoralRaiseDistance)
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+
+    MIDtoG.done()
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoCoralScoreState(true)));
+
+    MIDtoG.recentlyDone().and(hasNoCoral).onTrue(GtoGH.cmd());
+
+    GtoGH.done()
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoAlgaeIntakeState()));
+
     return routine;
   }
 
   public AutoRoutine middleAutoRoutine() {
     AutoRoutine routine = autoFactory.newRoutine("middleAuto");
 
-    AutoTrajectory MIDtoG = routine.trajectory("MIDtoG");
+    AutoTrajectory MIDtoG = routine.trajectory("MIDDLEtoG");
 
     Trigger withinCoralRaiseDistance =
         new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
@@ -172,7 +213,7 @@ public class AutoRoutines {
     MIDtoG.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(true)));
+                superstructureCommands.returnAutoCoralScoreState(true)));
 
     return routine;
   }
@@ -180,7 +221,7 @@ public class AutoRoutines {
   public AutoRoutine taxiAutoRoutine() {
     AutoRoutine routine = autoFactory.newRoutine("taxiAuto");
 
-    AutoTrajectory MIDtoTaxi = routine.trajectory("MIDtoTaxi");
+    AutoTrajectory MIDtoTaxi = routine.trajectory("MIDDLEtoTaxi");
 
     routine.active().onTrue(Commands.sequence(MIDtoTaxi.resetOdometry(), MIDtoTaxi.cmd()));
 

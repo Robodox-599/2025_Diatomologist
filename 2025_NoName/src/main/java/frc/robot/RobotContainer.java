@@ -168,10 +168,12 @@ public class RobotContainer {
 
     /** AUTO ROUTINES - DO NOT TOUCH */
     // COMPETITION
-    autoChooser.addRoutine("leftAutoRoutine", autoRoutines::leftAutoRoutine);
-    autoChooser.addRoutine("rightAutoRoutine", autoRoutines::rightAutoRoutine);
-    autoChooser.addRoutine("middleAutoRoutine", autoRoutines::middleAutoRoutine);
-    autoChooser.addRoutine("taxiAutoRoutine", autoRoutines::taxiAutoRoutine);
+    autoChooser.addRoutine("Left Auto - 3 Coral", autoRoutines::leftAutoRoutine);
+    autoChooser.addRoutine("Right Auto - 3 Coral", autoRoutines::rightAutoRoutine);
+    autoChooser.addRoutine(
+        "Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
+    autoChooser.addRoutine("Middle Auto - 1 Coral", autoRoutines::middleAutoRoutine);
+    autoChooser.addRoutine("Taxi Auto - Taxi", autoRoutines::taxiAutoRoutine);
 
     // TESTING ONLY
 
@@ -238,7 +240,7 @@ public class RobotContainer {
     // // INTAKE ALGAE GROUND
     driver
         .leftBumper()
-        .onTrue(
+        .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.INTAKING_ALGAE_GROUND));
     driver
@@ -254,23 +256,24 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
-    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF NO AUTO SCORE STATE IS SET)
+    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povLeft()
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(true)));
-    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF NO AUTO SCORE STATE IS SET)
+                superstructureCommands.returnAutoCoralScoreState(true)));
+    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoScoreState(false)));
-    // // AUTO INTAKE ALGAE FROM THE REEF
+                superstructureCommands.returnAutoCoralScoreState(false)));
+    // // AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .a()
         .whileTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE));
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoAlgaeIntakeState()));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
@@ -278,7 +281,7 @@ public class RobotContainer {
     // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
     driver
         .povUp()
-        .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_SCORE));
+        .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION));
     // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
     driver
         .povDown()

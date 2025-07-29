@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.SafetyChecker;
 import frc.robot.commands.AutoAlignPoseGenerator;
@@ -32,12 +31,7 @@ public class Superstructure extends SubsystemBase {
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
   private WantedSuperState queuedSuperState = WantedSuperState.STOPPED;
-  public AutomationLevel automationLevel = AutomationLevel.AUTO_SCORE;
-
-  public enum AutomationLevel {
-    MANUAL,
-    AUTO_SCORE,
-  }
+  public AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
 
   public enum CurrentSuperState {
     INTAKING_CORAL_STATION,
@@ -45,8 +39,6 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
-    AUTO_ALIGN_MIDDLE_ALGAE,
-    AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
@@ -54,6 +46,8 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L4,
     AUTO_ALIGN_LEFT_BRANCH,
     AUTO_ALIGN_RIGHT_BRANCH,
+    AUTO_ALIGN_MIDDLE_ALGAE,
+    AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     POSITION_CLIMB_PREPARED,
@@ -77,6 +71,7 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L4,
     AUTO_ALIGN_LEFT_BRANCH,
     AUTO_ALIGN_RIGHT_BRANCH,
+    AUTO_ALIGN_MIDDLE_ALGAE,
     AUTO_SCORE_L1,
     AUTO_SCORE_L1_LEFT,
     AUTO_SCORE_L1_RIGHT,
@@ -97,6 +92,11 @@ public class Superstructure extends SubsystemBase {
     CLIMBING,
     STOPPED,
     NO_STATE,
+  }
+
+  public enum AutomationLevel {
+    MANUAL,
+    AUTO_ACTION,
   }
 
   public Superstructure(
@@ -192,19 +192,24 @@ public class Superstructure extends SubsystemBase {
                 == CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR) {
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
           currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          break;
         } else if (rollers.isAlgaeDetected()) {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR;
+          break;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3)) {
           if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
+            break;
           } else {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
+            break;
           }
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
+          break;
         }
       case POSITION_PREPARED:
         currentSuperState = CurrentSuperState.POSITION_PREPARED;
@@ -226,6 +231,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_ALIGN_RIGHT_BRANCH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+        break;
+      case AUTO_ALIGN_MIDDLE_ALGAE:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
         break;
       case AUTO_SCORE_L1_LEFT:
         if (!rollers.isCoralDetected()) {
@@ -451,13 +459,6 @@ public class Superstructure extends SubsystemBase {
       case INTAKING_ALGAE_L3:
         intakeAlgaeL3();
         break;
-      case AUTO_ALIGN_MIDDLE_ALGAE:
-        autoAlignToAlgaeReefFace(false);
-        break;
-      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
-        autoAlignToAlgaeReefFace(true);
-        positionToAlgaeProcessor();
-        break;
       case POSITION_PREPARED:
         prepare();
         break;
@@ -478,6 +479,13 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_ALIGN_RIGHT_BRANCH:
         autoAlignToBranch(false);
+        break;
+      case AUTO_ALIGN_MIDDLE_ALGAE:
+        autoAlignToAlgaeReefFace(false);
+        break;
+      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
+        autoAlignToAlgaeReefFace(true);
+        positionToAlgaeProcessor();
         break;
       case POSITION_ALGAE_PROCESSOR:
         positionToAlgaeProcessor();
@@ -630,7 +638,12 @@ public class Superstructure extends SubsystemBase {
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
   }
 
-  /** Automatically drives to a reef face */
+  /**
+   * Automatically drives to a reef face
+   *
+   * @param shiftBackFromReefFace true if the target pose should be shifted back from the reef face,
+   *     false if the target pose should be right up to the reef face
+   */
   private void autoAlignToAlgaeReefFace(boolean shiftBackFromReefFace) {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
@@ -661,58 +674,16 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
 
-  public Command setQueuedSuperStateCommand(WantedSuperState nextState) {
-    return Commands.parallel(
-        this.runOnce(() -> setQueuedSuperState(nextState)), rumbleControllers().withTimeout(0.2));
+  public WantedSuperState returnAutoAlgaeIntakeState() {
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      return WantedSuperState.AUTO_INTAKE_ALGAE;
+    } else {
+      return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
+    }
   }
 
-  private void setQueuedSuperState(WantedSuperState state) {
-    queuedSuperState = state;
-  }
-
-  public Command updateWantedSuperStateCommand() {
-    return Commands.either(
-        Commands.sequence(
-            rumbleControllers().withTimeout(0.1),
-            new WaitCommand(0.2),
-            rumbleControllers().withTimeout(0.1)),
-        Commands.parallel(
-            this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.3)),
-        (() -> queuedSuperState == WantedSuperState.NO_STATE));
-  }
-
-  private void updateWantedSuperState() {
-    wantedSuperState = queuedSuperState;
-  }
-
-  public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
-    return this.runOnce(() -> setWantedSuperState(wantedState));
-  }
-
-  private void setWantedSuperState(WantedSuperState state) {
-    wantedSuperState = state;
-  }
-
-  // public WantedSuperState returnCoralState(WantedSuperState state) {
-  //   if (automationLevel == AutomationLevel.AUTO_SCORE) {
-  //     switch (state) {
-  //       case POSITION_CORAL_L1:
-  //         return WantedSuperState.AUTO_SCORE_L1;
-  //       case POSITION_CORAL_L2:
-  //         return WantedSuperState.AUTO_SCORE_L2;
-  //       case POSITION_CORAL_L3:
-  //         return WantedSuperState.AUTO_SCORE_L3;
-  //       case POSITION_CORAL_L4:
-  //         return WantedSuperState.AUTO_SCORE_L4;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   return state;
-  // }
-
-  public void setCoralState() {
-    if (automationLevel == AutomationLevel.AUTO_SCORE) {
+  public void setCoralQueuedState() {
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
       switch (queuedSuperState) {
         case POSITION_CORAL_L1:
           queuedSuperState = WantedSuperState.AUTO_SCORE_L1;
@@ -732,8 +703,8 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public WantedSuperState returnAutoScoreState(boolean alignLeft) {
-    setCoralState();
+  public WantedSuperState returnAutoCoralScoreState(boolean alignLeft) {
+    setCoralQueuedState();
     if (alignLeft) {
       switch (queuedSuperState) {
         case AUTO_SCORE_L1:
@@ -763,16 +734,8 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public Command setAutomationLevelCommand(AutomationLevel level) {
-    return this.runOnce(() -> setAutomationLevel(level));
-  }
-
-  public void setAutomationLevel(AutomationLevel level) {
-    automationLevel = level;
-  }
-
-  public Command zeroGyroCommand() {
-    return this.runOnce(() -> drivetrain.zeroGyro());
+  public Command setTeleopDriveStateCommand() {
+    return this.runOnce(() -> setTeleopDriveState());
   }
 
   public void setTeleopDriveState() {
@@ -816,34 +779,42 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public Command setTeleopDriveStateCommand() {
-    return this.runOnce(() -> setTeleopDriveState());
+  public Command setQueuedSuperStateCommand(WantedSuperState nextState) {
+    return Commands.parallel(
+        this.runOnce(() -> setQueuedSuperState(nextState)), rumbleControllers().withTimeout(0.2));
   }
 
-  public boolean isWithinCoralRaiseDistance() {
-    return drivetrain.isWithinCoralRaiseDistance();
+  private void setQueuedSuperState(WantedSuperState state) {
+    queuedSuperState = state;
   }
 
-  public boolean isWithinAlgaeRaiseDistance() {
-    return drivetrain.isWithinAlgaeRaiseDistance();
+  public Command updateWantedSuperStateCommand() {
+    return Commands.parallel(
+        this.runOnce(() -> updateWantedSuperState()), rumbleControllers().withTimeout(0.3));
   }
 
-  public boolean hasCoral() {
-    return rollers.isCoralDetected();
+  private void updateWantedSuperState() {
+    wantedSuperState = queuedSuperState;
   }
 
-  public Command rumbleDriverController() {
-    return new StartEndCommand(
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
-        .withTimeout(0.5);
+  public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
+    return this.runOnce(() -> setWantedSuperState(wantedState));
   }
 
-  public Command rumbleOperatorController() {
-    return new StartEndCommand(
-            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
-            () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0))
-        .withTimeout(0.5);
+  private void setWantedSuperState(WantedSuperState state) {
+    wantedSuperState = state;
+  }
+
+  public Command setAutomationLevelCommand(AutomationLevel level) {
+    return this.runOnce(() -> setAutomationLevel(level));
+  }
+
+  public void setAutomationLevel(AutomationLevel level) {
+    automationLevel = level;
+  }
+
+  public Command zeroGyroCommand() {
+    return this.runOnce(() -> drivetrain.zeroGyro());
   }
 
   public Command rumbleControllers() {
@@ -855,5 +826,18 @@ public class Superstructure extends SubsystemBase {
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 1),
                 () -> operator.getHID().setRumble(RumbleType.kBothRumble, 0)))
         .withTimeout(0.5);
+  }
+
+  /* USED FOR AUTOS ONLY */
+  public boolean isWithinCoralRaiseDistance() {
+    return drivetrain.isWithinCoralRaiseDistance();
+  }
+
+  public boolean isWithinAlgaeRaiseDistance() {
+    return drivetrain.isWithinAlgaeRaiseDistance();
+  }
+
+  public boolean hasCoral() {
+    return rollers.isCoralDetected();
   }
 }

@@ -20,6 +20,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.AutomationLevel;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.constants.CameraConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -33,6 +34,8 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.vision2.CameraReal;
+import frc.robot.subsystems.vision2.Vision;
 
 public class RobotContainer {
   // Controllers
@@ -48,7 +51,7 @@ public class RobotContainer {
   private final Rollers rollers;
   private final LEDs leds;
   //   private final Climb climb;
-  //   private final Vision vision;
+  private final Vision vision;
   private SafetyChecker safetyChecker;
   private final Superstructure superstructureCommands;
   private final Telemetry logger =
@@ -83,13 +86,12 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOReal());
         // climb = new Climb(new ClimbIOTalonFX());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOReal(RealConstants.cam2Constants),
-        //         new VisionIOReal(RealConstants.cam1Constants),
-        //         new VisionIOReal(RealConstants.cam3Constants));
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                new CameraReal(CameraConstants.cam1Constants),
+                new CameraReal(CameraConstants.cam2Constants),
+                new CameraReal(CameraConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -106,13 +108,12 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                new CameraReal(CameraConstants.cam1Constants),
+                new CameraReal(CameraConstants.cam2Constants),
+                new CameraReal(CameraConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -129,13 +130,12 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
-        // vision =
-        //     new Vision(
-        //         drivetrain::addVisionMeasurement,
-        //         drivetrain::getChassisSpeeds,
-        //         new VisionIOSim(RealConstants.cam2Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam1Constants, drivetrain::getPose),
-        //         new VisionIOSim(RealConstants.cam3Constants, drivetrain::getPose));
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                new CameraReal(CameraConstants.cam1Constants),
+                new CameraReal(CameraConstants.cam2Constants),
+                new CameraReal(CameraConstants.cam3Constants));
         autoFactory =
             new AutoFactory(
                 drivetrain::getPose,
@@ -156,7 +156,7 @@ public class RobotContainer {
             rollers,
             leds,
             // climb,
-            // vision,
+            vision,
             safetyChecker,
             driver,
             operator);
@@ -278,7 +278,6 @@ public class RobotContainer {
     driver
         .povDown()
         .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.MANUAL));
-
 
     //                                OPERATOR BINDS
     // // MOVE TO L1

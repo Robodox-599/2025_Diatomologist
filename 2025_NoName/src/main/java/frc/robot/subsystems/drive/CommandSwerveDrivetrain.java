@@ -50,16 +50,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final PIDController choreoThetaPID = new PIDController(10, 0, 0);
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
-  private final ProfiledPIDController driveToPointTranslationalController =
-      new ProfiledPIDController(
-          0.0,
-          0.0,
-          0.0,
-          new TrapezoidProfile.Constraints(
-              TunerConstants.MAX_LINEAR_SPEED, TunerConstants.MAX_LINEAR_ACCELERATION));
+  private final PIDController driveToPointTranslationalController =
+      new PIDController(0.5, 0.0, 0.0);
   ProfiledPIDController driveToPointAngularController =
       new ProfiledPIDController(
-          0.0,
+          0.5,
           0.0,
           0.0,
           new TrapezoidProfile.Constraints(
@@ -344,11 +339,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 currentPose.getRotation().getRadians(),
                 targetPoseForDriveToPoint.getRotation().getRadians());
 
-        setControl(
-            swreq_drive
-                .withVelocityX(xSpeed)
-                .withVelocityY(ySpeed)
-                .withRotationalRate(angularSpeed));
+        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, angularSpeed);
+        setControl(m_pathApplyFieldSpeeds.withSpeeds(speeds));
 
         DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
         DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
@@ -413,7 +405,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void resetDriveToPointControllers() {
-    driveToPointTranslationalController.reset(0.0);
+    driveToPointTranslationalController.reset();
     driveToPointAngularController.reset(getPose().getRotation().getRadians());
   }
 

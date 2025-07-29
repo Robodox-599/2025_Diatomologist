@@ -61,8 +61,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoL.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(false)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(false)));
 
     HPtoL.recentlyDone().and(hasNoCoral).onTrue(LtoHP.cmd());
 
@@ -74,8 +75,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoK.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(true)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(true)));
     return routine;
   }
 
@@ -109,8 +111,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     RIGHTtoE.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(true)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(true)));
 
     RIGHTtoE.recentlyDone().and(hasNoCoral).onTrue(EtoHP.cmd());
 
@@ -122,8 +125,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoC.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(true)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(true)));
 
     HPtoC.recentlyDone().and(hasNoCoral).onTrue(CtoHP.cmd());
 
@@ -135,8 +139,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoD.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(false)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(false)));
     return routine;
   }
 
@@ -165,8 +170,9 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     MIDtoG.done()
-        .onTrue(superstructureCommands.setWantedSuperStateCommand(
-            superstructureCommands.returnAutoScoreState(true)));
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoScoreState(true)));
 
     return routine;
   }

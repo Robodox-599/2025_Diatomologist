@@ -15,6 +15,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.vision2.Vision;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -23,7 +24,7 @@ public class Superstructure extends SubsystemBase {
   private final Rollers rollers;
   private final LEDs leds;
   // private final Climb climb;
-  // private final Vision vision;
+  private final Vision vision;
   private final SafetyChecker safetyChecker;
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -105,7 +106,7 @@ public class Superstructure extends SubsystemBase {
       Rollers rollers,
       LEDs LEDs,
       // Climb climb,
-      // Vision vision,
+      Vision vision,
       SafetyChecker safetyChecker,
       CommandXboxController driver,
       CommandXboxController operator) {
@@ -115,7 +116,7 @@ public class Superstructure extends SubsystemBase {
     this.rollers = rollers;
     this.leds = LEDs;
     // this.climb = climb;
-    // this.vision = vision;
+    this.vision = vision;
     this.safetyChecker = safetyChecker;
     this.driver = driver;
     this.operator = operator;
@@ -129,7 +130,7 @@ public class Superstructure extends SubsystemBase {
     wrist.updateInputs();
     leds.updateInputs();
     // climb.updateInputs();
-    // vision.updateInputs();
+    vision.update();
     currentSuperState = handleStateTransitions();
     applyStates();
 
@@ -184,7 +185,10 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_INTAKE_ALGAE:
-        if (rollers.isAlgaeDetected() && drivetrain.isAtDriveToPointSetpoints() && currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR) {
+        if (rollers.isAlgaeDetected()
+            && drivetrain.isAtDriveToPointSetpoints()
+            && currentSuperState
+                == CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR) {
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
           currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         } else if (rollers.isAlgaeDetected()) {
@@ -777,13 +781,12 @@ public class Superstructure extends SubsystemBase {
         wantedSuperState = WantedSuperState.SCORING_CORAL;
         break;
       default:
-        break; 
+        break;
     }
   }
 
   public Command setTeleopDriveStateCommand() {
-    return this.runOnce(
-        () -> setTeleopDriveState());
+    return this.runOnce(() -> setTeleopDriveState());
   }
 
   public boolean isWithinCoralRaiseDistance() {

@@ -6,104 +6,26 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 
-public class Vision extends SubsystemBase {
+public class Vision {
+  private final CameraReal[] cameras;
   private final VisionConsumer consumer;
-  private final SwerveConsumer speedsConsumer;
 
-  private final VisionIO[] io;
-  private final Alert[] disconnectedAlerts;
-
-  public Vision(VisionConsumer consumer, SwerveConsumer speedsConsumer, VisionIO... io) {
+  public Vision(VisionConsumer consumer, CameraReal... cameras) {
     this.consumer = consumer;
-    this.speedsConsumer = speedsConsumer;
-    this.io = io;
-
-    // Initialize disconnected alerts
-    this.disconnectedAlerts = new Alert[io.length];
-    for (int i = 0; i < io.length; i++) {
-      disconnectedAlerts[i] = new Alert(io[i].getName() + " is disconnected.", AlertType.kWarning);
-    }
+    this.cameras = cameras;
   }
 
-  public void updateInputs() {
-    for (int i = 0; i < io.length; i++) {
-      io[i].updateInputs();
-    }
-
-    // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
-
-      // Update disconnected alert
-      disconnectedAlerts[cameraIndex].set(!io[cameraIndex].cameraConnected);
-
-      // Loop over pose observations
-      for (var observation : io[cameraIndex].poseObservations) {
-        // Calculate standard deviations for selected pose
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
-
-        double linearStdDev =
-            io[cameraIndex].getVisionConstants().linearStdDevBaseline() * stdDevFactor;
-        double angularStdDev =
-            io[cameraIndex].getVisionConstants().angularStdDevBaseline() * stdDevFactor;
-
-        linearStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-        angularStdDev *= io[cameraIndex].getVisionConstants().cameraStdDevFactor();
-
-        // Check whether to reject pose
-        boolean rejectPose = checkPose(observation, cameraIndex);
-
-        var speeds = speedsConsumer.getSpeeds();
-
-        if (observation.getTagArea() > 8
-            && speeds.vxMetersPerSecond < 3
-            && speeds.vyMetersPerSecond < 3
-            && speeds.omegaRadiansPerSecond < 4 * Math.PI
-            && !rejectPose) {
-          DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", true);
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/AcceptedPoseObservation",
-              observation.getObservedPose());
-
-          angularStdDev += 25;
-        } else {
-          DogLog.log("Vision/" + io[cameraIndex].getName() + "/PoseAccepted?", false);
-          DogLog.log(
-              "Vision/" + io[cameraIndex].getName() + "/RejectedRobotPose",
-              observation.observedPose());
-
-          continue;
-        }
-
-        consumer.accept(
-            observation.getObservedPose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
-      }
-      logValues(cameraIndex);
-    }
-  }
-
+  // Functional interface for vision consumer
   @FunctionalInterface
   public static interface VisionConsumer {
     public void accept(
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
-  }
-
-  @FunctionalInterface
-  public static interface SwerveConsumer {
-    public ChassisSpeeds getSpeeds();
   }
 
   private boolean checkPose(PoseObservation observation, int cameraIndex) {
@@ -116,18 +38,52 @@ public class Vision extends SubsystemBase {
         || Double.isNaN(simplePose.getX())
         || Double.isNaN(simplePose.getY())
         || Math.abs(pose.getTranslation().getZ())
-            > io[cameraIndex].getVisionConstants().getMaxZError()
-        || pose.getRotation().getY() > io[cameraIndex].getVisionConstants().getMaxAngleError()
-        || pose.getRotation().getX() > io[cameraIndex].getVisionConstants().getMaxAngleError()
+            > cameras[cameraIndex].getConstants().getMaxZError()
+        || pose.getRotation().getY() > cameras[cameraIndex].getConstants().getMaxAngleError()
+        || pose.getRotation().getX() > cameras[cameraIndex].getConstants().getMaxAngleError()
         || observation.getAverageTagDistance() > 5.5);
   }
 
-  public void logValues(int cameraIndex) {
-    DogLog.log(
-        "Vision/" + io[cameraIndex].getName() + "/CameraConnected",
-        io[cameraIndex].cameraConnected);
-    DogLog.log("Vision/" + io[cameraIndex].getName() + "/HasTargets", io[cameraIndex].hasTargets);
-    DogLog.log("Vision/" + io[cameraIndex].getName() + "/NumTargets", io[cameraIndex].numTargets);
-    DogLog.log("Vision/" + io[cameraIndex].getName() + "/TagIds", io[cameraIndex].tagIds);
+  public void updateInputs() {
+    for (int i = 0; i < cameras.length; i++) {
+      CameraReal camera = cameras[i];
+      PoseObservation[] observations = camera.update();
+      DogLog.log(
+          "Vision/" + camera.getConstants().cameraName() + "/Observations", observations.length);
+
+      if (observations.length == 0) {
+        continue;
+      }
+
+      for (PoseObservation observation : observations) {
+        if (checkPose(observation, i)) {
+          DogLog.log(
+              "Vision/" + camera.getConstants().cameraName() + "/RejectedRobotPose",
+              observation.getObservedPose());
+          continue;
+        }
+
+        double stdDevFactor =
+            Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
+
+        double linearStdDev = camera.getConstants().linearStdDevBaseline() * stdDevFactor;
+        double angularStdDev = camera.getConstants().angularStdDevBaseline() * stdDevFactor;
+
+        linearStdDev *= camera.getConstants().cameraStdDevFactor();
+        angularStdDev *= camera.getConstants().cameraStdDevFactor();
+
+        // Check whether to reject pose
+
+        DogLog.log("Vision/" + camera.getConstants().cameraName() + "/PoseAccepted?", true);
+        DogLog.log(
+            "Vision/" + camera.getConstants().cameraName() + "/RobotPose",
+            observation.getObservedPose());
+
+        consumer.accept(
+            observation.getObservedPose().toPose2d(),
+            observation.timestamp(),
+            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+      }
+    }
   }
 }

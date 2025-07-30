@@ -34,8 +34,8 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
-import frc.robot.subsystems.vision2.CameraReal;
-import frc.robot.subsystems.vision2.Vision;
+import frc.robot.subsystems.vision.CameraReal;
+import frc.robot.subsystems.vision.Vision;
 
 public class RobotContainer {
   // Controllers
@@ -256,13 +256,13 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
-    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
+    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO CORAL STATE IS SET)
     driver
         .povLeft()
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 superstructureCommands.returnAutoCoralScoreState(true)));
-    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
+    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO CORAL STATE IS SET)
     driver
         .povRight()
         .whileTrue(
@@ -288,22 +288,22 @@ public class RobotContainer {
         .onTrue(superstructureCommands.setAutomationLevelCommand(AutomationLevel.MANUAL));
 
     //                                OPERATOR BINDS
-    // // MOVE TO L1
+    // // SET QUEUED STATE TO L1
     operator
         .x()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
-    // // MOVE TO L2
+    // // SET QUEUED STATE TO L2
     operator
         .a()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
-    // // MOVE TO L3
+    // // SET QUEUED STATE TO L3
     operator
         .b()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
-    // // MOVE TO L4
+    // // SET QUEUED STATE TO L4
     operator
         .y()
         .onTrue(
@@ -319,31 +319,31 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
-    // // CLIMB
+    // // PREPARE CLIMB
     operator
         .rightTrigger()
         .and(operator.leftTrigger())
         .onTrue(
-            superstructureCommands.setQueuedSuperStateCommand(
+            superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.POSITION_CLIMB_PREPARED));
-    // // MOVE TO BARGE
+    // // SET QUEUED STATE TO BARGE
     operator
         .povUp()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_BARGE));
-    // // MOVE TO PROCESSOR
+    // // SET QUEUED STATE TO PROCESSOR
     operator
         .povDown()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_PROCESSOR));
-    // // INTAKE ALGAE L2
+    // // SET QUEUED STATE TO INTAKE ALGAE L2
     operator
         .povLeft()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
-    // // INTAKE ALGAE L3
+    // // SET QUEUED STATE TO INTAKE ALGAE L3
     operator
         .povRight()
         .onTrue(

@@ -39,9 +39,10 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  private final double DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT = 0.1;
-  private final double DRIVE_TO_POINT_RAISE_RADIUS_INCHES = 24.0;
+  // private final double DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT = 0.1;
+  // private final double DRIVE_TO_POINT_RAISE_RADIUS_INCHES = 24.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
+  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(3);
   private static boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;
 
@@ -51,10 +52,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
   private final PIDController driveToPointTranslationalController =
-      new PIDController(0.5, 0.0, 0.0);
+      new PIDController(0.1, 0.0, 0.0);
   ProfiledPIDController driveToPointAngularController =
       new ProfiledPIDController(
-          0.5,
+          0.1,
           0.0,
           0.0,
           new TrapezoidProfile.Constraints(
@@ -87,8 +88,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds =
       new SwerveRequest.ApplyFieldSpeeds();
 
-  private final SwerveRequest.FieldCentric swreq_drive =
-      new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+  // private final SwerveRequest.FieldCentric swreq_drive =
+  //     new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -167,7 +168,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
     driveToPointAngularController.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointAngularController.setTolerance(Units.degreesToRadians(3));
+    driveToPointAngularController.setTolerance(DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
   }
 
   /**
@@ -276,7 +277,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-    updateRaiseDistances();
     handleStateTransitions();
     applyStates();
     DogLog.log("Drive/CurrentState", currentState);
@@ -322,7 +322,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Rotation2d direction = translationToTarget.getAngle();
 
         double linearDistance = translationToTarget.getNorm();
-        double frictionConstant = 0.0;
+        if (linearDistance <= 0.6) { // 0.6 meters (~2 feet)
+          withinCoralRaiseDistance = true;
+          withinAlgaeRaiseDistance = true;
+        } else {
+          withinCoralRaiseDistance = false;
+          if (linearDistance <= 1.0) { // 1 meter (~3.3 feet)
+            withinAlgaeRaiseDistance = true;
+          } else {
+            withinAlgaeRaiseDistance = false;
+          }
+        }
+        // double frictionConstant = 0.0;
         // if (linearDistance >= Units.inchesToMeters(DRIVE_TO_POINT_RAISE_RADIUS_INCHES)) {
         //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT;
         // }
@@ -330,7 +341,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double velocityOutput =
             Math.abs(
                 driveToPointTranslationalController.calculate(linearDistance, 0)
-                    + frictionConstant);
+                    // + frictionConstant
+                    );
 
         double xSpeed = velocityOutput * direction.getCos();
         double ySpeed = velocityOutput * direction.getSin();
@@ -355,25 +367,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
     this.targetPoseForDriveToPoint = targetPose;
-  }
-
-  public void updateRaiseDistances() {
-    double linearDistance =
-        targetPoseForDriveToPoint
-            .getTranslation()
-            .minus(getState().Pose.getTranslation())
-            .getNorm();
-
-    if (linearDistance <= Units.feetToMeters(2)) {
-      withinCoralRaiseDistance = true;
-    } else {
-      withinCoralRaiseDistance = false;
-    }
-    if (linearDistance <= Units.feetToMeters(3)) {
-      withinAlgaeRaiseDistance = true;
-    } else {
-      withinAlgaeRaiseDistance = false;
-    }
   }
 
   public boolean isWithinCoralRaiseDistance() {
@@ -407,6 +400,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void resetDriveToPointControllers() {
     driveToPointTranslationalController.reset();
     driveToPointAngularController.reset(getPose().getRotation().getRadians());
+    withinCoralRaiseDistance = false;
+    withinAlgaeRaiseDistance = false;
   }
 
   public ChassisSpeeds getChassisSpeeds() {

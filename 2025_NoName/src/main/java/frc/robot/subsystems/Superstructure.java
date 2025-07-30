@@ -14,7 +14,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
-import frc.robot.subsystems.vision2.Vision;
+import frc.robot.subsystems.vision.Vision;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -124,13 +124,13 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
+    vision.updateInputs();
     drivetrain.updateInputs();
     elevator.updateInputs();
     rollers.updateInputs();
     wrist.updateInputs();
     leds.updateInputs();
     // climb.updateInputs();
-    vision.update();
     currentSuperState = handleStateTransitions();
     applyStates();
 

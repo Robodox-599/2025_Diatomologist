@@ -683,52 +683,39 @@ public class Superstructure extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoCoralScoreState(boolean alignLeft) {
-    WantedSuperState coralState = returnCoralQueuedState();
     if (alignLeft) {
-      switch (coralState) {
-        case AUTO_SCORE_L1:
-          return WantedSuperState.AUTO_SCORE_L1_LEFT;
-        case AUTO_SCORE_L2:
-          return WantedSuperState.AUTO_SCORE_L2_LEFT;
-        case AUTO_SCORE_L3:
-          return WantedSuperState.AUTO_SCORE_L3_LEFT;
-        case AUTO_SCORE_L4:
-          return WantedSuperState.AUTO_SCORE_L4_LEFT;
-        default:
-          return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
+      if (automationLevel == AutomationLevel.AUTO_ACTION) {
+        switch (queuedSuperState) {
+          case AUTO_SCORE_L1:
+            return WantedSuperState.AUTO_SCORE_L1_LEFT;
+          case AUTO_SCORE_L2:
+            return WantedSuperState.AUTO_SCORE_L2_LEFT;
+          case AUTO_SCORE_L3:
+            return WantedSuperState.AUTO_SCORE_L3_LEFT;
+          case AUTO_SCORE_L4:
+            return WantedSuperState.AUTO_SCORE_L4_LEFT;
+          default:
+            break;
+        }
       }
+      return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
     } else {
-      switch (coralState) {
-        case AUTO_SCORE_L1:
-          return WantedSuperState.AUTO_SCORE_L1_RIGHT;
-        case AUTO_SCORE_L2:
-          return WantedSuperState.AUTO_SCORE_L2_RIGHT;
-        case AUTO_SCORE_L3:
-          return WantedSuperState.AUTO_SCORE_L3_RIGHT;
-        case AUTO_SCORE_L4:
-          return WantedSuperState.AUTO_SCORE_L4_RIGHT;
-        default:
-          return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+      if (automationLevel == AutomationLevel.AUTO_ACTION) {
+        switch (queuedSuperState) {
+          case AUTO_SCORE_L1:
+            return WantedSuperState.AUTO_SCORE_L1_RIGHT;
+          case AUTO_SCORE_L2:
+            return WantedSuperState.AUTO_SCORE_L2_RIGHT;
+          case AUTO_SCORE_L3:
+            return WantedSuperState.AUTO_SCORE_L3_RIGHT;
+          case AUTO_SCORE_L4:
+            return WantedSuperState.AUTO_SCORE_L4_RIGHT;
+          default:
+            break;
+        }
       }
+      return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
     }
-  }
-
-  public WantedSuperState returnCoralQueuedState() {
-    if (automationLevel == AutomationLevel.AUTO_ACTION) {
-      switch (queuedSuperState) {
-        case POSITION_CORAL_L1:
-          return WantedSuperState.AUTO_SCORE_L1;
-        case POSITION_CORAL_L2:
-          return WantedSuperState.AUTO_SCORE_L2;
-        case POSITION_CORAL_L3:
-          return WantedSuperState.AUTO_SCORE_L3;
-        case POSITION_CORAL_L4:
-          return WantedSuperState.AUTO_SCORE_L4;
-        default:
-          return queuedSuperState;
-      }
-    }
-    return queuedSuperState;
   }
 
   public Command setTeleopDriveStateCommand() {

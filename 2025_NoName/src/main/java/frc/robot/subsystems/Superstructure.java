@@ -72,16 +72,12 @@ public class Superstructure extends SubsystemBase {
     AUTO_ALIGN_LEFT_BRANCH,
     AUTO_ALIGN_RIGHT_BRANCH,
     AUTO_ALIGN_MIDDLE_ALGAE,
-    AUTO_SCORE_L1,
     AUTO_SCORE_L1_LEFT,
     AUTO_SCORE_L1_RIGHT,
-    AUTO_SCORE_L2,
     AUTO_SCORE_L2_LEFT,
     AUTO_SCORE_L2_RIGHT,
-    AUTO_SCORE_L3,
     AUTO_SCORE_L3_LEFT,
     AUTO_SCORE_L3_RIGHT,
-    AUTO_SCORE_L4,
     AUTO_SCORE_L4_LEFT,
     AUTO_SCORE_L4_RIGHT,
     POSITION_ALGAE_PROCESSOR,
@@ -683,39 +679,23 @@ public class Superstructure extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoCoralScoreState(boolean alignLeft) {
-    if (alignLeft) {
-      if (automationLevel == AutomationLevel.AUTO_ACTION) {
-        switch (queuedSuperState) {
-          case AUTO_SCORE_L1:
-            return WantedSuperState.AUTO_SCORE_L1_LEFT;
-          case AUTO_SCORE_L2:
-            return WantedSuperState.AUTO_SCORE_L2_LEFT;
-          case AUTO_SCORE_L3:
-            return WantedSuperState.AUTO_SCORE_L3_LEFT;
-          case AUTO_SCORE_L4:
-            return WantedSuperState.AUTO_SCORE_L4_LEFT;
-          default:
-            break;
-        }
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      switch (queuedSuperState) {
+        case POSITION_CORAL_L1:
+          return alignLeft ? WantedSuperState.AUTO_SCORE_L1_LEFT : WantedSuperState.AUTO_SCORE_L1_RIGHT;
+        case POSITION_CORAL_L2:
+          return alignLeft ? WantedSuperState.AUTO_SCORE_L2_LEFT : WantedSuperState.AUTO_SCORE_L2_RIGHT;
+        case POSITION_CORAL_L3:
+          return alignLeft ? WantedSuperState.AUTO_SCORE_L3_LEFT : WantedSuperState.AUTO_SCORE_L3_RIGHT;
+        case POSITION_CORAL_L4:
+          return alignLeft ? WantedSuperState.AUTO_SCORE_L4_LEFT : WantedSuperState.AUTO_SCORE_L4_RIGHT;
+        default:
+          break;
       }
-      return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
-    } else {
-      if (automationLevel == AutomationLevel.AUTO_ACTION) {
-        switch (queuedSuperState) {
-          case AUTO_SCORE_L1:
-            return WantedSuperState.AUTO_SCORE_L1_RIGHT;
-          case AUTO_SCORE_L2:
-            return WantedSuperState.AUTO_SCORE_L2_RIGHT;
-          case AUTO_SCORE_L3:
-            return WantedSuperState.AUTO_SCORE_L3_RIGHT;
-          case AUTO_SCORE_L4:
-            return WantedSuperState.AUTO_SCORE_L4_RIGHT;
-          default:
-            break;
-        }
-      }
-      return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
     }
+    return alignLeft
+        ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
+        : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
   }
 
   public Command setTeleopDriveStateCommand() {

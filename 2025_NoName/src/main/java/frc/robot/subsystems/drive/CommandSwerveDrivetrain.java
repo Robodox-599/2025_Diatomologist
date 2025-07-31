@@ -8,7 +8,6 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
@@ -89,7 +88,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       new SwerveRequest.ApplyFieldSpeeds();
 
   // private final SwerveRequest.FieldCentric swreq_drive =
-  //     new SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+  //     new
+  // SwerveRequest.FieldCentric().withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -341,8 +341,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double velocityOutput =
             Math.abs(
                 driveToPointTranslationalController.calculate(linearDistance, 0)
-                    // + frictionConstant
-                    );
+                // + frictionConstant
+                );
 
         double xSpeed = velocityOutput * direction.getCos();
         double ySpeed = velocityOutput * direction.getSin();

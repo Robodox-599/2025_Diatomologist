@@ -31,7 +31,8 @@
 //    * Buffer which keeps track of the robot rotation over the past few seconds This allows us to
 //    * match a vision estimate (which are determined with some delay) with a robot rotation
 //    */
-//   TimeInterpolatableBuffer<Rotation2d> rotationBuffer = TimeInterpolatableBuffer.createBuffer(1.5);
+//   TimeInterpolatableBuffer<Rotation2d> rotationBuffer =
+// TimeInterpolatableBuffer.createBuffer(1.5);
 
 //   /**
 //    * Creates a new VisionIOReal
@@ -129,7 +130,8 @@
 
 //     resultList.stream()
 //         .filter(result -> result.hasTargets()) // filters results to only those that have targets
-//         .map(result -> poseEstimator.update(result)) // gets an estimated robot pose for each result
+//         .map(result -> poseEstimator.update(result)) // gets an estimated robot pose for each
+// result
 //         .filter(Optional::isPresent) // filters out any empty optionals
 //         .map(Optional::get)
 //         .map(

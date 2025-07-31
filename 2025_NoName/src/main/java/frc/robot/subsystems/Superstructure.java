@@ -718,21 +718,17 @@ public class Superstructure extends SubsystemBase {
       switch (queuedSuperState) {
         case POSITION_CORAL_L1:
           return WantedSuperState.AUTO_SCORE_L1;
-          break;
         case POSITION_CORAL_L2:
-        return WantedSuperState.AUTO_SCORE_L2;
-          break;
+          return WantedSuperState.AUTO_SCORE_L2;
         case POSITION_CORAL_L3:
-        return WantedSuperState.AUTO_SCORE_L3;
-          break;
+          return WantedSuperState.AUTO_SCORE_L3;
         case POSITION_CORAL_L4:
-        return WantedSuperState.AUTO_SCORE_L4;
-          break;
+          return WantedSuperState.AUTO_SCORE_L4;
         default:
-        return queuedSuperState;
-          break;
+          return queuedSuperState;
       }
     }
+    return queuedSuperState;
   }
 
   public Command setTeleopDriveStateCommand() {

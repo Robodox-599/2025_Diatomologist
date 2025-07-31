@@ -256,13 +256,15 @@ public class RobotContainer {
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
-    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO CORAL STATE IS SET)
+    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO
+    // CORAL STATE IS SET)
     driver
         .povLeft()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 superstructureCommands.returnAutoCoralScoreState(true)));
-    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO CORAL STATE IS SET)
+    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF
+    // NO CORAL STATE IS SET)
     driver
         .povRight()
         .onTrue(

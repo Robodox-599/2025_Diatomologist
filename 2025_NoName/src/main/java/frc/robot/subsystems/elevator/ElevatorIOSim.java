@@ -36,7 +36,8 @@ public class ElevatorIOSim extends ElevatorIO {
     elevatorSim.update(0.02);
 
     super.positionInches = (Units.metersToInches(elevatorSim.getPositionMeters()));
-    // super.velocityInchesPerSec = (Units.metersToInches(elevatorSim.getVelocityMetersPerSecond()));
+    // super.velocityInchesPerSec =
+    // (Units.metersToInches(elevatorSim.getVelocityMetersPerSecond()));
     super.appliedVolts = elevatorSim.getInput().get(0, 0);
     super.currentAmps = elevatorSim.getCurrentDrawAmps();
     super.targetPositionInches = targetPositionInches;

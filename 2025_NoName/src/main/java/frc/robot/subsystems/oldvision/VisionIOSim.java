@@ -53,7 +53,8 @@
 //     visionSim.addCamera(simCamera, robotToCamera);
 //   }
 
-//   // Updates the Inputs and Feeds back to VisionIOReal, while updating the visionSim pose Supplier
+//   // Updates the Inputs and Feeds back to VisionIOReal, while updating the visionSim pose
+// Supplier
 //   // for Vision Odometry.
 //   @Override
 //   public void updateInputs() {

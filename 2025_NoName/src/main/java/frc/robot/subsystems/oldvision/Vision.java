@@ -30,7 +30,8 @@
 //     // Initialize disconnected alerts
 //     this.disconnectedAlerts = new Alert[io.length];
 //     for (int i = 0; i < io.length; i++) {
-//       disconnectedAlerts[i] = new Alert(io[i].getName() + " is disconnected.", AlertType.kWarning);
+//       disconnectedAlerts[i] = new Alert(io[i].getName() + " is disconnected.",
+// AlertType.kWarning);
 //     }
 //   }
 
@@ -126,8 +127,10 @@
 //     DogLog.log(
 //         "Vision/" + io[cameraIndex].getName() + "/CameraConnected",
 //         io[cameraIndex].cameraConnected);
-//     DogLog.log("Vision/" + io[cameraIndex].getName() + "/HasTargets", io[cameraIndex].hasTargets);
-//     DogLog.log("Vision/" + io[cameraIndex].getName() + "/NumTargets", io[cameraIndex].numTargets);
+//     DogLog.log("Vision/" + io[cameraIndex].getName() + "/HasTargets",
+// io[cameraIndex].hasTargets);
+//     DogLog.log("Vision/" + io[cameraIndex].getName() + "/NumTargets",
+// io[cameraIndex].numTargets);
 //     DogLog.log("Vision/" + io[cameraIndex].getName() + "/TagIds", io[cameraIndex].tagIds);
 //   }
 // }

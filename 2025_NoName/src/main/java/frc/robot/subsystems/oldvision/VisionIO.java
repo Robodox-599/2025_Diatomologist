@@ -9,11 +9,13 @@
 
 // public abstract class VisionIO {
 //   /**
-//    * Vision system constants, including the camera name, transform from the robot to the camera, and
+//    * Vision system constants, including the camera name, transform from the robot to the camera,
+// and
 //    * a standard deviation factor for measurements.
 //    */
 //   protected VisionConstants constants =
-//       new VisionConstants("Default", new Transform3d(new Translation3d(), new Rotation3d()), 1.0);
+//       new VisionConstants("Default", new Transform3d(new Translation3d(), new Rotation3d()),
+// 1.0);
 
 //   /** Indicates whether the camera is currently connected. */
 //   protected boolean cameraConnected = false;
@@ -36,7 +38,8 @@
 //   protected PoseObservation[] poseObservations = new PoseObservation[0];
 
 //   /**
-//    * Represents a single pose observation from the camera. Includes information about the observed
+//    * Represents a single pose observation from the camera. Includes information about the
+// observed
 //    * pose and additional metadata.
 //    *
 //    * @param timestamp the time the pose was observed

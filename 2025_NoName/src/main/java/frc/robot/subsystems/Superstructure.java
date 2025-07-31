@@ -682,31 +682,10 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public void setCoralQueuedState() {
-    if (automationLevel == AutomationLevel.AUTO_ACTION) {
-      switch (queuedSuperState) {
-        case POSITION_CORAL_L1:
-          queuedSuperState = WantedSuperState.AUTO_SCORE_L1;
-          break;
-        case POSITION_CORAL_L2:
-          queuedSuperState = WantedSuperState.AUTO_SCORE_L2;
-          break;
-        case POSITION_CORAL_L3:
-          queuedSuperState = WantedSuperState.AUTO_SCORE_L3;
-          break;
-        case POSITION_CORAL_L4:
-          queuedSuperState = WantedSuperState.AUTO_SCORE_L4;
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
   public WantedSuperState returnAutoCoralScoreState(boolean alignLeft) {
-    setCoralQueuedState();
+    WantedSuperState coralState = returnCoralQueuedState();
     if (alignLeft) {
-      switch (queuedSuperState) {
+      switch (coralState) {
         case AUTO_SCORE_L1:
           return WantedSuperState.AUTO_SCORE_L1_LEFT;
         case AUTO_SCORE_L2:
@@ -719,7 +698,7 @@ public class Superstructure extends SubsystemBase {
           return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
       }
     } else {
-      switch (queuedSuperState) {
+      switch (coralState) {
         case AUTO_SCORE_L1:
           return WantedSuperState.AUTO_SCORE_L1_RIGHT;
         case AUTO_SCORE_L2:
@@ -730,6 +709,28 @@ public class Superstructure extends SubsystemBase {
           return WantedSuperState.AUTO_SCORE_L4_RIGHT;
         default:
           return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+      }
+    }
+  }
+
+  public WantedSuperState returnCoralQueuedState() {
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      switch (queuedSuperState) {
+        case POSITION_CORAL_L1:
+          return WantedSuperState.AUTO_SCORE_L1;
+          break;
+        case POSITION_CORAL_L2:
+        return WantedSuperState.AUTO_SCORE_L2;
+          break;
+        case POSITION_CORAL_L3:
+        return WantedSuperState.AUTO_SCORE_L3;
+          break;
+        case POSITION_CORAL_L4:
+        return WantedSuperState.AUTO_SCORE_L4;
+          break;
+        default:
+        return queuedSuperState;
+          break;
       }
     }
   }

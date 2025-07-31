@@ -82,7 +82,8 @@ public class ClimbIOSim extends ClimbIO {
 
   @Override
   public void stop() {
-    climbSim.setInputVoltage(0);
+    setClimbVoltage(0);
+    setRollersVelocity(0);
   }
 
   @Override

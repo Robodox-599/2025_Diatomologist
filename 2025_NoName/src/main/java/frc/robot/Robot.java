@@ -22,6 +22,8 @@ public class Robot extends TimedRobot {
   }
 
   public Robot() {
+    Tracer.enableSingleThreadedMode();
+    Tracer.enableTracingForCurrentThread();
     m_robotContainer = new RobotContainer();
   }
 

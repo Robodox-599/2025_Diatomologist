@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.Tracer;
+
 import java.util.function.Supplier;
 
 /**
@@ -301,8 +303,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-    handleStateTransitions();
-    applyStates();
+    Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
+    Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Drive/CurrentState", currentState);
     DogLog.log("Drive/WantedState", wantedState);
     DogLog.log("RobotPose", getState().Pose);
@@ -315,7 +317,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.wantedState = wantedState;
   }
 
-  private CurrentState handleStateTransitions() {
+  private void handleStateTransitions() {
     switch (wantedState) {
       case TELEOP_DRIVE:
         currentState = CurrentState.TELEOP_DRIVE;
@@ -331,7 +333,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         currentState = CurrentState.TELEOP_DRIVE;
         break;
     }
-    return currentState;
   }
 
   private void applyStates() {

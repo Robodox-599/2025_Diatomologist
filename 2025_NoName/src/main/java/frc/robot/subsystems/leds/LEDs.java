@@ -2,6 +2,7 @@ package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.Tracer;
 
 public class LEDs {
   private final LEDsIO io;
@@ -38,7 +39,7 @@ public class LEDs {
     if (DriverStation.isDisabled()) {
       currentState = CurrentState.STOPPED;
     }
-    // io.updateInputs();
+    // Tracer.traceFunc("UpdateIO", io::updateInputs);
     DogLog.log("LEDs/CurrentState", currentState);
   }
 

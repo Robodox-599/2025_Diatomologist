@@ -3,6 +3,7 @@ package frc.robot.subsystems.endefector.endefectorwrist;
 import dev.doglog.DogLog;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
+import frc.robot.util.Tracer;
 
 public class Wrist {
   private final WristIO io;
@@ -39,16 +40,16 @@ public class Wrist {
   }
 
   public void updateInputs() {
-    io.updateInputs();
+    Tracer.traceFunc("UpdateIO", io::updateInputs);
     safetyChecker.setCurrentWristDegrees(io.currentPositionDegrees);
     safetyChecker.updateIsAtSetpointWrist(isAtSetpoint());
-    currentState = handleStateTransitions();
-    applyStates();
+    Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
+    Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Wrist/CurrentState", currentState);
     DogLog.log("Wrist/WantedState", wantedState);
   }
 
-  private CurrentState handleStateTransitions() {
+  private void handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
@@ -82,7 +83,6 @@ public class Wrist {
         currentState = CurrentState.STOPPED;
         break;
     }
-    return currentState;
   }
 
   private void applyStates() {

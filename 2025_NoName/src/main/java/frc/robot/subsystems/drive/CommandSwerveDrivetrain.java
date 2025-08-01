@@ -334,7 +334,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       case TELEOP_DRIVE:
         break;
       case DRIVE_TO_POINT:
-        updateRaiseDistances();
+        break;
       default:
         break;
     }

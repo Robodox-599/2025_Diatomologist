@@ -596,11 +596,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
-    if (rollers.isAlgaeDetected()) {
-      rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
-    } else {
-      rollers.setWantedState(Rollers.WantedState.STOPPED);
-    }
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -608,11 +604,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToAlgaeBarge() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_BARGE);
-    if (rollers.isAlgaeDetected()) {
-      rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
-    } else {
-      rollers.setWantedState(Rollers.WantedState.STOPPED);
-    }
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_BARGE);
     // climb.setWantedState(Climb.WantedState.STOWED);

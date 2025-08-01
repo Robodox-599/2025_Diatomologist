@@ -261,8 +261,8 @@ public class RobotContainer {
     // CORAL STATE IS SET)
     driver
         .povLeft()
-        .onTrue(
-            Commands.parallel(
+        .whileTrue(
+            Commands.sequence(
                 superstructureCommands.setWantedSuperStateCommand(
                     superstructureCommands.returnAutoCoralScoreState(true)),
                 drivetrain.autoAlignCommand()));
@@ -270,8 +270,8 @@ public class RobotContainer {
     // NO CORAL STATE IS SET)
     driver
         .povRight()
-        .onTrue(
-            Commands.parallel(
+        .whileTrue(
+            Commands.sequence(
                 superstructureCommands.setWantedSuperStateCommand(
                     superstructureCommands.returnAutoCoralScoreState(false)),
                 drivetrain.autoAlignCommand()));

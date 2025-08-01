@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -47,6 +48,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;
 
+  private double xVelocity = 0.0;
+  private double yVelocity = 0.0;
+  private double angularVelocity = 0.0;
+
   private final PIDController choreoXController = new PIDController(10, 0, 0);
   private final PIDController choreoYController = new PIDController(10, 0, 0);
   private final PIDController choreoThetaPID = new PIDController(10, 0, 0);
@@ -64,9 +69,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private CurrentState currentState = CurrentState.TELEOP_DRIVE;
   private WantedState wantedState = WantedState.TELEOP_DRIVE;
-  public double xVelocity;
-  public double yVelocity;
-  public double angularSpeed;
 
   public enum WantedState {
     TELEOP_DRIVE,
@@ -344,41 +346,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             driveToPointXController.calculate(currentPose.getX(), targetPoseForDriveToPoint.getX());
         yVelocity =
             driveToPointYController.calculate(currentPose.getY(), targetPoseForDriveToPoint.getY());
-        angularSpeed =
+        angularVelocity =
             driveToPointAngularController.calculate(
                 currentPose.getRotation().getRadians(),
                 targetPoseForDriveToPoint.getRotation().getRadians());
-
-        // applyRequest(
-        // () ->
-        //     m_pathApplyFieldSpeeds.withSpeeds(
-        //         new ChassisSpeeds(xVelocity, yVelocity, angularSpeed)));
-        // setControl(
-        //     swreq_drive
-        //         .withVelocityX(xVelocity)
-        //         .withVelocityY(yVelocity)
-        //         .withRotationalRate(angularSpeed));
 
         DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
         DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
         DogLog.log("Drive/DriveToPose/XVelocity", xVelocity);
         DogLog.log("Drive/DriveToPose/YVelocity", yVelocity);
-        DogLog.log("Drive/DriveToPose/AngularSpeed", angularSpeed);
-        break;
+        DogLog.log("Drive/DriveToPose/AngularVelocity", angularVelocity);
       default:
         break;
     }
-  }
-
-  public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
-    this.targetPoseForDriveToPoint = targetPose;
-  }
-
-  public Command autoAlignCommand() {
-    return (applyRequest(
-        () ->
-            m_pathApplyFieldSpeeds.withSpeeds(
-                new ChassisSpeeds(xVelocity, yVelocity, angularSpeed))));
   }
 
   public void updateRaiseDistances() {
@@ -401,6 +381,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
+  }
+
+  public Command autoAlignCommand() {
+    return applyRequest(
+        () ->
+            m_pathApplyFieldSpeeds.withSpeeds(
+                new ChassisSpeeds(xVelocity, yVelocity, angularVelocity)));
+  }
+
+  public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
+    this.targetPoseForDriveToPoint = targetPose;
   }
 
   public boolean isWithinCoralRaiseDistance() {
@@ -432,6 +423,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     driveToPointAngularController.reset(getPose().getRotation().getRadians());
     withinCoralRaiseDistance = false;
     withinAlgaeRaiseDistance = false;
+    xVelocity = 0.0;
+    yVelocity = 0.0;
+    angularVelocity = 0.0;
   }
 
   public ChassisSpeeds getChassisSpeeds() {

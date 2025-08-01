@@ -16,9 +16,9 @@ public class Robot extends TimedRobot {
 
   @Override
   protected void loopFunc() {
-      Tracer.startTrace("RobotLoop");
-      super.loopFunc();
-      Tracer.endTrace();
+    Tracer.startTrace("RobotLoop");
+    super.loopFunc();
+    Tracer.endTrace();
   }
 
   public Robot() {

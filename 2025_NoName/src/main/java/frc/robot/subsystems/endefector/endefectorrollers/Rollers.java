@@ -3,6 +3,7 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 import dev.doglog.DogLog;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
+import frc.robot.util.Tracer;
 
 public class Rollers {
   private final RollersIO io;
@@ -39,14 +40,14 @@ public class Rollers {
   }
 
   public void updateInputs() {
-    io.updateInputs();
-    currentState = handleStateTransitions();
-    applyStates();
+    Tracer.traceFunc("UpdateIO", io::updateInputs);
+    Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
+    Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
   }
 
-  private CurrentState handleStateTransitions() {
+  private void handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
@@ -81,7 +82,6 @@ public class Rollers {
         currentState = CurrentState.STOPPED;
         break;
     }
-    return currentState;
   }
 
   private void applyStates() {

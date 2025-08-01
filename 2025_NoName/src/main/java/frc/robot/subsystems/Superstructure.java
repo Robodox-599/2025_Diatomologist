@@ -15,6 +15,7 @@ import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.Tracer;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -121,23 +122,25 @@ public class Superstructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    vision.updateInputs();
-    drivetrain.updateInputs();
-    elevator.updateInputs();
-    rollers.updateInputs();
-    wrist.updateInputs();
-    leds.updateInputs();
+    Tracer.startTrace("SuperstructurePeriodic");
+    Tracer.traceFunc("VisionPeriodic", vision::updateInputs);
+    Tracer.traceFunc("DrivetrainPeriodic", drivetrain::updateInputs);
+    Tracer.traceFunc("ElevatorPeriodic", elevator::updateInputs);
+    Tracer.traceFunc("RollersPeriodic", rollers::updateInputs);
+    Tracer.traceFunc("WristPeriodic", wrist::updateInputs);
+    Tracer.traceFunc("LedsPeriodic", leds::updateInputs);
     // climb.updateInputs();
-    currentSuperState = handleStateTransitions();
-    applyStates();
+    Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
+    Tracer.traceFunc("ApplyStates", this::applyStates);
 
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
     DogLog.log("Superstructure/QueuedSuperState", queuedSuperState);
     DogLog.log("Superstructure/AutomationLevel", automationLevel);
+    Tracer.endTrace();
   }
 
-  private CurrentSuperState handleStateTransitions() {
+  private void handleStateTransitions() {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
       case INTAKING_CORAL_STATION:
@@ -437,7 +440,6 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.STOPPED;
         break;
     }
-    return currentSuperState;
   }
 
   private void applyStates() {

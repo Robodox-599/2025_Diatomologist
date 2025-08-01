@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import dev.doglog.DogLog;
 import frc.robot.SafetyChecker;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.util.Tracer;
 
 public class Elevator {
   private final ElevatorIO io;
@@ -47,16 +48,16 @@ public class Elevator {
   }
 
   public void updateInputs() {
-    io.updateInputs();
+    Tracer.traceFunc("UpdateIO", io::updateInputs);
     safetyChecker.setCurrentElevatorInches(io.positionInches);
     safetyChecker.updateIsAtSetpointElevator(isAtSetpoint());
-    currentState = handleStateTransitions();
-    applyStates();
+    Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
+    Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Elevator/CurrentState", currentState);
     DogLog.log("Elevator/WantedState", wantedState);
   }
 
-  private CurrentState handleStateTransitions() {
+  private void handleStateTransitions() {
     previousState = currentState;
     if (safetyChecker.isSafeElevator()) {
       switch (wantedState) {
@@ -103,7 +104,6 @@ public class Elevator {
     } else {
       currentState = CurrentState.STOPPED;
     }
-    return currentState;
   }
 
   private void applyStates() {

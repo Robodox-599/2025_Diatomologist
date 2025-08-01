@@ -9,6 +9,7 @@ public class Rollers {
   private final SafetyChecker safetyChecker;
   private WantedState wantedState = WantedState.STOPPED;
   private CurrentState currentState = CurrentState.STOPPED;
+  private CurrentState previousState = CurrentState.STOPPED;
 
   public Rollers(RollersIO io, SafetyChecker safetyChecker) {
     this.io = io;
@@ -46,6 +47,7 @@ public class Rollers {
   }
 
   private CurrentState handleStateTransitions() {
+    previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
         currentState = CurrentState.INTAKING_CORAL_STATION;
@@ -83,34 +85,36 @@ public class Rollers {
   }
 
   private void applyStates() {
-    switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
-        break;
-      case ENSURING_CORAL:
-        stop();
-        break;
-      case INTAKING_ALGAE:
-        setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
-        break;
-      case HOLD_CORAL:
-        stop();
-        break;
-      case HOLD_ALGAE:
-        holdAlgae();
-        break;
-      case SCORING_CORAL:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL);
-        break;
-      case SCORING_ALGAE:
-        setVelocity(EndefectorRollerStates.SCORING_ALGAE);
-        break;
-      case STOPPED:
-        stop();
-        break;
-      default:
-        stop();
-        break;
+    if (previousState != currentState) {
+      switch (currentState) {
+        case INTAKING_CORAL_STATION:
+          setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
+          break;
+        case ENSURING_CORAL:
+          stop();
+          break;
+        case INTAKING_ALGAE:
+          setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
+          break;
+        case HOLD_CORAL:
+          stop();
+          break;
+        case HOLD_ALGAE:
+          holdAlgae();
+          break;
+        case SCORING_CORAL:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL);
+          break;
+        case SCORING_ALGAE:
+          setVelocity(EndefectorRollerStates.SCORING_ALGAE);
+          break;
+        case STOPPED:
+          stop();
+          break;
+        default:
+          stop();
+          break;
+      }
     }
   }
 

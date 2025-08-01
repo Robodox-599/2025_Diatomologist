@@ -9,6 +9,7 @@ public class Wrist {
   private final SafetyChecker safetyChecker;
   private WantedState wantedState = WantedState.STOPPED;
   private CurrentState currentState = CurrentState.STOPPED;
+  private CurrentState previousState = CurrentState.STOPPED;
 
   public Wrist(WristIO io, SafetyChecker safetyChecker) {
     this.io = io;
@@ -48,6 +49,7 @@ public class Wrist {
   }
 
   private CurrentState handleStateTransitions() {
+    previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
         if (safetyChecker.isSafeWrist()) {
@@ -84,31 +86,33 @@ public class Wrist {
   }
 
   private void applyStates() {
-    switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setAngle(WristStates.INTAKING_CORAL_STATION);
-        break;
-      case INTAKING_ALGAE_GROUND:
-        setAngle(WristStates.INTAKING_ALGAE_GROUND);
-        break;
-      case INTAKING_ALGAE_REEF:
-        setAngle(WristStates.INTAKING_ALGAE_REEF);
-        break;
-      case POSITION_PREPARED:
-        setAngle(WristStates.POSITION_PREPARED);
-        break;
-      case SCORING_CORAL:
-        setAngle(WristStates.SCORING_CORAL);
-        break;
-      case SCORING_ALGAE:
-        setAngle(WristStates.SCORING_ALGAE);
-        break;
-      case STOPPED:
-        stop();
-        break;
-      default:
-        stop();
-        break;
+    if (previousState != currentState) {
+      switch (currentState) {
+        case INTAKING_CORAL_STATION:
+          setAngle(WristStates.INTAKING_CORAL_STATION);
+          break;
+        case INTAKING_ALGAE_GROUND:
+          setAngle(WristStates.INTAKING_ALGAE_GROUND);
+          break;
+        case INTAKING_ALGAE_REEF:
+          setAngle(WristStates.INTAKING_ALGAE_REEF);
+          break;
+        case POSITION_PREPARED:
+          setAngle(WristStates.POSITION_PREPARED);
+          break;
+        case SCORING_CORAL:
+          setAngle(WristStates.SCORING_CORAL);
+          break;
+        case SCORING_ALGAE:
+          setAngle(WristStates.SCORING_ALGAE);
+          break;
+        case STOPPED:
+          stop();
+          break;
+        default:
+          stop();
+          break;
+      }
     }
   }
 

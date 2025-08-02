@@ -235,9 +235,9 @@ public class RobotContainer {
 
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
-    // // UPDATE STATE WITH OPERATOR STATE
+    // // UPDATE WANTED STATE WITH QUEUED STATE
     driver.rightBumper().onTrue(superstructureCommands.updateWantedSuperStateCommand());
-    // // INTAKE ALGAE GROUND
+    // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftBumper()
         .onTrue(
@@ -248,29 +248,29 @@ public class RobotContainer {
         .onFalse(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_PROCESSOR));
-    // // SCORE CORAL
+    // // SET WANTED STATE TO SCORING CORAL
     driver
         .rightTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL));
-    // // SCORE ALGAE
+    // // SET WANTED STATE TO SCORING ALGAE
     driver
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
-    // // AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO
+    // // SET WANTED STATE TO AUTO SCORE CORAL ON LEFT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF NO
     // CORAL STATE IS SET)
     driver
         .povLeft()
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 superstructureCommands.returnAutoCoralScoreState(true)));
-    // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF
+    // // SET WANTED STATE TO AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF
     // NO CORAL STATE IS SET)
     driver
         .povRight()
         .whileTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 superstructureCommands.returnAutoCoralScoreState(false)));
-    // // AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
+    // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .a()
         .onTrue(
@@ -295,33 +295,57 @@ public class RobotContainer {
         .x()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
+    // // SET WANTED STATE TO L1
+    operator
+        .x()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1));
     // // SET QUEUED STATE TO L2
     operator
         .a()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
+    // // SET WANTED STATE TO L2
+    operator
+        .a()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2));
     // // SET QUEUED STATE TO L3
     operator
         .b()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
+    // // SET WANTED STATE TO L3
+    operator
+        .b()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3));
     // // SET QUEUED STATE TO L4
     operator
         .y()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
-    // // CORAL STATION INTAKE
+    // // SET WANTED STATE TO L4
+    operator
+        .y()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    // // SET WANTED STATE TO CORAL STATION INTAKE
     operator
         .rightBumper()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.INTAKING_CORAL_STATION));
-    // // PREPARE
+    // // SET WANTED STATE TO PREPARE
     operator
         .leftBumper()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
-    // // PREPARE CLIMB
+    // // SET WANTED STATE TO PREPARE CLIMB
     operator
         .rightTrigger()
         .and(operator.leftTrigger())
@@ -334,22 +358,48 @@ public class RobotContainer {
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_BARGE));
+    // // SET WANTED STATE TO BARGE
+    operator
+        .povUp()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.POSITION_ALGAE_BARGE));
     // // SET QUEUED STATE TO PROCESSOR
     operator
         .povDown()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(
                 WantedSuperState.POSITION_ALGAE_PROCESSOR));
+    // // SET WANTED STATE TO PROCESSOR
+    operator
+        .povDown()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SET QUEUED STATE TO INTAKE ALGAE L2
     operator
         .povLeft()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
+    // // SET WANTED STATE TO INTAKE ALGAE L2
+    operator
+        .povLeft()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2));
     // // SET QUEUED STATE TO INTAKE ALGAE L3
     operator
         .povRight()
         .onTrue(
             superstructureCommands.setQueuedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
+    // // SET WANTED STATE TO INTAKE ALGAE L3
+    operator
+        .povRight()
+        .and(operator.leftTrigger())
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3));
   }
 
   private static double joystickDeadbandApply(double x) {

@@ -40,8 +40,6 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  private Command autoAlignCommand;
-
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);

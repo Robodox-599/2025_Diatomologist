@@ -35,11 +35,11 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 LEFTtoJ.resetOdometry(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                LEFTtoJ.cmd(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4)));
+                LEFTtoJ.cmd()));
 
     LEFTtoJ.active()
         .and(withinCoralRaiseDistance)
@@ -99,11 +99,11 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 RIGHTtoE.resetOdometry(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                RIGHTtoE.cmd(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4)));
+                RIGHTtoE.cmd()));
 
     RIGHTtoE.active()
         .and(withinCoralRaiseDistance)
@@ -160,11 +160,11 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 MIDtoG.resetOdometry(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                MIDtoG.cmd(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4)));
+                MIDtoG.cmd()));
 
     MIDtoG.active()
         .and(withinCoralRaiseDistance)
@@ -199,11 +199,11 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 MIDtoG.resetOdometry(),
+                superstructureCommands.setQueuedSuperStateCommand(
+                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                MIDtoG.cmd(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4)));
+                MIDtoG.cmd()));
 
     MIDtoG.active()
         .and(withinCoralRaiseDistance)

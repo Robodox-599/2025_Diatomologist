@@ -6,22 +6,22 @@ import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.Tracer;
 import java.util.function.Supplier;
@@ -41,27 +40,31 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  // private final double DRIVE_TO_POINT_STATIC_FRICTION_VELOCITY_CONSTANT = 0.1;
-  // private final double DRIVE_TO_POINT_RAISE_RADIUS_INCHES = 24.0;
+  private Command autoAlignCommand;
+
+  private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
-  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(3);
+  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
   private static boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;
+  private static boolean atDriveToPointSetpoints = false;
 
-  private final PIDController choreoXController = new PIDController(10, 0, 0);
-  private final PIDController choreoYController = new PIDController(10, 0, 0);
-  private final PIDController choreoThetaPID = new PIDController(10, 0, 0);
+  private final PIDController choreoXController = new PIDController(7, 0, 0);
+  private final PIDController choreoYController = new PIDController(7, 0, 0);
+  private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
-  private final PIDController driveToPointXController = new PIDController(1.5, 0.0, 0.0);
-  private final PIDController driveToPointYController = new PIDController(1.5, 0.0, 0.0);
-  ProfiledPIDController driveToPointAngularController =
-      new ProfiledPIDController(
-          1.5,
-          0.0,
-          0.0,
-          new TrapezoidProfile.Constraints(
-              TunerConstants.MAX_ANGULAR_SPEED, TunerConstants.MAX_ANGULAR_ACCELERATION));
+
+  private final PIDController driveToPointController =
+      new PIDController(3.0, 0.0, 0.0); // P: 3.0/3.6, D: 0.1
+  private final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
+      new SwerveRequest.FieldCentricFacingAngle()
+          .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+  private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds =
+      new SwerveRequest.ApplyFieldSpeeds()
+          .withDriveRequestType(DriveRequestType.Velocity)
+          .withSteerRequestType(SteerRequestType.Position);
 
   private CurrentState currentState = CurrentState.TELEOP_DRIVE;
   private WantedState wantedState = WantedState.TELEOP_DRIVE;
@@ -86,17 +89,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
-
-  private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds =
-      new SwerveRequest.ApplyFieldSpeeds()
-          .withDriveRequestType(DriveRequestType.Velocity)
-          .withSteerRequestType(SteerRequestType.Position);
-
-  private final SwerveRequest.FieldCentric swreq_drive =
-      new SwerveRequest.FieldCentric()
-          .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-          .withDriveRequestType(DriveRequestType.Velocity)
-          .withSteerRequestType(SteerRequestType.Position);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -156,7 +148,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -173,78 +165,81 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
+    driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+
     choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointXController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointYController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointAngularController.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointAngularController.setTolerance(DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
-    resetDriveToPointControllers();
+
+    resetDriveToPoint();
   }
 
-  /**
-   * Constructs a CTRE SwerveDrivetrain using the specified constants.
-   *
-   * <p>This constructs the underlying hardware devices, so users should not construct the devices
-   * themselves. If they need the devices, they can access them through getters in the classes.
-   *
-   * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
-   * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set to
-   *     0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
-   * @param modules Constants for each specific module
-   */
-  public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(drivetrainConstants, odometryUpdateFrequency, modules);
-    if (Utils.isSimulation()) {
-      startSimThread();
-    }
-    choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointXController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointYController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointAngularController.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointAngularController.setTolerance(DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
-    resetDriveToPointControllers();
-  }
+  // /**
+  //  * Constructs a CTRE SwerveDrivetrain using the specified constants.
+  //  *
+  //  * <p>This constructs the underlying hardware devices, so users should not construct the
+  // devices
+  //  * themselves. If they need the devices, they can access them through getters in the classes.
+  //  *
+  //  * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
+  //  * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set
+  // to
+  //  *     0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
+  //  * @param modules Constants for each specific module
+  //  */
+  // public CommandSwerveDrivetrain(
+  //     SwerveDrivetrainConstants drivetrainConstants,
+  //     double odometryUpdateFrequency,
+  //     SwerveModuleConstants<?, ?, ?>... modules) {
+  //   super(drivetrainConstants, odometryUpdateFrequency, modules);
+  //   if (Utils.isSimulation()) {
+  //     startSimThread();
+  //   }
+  //   driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
+  //   driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+  //   choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
+  //   driveToPointController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
+  //   resetDriveToPoint();
+  // }
 
-  /**
-   * Constructs a CTRE SwerveDrivetrain using the specified constants.
-   *
-   * <p>This constructs the underlying hardware devices, so users should not construct the devices
-   * themselves. If they need the devices, they can access them through getters in the classes.
-   *
-   * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
-   * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set to
-   *     0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
-   * @param odometryStandardDeviation The standard deviation for odometry calculation in the form
-   *     [x, y, theta]ᵀ, with units in meters and radians
-   * @param visionStandardDeviation The standard deviation for vision calculation in the form [x, y,
-   *     theta]ᵀ, with units in meters and radians
-   * @param modules Constants for each specific module
-   */
-  public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      Matrix<N3, N1> odometryStandardDeviation,
-      Matrix<N3, N1> visionStandardDeviation,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(
-        drivetrainConstants,
-        odometryUpdateFrequency,
-        odometryStandardDeviation,
-        visionStandardDeviation,
-        modules);
-    if (Utils.isSimulation()) {
-      startSimThread();
-    }
-    choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointXController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointYController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
-    driveToPointAngularController.enableContinuousInput(-Math.PI, Math.PI);
-    driveToPointAngularController.setTolerance(DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
-    resetDriveToPointControllers();
-  }
+  // /**
+  //  * Constructs a CTRE SwerveDrivetrain using the specified constants.
+  //  *
+  //  * <p>This constructs the underlying hardware devices, so users should not construct the
+  // devices
+  //  * themselves. If they need the devices, they can access them through getters in the classes.
+  //  *
+  //  * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
+  //  * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set
+  // to
+  //  *     0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
+  //  * @param odometryStandardDeviation The standard deviation for odometry calculation in the form
+  //  *     [x, y, theta]ᵀ, with units in meters and radians
+  //  * @param visionStandardDeviation The standard deviation for vision calculation in the form [x,
+  // y,
+  //  *     theta]ᵀ, with units in meters and radians
+  //  * @param modules Constants for each specific module
+  //  */
+  // public CommandSwerveDrivetrain(
+  //     SwerveDrivetrainConstants drivetrainConstants,
+  //     double odometryUpdateFrequency,
+  //     Matrix<N3, N1> odometryStandardDeviation,
+  //     Matrix<N3, N1> visionStandardDeviation,
+  //     SwerveModuleConstants<?, ?, ?>... modules) {
+  //   super(
+  //       drivetrainConstants,
+  //       odometryUpdateFrequency,
+  //       odometryStandardDeviation,
+  //       visionStandardDeviation,
+  //       modules);
+  //   if (Utils.isSimulation()) {
+  //     startSimThread();
+  //   }
+  //   driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
+  //   driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+  //   choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
+  //   driveToPointController.setTolerance(DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
+  //   resetDriveToPoint();
+  // }
 
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
@@ -305,8 +300,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void setWantedState(WantedState wantedState) {
-    if (this.wantedState == WantedState.DRIVE_TO_POINT && wantedState == WantedState.TELEOP_DRIVE) {
-      resetDriveToPointControllers();
+    if (this.wantedState == WantedState.DRIVE_TO_POINT
+        && wantedState
+            == WantedState
+                .TELEOP_DRIVE) { // when going from drive to point to teleop, reset drive to point
+      resetDriveToPoint();
     }
     this.wantedState = wantedState;
   }
@@ -320,8 +318,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (isAtDriveToPointSetpoints()) {
           wantedState = WantedState.TELEOP_DRIVE;
           currentState = CurrentState.TELEOP_DRIVE;
+          resetDriveToPoint();
+        } else {
+          currentState = CurrentState.DRIVE_TO_POINT;
         }
-        currentState = CurrentState.DRIVE_TO_POINT;
         break;
       default:
         currentState = CurrentState.TELEOP_DRIVE;
@@ -334,17 +334,40 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       case TELEOP_DRIVE:
         break;
       case DRIVE_TO_POINT:
+        Translation2d translationToTarget =
+            targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
+
+        double linearDistance = translationToTarget.getNorm();
+
+        updateDistancesAndSetpoints(linearDistance);
+
+        Rotation2d direction = translationToTarget.getAngle();
+        double velocityOutput =
+            Math.min(
+                Math.abs(driveToPointController.calculate(linearDistance, 0)),
+                DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT);
+
+        double xVelocity = velocityOutput * direction.getCos();
+        double yVelocity = velocityOutput * direction.getSin();
+
+        DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
+        DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
+        DogLog.log("Drive/DriveToPose/VelocityOutput", velocityOutput);
+        DogLog.log("Drive/DriveToPose/XVelocity", xVelocity);
+        DogLog.log("Drive/DriveToPose/YVelocity", yVelocity);
+
+        setControl(
+            driveAtAngle
+                .withVelocityX(xVelocity)
+                .withVelocityY(yVelocity)
+                .withTargetDirection(targetPoseForDriveToPoint.getRotation()));
         break;
       default:
         break;
     }
   }
 
-  public void updateRaiseDistances() {
-    Translation2d translationToTarget =
-        targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
-
-    double linearDistance = translationToTarget.getNorm();
+  public void updateDistancesAndSetpoints(double linearDistance) {
     if (linearDistance <= 0.6) { // 0.6 meters (~2 feet)
       withinCoralRaiseDistance = true;
       withinAlgaeRaiseDistance = true;
@@ -356,42 +379,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         withinAlgaeRaiseDistance = false;
       }
     }
+    boolean atDriveToPointTranslationSetpoint =
+        MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
+    boolean atDriveToPointAngularSetpoint =
+        driveAtAngle.HeadingController.getPositionError() < DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE;
+    atDriveToPointSetpoints = atDriveToPointTranslationSetpoint && atDriveToPointAngularSetpoint;
 
-    DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
-  }
-
-  public Command autoAlignCommand() {
-    return applyRequest(() -> m_pathApplyFieldSpeeds.withSpeeds(returnAutoAlignVelocities()));
-  }
-
-  public ChassisSpeeds returnAutoAlignVelocities() {
-    updateRaiseDistances();
-    Pose2d currentPose = getState().Pose;
-
-    double xVelocity =
-        driveToPointXController.calculate(currentPose.getX(), targetPoseForDriveToPoint.getX());
-    double yVelocity =
-        driveToPointYController.calculate(currentPose.getY(), targetPoseForDriveToPoint.getY());
-    double angularVelocity =
-        driveToPointAngularController.calculate(
-            currentPose.getRotation().getRadians(),
-            targetPoseForDriveToPoint.getRotation().getRadians());
-
-    ChassisSpeeds speeds = new ChassisSpeeds(xVelocity, yVelocity, angularVelocity);
-
-    DogLog.log("Drive/DriveToPose/CurrentPose", currentPose);
-    DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
-    DogLog.log("Drive/DriveToPose/XVelocity", xVelocity);
-    DogLog.log("Drive/DriveToPose/YVelocity", yVelocity);
-    DogLog.log("Drive/DriveToPose/AngularVelocity", angularVelocity);
-
-    return speeds;
+    DogLog.log(
+        "Drive/DriveToPose/AtDriveToPointTranslationSetpoint", atDriveToPointTranslationSetpoint);
+    DogLog.log("Drive/DriveToPose/AtDriveToPointAngularSetpoint", atDriveToPointAngularSetpoint);
+    DogLog.log("Drive/DriveToPose/AtDriveToPointSetpoints", atDriveToPointSetpoints);
   }
 
   public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
-    resetDriveToPointControllers();
+    resetDriveToPoint();
     this.targetPoseForDriveToPoint = targetPose;
   }
 
@@ -404,26 +407,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public boolean isAtDriveToPointSetpoints() {
-    boolean atDriveToPointSetpoints =
-        isAtDriveToPointTranslationSetpoint() && isAtDriveToPointAngularSetpoint();
-    DogLog.log("Drive/DriveToPose/AtDriveToPointSetpoints", atDriveToPointSetpoints);
     return atDriveToPointSetpoints;
   }
 
-  public boolean isAtDriveToPointTranslationSetpoint() {
-    return driveToPointXController.atSetpoint() && driveToPointYController.atSetpoint();
-  }
-
-  public boolean isAtDriveToPointAngularSetpoint() {
-    return driveToPointAngularController.atSetpoint();
-  }
-
-  public void resetDriveToPointControllers() {
-    driveToPointXController.reset();
-    driveToPointYController.reset();
-    driveToPointAngularController.reset(getPose().getRotation().getRadians());
+  public void resetDriveToPoint() {
+    driveToPointController.reset();
+    driveAtAngle.HeadingController.reset();
     withinCoralRaiseDistance = false;
     withinAlgaeRaiseDistance = false;
+    atDriveToPointSetpoints = false;
   }
 
   public ChassisSpeeds getChassisSpeeds() {

@@ -14,7 +14,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
@@ -262,19 +261,15 @@ public class RobotContainer {
     driver
         .povLeft()
         .whileTrue(
-            Commands.sequence(
-                superstructureCommands.setWantedSuperStateCommand(
-                    superstructureCommands.returnAutoCoralScoreState(true)),
-                drivetrain.autoAlignCommand()));
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoCoralScoreState(true)));
     // // AUTO SCORE CORAL ON RIGHT BRANCH (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL OR IF
     // NO CORAL STATE IS SET)
     driver
         .povRight()
         .whileTrue(
-            Commands.sequence(
-                superstructureCommands.setWantedSuperStateCommand(
-                    superstructureCommands.returnAutoCoralScoreState(false)),
-                drivetrain.autoAlignCommand()));
+            superstructureCommands.setWantedSuperStateCommand(
+                superstructureCommands.returnAutoCoralScoreState(false)));
     // // AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .a()

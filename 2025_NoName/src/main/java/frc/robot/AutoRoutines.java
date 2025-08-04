@@ -6,6 +6,7 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.AutomationLevel;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class AutoRoutines {
@@ -34,9 +35,8 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
+                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 LEFTtoJ.resetOdometry(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
                 LEFTtoJ.cmd()));
@@ -49,7 +49,7 @@ public class AutoRoutines {
     LEFTtoJ.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(false)));
+                WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     LEFTtoJ.recentlyDone().and(hasNoCoral).onTrue(JtoHP.cmd());
 
@@ -63,7 +63,7 @@ public class AutoRoutines {
     HPtoL.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(false)));
+                WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     HPtoL.recentlyDone().and(hasNoCoral).onTrue(LtoHP.cmd());
 
@@ -76,8 +76,8 @@ public class AutoRoutines {
 
     HPtoK.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(true)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+
     return routine;
   }
 
@@ -98,9 +98,8 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
+                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 RIGHTtoE.resetOdometry(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
                 RIGHTtoE.cmd()));
@@ -112,8 +111,7 @@ public class AutoRoutines {
 
     RIGHTtoE.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(true)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     RIGHTtoE.recentlyDone().and(hasNoCoral).onTrue(EtoHP.cmd());
 
@@ -126,8 +124,7 @@ public class AutoRoutines {
 
     HPtoC.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(true)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     HPtoC.recentlyDone().and(hasNoCoral).onTrue(CtoHP.cmd());
 
@@ -141,7 +138,8 @@ public class AutoRoutines {
     HPtoD.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(false)));
+                WantedSuperState.AUTO_SCORE_L4_RIGHT));
+
     return routine;
   }
 
@@ -159,9 +157,8 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
+                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 MIDtoG.resetOdometry(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
                 MIDtoG.cmd()));
@@ -173,8 +170,7 @@ public class AutoRoutines {
 
     MIDtoG.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(true)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     MIDtoG.recentlyDone().and(hasNoCoral).onTrue(GtoGH.cmd());
 
@@ -198,9 +194,8 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
+                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 MIDtoG.resetOdometry(),
-                superstructureCommands.setQueuedSuperStateCommand(
-                    WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
                 MIDtoG.cmd()));
@@ -212,8 +207,7 @@ public class AutoRoutines {
 
     MIDtoG.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState(true)));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     return routine;
   }

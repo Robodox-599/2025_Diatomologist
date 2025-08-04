@@ -199,24 +199,6 @@ public class RobotContainer {
     return autoChooser.selectedCommandScheduler();
   }
 
-  /**
-   * **CONTROLS:** DRIVER: Left/Right Joysticks - Drive Right Bumper - Return Logic State (basically
-   * returns a state for algae or coral based on operator state) Left Bumper - Intake Algae Ground
-   * (release to go to processor) Right Trigger - Score Coral Left Trigger - Score Algae Pov Right -
-   * Auto Score/Auto Align Coral (release to stop) Pov Left - Auto Intake/Auto Align Algae (release
-   * to stop) Pov Up - Set Automation Level to Auto Action (auto score) Pov Down - Set Automation
-   * Level to Manual (only auto align)
-   *
-   * <p>OPERATOR: X - Queue Coral L1 or Queue Algae L2 (based on if operator state is coral or
-   * algae) (if X and Left Trigger is pressed, set the state instead) A - Queue Coral L2 or Queue
-   * Processor (based on if operator state is coral or algae) (if X and Left Trigger is pressed, set
-   * the state instead) B - Queue Coral L3 or Queue Algae L3 (based on if operator state is coral or
-   * algae) (if X and Left Trigger is pressed, set the state instead) Y - Queue Coral L4 or Queue
-   * Barge (based on if operator state is coral or algae) (if X and Left Trigger is pressed, set the
-   * state instead) Right Bumper - Set Intake Coral Station Left Bumper - Set Prepare Right Trigger
-   * & Left Trigger - Prepare Climb Pov Right - Auto Align Right Pov Left - Auto Align Left Pov Up -
-   * Set Game Piece State to Coral Pov Down - Set Game Piece State to Algae
-   */
   public void configureBindings() {
     //                               DRIVER BINDS
     // Note that X is defined as forward according to WPILib convention,

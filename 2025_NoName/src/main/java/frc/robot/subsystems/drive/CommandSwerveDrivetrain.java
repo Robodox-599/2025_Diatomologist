@@ -366,12 +366,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void updateDistancesAndSetpoints(double linearDistance) {
-    if (linearDistance <= 0.6) { // 0.6 meters (~2 feet)
+    if (linearDistance <= 0.15) { // 0.15 meters (~0.5 feet)
       withinCoralRaiseDistance = true;
       withinAlgaeRaiseDistance = true;
     } else {
       withinCoralRaiseDistance = false;
-      if (linearDistance <= 1.0) { // 1 meter (~3.3 feet)
+      if (linearDistance <= 0.5) { // 1 meter (~3.3 feet)
         withinAlgaeRaiseDistance = true;
       } else {
         withinAlgaeRaiseDistance = false;

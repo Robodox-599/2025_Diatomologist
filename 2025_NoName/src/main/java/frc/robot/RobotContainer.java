@@ -1,16 +1,11 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,21 +60,9 @@ public class RobotContainer {
   private final AutoFactory autoFactory;
   public final AutoChooser autoChooser = new AutoChooser();
 
-  private double MaxSpeed =
-      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-  private double MaxAngularRate =
-      RotationsPerSecond.of(0.75)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-  // Setting up bindings for necessary control of the swerve drive platform
-  private final SwerveRequest.FieldCentric drive =
-      new SwerveRequest.FieldCentric()
-          .withDeadband(0)
-          .withRotationalDeadband(0) // Add a 10% deadband
-          .withDriveRequestType(
-              DriveRequestType.Velocity); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  //   // Setting up bindings for necessary control of the swerve drive platform
+  //   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  //   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   public RobotContainer() {
     safetyChecker = new SafetyChecker();
@@ -88,7 +71,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
         rollers = new Rollers(new RollersIOTalonFX(), safetyChecker);
         wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
-        drivetrain = TunerConstants.createDrivetrain();
+        drivetrain = TunerConstants.createDrivetrain(driver);
         leds = new LEDs(new LEDsIOReal());
         // climb = new Climb(new ClimbIOTalonFX());
         vision =
@@ -110,7 +93,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
         rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
-        drivetrain = TunerConstants.createDrivetrain();
+        drivetrain = TunerConstants.createDrivetrain(driver);
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
         vision =
@@ -132,7 +115,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
         rollers = new Rollers(new RollersIOSim(), safetyChecker);
         wrist = new Wrist(new WristIOSim(), safetyChecker);
-        drivetrain = TunerConstants.createDrivetrain();
+        drivetrain = TunerConstants.createDrivetrain(driver);
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
         vision =
@@ -201,43 +184,6 @@ public class RobotContainer {
 
   public void configureBindings() {
     //                               DRIVER BINDS
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        -joystickDeadbandApply(driver.getLeftY())
-                            * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        -joystickDeadbandApply(driver.getLeftX())
-                            * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(
-                        joystickDeadbandApply(-driver.getRightX())
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            ));
-
-    // // // reset the field-centric heading on left bumper press
-    // // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-    // SET DRIVE VELOCITY (FOR PID TUNING)
-    driver
-        .x()
-        .whileTrue(
-            drivetrain.applyRequest(
-                () -> drive.withVelocityX(1.5).withVelocityY(0).withRotationalRate(0)));
-    // BRAKE (FOR PID TUNING)
-    driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
-
-    // // Run SysId routines when holding back/start and X/Y.
-    // // Note that each routine ssdx hould be run exactly once in a single log.
-    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
     // // SET WANTED STATE TO A LOGIC STATE
@@ -397,8 +343,24 @@ public class RobotContainer {
         .onTrue(superstructureCommands.setGamePieceStateCommand(GamePieceState.ALGAE));
   }
 
-  private static double joystickDeadbandApply(double x) {
-    return MathUtil.applyDeadband(
-        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
-  }
+  /* DRIVE COMMANDS (NOT USED IN COMPETITION)
+  * // // // reset the field-centric heading on left bumper press
+   // // driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+   // // SET DRIVE VELOCITY (FOR PID TUNING)
+   // driver
+   //     .x()
+   //     .whileTrue(
+   //         drivetrain.applyRequest(
+   //             () -> drive.withVelocityX(1.5).withVelocityY(0).withRotationalRate(0)));
+   // // BRAKE (FOR PID TUNING)
+   // driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
+
+   // // Run SysId routines when holding back/start and X/Y.
+   // // Note that each routine ssdx hould be run exactly once in a single log.
+   // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+   // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+   // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+   // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+  */
 }

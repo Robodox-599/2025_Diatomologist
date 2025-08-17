@@ -30,7 +30,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.Tracer;
 import java.util.function.Supplier;
@@ -40,6 +42,19 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+  CommandXboxController driver;
+  private double MaxSpeed =
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private double MaxAngularRate =
+      RotationsPerSecond.of(0.75)
+          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(0)
+          .withRotationalDeadband(0) // Add a 10% deadband
+          .withDriveRequestType(
+              DriveRequestType.Velocity); // Use open-loop control for drive motors
+
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
@@ -50,6 +65,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final PIDController choreoXController = new PIDController(7, 0, 0);
   private final PIDController choreoYController = new PIDController(7, 0, 0);
   private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
+  // private Trajectory<SwerveSample> desiredChoreoTrajectory;
+  //   private final Timer choreoTimer = new Timer();
+  //   private Optional<SwerveSample> choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
@@ -70,11 +88,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public enum WantedState {
     TELEOP_DRIVE,
     DRIVE_TO_POINT,
+    AUTONOMOUS_DRIVE,
   }
 
   public enum CurrentState {
     TELEOP_DRIVE,
     DRIVE_TO_POINT,
+    AUTONOMOUS_DRIVE,
   }
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -158,11 +178,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    * @param modules Constants for each specific module
    */
   public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
+      CommandXboxController driver,
+      SwerveDrivetrainConstants drivetrainConstants,
+      SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
     if (Utils.isSimulation()) {
       startSimThread();
     }
+    this.driver = driver;
+
     driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
     driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -321,6 +345,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           currentState = CurrentState.DRIVE_TO_POINT;
         }
         break;
+      case AUTONOMOUS_DRIVE:
+        if (!DriverStation.isAutonomous()) {
+          wantedState = WantedState.TELEOP_DRIVE;
+          currentState = CurrentState.TELEOP_DRIVE;
+        } else {
+          currentState = CurrentState.AUTONOMOUS_DRIVE;
+        }
+        break;
       default:
         currentState = CurrentState.TELEOP_DRIVE;
         break;
@@ -330,6 +362,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private void applyStates() {
     switch (currentState) {
       case TELEOP_DRIVE:
+        setControl(
+            drive
+                .withVelocityX(
+                    -joystickDeadbandApply(driver.getLeftY())
+                        * MaxSpeed) // Drive forward with negative Y (forward)
+                .withVelocityY(
+                    -joystickDeadbandApply(driver.getLeftX())
+                        * MaxSpeed) // Drive left with negative X (left)
+                .withRotationalRate(
+                    joystickDeadbandApply(-driver.getRightX())
+                        * MaxAngularRate)); // Drive counterclockwise with negative X (left));
         break;
       case DRIVE_TO_POINT:
         Translation2d translationToTarget =
@@ -359,6 +402,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
                 .withTargetDirection(targetPoseForDriveToPoint.getRotation()));
+        break;
+      case AUTONOMOUS_DRIVE:
         break;
       default:
         break;
@@ -418,6 +463,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public ChassisSpeeds getChassisSpeeds() {
     return getState().Speeds;
+  }
+
+  private static double joystickDeadbandApply(double x) {
+    return MathUtil.applyDeadband(
+        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 
   public Pose2d getPose() {

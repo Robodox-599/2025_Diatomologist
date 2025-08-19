@@ -190,8 +190,7 @@ public class RobotContainer {
     driver
         .rightBumper()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnLogicState()));
+            superstructureCommands.setLogicStateCommand());
     // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftBumper()
@@ -214,16 +213,13 @@ public class RobotContainer {
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()
-        .whileTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoCoralScoreState()));
+        .whileTrue(superstructureCommands.setAutoCoralScoreStateCommand());
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
     driver
         .povLeft()
-        .whileTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoAlgaeIntakeState()));
+        .onTrue(
+            superstructureCommands.setAutoAlgaeIntakeStateCommand());
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());
@@ -244,7 +240,7 @@ public class RobotContainer {
             Commands.either(
                 superstructureCommands.setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
                 superstructureCommands.setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
     operator
         .x()
@@ -255,7 +251,7 @@ public class RobotContainer {
                     WantedSuperState.POSITION_CORAL_L1),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.INTAKING_ALGAE_L2),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
     operator
         .a()
@@ -263,7 +259,7 @@ public class RobotContainer {
             Commands.either(
                 superstructureCommands.setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
                 superstructureCommands.setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
     operator
         .a()
@@ -274,7 +270,7 @@ public class RobotContainer {
                     WantedSuperState.POSITION_CORAL_L2),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_ALGAE_PROCESSOR),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // QUEUE CORAL L3 OR QUEUE ALGAE L3
     operator
         .b()
@@ -282,7 +278,7 @@ public class RobotContainer {
             Commands.either(
                 superstructureCommands.setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L3),
                 superstructureCommands.setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L3),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // SET WANTED STATE TO L3 OR SET WANTED STATE TO ALGAE L3
     operator
         .b()
@@ -293,7 +289,7 @@ public class RobotContainer {
                     WantedSuperState.POSITION_CORAL_L3),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.INTAKING_ALGAE_L3),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // QUEUE CORAL L4 OR QUEUE ALGAE BARGE
     operator
         .y()
@@ -301,7 +297,7 @@ public class RobotContainer {
             Commands.either(
                 superstructureCommands.setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L4),
                 superstructureCommands.setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_BARGE),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // SET WANTED STATE TO L4 OR SET WANTED STATE TO ALGAE BARGE
     operator
         .y()
@@ -312,7 +308,7 @@ public class RobotContainer {
                     WantedSuperState.POSITION_CORAL_L4),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_ALGAE_BARGE),
-                superstructureCommands.isGamePieceStateCoral()));
+                () -> superstructureCommands.isGamePieceStateCoral()));
     // // SET WANTED STATE TO CORAL STATION INTAKE
     operator
         .rightBumper()

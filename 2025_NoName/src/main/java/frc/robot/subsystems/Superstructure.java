@@ -699,6 +699,10 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.STOPPED);
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
+  
+  public Command setAutoCoralScoreStateCommand() {
+    return this.runOnce(() -> setWantedSuperState(returnAutoCoralScoreState()));
+  }
 
   public WantedSuperState returnAutoCoralScoreState() {
     if (rollers.isCoralDetected()) {
@@ -753,6 +757,10 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
+  public Command setAutoAlgaeIntakeStateCommand() {
+    return this.runOnce(() -> setWantedSuperState(returnAutoAlgaeIntakeState()));
+  }
+
   public WantedSuperState returnAutoAlgaeIntakeState() {
     switch (automationLevel) {
       case AUTO_ACTION:
@@ -760,6 +768,10 @@ public class Superstructure extends SubsystemBase {
       default:
         return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
     }
+  }
+
+  public Command setLogicStateCommand() {
+    return this.runOnce(() -> setWantedSuperState(returnLogicState()));
   }
 
   public WantedSuperState returnLogicState() {
@@ -871,13 +883,13 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> setWantedSuperState(wantedState));
   }
 
-  public BooleanSupplier isGamePieceStateCoral() {
+  public boolean isGamePieceStateCoral() {
     switch (gamePieceState) {
       default:
       case CORAL:
-        return () -> true;
+        return true;
       case ALGAE:
-        return () -> false;
+        return false;
     }
   }
 

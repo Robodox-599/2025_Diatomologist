@@ -121,6 +121,8 @@ public class Robot extends TimedRobot {
             driver,
             operator);
 
+    new Bindings(driver, operator, superstructure);
+
     autoRoutines = new AutoRoutines(autoFactory, superstructure);
 
     // Auto chooser setup

@@ -6,7 +6,6 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.AutomationLevel;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 
 public class AutoRoutines {
@@ -35,7 +34,6 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 LEFTtoJ.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
@@ -98,7 +96,6 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 RIGHTtoE.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
@@ -157,7 +154,6 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 MIDtoG.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
@@ -194,7 +190,6 @@ public class AutoRoutines {
         .active()
         .onTrue(
             Commands.sequence(
-                superstructureCommands.setAutomationLevelCommand(AutomationLevel.AUTO_ACTION),
                 MIDtoG.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),

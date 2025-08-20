@@ -704,24 +704,26 @@ public class Superstructure extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoCoralScoreState() {
-    if (automationLevel == AutomationLevel.AUTO_ACTION) {
-      switch (coralScoreLevel) {
-        case POSITION_CORAL_L1:
-          return (autoAlignSide == AutoAlignSide.LEFT)
-              ? WantedSuperState.AUTO_SCORE_L1_LEFT
-              : WantedSuperState.AUTO_SCORE_L1_RIGHT;
-        case POSITION_CORAL_L2:
-          return (autoAlignSide == AutoAlignSide.LEFT)
-              ? WantedSuperState.AUTO_SCORE_L2_LEFT
-              : WantedSuperState.AUTO_SCORE_L2_RIGHT;
-        case POSITION_CORAL_L3:
-          return (autoAlignSide == AutoAlignSide.LEFT)
-              ? WantedSuperState.AUTO_SCORE_L3_LEFT
-              : WantedSuperState.AUTO_SCORE_L3_RIGHT;
-        case POSITION_CORAL_L4:
-          return (autoAlignSide == AutoAlignSide.LEFT)
-              ? WantedSuperState.AUTO_SCORE_L4_LEFT
-              : WantedSuperState.AUTO_SCORE_L4_RIGHT;
+    if (rollers.isCoralDetected()) {
+      if (automationLevel == AutomationLevel.AUTO_ACTION) {
+        switch (coralScoreLevel) {
+          case POSITION_CORAL_L1:
+            return (autoAlignSide == AutoAlignSide.LEFT)
+                ? WantedSuperState.AUTO_SCORE_L1_LEFT
+                : WantedSuperState.AUTO_SCORE_L1_RIGHT;
+          case POSITION_CORAL_L2:
+            return (autoAlignSide == AutoAlignSide.LEFT)
+                ? WantedSuperState.AUTO_SCORE_L2_LEFT
+                : WantedSuperState.AUTO_SCORE_L2_RIGHT;
+          case POSITION_CORAL_L3:
+            return (autoAlignSide == AutoAlignSide.LEFT)
+                ? WantedSuperState.AUTO_SCORE_L3_LEFT
+                : WantedSuperState.AUTO_SCORE_L3_RIGHT;
+          case POSITION_CORAL_L4:
+            return (autoAlignSide == AutoAlignSide.LEFT)
+                ? WantedSuperState.AUTO_SCORE_L4_LEFT
+                : WantedSuperState.AUTO_SCORE_L4_RIGHT;
+        }
       }
     }
     return (autoAlignSide == AutoAlignSide.LEFT)

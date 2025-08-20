@@ -4,15 +4,39 @@
 
 package frc.robot;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.constants.CameraConstants;
+import frc.robot.subsystems.drive.constants.TunerConstants;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOSim;
+import frc.robot.subsystems.endefector.endefectorrollers.RollersIOTalonFX;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOSim;
+import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDsIOReal;
+import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.vision.CameraReal;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
-
-  private final RobotContainer m_robotContainer;
+  private final CommandScheduler scheduler = CommandScheduler.getInstance();
 
   @Override
   protected void loopFunc() {
@@ -24,12 +48,97 @@ public class Robot extends TimedRobot {
   public Robot() {
     Tracer.enableSingleThreadedMode();
     Tracer.enableTracingForCurrentThread();
-    m_robotContainer = new RobotContainer();
+
+    DogLog.setOptions(
+        new DogLogOptions()
+            .withCaptureDs(true)
+            .withCaptureNt(true)
+            .withNtPublish(true)
+            .withCaptureConsole(true));
+
+    final CommandXboxController driver = new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
+    final CommandXboxController operator = new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
+    final SafetyChecker safetyChecker = new SafetyChecker();
+    final AutoChooser autoChooser = new AutoChooser();
+    final Superstructure superstructure;
+    final CommandSwerveDrivetrain drivetrain;
+    final Elevator elevator;
+    final Wrist wrist;
+    final Rollers rollers;
+    final LEDs leds;
+    final Vision vision;
+    final AutoFactory autoFactory;
+    final AutoRoutines autoRoutines;
+
+    switch (Constants.currentMode) {
+      case REAL:
+        elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
+        rollers = new Rollers(new RollersIOTalonFX(), safetyChecker);
+        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        drivetrain = TunerConstants.createDrivetrain(driver);
+        leds = new LEDs(new LEDsIOReal());
+        // climb = new Climb(new ClimbIOTalonFX());
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                new CameraReal(CameraConstants.frontLeftCameraConstants),
+                new CameraReal(CameraConstants.frontRightCameraConstants),
+                new CameraReal(CameraConstants.backCameraConstants));
+        break;
+      default: // SIMULATION
+        DriverStation.silenceJoystickConnectionWarning(true);
+        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
+        rollers = new Rollers(new RollersIOSim(), safetyChecker);
+        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        drivetrain = TunerConstants.createDrivetrain(driver);
+        leds = new LEDs(new LEDsIOSim());
+        // climb = new Climb(new ClimbIOSim());
+        vision =
+            new Vision(
+                drivetrain::addVisionMeasurement,
+                new CameraReal(CameraConstants.frontLeftCameraConstants),
+                new CameraReal(CameraConstants.frontRightCameraConstants),
+                new CameraReal(CameraConstants.backCameraConstants));
+        break;
+    }
+    autoFactory =
+            new AutoFactory(
+                drivetrain::getPose,
+                drivetrain::resetPose,
+                drivetrain::followChoreoPath,
+                false,
+                drivetrain);
+
+    superstructure =
+        new Superstructure(
+            drivetrain,
+            elevator,
+            wrist,
+            rollers,
+            leds,
+            vision,
+            safetyChecker,
+            driver,
+            operator);
+
+    autoRoutines = new AutoRoutines(autoFactory, superstructure);
+
+    // Auto chooser setup
+    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+
+    /** AUTO ROUTINES */
+    // COMPETITION
+    autoChooser.addRoutine("Left Auto - 3 Coral", autoRoutines::leftAutoRoutine);
+    autoChooser.addRoutine("Right Auto - 3 Coral", autoRoutines::rightAutoRoutine);
+    autoChooser.addRoutine("Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
+    autoChooser.addRoutine("Middle Auto - 1 Coral", autoRoutines::middleAutoRoutine);
+    autoChooser.addRoutine("Taxi Auto - Taxi", autoRoutines::taxiAutoRoutine);
+
+    SmartDashboard.putData("AutoChooser", autoChooser);
   }
 
   @Override
   public void robotPeriodic() {
-    final var scheduler = CommandScheduler.getInstance();
     Tracer.traceFunc("CommandScheduler", scheduler::run);
   }
 
@@ -40,44 +149,40 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    scheduler.cancelAll();
+  }
 
   @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
+  public void autonomousInit() {}
 
   @Override
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    scheduler.cancelAll();
+  }
 
   @Override
-  public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-  }
+  public void teleopInit() {}
 
   @Override
   public void teleopPeriodic() {}
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+    scheduler.cancelAll();
+  }
 
   @Override
-  public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
-  }
+  public void testInit() {}
 
   @Override
   public void testPeriodic() {}
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+    scheduler.cancelAll();
+  }
 }

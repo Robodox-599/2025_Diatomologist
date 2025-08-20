@@ -1,8 +1,8 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
 
 import dev.doglog.DogLog;
-import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
 
 public class Rollers {

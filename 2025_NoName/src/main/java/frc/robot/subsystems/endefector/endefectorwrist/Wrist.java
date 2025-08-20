@@ -1,8 +1,8 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
 import dev.doglog.DogLog;
-import frc.robot.SafetyChecker;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
 
 public class Wrist {

@@ -6,16 +6,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.SafetyChecker;
-import frc.robot.commands.AutoAlignPoseGenerator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.AutoAlignPoseGenerator;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
-import java.util.function.BooleanSupplier;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -23,7 +22,6 @@ public class Superstructure extends SubsystemBase {
   private final Wrist wrist;
   private final Rollers rollers;
   private final LEDs leds;
-  // private final Climb climb;
   private final Vision vision;
   private final SafetyChecker safetyChecker;
   private final CommandXboxController driver;
@@ -32,11 +30,6 @@ public class Superstructure extends SubsystemBase {
   private CurrentSuperState previousSuperState = CurrentSuperState.STOPPED;
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
-  private AutoAlignSide autoAlignSide = AutoAlignSide.LEFT;
-  private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
-  private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
-  private GamePieceState gamePieceState = GamePieceState.CORAL;
-  public AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
 
   public enum CurrentSuperState {
     INTAKING_CORAL_STATION,
@@ -95,44 +88,12 @@ public class Superstructure extends SubsystemBase {
     NO_STATE,
   }
 
-  /* DRIVER */
-  public enum AutomationLevel {
-    MANUAL,
-    AUTO_ACTION,
-  }
-
-  /* OPERATOR */
-  public enum AutoAlignSide {
-    LEFT,
-    RIGHT,
-  }
-
-  public enum CoralScoreLevel {
-    POSITION_CORAL_L1,
-    POSITION_CORAL_L2,
-    POSITION_CORAL_L3,
-    POSITION_CORAL_L4,
-  }
-
-  public enum AlgaeLevel {
-    POSITION_ALGAE_BARGE,
-    INTAKING_ALGAE_L3,
-    INTAKING_ALGAE_L2,
-    POSITION_ALGAE_PROCESSOR,
-  }
-
-  public enum GamePieceState {
-    CORAL,
-    ALGAE,
-  }
-
   public Superstructure(
       CommandSwerveDrivetrain drivetrain,
       Elevator elevator,
       Wrist wrist,
       Rollers rollers,
       LEDs LEDs,
-      // Climb climb,
       Vision vision,
       SafetyChecker safetyChecker,
       CommandXboxController driver,
@@ -142,7 +103,6 @@ public class Superstructure extends SubsystemBase {
     this.wrist = wrist;
     this.rollers = rollers;
     this.leds = LEDs;
-    // this.climb = climb;
     this.vision = vision;
     this.safetyChecker = safetyChecker;
     this.driver = driver;
@@ -164,11 +124,6 @@ public class Superstructure extends SubsystemBase {
 
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
-    DogLog.log("Superstructure/AutomationLevel", automationLevel);
-    DogLog.log("Superstructure/AutoAlignSide", autoAlignSide);
-    DogLog.log("Superstructure/CoralScoreLevel", coralScoreLevel);
-    DogLog.log("Superstructure/AlgaeLevel", algaeLevel);
-    DogLog.log("Superstructure/GamePieceState", gamePieceState);
     Tracer.endTrace();
   }
 
@@ -699,120 +654,6 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.STOPPED);
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
-  
-  public Command setAutoCoralScoreStateCommand() {
-    return this.runOnce(() -> setWantedSuperState(returnAutoCoralScoreState()));
-  }
-
-  public WantedSuperState returnAutoCoralScoreState() {
-    if (rollers.isCoralDetected()) {
-      switch (automationLevel) {
-        case AUTO_ACTION:
-          switch (coralScoreLevel) {
-            case POSITION_CORAL_L1:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L1_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L1_RIGHT;
-              }
-            case POSITION_CORAL_L2:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L2_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L2_RIGHT;
-              }
-            case POSITION_CORAL_L3:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L3_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L3_RIGHT;
-              }
-            case POSITION_CORAL_L4:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L4_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L4_RIGHT;
-              }
-            default:
-              break;
-          }
-        default:
-          break;
-      }
-    }
-    switch (autoAlignSide) {
-      default:
-      case LEFT:
-        return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
-      case RIGHT:
-        return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
-    }
-  }
-
-  public Command setAutoAlgaeIntakeStateCommand() {
-    return this.runOnce(() -> setWantedSuperState(returnAutoAlgaeIntakeState()));
-  }
-
-  public WantedSuperState returnAutoAlgaeIntakeState() {
-    switch (automationLevel) {
-      case AUTO_ACTION:
-        return WantedSuperState.AUTO_INTAKE_ALGAE;
-      default:
-        return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
-    }
-  }
-
-  public Command setLogicStateCommand() {
-    return this.runOnce(() -> setWantedSuperState(returnLogicState()));
-  }
-
-  public WantedSuperState returnLogicState() {
-    if (rollers.isAlgaeDetected()) {
-      switch (wantedSuperState) {
-        case POSITION_ALGAE_PROCESSOR:
-          return WantedSuperState.POSITION_ALGAE_BARGE;
-        case POSITION_ALGAE_BARGE:
-          return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        default:
-          break;
-      }
-    }
-    switch (gamePieceState) {
-      default:
-      case CORAL:
-        switch (coralScoreLevel) {
-          default:
-          case POSITION_CORAL_L1:
-            return WantedSuperState.POSITION_CORAL_L1;
-          case POSITION_CORAL_L2:
-            return WantedSuperState.POSITION_CORAL_L2;
-          case POSITION_CORAL_L3:
-            return WantedSuperState.POSITION_CORAL_L3;
-          case POSITION_CORAL_L4:
-            return WantedSuperState.POSITION_CORAL_L4;
-        }
-      case ALGAE:
-        switch (algaeLevel) {
-          default:
-          case POSITION_ALGAE_BARGE:
-            return WantedSuperState.POSITION_ALGAE_BARGE;
-          case INTAKING_ALGAE_L3:
-            return WantedSuperState.INTAKING_ALGAE_L3;
-          case INTAKING_ALGAE_L2:
-            return WantedSuperState.INTAKING_ALGAE_L2;
-          case POSITION_ALGAE_PROCESSOR:
-            return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        }
-    }
-  }
 
   public Command setTeleopDriveStateCommand() {
     return this.runOnce(() -> setTeleopDriveState());
@@ -859,38 +700,9 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public Command setAutoAlignSideCommand(AutoAlignSide side) {
-    return this.runOnce(() -> autoAlignSide = side);
-  }
-
-  public Command setCoralScoreLevelCommand(CoralScoreLevel level) {
-    return this.runOnce(() -> coralScoreLevel = level);
-  }
-
-  public Command setAlgaeLevelCommand(AlgaeLevel level) {
-    return this.runOnce(() -> algaeLevel = level);
-  }
-
-  public Command setGamePieceStateCommand(GamePieceState state) {
-    return this.runOnce(() -> gamePieceState = state);
-  }
-
-  public Command setAutomationLevelCommand(AutomationLevel level) {
-    return this.runOnce(() -> automationLevel = level);
-  }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
     return this.runOnce(() -> setWantedSuperState(wantedState));
-  }
-
-  public boolean isGamePieceStateCoral() {
-    switch (gamePieceState) {
-      default:
-      case CORAL:
-        return true;
-      case ALGAE:
-        return false;
-    }
   }
 
   private void setWantedSuperState(WantedSuperState state) {
@@ -923,5 +735,9 @@ public class Superstructure extends SubsystemBase {
 
   public boolean hasCoral() {
     return rollers.isCoralDetected();
+  }
+
+  public boolean hasAlgae() {
+    return rollers.isAlgaeDetected();
   }
 }

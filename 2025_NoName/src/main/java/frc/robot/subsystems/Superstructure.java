@@ -15,7 +15,6 @@ import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Tracer;
-import java.util.function.BooleanSupplier;
 
 public class Superstructure extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
@@ -699,62 +698,35 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.STOPPED);
     // climb.setWantedState(Climb.WantedState.STOPPED);
   }
-  
+
   public Command setAutoCoralScoreStateCommand() {
     return this.runOnce(() -> setWantedSuperState(returnAutoCoralScoreState()));
   }
 
   public WantedSuperState returnAutoCoralScoreState() {
-    if (rollers.isCoralDetected()) {
-      switch (automationLevel) {
-        case AUTO_ACTION:
-          switch (coralScoreLevel) {
-            case POSITION_CORAL_L1:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L1_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L1_RIGHT;
-              }
-            case POSITION_CORAL_L2:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L2_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L2_RIGHT;
-              }
-            case POSITION_CORAL_L3:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L3_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L3_RIGHT;
-              }
-            case POSITION_CORAL_L4:
-              switch (autoAlignSide) {
-                default:
-                case LEFT:
-                  return WantedSuperState.AUTO_SCORE_L4_LEFT;
-                case RIGHT:
-                  return WantedSuperState.AUTO_SCORE_L4_RIGHT;
-              }
-            default:
-              break;
-          }
-        default:
-          break;
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      switch (coralScoreLevel) {
+        case POSITION_CORAL_L1:
+          return (autoAlignSide == AutoAlignSide.LEFT)
+              ? WantedSuperState.AUTO_SCORE_L1_LEFT
+              : WantedSuperState.AUTO_SCORE_L1_RIGHT;
+        case POSITION_CORAL_L2:
+          return (autoAlignSide == AutoAlignSide.LEFT)
+              ? WantedSuperState.AUTO_SCORE_L2_LEFT
+              : WantedSuperState.AUTO_SCORE_L2_RIGHT;
+        case POSITION_CORAL_L3:
+          return (autoAlignSide == AutoAlignSide.LEFT)
+              ? WantedSuperState.AUTO_SCORE_L3_LEFT
+              : WantedSuperState.AUTO_SCORE_L3_RIGHT;
+        case POSITION_CORAL_L4:
+          return (autoAlignSide == AutoAlignSide.LEFT)
+              ? WantedSuperState.AUTO_SCORE_L4_LEFT
+              : WantedSuperState.AUTO_SCORE_L4_RIGHT;
       }
     }
-    switch (autoAlignSide) {
-      default:
-      case LEFT:
-        return WantedSuperState.AUTO_ALIGN_LEFT_BRANCH;
-      case RIGHT:
-        return WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
-    }
+    return (autoAlignSide == AutoAlignSide.LEFT)
+        ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
+        : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
   }
 
   public Command setAutoAlgaeIntakeStateCommand() {
@@ -762,11 +734,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoAlgaeIntakeState() {
-    switch (automationLevel) {
-      case AUTO_ACTION:
-        return WantedSuperState.AUTO_INTAKE_ALGAE;
-      default:
-        return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      return WantedSuperState.AUTO_INTAKE_ALGAE;
+    } else {
+      return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
     }
   }
 
@@ -776,41 +747,34 @@ public class Superstructure extends SubsystemBase {
 
   public WantedSuperState returnLogicState() {
     if (rollers.isAlgaeDetected()) {
-      switch (wantedSuperState) {
-        case POSITION_ALGAE_PROCESSOR:
-          return WantedSuperState.POSITION_ALGAE_BARGE;
-        case POSITION_ALGAE_BARGE:
-          return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        default:
-          break;
+      if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
+        return WantedSuperState.POSITION_ALGAE_BARGE;
+      } else if (wantedSuperState == WantedSuperState.POSITION_ALGAE_BARGE) {
+        return WantedSuperState.POSITION_ALGAE_PROCESSOR;
       }
     }
-    switch (gamePieceState) {
-      default:
-      case CORAL:
-        switch (coralScoreLevel) {
-          default:
-          case POSITION_CORAL_L1:
-            return WantedSuperState.POSITION_CORAL_L1;
-          case POSITION_CORAL_L2:
-            return WantedSuperState.POSITION_CORAL_L2;
-          case POSITION_CORAL_L3:
-            return WantedSuperState.POSITION_CORAL_L3;
-          case POSITION_CORAL_L4:
-            return WantedSuperState.POSITION_CORAL_L4;
-        }
-      case ALGAE:
-        switch (algaeLevel) {
-          default:
-          case POSITION_ALGAE_BARGE:
-            return WantedSuperState.POSITION_ALGAE_BARGE;
-          case INTAKING_ALGAE_L3:
-            return WantedSuperState.INTAKING_ALGAE_L3;
-          case INTAKING_ALGAE_L2:
-            return WantedSuperState.INTAKING_ALGAE_L2;
-          case POSITION_ALGAE_PROCESSOR:
-            return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        }
+    if (gamePieceState == GamePieceState.CORAL) {
+      switch (coralScoreLevel) {
+        default:
+        case POSITION_CORAL_L1:
+          return WantedSuperState.POSITION_CORAL_L1;
+        case POSITION_CORAL_L2:
+          return WantedSuperState.POSITION_CORAL_L2;
+        case POSITION_CORAL_L3:
+          return WantedSuperState.POSITION_CORAL_L3;
+        case POSITION_CORAL_L4:
+          return WantedSuperState.POSITION_CORAL_L4;
+      }
+    } else { // (gamePieceState == GamePieceState.ALGAE)
+      switch (algaeLevel) {
+        default:
+        case POSITION_ALGAE_BARGE:
+          return WantedSuperState.POSITION_ALGAE_BARGE;
+        case INTAKING_ALGAE_L3:
+          return WantedSuperState.INTAKING_ALGAE_L3;
+        case INTAKING_ALGAE_L2:
+          return WantedSuperState.INTAKING_ALGAE_L2;
+      }
     }
   }
 

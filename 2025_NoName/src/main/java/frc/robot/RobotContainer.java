@@ -187,10 +187,7 @@ public class RobotContainer {
     // ZERO GYRO
     driver.y().onTrue(superstructureCommands.zeroGyroCommand());
     // // SET WANTED STATE TO A LOGIC STATE
-    driver
-        .rightBumper()
-        .onTrue(
-            superstructureCommands.setLogicStateCommand());
+    driver.rightBumper().onTrue(superstructureCommands.setLogicStateCommand());
     // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftBumper()
@@ -211,15 +208,10 @@ public class RobotContainer {
         .leftTrigger()
         .onTrue(superstructureCommands.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
-    driver
-        .povRight()
-        .whileTrue(superstructureCommands.setAutoCoralScoreStateCommand());
+    driver.povRight().whileTrue(superstructureCommands.setAutoCoralScoreStateCommand());
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
-    driver
-        .povLeft()
-        .onTrue(
-            superstructureCommands.setAutoAlgaeIntakeStateCommand());
+    driver.povLeft().onTrue(superstructureCommands.setAutoAlgaeIntakeStateCommand());
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructureCommands.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructureCommands.setTeleopDriveStateCommand());

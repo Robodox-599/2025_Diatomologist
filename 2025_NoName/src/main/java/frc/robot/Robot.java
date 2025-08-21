@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drive.constants.CameraConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -30,6 +29,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.vision.CameraConstants;
 import frc.robot.subsystems.vision.CameraReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.SafetyChecker;
@@ -56,8 +56,10 @@ public class Robot extends TimedRobot {
             .withNtPublish(true)
             .withCaptureConsole(true));
 
-    final CommandXboxController driver = new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
-    final CommandXboxController operator = new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
+    final CommandXboxController driver =
+        new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
+    final CommandXboxController operator =
+        new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
     final SafetyChecker safetyChecker = new SafetyChecker();
     final AutoChooser autoChooser = new AutoChooser();
     final Superstructure superstructure;
@@ -102,24 +104,16 @@ public class Robot extends TimedRobot {
         break;
     }
     autoFactory =
-            new AutoFactory(
-                drivetrain::getPose,
-                drivetrain::resetPose,
-                drivetrain::followChoreoPath,
-                false,
-                drivetrain);
+        new AutoFactory(
+            drivetrain::getPose,
+            drivetrain::resetPose,
+            drivetrain::followChoreoPath,
+            false,
+            drivetrain);
 
     superstructure =
         new Superstructure(
-            drivetrain,
-            elevator,
-            wrist,
-            rollers,
-            leds,
-            vision,
-            safetyChecker,
-            driver,
-            operator);
+            drivetrain, elevator, wrist, rollers, leds, vision, safetyChecker, driver, operator);
 
     new Bindings(driver, operator, superstructure);
 
@@ -132,7 +126,8 @@ public class Robot extends TimedRobot {
     // COMPETITION
     autoChooser.addRoutine("Left Auto - 3 Coral", autoRoutines::leftAutoRoutine);
     autoChooser.addRoutine("Right Auto - 3 Coral", autoRoutines::rightAutoRoutine);
-    autoChooser.addRoutine("Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
+    autoChooser.addRoutine(
+        "Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
     autoChooser.addRoutine("Middle Auto - 1 Coral", autoRoutines::middleAutoRoutine);
     autoChooser.addRoutine("Taxi Auto - Taxi", autoRoutines::taxiAutoRoutine);
 

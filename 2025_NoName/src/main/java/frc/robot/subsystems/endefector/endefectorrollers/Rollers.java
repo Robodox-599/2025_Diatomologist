@@ -23,7 +23,8 @@ public class Rollers {
     INTAKING_ALGAE,
     HOLD_CORAL,
     HOLD_ALGAE,
-    SCORING_CORAL,
+    SCORING_CORAL_TROUGH,
+    SCORING_CORAL_BRANCH,
     SCORING_ALGAE,
     STOPPED,
   }
@@ -69,7 +70,14 @@ public class Rollers {
           currentState = CurrentState.STOPPED;
         }
         break;
-      case SCORING_CORAL:
+      case SCORING_CORAL_TROUGH:
+        if (safetyChecker.isReadyToScore()) {
+          currentState = CurrentState.SCORING_CORAL;
+        } else {
+          currentState = CurrentState.HOLD_CORAL;
+        }
+        break;
+      case SCORING_CORAL_BRANCH:
         if (safetyChecker.isReadyToScore()) {
           currentState = CurrentState.SCORING_CORAL;
         } else {

@@ -52,6 +52,22 @@ public class AutoAlignPoseGenerator {
   }
 
   /**
+   * Finds nearest branch position
+   *
+   * @param robotPose robot pose
+   * @param useLeftBranch true if left branch, false if right branch
+   */
+  public static Pose2d getNearestTroughPosition(Pose2d robotPose, boolean useLeftBranch) {
+    Pose2d targetPose = getNearestBranchPosition(robotPose, useLeftBranch);
+
+    targetPose = targetPose.transformBy(new Transform2d(0.3, 0, new Rotation2d(0)));
+
+    DogLog.log("ClosestFace/TargetPose", targetPose);
+    DogLog.log("ClosestFace/RobotPose", robotPose);
+    return targetPose;
+  }
+
+  /**
    * Finds nearest reef face position for algae
    *
    * @param robotPose robot pose

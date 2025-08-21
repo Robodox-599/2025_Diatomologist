@@ -22,7 +22,7 @@ public class Wrist {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
     POSITION_PREPARED,
-    POSITION_L1,
+    POSITION_TROUGH,
     HOLDING_ALGAE,
     SCORING_CORAL,
     SCORING_ALGAE,
@@ -34,7 +34,7 @@ public class Wrist {
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF,
     POSITION_PREPARED,
-    POSITION_L1,
+    POSITION_TROUGH,
     HOLDING_ALGAE,
     SCORING_CORAL,
     SCORING_ALGAE,
@@ -66,20 +66,14 @@ public class Wrist {
         if (safetyChecker.isAtSetpointElevator()) {
           currentState = CurrentState.INTAKING_ALGAE_REEF;
         } else {
-          currentState = CurrentState.SCORING_ALGAE;
+          currentState = CurrentState.POSITION_PREPARED;
         }
         break;
       case POSITION_PREPARED:
         currentState = CurrentState.POSITION_PREPARED;
         break;
-      case POSITION_L1:
-        currentState = CurrentState.POSITION_L1;
-        break;
-      case SCORING_CORAL:
-        currentState = CurrentState.SCORING_CORAL;
-        break;
-      case SCORING_ALGAE:
-        currentState = CurrentState.SCORING_ALGAE;
+      case POSITION_TROUGH:
+        currentState = CurrentState.POSITION_TROUGH;
         break;
       case STOPPED:
         currentState = CurrentState.STOPPED;
@@ -105,14 +99,8 @@ public class Wrist {
         case POSITION_PREPARED:
           setAngle(WristStates.POSITION_PREPARED);
           break;
-        case POSITION_L1:
-          setAngle(WristStates.POSITION_L1);
-          break;
-        case SCORING_CORAL:
-          setAngle(WristStates.SCORING_CORAL);
-          break;
-        case SCORING_ALGAE:
-          setAngle(WristStates.SCORING_ALGAE);
+        case POSITION_TROUGH:
+          setAngle(WristStates.POSITION_TROUGH);
           break;
         case STOPPED:
           stop();

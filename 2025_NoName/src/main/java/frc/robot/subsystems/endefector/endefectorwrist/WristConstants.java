@@ -62,7 +62,7 @@ public class WristConstants {
     0.99, // INTAKING ALGAE GROUND
     0.91, // INTAKING ALGAE REEF
     0.79, // POSITION PREPARED
-    0.85, // POSITION TROUGH
+    1.05, // POSITION TROUGH
     0.79, // SCORING CORAL
     0.79 // SCORING ALGAE
   };

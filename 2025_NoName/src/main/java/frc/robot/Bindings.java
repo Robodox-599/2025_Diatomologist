@@ -45,14 +45,14 @@ public class Bindings {
   private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
   private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
   private GamePieceState gamePieceState = GamePieceState.CORAL;
-  private AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
+  private AutomationLevel automationLevel = AutomationLevel.MANUAL;
 
   public Bindings(
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
     this.superstructure = superstructure;
     //                               DRIVER BINDS
     // ZERO GYRO
-    driver.start().onTrue(superstructure.zeroGyroCommand());
+    driver.y().onTrue(superstructure.zeroGyroCommand());
     // // SET WANTED STATE TO A LOGIC STATE
     driver.rightBumper().onTrue(setLogicStateCommand());
     // // SET WANTED STATE TO INTAKING ALGAE GROUND

@@ -6,9 +6,10 @@ public class RollersConstants {
     INTAKING_ALGAE(1),
     HOLD_CORAL(2),
     HOLD_ALGAE(3),
-    SCORING_CORAL(4),
-    SCORING_ALGAE(5),
-    STOPPED(6);
+    SCORING_CORAL_TROUGH(4),
+    SCORING_CORAL_BRANCH(5),
+    SCORING_ALGAE(6),
+    STOPPED(7);
 
     private final int index;
 
@@ -26,7 +27,8 @@ public class RollersConstants {
     0.6, // intaking algae
     0.0, // holding coral
     0.0, // VELOCITY NOT USED - holding algae
-    -0.4, // scoring coral
+    0.3, // scoring coral trough
+    -0.4, // scoring coral branch
     -0.2, // scoring algae
     0.0, // stopped
   };

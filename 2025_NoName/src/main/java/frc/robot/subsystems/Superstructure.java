@@ -377,7 +377,8 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {
-          if (currentSuperState == CurrentSuperState.POSITION_CORAL_L1 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
+          if (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
+              || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
           } else {
             currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;

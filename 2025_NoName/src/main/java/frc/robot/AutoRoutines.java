@@ -170,10 +170,10 @@ public class AutoRoutines {
 
     MIDtoG.recentlyDone().and(hasNoCoral).onTrue(GtoGH.cmd());
 
-    GtoGH.done()
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                superstructureCommands.returnAutoAlgaeIntakeState()));
+    // GtoGH.done()
+    //     .onTrue(
+    //         superstructureCommands.setWantedSuperStateCommand(
+    //             superstructureCommands.returnAutoAlgaeIntakeState()));
 
     return routine;
   }

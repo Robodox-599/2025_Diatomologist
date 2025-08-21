@@ -1,8 +1,8 @@
 package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
-import frc.robot.SafetyChecker;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
 
 public class Elevator {

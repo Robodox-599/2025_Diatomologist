@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.SafetyChecker;
-import frc.robot.commands.AutoAlignPoseGenerator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.AutoAlignPoseGenerator;
+import frc.robot.util.SafetyChecker;
 import frc.robot.util.Tracer;
 
 public class Superstructure extends SubsystemBase {
@@ -22,7 +22,6 @@ public class Superstructure extends SubsystemBase {
   private final Wrist wrist;
   private final Rollers rollers;
   private final LEDs leds;
-  // private final Climb climb;
   private final Vision vision;
   private final SafetyChecker safetyChecker;
   private final CommandXboxController driver;
@@ -31,11 +30,6 @@ public class Superstructure extends SubsystemBase {
   private CurrentSuperState previousSuperState = CurrentSuperState.STOPPED;
   private CurrentSuperState currentSuperState = CurrentSuperState.STOPPED;
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
-  private AutoAlignSide autoAlignSide = AutoAlignSide.LEFT;
-  private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
-  private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
-  private GamePieceState gamePieceState = GamePieceState.CORAL;
-  public AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
 
   public enum CurrentSuperState {
     INTAKING_CORAL_STATION,
@@ -94,44 +88,12 @@ public class Superstructure extends SubsystemBase {
     NO_STATE,
   }
 
-  /* DRIVER */
-  public enum AutomationLevel {
-    MANUAL,
-    AUTO_ACTION,
-  }
-
-  /* OPERATOR */
-  public enum AutoAlignSide {
-    LEFT,
-    RIGHT,
-  }
-
-  public enum CoralScoreLevel {
-    POSITION_CORAL_L1,
-    POSITION_CORAL_L2,
-    POSITION_CORAL_L3,
-    POSITION_CORAL_L4,
-  }
-
-  public enum AlgaeLevel {
-    POSITION_ALGAE_BARGE,
-    INTAKING_ALGAE_L3,
-    INTAKING_ALGAE_L2,
-    POSITION_ALGAE_PROCESSOR,
-  }
-
-  public enum GamePieceState {
-    CORAL,
-    ALGAE,
-  }
-
   public Superstructure(
       CommandSwerveDrivetrain drivetrain,
       Elevator elevator,
       Wrist wrist,
       Rollers rollers,
       LEDs LEDs,
-      // Climb climb,
       Vision vision,
       SafetyChecker safetyChecker,
       CommandXboxController driver,
@@ -141,7 +103,6 @@ public class Superstructure extends SubsystemBase {
     this.wrist = wrist;
     this.rollers = rollers;
     this.leds = LEDs;
-    // this.climb = climb;
     this.vision = vision;
     this.safetyChecker = safetyChecker;
     this.driver = driver;
@@ -163,11 +124,6 @@ public class Superstructure extends SubsystemBase {
 
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
-    DogLog.log("Superstructure/AutomationLevel", automationLevel);
-    DogLog.log("Superstructure/AutoAlignSide", autoAlignSide);
-    DogLog.log("Superstructure/CoralScoreLevel", coralScoreLevel);
-    DogLog.log("Superstructure/AlgaeLevel", algaeLevel);
-    DogLog.log("Superstructure/GamePieceState", gamePieceState);
     Tracer.endTrace();
   }
 
@@ -825,38 +781,9 @@ public class Superstructure extends SubsystemBase {
     }
   }
 
-  public Command setAutoAlignSideCommand(AutoAlignSide side) {
-    return this.runOnce(() -> autoAlignSide = side);
-  }
-
-  public Command setCoralScoreLevelCommand(CoralScoreLevel level) {
-    return this.runOnce(() -> coralScoreLevel = level);
-  }
-
-  public Command setAlgaeLevelCommand(AlgaeLevel level) {
-    return this.runOnce(() -> algaeLevel = level);
-  }
-
-  public Command setGamePieceStateCommand(GamePieceState state) {
-    return this.runOnce(() -> gamePieceState = state);
-  }
-
-  public Command setAutomationLevelCommand(AutomationLevel level) {
-    return this.runOnce(() -> automationLevel = level);
-  }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
     return this.runOnce(() -> setWantedSuperState(wantedState));
-  }
-
-  public boolean isGamePieceStateCoral() {
-    switch (gamePieceState) {
-      default:
-      case CORAL:
-        return true;
-      case ALGAE:
-        return false;
-    }
   }
 
   private void setWantedSuperState(WantedSuperState state) {
@@ -889,5 +816,9 @@ public class Superstructure extends SubsystemBase {
 
   public boolean hasCoral() {
     return rollers.isCoralDetected();
+  }
+
+  public boolean hasAlgae() {
+    return rollers.isAlgaeDetected();
   }
 }

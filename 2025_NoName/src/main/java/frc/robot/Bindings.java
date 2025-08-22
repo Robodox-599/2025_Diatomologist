@@ -11,13 +11,19 @@ public class Bindings {
 
   /* DRIVER */
   public enum AutomationLevel {
-    MANUAL,
+    AUTO_ALIGN,
     AUTO_ACTION,
   }
 
   /* OPERATOR */
-  public enum AutoAlignSide {
+  public enum BranchAutoAlignSide {
     LEFT,
+    RIGHT,
+  }
+
+  public enum TroughAutoAlignSide {
+    LEFT,
+    MIDDLE,
     RIGHT,
   }
 
@@ -41,11 +47,12 @@ public class Bindings {
   }
 
   private final Superstructure superstructure;
-  private AutoAlignSide autoAlignSide = AutoAlignSide.LEFT;
+  private BranchAutoAlignSide branchAutoAlignSide = BranchAutoAlignSide.LEFT;
+  private TroughAutoAlignSide troughAutoAlignSide = TroughAutoAlignSide.LEFT;
   private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
   private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
   private GamePieceState gamePieceState = GamePieceState.CORAL;
-  private AutomationLevel automationLevel = AutomationLevel.MANUAL;
+  private AutomationLevel automationLevel = AutomationLevel.AUTO_ALIGN;
 
   public Bindings(
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
@@ -80,7 +87,13 @@ public class Bindings {
     // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
     driver.povUp().onTrue(setAutomationLevelCommand(AutomationLevel.AUTO_ACTION));
     // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
-    driver.povDown().onTrue(setAutomationLevelCommand(AutomationLevel.MANUAL));
+    driver.povDown().onTrue(setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN));
+    // // SET WANTED STATE TO PREPARE CLIMB
+    driver
+        .x()
+        .and(driver.a())
+        .onTrue(
+            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED));
 
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
@@ -160,24 +173,37 @@ public class Bindings {
     operator
         .leftBumper()
         .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED));
-    // // SET WANTED STATE TO PREPARE CLIMB
-    operator
-        .rightTrigger()
-        .and(operator.leftTrigger())
-        .onTrue(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED));
     // // SET AUTO ALIGN TO LEFT
-    operator.povLeft().onTrue(setAutoAlignSideCommand(AutoAlignSide.LEFT));
+    operator.povLeft().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.LEFT));
     // // SET AUTO ALIGN TO RIGHT
-    operator.povRight().onTrue(setAutoAlignSideCommand(AutoAlignSide.RIGHT));
+    operator.povRight().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.RIGHT));
+    // // SET AUTO ALIGN TO MIDDLE
+    operator.povUp().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE));
     // // SET GAME PIECE STATE TO CORAL
-    operator.povUp().onTrue(setGamePieceStateCommand(GamePieceState.CORAL));
+    operator.rightTrigger().onTrue(setGamePieceStateCommand(GamePieceState.CORAL));
     // // SET GAME PIECE STATE TO ALGAE
-    operator.povDown().onTrue(setGamePieceStateCommand(GamePieceState.ALGAE));
+    operator.leftTrigger().onTrue(setGamePieceStateCommand(GamePieceState.ALGAE));
   }
 
-  public Command setAutoAlignSideCommand(AutoAlignSide side) {
-    return Commands.runOnce(() -> this.autoAlignSide = side);
+  public Command setAutoAlignSideCommand(TroughAutoAlignSide side) {
+    return Commands.runOnce(() -> setAutoAlignSide(side));
+  }
+
+  public void setAutoAlignSide(TroughAutoAlignSide side) {
+    switch (side) {
+      default:
+      case LEFT:
+        branchAutoAlignSide = BranchAutoAlignSide.LEFT;
+        troughAutoAlignSide = TroughAutoAlignSide.LEFT;
+        break;
+      case MIDDLE:
+        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE;
+        break;
+      case RIGHT:
+        branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
+        troughAutoAlignSide = TroughAutoAlignSide.RIGHT;
+        break;
+    }
   }
 
   public Command setCoralScoreLevelCommand(CoralScoreLevel level) {
@@ -211,27 +237,45 @@ public class Bindings {
       if (automationLevel == AutomationLevel.AUTO_ACTION) {
         switch (coralScoreLevel) {
           case POSITION_CORAL_L1:
-            return (autoAlignSide == AutoAlignSide.LEFT)
-                ? WantedSuperState.AUTO_SCORE_L1_LEFT
-                : WantedSuperState.AUTO_SCORE_L1_RIGHT;
+            switch (troughAutoAlignSide) {
+              default:
+              case LEFT:
+                return WantedSuperState.AUTO_SCORE_L1_LEFT;
+              case MIDDLE:
+                return WantedSuperState.AUTO_SCORE_L1_MIDDLE;
+              case RIGHT:
+                return WantedSuperState.AUTO_SCORE_L1_RIGHT;
+            }
           case POSITION_CORAL_L2:
-            return (autoAlignSide == AutoAlignSide.LEFT)
+            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
                 ? WantedSuperState.AUTO_SCORE_L2_LEFT
                 : WantedSuperState.AUTO_SCORE_L2_RIGHT;
           case POSITION_CORAL_L3:
-            return (autoAlignSide == AutoAlignSide.LEFT)
+            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
                 ? WantedSuperState.AUTO_SCORE_L3_LEFT
                 : WantedSuperState.AUTO_SCORE_L3_RIGHT;
           case POSITION_CORAL_L4:
-            return (autoAlignSide == AutoAlignSide.LEFT)
+            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
                 ? WantedSuperState.AUTO_SCORE_L4_LEFT
                 : WantedSuperState.AUTO_SCORE_L4_RIGHT;
         }
       }
     }
-    return (autoAlignSide == AutoAlignSide.LEFT)
+    if (coralScoreLevel == CoralScoreLevel.POSITION_CORAL_L1) {
+      switch (troughAutoAlignSide) {
+        default:
+        case LEFT:
+          return WantedSuperState.AUTO_ALIGN_LEFT_TROUGH;
+        case MIDDLE:
+          return WantedSuperState.AUTO_ALIGN_MIDDLE_TROUGH;
+        case RIGHT:
+          return WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
+      }
+    } else {
+      return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
         ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
         : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+    }
   }
 
   public Command setAutoAlignAlgaeStateCommand() {

@@ -273,8 +273,8 @@ public class Bindings {
       }
     } else {
       return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
-        ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
-        : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+          ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
+          : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
     }
   }
 

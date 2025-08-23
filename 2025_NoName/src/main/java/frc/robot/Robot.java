@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.autos.AutoRoutines;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drive.constants.TunerConstants;
@@ -38,6 +39,22 @@ import frc.robot.util.Tracer;
 public class Robot extends TimedRobot {
   private final CommandScheduler scheduler = CommandScheduler.getInstance();
 
+  final CommandXboxController driver =
+      new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
+  final CommandXboxController operator =
+      new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
+  final SafetyChecker safetyChecker = new SafetyChecker();
+  final AutoChooser autoChooser = new AutoChooser();
+  final Superstructure superstructure;
+  final CommandSwerveDrivetrain drivetrain;
+  final Elevator elevator;
+  final Wrist wrist;
+  final Rollers rollers;
+  final LEDs leds;
+  final Vision vision;
+  final AutoFactory autoFactory;
+  final AutoRoutines autoRoutines;
+
   @Override
   protected void loopFunc() {
     Tracer.startTrace("RobotLoop");
@@ -55,22 +72,6 @@ public class Robot extends TimedRobot {
             .withCaptureNt(true)
             .withNtPublish(true)
             .withCaptureConsole(true));
-
-    final CommandXboxController driver =
-        new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
-    final CommandXboxController operator =
-        new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
-    final SafetyChecker safetyChecker = new SafetyChecker();
-    final AutoChooser autoChooser = new AutoChooser();
-    final Superstructure superstructure;
-    final CommandSwerveDrivetrain drivetrain;
-    final Elevator elevator;
-    final Wrist wrist;
-    final Rollers rollers;
-    final LEDs leds;
-    final Vision vision;
-    final AutoFactory autoFactory;
-    final AutoRoutines autoRoutines;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -107,7 +108,7 @@ public class Robot extends TimedRobot {
         new AutoFactory(
             drivetrain::getPose,
             drivetrain::resetPose,
-            drivetrain::followChoreoPath,
+            drivetrain::setDesiredChoreoTrajectory,
             false,
             drivetrain);
 

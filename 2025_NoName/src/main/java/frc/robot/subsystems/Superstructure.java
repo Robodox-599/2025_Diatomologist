@@ -219,8 +219,8 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         break;
       case AUTO_ALIGN_LEFT_TROUGH:
-      currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH;
-      break;
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH;
+        break;
       case AUTO_ALIGN_LEFT_BRANCH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
         break;
@@ -245,7 +245,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -262,7 +262,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -279,7 +279,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -296,7 +296,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
@@ -313,7 +313,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
@@ -330,7 +330,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
@@ -347,7 +347,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
@@ -364,7 +364,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
@@ -381,7 +381,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
@@ -639,7 +639,6 @@ public class Superstructure extends SubsystemBase {
   private void autoAlignToBranch(boolean useLeftBranch) {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
-    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
   }
 
   /**
@@ -651,7 +650,6 @@ public class Superstructure extends SubsystemBase {
   private void autoAlignToTrough(int troughIndex) {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestTroughPosition(drivetrain.getPose(), troughIndex));
-    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
   }
 
   /**
@@ -664,7 +662,6 @@ public class Superstructure extends SubsystemBase {
     drivetrain.setTargetPoseForDriveToPoint(
         AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
             drivetrain.getPose(), shiftBackFromReefFace));
-    drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.DRIVE_TO_POINT);
   }
 
   private void scoreCoralOnBranch() {

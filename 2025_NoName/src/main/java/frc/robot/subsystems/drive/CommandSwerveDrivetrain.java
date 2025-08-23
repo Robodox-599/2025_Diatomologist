@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -35,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.Tracer;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -67,9 +70,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final PIDController choreoXController = new PIDController(7, 0, 0);
   private final PIDController choreoYController = new PIDController(7, 0, 0);
   private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
-  // private Trajectory<SwerveSample> desiredChoreoTrajectory;
-  //   private final Timer choreoTimer = new Timer();
-  //   private Optional<SwerveSample> choreoSampleToBeApplied;
+  private Trajectory<SwerveSample> desiredChoreoTrajectory;
+  private final Timer choreoTimer = new Timer();
+  private Optional<SwerveSample> choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
@@ -90,13 +93,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public enum WantedState {
     TELEOP_DRIVE,
     DRIVE_TO_POINT,
-    AUTONOMOUS_DRIVE,
+    CHOREO_TRAJECTORY,
   }
 
   public enum CurrentState {
     TELEOP_DRIVE,
     DRIVE_TO_POINT,
-    AUTONOMOUS_DRIVE,
+    CHOREO_TRAJECTORY,
   }
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -273,20 +276,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         currentState = CurrentState.TELEOP_DRIVE;
         break;
       case DRIVE_TO_POINT:
-        if (isAtDriveToPointSetpoints()) {
-          wantedState = WantedState.TELEOP_DRIVE;
-          currentState = CurrentState.TELEOP_DRIVE;
-          resetDriveToPoint();
-        } else {
-          currentState = CurrentState.DRIVE_TO_POINT;
-        }
+        currentState = CurrentState.DRIVE_TO_POINT;
         break;
-      case AUTONOMOUS_DRIVE:
-        if (!DriverStation.isAutonomous()) {
-          wantedState = WantedState.TELEOP_DRIVE;
-          currentState = CurrentState.TELEOP_DRIVE;
+      case CHOREO_TRAJECTORY:
+        if (currentState != CurrentState.CHOREO_TRAJECTORY) {
+          choreoTimer.reset();
+          choreoSampleToBeApplied = desiredChoreoTrajectory.sampleAt(choreoTimer.get(), false);
+          currentState = CurrentState.CHOREO_TRAJECTORY;
         } else {
-          currentState = CurrentState.AUTONOMOUS_DRIVE;
+          choreoSampleToBeApplied = desiredChoreoTrajectory.sampleAt(choreoTimer.get(), false);
+          currentState = CurrentState.CHOREO_TRAJECTORY;
         }
         break;
       default:
@@ -316,8 +315,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         double linearDistance = translationToTarget.getNorm();
 
-        updateDistancesAndSetpoints(linearDistance);
-
         Rotation2d direction = translationToTarget.getAngle();
         double velocityOutput =
             Math.min(
@@ -339,14 +336,42 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 .withVelocityY(yVelocity)
                 .withTargetDirection(targetPoseForDriveToPoint.getRotation()));
         break;
-      case AUTONOMOUS_DRIVE:
+      case CHOREO_TRAJECTORY:
+        if (choreoSampleToBeApplied.isPresent()) {
+          SwerveSample sample = choreoSampleToBeApplied.get();
+
+          var pose = getState().Pose;
+
+          var targetSpeeds = sample.getChassisSpeeds();
+          DogLog.log("Drive/Choreo/RobotPose2d", pose);
+          DogLog.log("Drive/Choreo/SwerveSample", sample);
+          DogLog.log("Drive/Choreo/SwerveSample/ChoreoPosition", sample.getPose());
+          DogLog.log("Drive/Choreo/RealRobotPosition", pose);
+
+          targetSpeeds.vxMetersPerSecond += choreoXController.calculate(pose.getX(), sample.x);
+          targetSpeeds.vyMetersPerSecond += choreoYController.calculate(pose.getY(), sample.y);
+          targetSpeeds.omegaRadiansPerSecond +=
+              choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
+
+          DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
+
+          setControl(
+              m_pathApplyFieldSpeeds
+                  .withSpeeds(targetSpeeds)
+                  .withWheelForceFeedforwardsX(sample.moduleForcesX())
+                  .withWheelForceFeedforwardsY(sample.moduleForcesY()));
+        }
         break;
       default:
         break;
     }
   }
 
-  public void updateDistancesAndSetpoints(double linearDistance) {
+  public void updateDistancesAndSetpoints() {
+    double linearDistance =
+        (targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation()))
+            .getNorm();
+
     if (linearDistance <= 0.15) { // 0.15 meters (~0.5 feet)
       withinCoralRaiseDistance = true;
       withinAlgaeRaiseDistance = true;
@@ -375,10 +400,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
     resetDriveToPoint();
     this.targetPoseForDriveToPoint = targetPose;
+    this.wantedState = WantedState.DRIVE_TO_POINT;
   }
 
   public boolean isWithinCoralRaiseDistance() {
     return withinCoralRaiseDistance;
+  }
+
+  public boolean isReadyToRaiseAutoScoreCoral() {
+    return isWithinCoralRaiseDistance() && this.wantedState == WantedState.DRIVE_TO_POINT;
   }
 
   public boolean isWithinAlgaeRaiseDistance() {
@@ -392,9 +422,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void resetDriveToPoint() {
     driveToPointController.reset();
     driveAtAngle.HeadingController.reset();
-    withinCoralRaiseDistance = false;
-    withinAlgaeRaiseDistance = false;
-    atDriveToPointSetpoints = false;
+  }
+
+  public void setDesiredChoreoTrajectory(Trajectory<SwerveSample> trajectory) {
+    this.desiredChoreoTrajectory = trajectory;
+    this.wantedState = WantedState.CHOREO_TRAJECTORY;
+    choreoTimer.reset();
   }
 
   public ChassisSpeeds getChassisSpeeds() {
@@ -410,10 +443,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return getState().Pose;
   }
 
-  public Supplier<Pose2d> getPoseSupplier() {
-    return () -> getState().Pose;
-  }
-
   public void zeroGyro() {
     resetRotation(new Rotation2d(0.0));
   }
@@ -423,29 +452,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         () -> {
           resetRotation(new Rotation2d(0.0));
         });
-  }
-
-  public void followChoreoPath(SwerveSample sample) {
-    var pose = getState().Pose;
-
-    var targetSpeeds = sample.getChassisSpeeds();
-    DogLog.log("Drive/Choreo/RobotPose2d", pose);
-    DogLog.log("Drive/Choreo/SwerveSample", sample);
-    DogLog.log("Drive/Choreo/SwerveSample/ChoreoPosition", sample.getPose());
-    DogLog.log("Drive/Choreo/RealRobotPosition", pose);
-
-    targetSpeeds.vxMetersPerSecond += choreoXController.calculate(pose.getX(), sample.x);
-    targetSpeeds.vyMetersPerSecond += choreoYController.calculate(pose.getY(), sample.y);
-    targetSpeeds.omegaRadiansPerSecond +=
-        choreoThetaPID.calculate(pose.getRotation().getRadians(), sample.heading);
-
-    DogLog.log("Drive/Choreo/RobotSetpointSpeedsAfterPID", targetSpeeds);
-
-    setControl(
-        m_pathApplyFieldSpeeds
-            .withSpeeds(targetSpeeds)
-            .withWheelForceFeedforwardsX(sample.moduleForcesX())
-            .withWheelForceFeedforwardsY(sample.moduleForcesY()));
   }
 
   private void startSimThread() {

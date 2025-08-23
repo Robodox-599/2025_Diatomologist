@@ -79,19 +79,27 @@ public class AutoAlignPoseGenerator {
     Pose2d targetPose = new Pose2d();
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       if (troughIndex == 1) { // left
-        targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(new Transform2d(0.0, 0.45, new Rotation2d(0)));
+        targetPose =
+            REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+                new Transform2d(0.0, 0.45, new Rotation2d(0)));
       } else if (troughIndex == 2) { // middle
         targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex];
       } else if (troughIndex == 3) { // right
-        targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(new Transform2d(0.0, -0.45, new Rotation2d(0)));
+        targetPose =
+            REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+                new Transform2d(0.0, -0.45, new Rotation2d(0)));
       }
     } else {
       if (troughIndex == 1) { // left
-        targetPose = REEF_RED_MIDDLE[nearestFaceIndex].transformBy(new Transform2d(0.0, 0.45, new Rotation2d(0)));
+        targetPose =
+            REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+                new Transform2d(0.0, 0.45, new Rotation2d(0)));
       } else if (troughIndex == 2) { // middle
         targetPose = REEF_RED_MIDDLE[nearestFaceIndex];
       } else if (troughIndex == 3) { // right
-        targetPose = REEF_RED_MIDDLE[nearestFaceIndex].transformBy(new Transform2d(0.0, -0.45, new Rotation2d(0)));
+        targetPose =
+            REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+                new Transform2d(0.0, -0.45, new Rotation2d(0)));
       }
     }
 

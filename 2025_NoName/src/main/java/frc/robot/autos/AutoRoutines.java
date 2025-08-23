@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.autos;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
@@ -216,4 +216,28 @@ public class AutoRoutines {
 
     return routine;
   }
+
+  //   private Command followTrajectoryAndAutoScore(
+  //       Trajectory<SwerveSample> trajectory, boolean scoreLeft) {
+  //     return (followTrajectory(trajectory)
+  //             .andThen(
+  //                 new WaitUntilCommand(() -> superstructureCommands.isAtEndOfChoreoTrajectory())
+  //                     .andThen(autoScore(scoreLeft))))
+  //         .alongWith(
+  //             new WaitUntilCommand(() -> superstructureCommands.isWithinCoralRaiseDistance())
+  //                 .andThen(
+  //                     superstructureCommands.setWantedSuperStateCommand(
+  //                         WantedSuperState.POSITION_CORAL_L4)));
+  //   }
+
+  //   private Command followTrajectory(Trajectory<SwerveSample> trajectory) {
+  //     return new InstantCommand(() ->
+  // superstructureCommands.setDesiredChoreoTrajectory(trajectory));
+  //   }
+
+  //   private Command autoScore(boolean scoreLeft) {
+  //     return superstructureCommands.setWantedSuperStateCommand(
+  //         scoreLeft ? WantedSuperState.AUTO_SCORE_L4_LEFT :
+  // WantedSuperState.AUTO_SCORE_L4_RIGHT);
+  //   }
 }

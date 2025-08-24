@@ -3,7 +3,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import choreo.trajectory.SwerveSample;
-import choreo.trajectory.Trajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -37,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.Tracer;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -70,9 +67,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final PIDController choreoXController = new PIDController(7, 0, 0);
   private final PIDController choreoYController = new PIDController(7, 0, 0);
   private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
-  private Trajectory<SwerveSample> desiredChoreoTrajectory;
-  private final Timer choreoTimer = new Timer();
-  private Optional<SwerveSample> choreoSampleToBeApplied;
+  private SwerveSample choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
@@ -276,17 +271,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         currentState = CurrentState.TELEOP_DRIVE;
         break;
       case DRIVE_TO_POINT:
-        currentState = CurrentState.DRIVE_TO_POINT;
-        break;
-      case CHOREO_TRAJECTORY:
-        if (currentState != CurrentState.CHOREO_TRAJECTORY) {
-          choreoTimer.reset();
-          choreoSampleToBeApplied = desiredChoreoTrajectory.sampleAt(choreoTimer.get(), false);
+      if (isAtDriveToPointSetpoints()) {
+        if (DriverStation.isAutonomous()) {
+          wantedState = WantedState.CHOREO_TRAJECTORY;
           currentState = CurrentState.CHOREO_TRAJECTORY;
         } else {
-          choreoSampleToBeApplied = desiredChoreoTrajectory.sampleAt(choreoTimer.get(), false);
-          currentState = CurrentState.CHOREO_TRAJECTORY;
+          wantedState = WantedState.TELEOP_DRIVE;
+          currentState = CurrentState.TELEOP_DRIVE;
         }
+        resetDriveToPoint();
+      } else {
+        currentState = CurrentState.DRIVE_TO_POINT;
+      }
+        break;
+      case CHOREO_TRAJECTORY:
+        currentState = CurrentState.CHOREO_TRAJECTORY;
         break;
       default:
         currentState = CurrentState.TELEOP_DRIVE;
@@ -337,8 +336,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 .withTargetDirection(targetPoseForDriveToPoint.getRotation()));
         break;
       case CHOREO_TRAJECTORY:
-        if (choreoSampleToBeApplied.isPresent()) {
-          SwerveSample sample = choreoSampleToBeApplied.get();
+        if (choreoSampleToBeApplied != null) {
+          SwerveSample sample = choreoSampleToBeApplied;
+          choreoSampleToBeApplied = null;
 
           var pose = getState().Pose;
 
@@ -424,10 +424,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     driveAtAngle.HeadingController.reset();
   }
 
-  public void setDesiredChoreoTrajectory(Trajectory<SwerveSample> trajectory) {
-    this.desiredChoreoTrajectory = trajectory;
+  public void setDesiredChoreoTrajectory(SwerveSample sample) {
+    this.choreoSampleToBeApplied = sample;
     this.wantedState = WantedState.CHOREO_TRAJECTORY;
-    choreoTimer.reset();
   }
 
   public ChassisSpeeds getChassisSpeeds() {

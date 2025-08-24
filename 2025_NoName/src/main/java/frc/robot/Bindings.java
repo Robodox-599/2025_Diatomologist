@@ -63,39 +63,64 @@ public class Bindings {
     // ZERO GYRO
     driver.y().onTrue(superstructure.zeroGyroCommand());
     // // SET WANTED STATE TO A LOGIC STATE
-    driver.rightBumper().onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
+    driver
+        .rightBumper()
+        .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftBumper()
-        .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND).alongWith(rumbleControllers(driver, operator)))
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND)
+                .alongWith(rumbleControllers(driver, operator)))
         .onFalse(
             superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SET WANTED STATE TO SCORING CORAL
     driver
         .rightTrigger()
-        .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL).alongWith(rumbleControllers(driver, operator)));
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL)
+                .alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO SCORING ALGAE
     driver
         .leftTrigger()
-        .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE).alongWith(rumbleControllers(driver, operator)));
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE)
+                .alongWith(rumbleControllers(driver, operator)));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
-    driver.povRight().whileTrue(setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator)));
+    driver
+        .povRight()
+        .whileTrue(setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
-    driver.povLeft().onTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
+    driver
+        .povLeft()
+        .onTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructure.setTeleopDriveStateCommand());
     // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
-    driver.povUp().onTrue(setAutomationLevelCommand(AutomationLevel.AUTO_ACTION).alongWith(rumbleControllers(driver, operator)));
+    driver
+        .povUp()
+        .onTrue(
+            setAutomationLevelCommand(AutomationLevel.AUTO_ACTION)
+                .alongWith(rumbleControllers(driver, operator)));
     // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
-    driver.povDown().onTrue(setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN).alongWith(rumbleControllers(driver, operator)));
+    driver
+        .povDown()
+        .onTrue(
+            setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN)
+                .alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO PREPARE CLIMB
     driver
         .x()
         .and(driver.a())
         .onTrue(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED).alongWith(rumbleControllers(driver, operator)));
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED)
+                .alongWith(rumbleControllers(driver, operator)));
 
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
@@ -103,88 +128,117 @@ public class Bindings {
         .x()
         .onTrue(
             Commands.either(
-                setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
-                setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
+                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
     operator
         .x()
         .and(operator.leftTrigger())
         .onTrue(
             Commands.either(
-                superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
-                superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
     operator
         .a()
         .onTrue(
             Commands.either(
-                setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
-                setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
+                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
     operator
         .a()
         .and(operator.leftTrigger())
         .onTrue(
             Commands.either(
-                superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
-                superstructure.setWantedSuperStateCommand(
-                    WantedSuperState.POSITION_ALGAE_PROCESSOR),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
+                    superstructure.setWantedSuperStateCommand(
+                        WantedSuperState.POSITION_ALGAE_PROCESSOR),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L3 OR QUEUE ALGAE L3
     operator
         .b()
         .onTrue(
             Commands.either(
-                setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L3),
-                setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L3),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L3),
+                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L3),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L3 OR SET WANTED STATE TO ALGAE L3
     operator
         .b()
         .and(operator.leftTrigger())
         .onTrue(
             Commands.either(
-                superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
-                superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L4 OR QUEUE ALGAE BARGE
     operator
         .y()
         .onTrue(
             Commands.either(
-                setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L4),
-                setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_BARGE),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L4),
+                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_BARGE),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L4 OR SET WANTED STATE TO ALGAE BARGE
     operator
         .y()
         .and(operator.leftTrigger())
         .onTrue(
             Commands.either(
-                superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
-                superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_BARGE),
-                this::isGamePieceStateCoral).alongWith(rumbleOperator(operator)));
+                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
+                    superstructure.setWantedSuperStateCommand(
+                        WantedSuperState.POSITION_ALGAE_BARGE),
+                    this::isGamePieceStateCoral)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO CORAL STATION INTAKE
     operator
         .rightBumper()
-        .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION).alongWith(rumbleOperator(operator)));
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION)
+                .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO PREPARE
     operator
         .leftBumper()
-        .onTrue(superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED).alongWith(rumbleOperator(operator)));
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED)
+                .alongWith(rumbleOperator(operator)));
     // // SET AUTO ALIGN TO LEFT
-    operator.povLeft().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
+    operator
+        .povLeft()
+        .onTrue(
+            setAutoAlignSideCommand(TroughAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
     // // SET AUTO ALIGN TO RIGHT
-    operator.povRight().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
+    operator
+        .povRight()
+        .onTrue(
+            setAutoAlignSideCommand(TroughAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
     // // SET AUTO ALIGN TO MIDDLE
-    operator.povUp().onTrue(setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE).alongWith(rumbleOperator(operator)));
+    operator
+        .povUp()
+        .onTrue(
+            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE)
+                .alongWith(rumbleOperator(operator)));
     // // SET GAME PIECE STATE TO CORAL
-    operator.rightTrigger().onTrue(setGamePieceStateCommand(GamePieceState.CORAL).alongWith(rumbleOperator(operator)));
+    operator
+        .rightTrigger()
+        .onTrue(setGamePieceStateCommand(GamePieceState.CORAL).alongWith(rumbleOperator(operator)));
     // // SET GAME PIECE STATE TO ALGAE
-    operator.leftTrigger().onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
+    operator
+        .leftTrigger()
+        .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
   }
 
   public Command rumbleControllers(CommandXboxController driver, CommandXboxController operator) {

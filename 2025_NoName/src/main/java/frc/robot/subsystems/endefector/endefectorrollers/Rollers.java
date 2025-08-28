@@ -102,7 +102,6 @@ public class Rollers {
   }
 
   private void applyStates() {
-    if (previousState != currentState) {
       switch (currentState) {
         case INTAKING_CORAL_STATION:
           setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
@@ -135,7 +134,7 @@ public class Rollers {
           stop();
           break;
       }
-    }
+    
   }
 
   public void setVelocity(EndefectorRollerStates state) {

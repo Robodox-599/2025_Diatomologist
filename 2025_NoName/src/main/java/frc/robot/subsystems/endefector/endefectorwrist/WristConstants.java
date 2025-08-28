@@ -34,7 +34,7 @@ public class WristConstants {
 
   // setpoints
   public static final double wristMinAngle = 0.52;
-  public static final double wristMaxAngle = 1.05;
+  public static final double wristMaxAngle = 1.1;
 
   // wrist state stuff
   public static enum WristStates {

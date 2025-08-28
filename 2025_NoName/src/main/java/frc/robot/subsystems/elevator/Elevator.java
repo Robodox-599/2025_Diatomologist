@@ -107,7 +107,6 @@ public class Elevator {
   }
 
   private void applyStates() {
-    if (currentState != previousState) {
       switch (currentState) {
         case INTAKING_CORAL_STATION:
           setHeight(ElevatorStates.INTAKING_CORAL_STATION);
@@ -148,7 +147,7 @@ public class Elevator {
         default:
           stop();
           break;
-      }
+      
     }
   }
 

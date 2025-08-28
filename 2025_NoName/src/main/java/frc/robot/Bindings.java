@@ -4,12 +4,15 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import java.util.Set;
 
-public class Bindings {
+import dev.doglog.DogLog;
+
+public class Bindings extends SubsystemBase {
 
   /* DRIVER */
   public enum AutomationLevel {
@@ -241,6 +244,11 @@ public class Bindings {
         .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
   }
 
+  @Override 
+  public void periodic() {
+    logBindings();
+  }
+
   public Command rumbleControllers(CommandXboxController driver, CommandXboxController operator) {
     return new StartEndCommand(
             () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
@@ -264,6 +272,15 @@ public class Bindings {
             () -> driver.getHID().setRumble(RumbleType.kBothRumble, 1),
             () -> driver.getHID().setRumble(RumbleType.kBothRumble, 0))
         .withTimeout(0.2);
+  }
+
+  public void logBindings() {
+    DogLog.log("Bindings/BranchAutoAlignSide", branchAutoAlignSide);
+    DogLog.log("Bindings/TroughAutoAlignSide", troughAutoAlignSide);
+    DogLog.log("Bindings/CoralScoreLevel", coralScoreLevel);
+    DogLog.log("Bindings/AlgaeLevel", algaeLevel);
+    DogLog.log("Bindings/GamePieceState", gamePieceState);
+    DogLog.log("Bindings/AutomationLevel", automationLevel);
   }
 
   public Command setAutoAlignSideCommand(TroughAutoAlignSide side) {

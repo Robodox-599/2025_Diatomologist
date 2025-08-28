@@ -85,7 +85,6 @@ public class Wrist {
   }
 
   private void applyStates() {
-    if (previousState != currentState) {
       switch (currentState) {
         case INTAKING_CORAL_STATION:
           setAngle(WristStates.INTAKING_CORAL_STATION);
@@ -108,7 +107,7 @@ public class Wrist {
         default:
           stop();
           break;
-      }
+      
     }
   }
 

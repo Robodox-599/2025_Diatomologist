@@ -75,6 +75,21 @@ public class TunerConstants {
           .withKS(0.09) // 0.09
           .withKV(0.124); // 0.124 (calculated)
 
+  /*
+   * Motor Free Speed = 5800
+   * Gear Ratio = 5.9
+   * 
+   * REAL: CURRENTLY USED FOR OUR CALCULATIONS
+   * Motor Rps = Motor Free Speed / 60
+   * kV = 12 / Motor Rps
+   * 
+   * THEORETICAL: DO NOT USE
+   * Wheel Rps = Motor Rps / Gear Ratio
+   * Wheel Circumference = 2 * Pi * Wheel Radius
+   * Wheel Speed = Wheel Circumference * wheel rps
+   * 12 / Wheel speed
+   */
+
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
   private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;

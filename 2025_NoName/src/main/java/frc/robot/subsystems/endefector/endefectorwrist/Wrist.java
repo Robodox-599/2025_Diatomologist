@@ -85,29 +85,28 @@ public class Wrist {
   }
 
   private void applyStates() {
-      switch (currentState) {
-        case INTAKING_CORAL_STATION:
-          setAngle(WristStates.INTAKING_CORAL_STATION);
-          break;
-        case INTAKING_ALGAE_GROUND:
-          setAngle(WristStates.INTAKING_ALGAE_GROUND);
-          break;
-        case INTAKING_ALGAE_REEF:
-          setAngle(WristStates.INTAKING_ALGAE_REEF);
-          break;
-        case POSITION_PREPARED:
-          setAngle(WristStates.POSITION_PREPARED);
-          break;
-        case POSITION_TROUGH:
-          setAngle(WristStates.POSITION_TROUGH);
-          break;
-        case STOPPED:
-          stop();
-          break;
-        default:
-          stop();
-          break;
-      
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
+        setAngle(WristStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE_GROUND:
+        setAngle(WristStates.INTAKING_ALGAE_GROUND);
+        break;
+      case INTAKING_ALGAE_REEF:
+        setAngle(WristStates.INTAKING_ALGAE_REEF);
+        break;
+      case POSITION_PREPARED:
+        setAngle(WristStates.POSITION_PREPARED);
+        break;
+      case POSITION_TROUGH:
+        setAngle(WristStates.POSITION_TROUGH);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 

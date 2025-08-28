@@ -1,5 +1,6 @@
 package frc.robot;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import java.util.Set;
-
-import dev.doglog.DogLog;
 
 public class Bindings extends SubsystemBase {
 
@@ -244,7 +243,7 @@ public class Bindings extends SubsystemBase {
         .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
   }
 
-  @Override 
+  @Override
   public void periodic() {
     logBindings();
   }

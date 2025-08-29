@@ -105,16 +105,16 @@ public class WristIOTalonFX extends WristIO {
     super.appliedVolts = appliedVolts.getValueAsDouble();
     super.currentAmps = current.getValueAsDouble();
     super.velocity = velocity.getValueAsDouble();
-    super.currentPositionDegrees = position.getValueAsDouble();
+    super.currentPosition = position.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.atSetpoint =
-        Math.abs(super.currentPositionDegrees - super.targetPosition) < wristPositionTolerance;
+        Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance;
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
     DogLog.log("Wrist/CurrentAmps", super.currentAmps);
     DogLog.log("Wrist/Velocity", super.velocity);
     DogLog.log("Wrist/Temperature", super.tempCelsius);
-    DogLog.log("Wrist/CurrentPosition", super.currentPositionDegrees);
+    DogLog.log("Wrist/CurrentPosition", super.currentPosition);
     DogLog.log("Wrist/WristAtSetpoint", super.atSetpoint);
     DogLog.log("Wrist/AbsolutePosition", absolutePosition.getValueAsDouble());
     DogLog.log("Wrist/TargetPosition", targetPosition);

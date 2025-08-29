@@ -94,7 +94,7 @@ public class Elevator {
           currentState = CurrentState.POSITION_CORAL_L4;
           break;
         case POSITION_ALGAE_PROCESSOR:
-          if (safetyChecker.isWristAtPrepared()) {
+          if (subsystemChecker.isWristAtPrepared()) {
             currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
           }
           break;
@@ -165,6 +165,10 @@ public class Elevator {
   /* Moves the elevator to one of the states */
   public void setHeight(ElevatorStates state) {
     io.setHeight(state);
+  }
+
+  public double getPositionInches() {
+    return io.positionInches;
   }
 
   public void stop() {

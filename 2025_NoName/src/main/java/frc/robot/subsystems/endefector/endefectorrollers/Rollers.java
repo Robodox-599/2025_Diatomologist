@@ -130,6 +130,10 @@ public class Rollers {
     io.setVelocity(state);
   }
 
+  public double getVelocity() {
+    return io.getVelocity();
+  }
+
   public void holdAlgae() {
     io.holdAlgae();
   }

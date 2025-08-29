@@ -47,7 +47,7 @@ public class Wrist {
 
   public void updateInputs() {
     Tracer.traceFunc("UpdateIO", io::updateInputs);
-    subsystemChecker.setCurrentWristDegrees(io.currentPositionDegrees);
+    subsystemChecker.setCurrentWristDegrees(io.currentPosition);
     subsystemChecker.updateIsAtSetpointWrist(isAtSetpoint());
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
@@ -143,6 +143,10 @@ public class Wrist {
     io.setAngle(state);
   }
 
+  public double getAngle() {
+    return io.currentPosition;
+  }
+
   public void setWantedState(WantedState wantedState) {
     this.wantedState = wantedState;
   }
@@ -160,7 +164,7 @@ public class Wrist {
   }
 
   public boolean isAtAngle(double angle) {
-    return Math.abs(io.currentPositionDegrees - angle) < WristConstants.wristPositionTolerance;
+    return Math.abs(io.currentPosition - angle) < WristConstants.wristPositionTolerance;
   }
 
   public void stop() {

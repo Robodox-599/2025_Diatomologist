@@ -126,7 +126,7 @@ public class Wrist {
         case POSITION_TROUGH:
           setAngle(WristStates.POSITION_TROUGH);
           break;
-        case SCORING_ALGAE_BARGE: 
+        case SCORING_ALGAE_BARGE:
           setAngle(WristStates.SCORING_ALGAE_BARGE);
           break;
         case STOPPED:

@@ -33,6 +33,4 @@ public final class Constants {
       public static final double kV = 12.0 / FREE_SPEED;
     }
   }
-
-
 }

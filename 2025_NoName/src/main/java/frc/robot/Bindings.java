@@ -69,20 +69,32 @@ public class Bindings extends SubsystemBase {
     driver
         .rightBumper()
         .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
+    // // SET WANTED STATE TO INTAKING ALGAE LOLLIPOP
+    driver
+        .leftBumper()
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_LOLLIPOP)
+                .alongWith(rumbleDriver(driver)));
+    driver
+        .leftTrigger()
+        .onFalse(
+            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftTrigger()
-        .onTrue(
+        .whileTrue(
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND)
-                .alongWith(rumbleControllers(driver, operator)))
+                .alongWith(rumbleControllers(driver, operator)));
+    driver
+        .leftTrigger()
         .onFalse(
             superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SET WANTED STATE TO SCORING GAME PIECE
     driver
         .rightTrigger()
-        .onTrue(setGamePieceScoreStateCommand()
-                .alongWith(rumbleControllers(driver, operator)));
+        .onTrue(setGamePieceScoreStateCommand().alongWith(rumbleControllers(driver, operator)));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()

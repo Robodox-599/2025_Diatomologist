@@ -35,6 +35,7 @@ public class Superstructure extends SubsystemBase {
     INTAKING_CORAL_STATION,
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
@@ -63,6 +64,7 @@ public class Superstructure extends SubsystemBase {
     INTAKING_CORAL_STATION,
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
     AUTO_INTAKE_ALGAE,
@@ -163,6 +165,14 @@ public class Superstructure extends SubsystemBase {
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_GROUND;
+        }
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        if (rollers.isAlgaeDetected()) {
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+        } else {
+          currentSuperState = CurrentSuperState.INTAKING_ALGAE_LOLLIPOP;
         }
         break;
       case INTAKING_ALGAE_L2:
@@ -452,6 +462,9 @@ public class Superstructure extends SubsystemBase {
         case INTAKING_ALGAE_GROUND:
           intakeAlgaeGround();
           break;
+        case INTAKING_ALGAE_LOLLIPOP:
+          intakeAlgaeLollipop();
+          break;
         case INTAKING_ALGAE_L2:
           intakeAlgaeL2();
           break;
@@ -546,6 +559,14 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_GROUND);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_GROUND);
+    leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_GROUND);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void intakeAlgaeLollipop() {
+    elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_LOLLIPOP);
+    rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
+    wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_LOLLIPOP);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_GROUND);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }

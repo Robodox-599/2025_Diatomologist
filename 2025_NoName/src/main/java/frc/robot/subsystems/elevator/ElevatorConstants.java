@@ -41,7 +41,7 @@ public final class ElevatorConstants {
     37.0, // POSITION CORAL L3 // 33
     62.0, // POSITION CORAL L4 // 60
     1.0, // POSITION ALGAE PROCESSOR
-    92, // POSITION ALGAE BARGE
+    89, // POSITION ALGAE BARGE
   };
 
   public static final int leaderMotorID = 13;

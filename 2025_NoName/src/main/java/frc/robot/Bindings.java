@@ -64,6 +64,7 @@ public class Bindings extends SubsystemBase {
     //                               DRIVER BINDS
     // ZERO GYRO
     driver.y().onTrue(superstructure.zeroGyroCommand());
+
     // // SET WANTED STATE TO A LOGIC STATE
     driver
         .rightBumper()

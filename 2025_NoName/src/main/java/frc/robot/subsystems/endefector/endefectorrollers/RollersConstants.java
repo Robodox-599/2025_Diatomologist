@@ -62,7 +62,7 @@ public class RollersConstants {
 
   public static final int beakBreakPort = 3;
 
-  public static final double beamBreakDebounce = 0.3;
+  public static final double beamBreakDebounce = 0.4;
   public static final double ensureCoralDebounce = 0.8;
   public static final double algaeDebounce = 0.5;
 

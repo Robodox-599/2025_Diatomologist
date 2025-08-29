@@ -102,37 +102,39 @@ public class Rollers {
   }
 
   private void applyStates() {
-    switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
-        break;
-      case ENSURING_CORAL:
-        setVelocity(EndefectorRollerStates.ENSURING_CORAL);
-        break;
-      case INTAKING_ALGAE:
-        setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
-        break;
-      case HOLD_CORAL:
-        stop();
-        break;
-      case HOLD_ALGAE:
-        holdAlgae();
-        break;
-      case SCORING_CORAL_TROUGH:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
-        break;
-      case SCORING_CORAL_BRANCH:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL_BRANCH);
-        break;
-      case SCORING_ALGAE:
-        setVelocity(EndefectorRollerStates.SCORING_ALGAE);
-        break;
-      case STOPPED:
-        stop();
-        break;
-      default:
-        stop();
-        break;
+    if (currentState != previousState) {
+      switch (currentState) {
+        case INTAKING_CORAL_STATION:
+          setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
+          break;
+        case ENSURING_CORAL:
+          setVelocity(EndefectorRollerStates.ENSURING_CORAL);
+          break;
+        case INTAKING_ALGAE:
+          setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
+          break;
+        case HOLD_CORAL:
+          stop();
+          break;
+        case HOLD_ALGAE:
+          holdAlgae();
+          break;
+        case SCORING_CORAL_TROUGH:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
+          break;
+        case SCORING_CORAL_BRANCH:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_BRANCH);
+          break;
+        case SCORING_ALGAE:
+          setVelocity(EndefectorRollerStates.SCORING_ALGAE);
+          break;
+        case STOPPED:
+          stop();
+          break;
+        default:
+          stop();
+          break;
+      }
     }
   }
 

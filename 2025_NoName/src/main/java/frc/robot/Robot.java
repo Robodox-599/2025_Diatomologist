@@ -33,7 +33,7 @@ import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.vision.CameraConstants;
 import frc.robot.subsystems.vision.CameraReal;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.util.SafetyChecker;
+import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
 public class Robot extends TimedRobot {
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
       new CommandXboxController(Constants.ControllerConstants.kDriverControllerPort);
   final CommandXboxController operator =
       new CommandXboxController(Constants.ControllerConstants.kOperatorControllerPort);
-  final SafetyChecker safetyChecker = new SafetyChecker();
+  final SubsystemChecker subsystemChecker = new SubsystemChecker();
   final AutoChooser autoChooser = new AutoChooser();
   final Superstructure superstructure;
   final CommandSwerveDrivetrain drivetrain;
@@ -75,9 +75,9 @@ public class Robot extends TimedRobot {
 
     switch (Constants.currentMode) {
       case REAL:
-        elevator = new Elevator(new ElevatorIOTalonFX(), safetyChecker);
-        rollers = new Rollers(new RollersIOTalonFX(), safetyChecker);
-        wrist = new Wrist(new WristIOTalonFX(), safetyChecker);
+        elevator = new Elevator(new ElevatorIOTalonFX(), subsystemChecker);
+        rollers = new Rollers(new RollersIOTalonFX(), subsystemChecker);
+        wrist = new Wrist(new WristIOTalonFX(), subsystemChecker);
         drivetrain = TunerConstants.createDrivetrain(driver);
         leds = new LEDs(new LEDsIOReal());
         // climb = new Climb(new ClimbIOTalonFX());
@@ -90,9 +90,9 @@ public class Robot extends TimedRobot {
         break;
       default: // SIMULATION
         DriverStation.silenceJoystickConnectionWarning(true);
-        elevator = new Elevator(new ElevatorIOSim(), safetyChecker);
-        rollers = new Rollers(new RollersIOSim(), safetyChecker);
-        wrist = new Wrist(new WristIOSim(), safetyChecker);
+        elevator = new Elevator(new ElevatorIOSim(), subsystemChecker);
+        rollers = new Rollers(new RollersIOSim(), subsystemChecker);
+        wrist = new Wrist(new WristIOSim(), subsystemChecker);
         drivetrain = TunerConstants.createDrivetrain(driver);
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
 
     superstructure =
         new Superstructure(
-            drivetrain, elevator, wrist, rollers, leds, vision, safetyChecker, driver, operator);
+            drivetrain, elevator, wrist, rollers, leds, vision, subsystemChecker, driver, operator);
 
     new Bindings(driver, operator, superstructure);
 

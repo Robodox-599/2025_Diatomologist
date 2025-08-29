@@ -2,19 +2,19 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 import dev.doglog.DogLog;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
-import frc.robot.util.SafetyChecker;
+import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
 public class Rollers {
   private final RollersIO io;
-  private final SafetyChecker safetyChecker;
+  private final SubsystemChecker subsystemChecker;
   private WantedState wantedState = WantedState.STOPPED;
   private CurrentState currentState = CurrentState.STOPPED;
   private CurrentState previousState = CurrentState.STOPPED;
 
-  public Rollers(RollersIO io, SafetyChecker safetyChecker) {
+  public Rollers(RollersIO io, SubsystemChecker subsystemChecker) {
     this.io = io;
-    this.safetyChecker = safetyChecker;
+    this.subsystemChecker = subsystemChecker;
   }
 
   public enum WantedState {
@@ -72,25 +72,13 @@ public class Rollers {
         }
         break;
       case SCORING_CORAL_TROUGH:
-        if (safetyChecker.isReadyToScore()) {
-          currentState = CurrentState.SCORING_CORAL_TROUGH;
-        } else {
-          currentState = CurrentState.HOLD_CORAL;
-        }
+        currentState = CurrentState.SCORING_CORAL_TROUGH;
         break;
       case SCORING_CORAL_BRANCH:
-        if (safetyChecker.isReadyToScore()) {
-          currentState = CurrentState.SCORING_CORAL_BRANCH;
-        } else {
-          currentState = CurrentState.HOLD_CORAL;
-        }
+        currentState = CurrentState.SCORING_CORAL_BRANCH;
         break;
       case SCORING_ALGAE:
-        if (safetyChecker.isReadyToScore()) {
-          currentState = CurrentState.SCORING_ALGAE;
-        } else {
-          currentState = CurrentState.HOLD_ALGAE;
-        }
+        currentState = CurrentState.SCORING_ALGAE;
         break;
       case STOPPED:
         currentState = CurrentState.STOPPED;
@@ -152,6 +140,14 @@ public class Rollers {
 
   public void setWantedState(WantedState wantedState) {
     this.wantedState = wantedState;
+  }
+
+  public void getWantedState(WantedState wantedState) {
+    this.wantedState = wantedState;
+  }
+
+  public void getCurrentState(CurrentState currentState) {
+    this.currentState = currentState;
   }
 
   public boolean isCoralDetected() {

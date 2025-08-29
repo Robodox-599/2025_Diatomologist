@@ -2,7 +2,7 @@ package frc.robot.util;
 
 import dev.doglog.DogLog;
 
-public class SafetyChecker {
+public class SubsystemChecker {
   private double elevatorInches, wristDegrees;
   private final double maximumElevatorSwingThroughHeight =
       12.6; // maximum height that the elevator can be so the endefector can swing through the

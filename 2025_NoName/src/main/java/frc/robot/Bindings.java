@@ -71,26 +71,17 @@ public class Bindings extends SubsystemBase {
         .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
-        .leftBumper()
+        .leftTrigger()
         .onTrue(
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_GROUND)
                 .alongWith(rumbleControllers(driver, operator)))
         .onFalse(
             superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
-    // // SET WANTED STATE TO SCORING CORAL
+    // // SET WANTED STATE TO SCORING GAME PIECE
     driver
         .rightTrigger()
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.SCORING_CORAL)
-                .alongWith(rumbleControllers(driver, operator)));
-    // // SET WANTED STATE TO SCORING ALGAE
-    driver
-        .leftTrigger()
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.SCORING_ALGAE)
+        .onTrue(setGamePieceScoreStateCommand()
                 .alongWith(rumbleControllers(driver, operator)));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
@@ -100,7 +91,7 @@ public class Bindings extends SubsystemBase {
     // LEVEL IS MANUAL)
     driver
         .povLeft()
-        .onTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .whileTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructure.setTeleopDriveStateCommand());
@@ -432,6 +423,20 @@ public class Bindings extends SubsystemBase {
           case POSITION_ALGAE_PROCESSOR:
             return WantedSuperState.POSITION_ALGAE_PROCESSOR;
         }
+    }
+  }
+
+  public Command setGamePieceScoreStateCommand() {
+    return Commands.defer(
+        () -> superstructure.setWantedSuperStateCommand(returnGamePieceScoreState()),
+        Set.of(superstructure));
+  }
+
+  public WantedSuperState returnGamePieceScoreState() {
+    if (superstructure.hasAlgae()) {
+      return WantedSuperState.SCORING_ALGAE;
+    } else {
+      return WantedSuperState.SCORING_CORAL;
     }
   }
 }

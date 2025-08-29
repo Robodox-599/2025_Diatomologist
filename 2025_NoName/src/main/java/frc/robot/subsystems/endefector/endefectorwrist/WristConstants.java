@@ -40,11 +40,12 @@ public class WristConstants {
   public static enum WristStates {
     INTAKING_CORAL_STATION(0),
     INTAKING_ALGAE_GROUND(1),
-    INTAKING_ALGAE_REEF(2),
-    POSITION_PREPARED(3),
-    POSITION_TROUGH(4),
-    SCORING_CORAL(5),
-    SCORING_ALGAE(6);
+    INTAKING_ALGAE_LOLLIPOP(2),
+    INTAKING_ALGAE_REEF(3),
+    POSITION_PREPARED(4),
+    POSITION_TROUGH(5),
+    SCORING_CORAL(6),
+    SCORING_ALGAE_BARGE(7);
 
     private final int index;
 
@@ -60,10 +61,11 @@ public class WristConstants {
   public static final double[] setpoints = {
     0.664, // INTAKING CORAL STATION
     0.99, // INTAKING ALGAE GROUND
+    0.95, // INTAKING ALGAE LOLLIPOP
     0.91, // INTAKING ALGAE REEF
     0.79, // POSITION PREPARED
     1.05, // POSITION TROUGH
     0.79, // SCORING CORAL
-    0.79 // SCORING ALGAE
+    0.67 // SCORING ALGAE BARGE
   };
 }

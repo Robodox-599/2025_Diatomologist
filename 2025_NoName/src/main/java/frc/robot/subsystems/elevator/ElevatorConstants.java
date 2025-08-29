@@ -8,15 +8,16 @@ public final class ElevatorConstants {
   public static enum ElevatorStates {
     INTAKING_CORAL_STATION(0),
     INTAKING_ALGAE_GROUND(1),
-    INTAKING_ALGAE_L2(2),
-    INTAKING_ALGAE_L3(3),
-    POSITION_PREPARED(4),
-    POSITION_CORAL_L1(5),
-    POSITION_CORAL_L2(6),
-    POSITION_CORAL_L3(7),
-    POSITION_CORAL_L4(8),
-    POSITION_ALGAE_PROCESSOR(9),
-    POSITION_ALGAE_BARGE(10);
+    INTAKING_ALGAE_LOLLIPOP(2),
+    INTAKING_ALGAE_L2(3),
+    INTAKING_ALGAE_L3(4),
+    POSITION_PREPARED(5),
+    POSITION_CORAL_L1(6),
+    POSITION_CORAL_L2(7),
+    POSITION_CORAL_L3(8),
+    POSITION_CORAL_L4(9),
+    POSITION_ALGAE_PROCESSOR(10),
+    POSITION_ALGAE_BARGE(11);
 
     private final int index;
 
@@ -33,6 +34,7 @@ public final class ElevatorConstants {
   public static final double[] heights = {
     0.0, // INTAKING CORAL STATION
     7.0, // INTAKING ALGAE GROUND
+    16.0, // INTAKING ALGAE LOLLIPOP
     28.5, // INTAKING ALGAE L2 // 27.5
     42.0, // INTAKING ALGAE L3 // 42
     12.0, // POSITION PREPARED

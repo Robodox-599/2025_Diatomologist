@@ -94,7 +94,9 @@ public class Elevator {
           currentState = CurrentState.POSITION_CORAL_L4;
           break;
         case POSITION_ALGAE_PROCESSOR:
-          currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
+          if (safetyChecker.isWristAtPrepared()) {
+            currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
+          }
           break;
         case POSITION_ALGAE_BARGE:
           currentState = CurrentState.POSITION_ALGAE_BARGE;

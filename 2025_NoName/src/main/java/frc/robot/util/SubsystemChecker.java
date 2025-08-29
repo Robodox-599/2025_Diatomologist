@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import dev.doglog.DogLog;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
 public class SubsystemChecker {
   private double elevatorInches, wristDegrees;
@@ -84,5 +85,9 @@ public class SubsystemChecker {
 
   public boolean isAtSetpointElevator() {
     return isAtSetpointElevator;
+  }
+
+  public boolean isWristAtPrepared() {
+    return Math.abs(wristDegrees - 0.79) < WristConstants.wristPositionTolerance;
   }
 }

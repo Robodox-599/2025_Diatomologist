@@ -37,6 +37,27 @@ public final class ChoreoVariableWriter {
       namedPosesMap.put(blueMiddleNames[i], REEF_BLUE_MIDDLE[i]);
     }
 
+    String[] redLeftNames = {
+      "REEF_RED_A", "REEF_RED_C", "REEF_RED_E", "REEF_RED_G", "REEF_RED_I", "REEF_RED_K"
+    };
+    for (int i = 0; i < REEF_RED_LEFT.length; i++) {
+      namedPosesMap.put(redLeftNames[i], REEF_RED_LEFT[i]);
+    }
+
+    String[] redRightNames = {
+      "REEF_RED_B", "REEF_RED_D", "REEF_RED_F", "REEF_RED_H", "REEF_RED_J", "REEF_RED_L"
+    };
+    for (int i = 0; i < REEF_RED_RIGHT.length; i++) {
+      namedPosesMap.put(redRightNames[i], REEF_RED_RIGHT[i]);
+    }
+
+    String[] redMiddleNames = {
+      "REEF_RED_AB", "REEF_RED_CD", "REEF_RED_EF", "REEF_RED_GH", "REEF_RED_IJ", "REEF_RED_KL"
+    };
+    for (int i = 0; i < REEF_RED_MIDDLE.length; i++) {
+      namedPosesMap.put(redMiddleNames[i], REEF_RED_MIDDLE[i]);
+    }
+
     try (FileReader reader = new FileReader(filePath)) {
       System.out.println("[ChoreoVariableWriter]: " + filePath + " read successfully.");
       // Parse the JSON content into a JsonObject

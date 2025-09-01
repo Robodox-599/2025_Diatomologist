@@ -30,6 +30,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristIOTalonFX;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
+import frc.robot.subsystems.subsystemVisualizer.SubsystemVisualizer;
 import frc.robot.subsystems.vision.CameraConstants;
 import frc.robot.subsystems.vision.CameraReal;
 import frc.robot.subsystems.vision.Vision;
@@ -54,6 +55,7 @@ public class Robot extends TimedRobot {
   final Vision vision;
   final AutoFactory autoFactory;
   final AutoRoutines autoRoutines;
+  final SubsystemVisualizer subsystemVisualizer;
 
   @Override
   protected void loopFunc() {
@@ -117,6 +119,8 @@ public class Robot extends TimedRobot {
             drivetrain, elevator, wrist, rollers, leds, vision, subsystemChecker, driver, operator);
 
     new Bindings(driver, operator, superstructure);
+
+    subsystemVisualizer = new SubsystemVisualizer(elevator, wrist, rollers);
 
     autoRoutines = new AutoRoutines(autoFactory, superstructure);
 

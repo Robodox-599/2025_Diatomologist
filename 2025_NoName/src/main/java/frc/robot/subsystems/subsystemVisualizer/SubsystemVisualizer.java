@@ -8,20 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
-import frc.robot.subsystems.leds.LEDs;
 
 public class SubsystemVisualizer extends SubsystemBase {
 
-  Climb climb;
   Elevator elevator;
   Rollers endefectorRollers;
   Wrist endefectorWrist;
-  LEDs lightEmittingDiode;
 
   Mechanism2d mech = new Mechanism2d(60, 60);
   MechanismRoot2d root = mech.getRoot("root", 30, 0);
@@ -37,9 +32,8 @@ public class SubsystemVisualizer extends SubsystemBase {
       endefectorWristVis.append(
           new MechanismLigament2d("endefectorRollersVis", 3, -45, 4, new Color8Bit(Color.kYellow)));
 
-  public SubsystemVisualizer(Elevator elevator, Climb climb, Wrist wrist, Rollers rollers) {
+  public SubsystemVisualizer(Elevator elevator, Wrist wrist, Rollers rollers) {
     this.elevator = elevator;
-    this.climb = climb;
     this.endefectorWrist = wrist;
     this.endefectorRollers = rollers;
   }
@@ -60,12 +54,10 @@ public class SubsystemVisualizer extends SubsystemBase {
   }
 
   public void updateWrist() {
-    endefectorWristVis.setAngle(
-        Units.inchesToMeters(endefectorWrist.getAngle()) * 25);
+    endefectorWristVis.setAngle(Units.inchesToMeters(endefectorWrist.getAngle()) * 25);
   }
 
   public void updateRollers() {
-    endefectorRollersVis.setAngle(
-        Units.inchesToMeters(endefectorRollers.getVelocity()) * 300);
+    endefectorRollersVis.setAngle(Units.inchesToMeters(endefectorRollers.getVelocity()) * 300);
   }
 }

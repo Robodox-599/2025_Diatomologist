@@ -44,8 +44,7 @@ public class WristIOSim extends WristIO {
     DogLog.log("Wrist/CurrentPosition", super.currentPosition);
     DogLog.log("Wrist/Temperature", super.tempCelsius);
 
-    wristSim.setInputVoltage(
-        wristPID.calculate(super.currentPosition, super.targetPosition));
+    wristSim.setInputVoltage(wristPID.calculate(super.currentPosition, super.targetPosition));
   }
 
   @Override

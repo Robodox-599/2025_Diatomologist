@@ -138,21 +138,21 @@ public class FieldConstants {
   };
 
   public static final Pose2d[] REEF_RED_LEFT = {
-    FieldConstants.REEF_BLUE_A,
-    FieldConstants.REEF_BLUE_C,
-    FieldConstants.REEF_BLUE_E,
-    FieldConstants.REEF_BLUE_G,
-    FieldConstants.REEF_BLUE_I,
-    FieldConstants.REEF_BLUE_K
+    FieldConstants.REEF_RED_A,
+    FieldConstants.REEF_RED_C,
+    FieldConstants.REEF_RED_E,
+    FieldConstants.REEF_RED_G,
+    FieldConstants.REEF_RED_I,
+    FieldConstants.REEF_RED_K
   };
 
   public static final Pose2d[] REEF_RED_RIGHT = {
-    FieldConstants.REEF_BLUE_B,
-    FieldConstants.REEF_BLUE_D,
-    FieldConstants.REEF_BLUE_F,
-    FieldConstants.REEF_BLUE_H,
-    FieldConstants.REEF_BLUE_J,
-    FieldConstants.REEF_BLUE_L
+    FieldConstants.REEF_RED_B,
+    FieldConstants.REEF_RED_D,
+    FieldConstants.REEF_RED_F,
+    FieldConstants.REEF_RED_H,
+    FieldConstants.REEF_RED_J,
+    FieldConstants.REEF_RED_L
   };
 
   public static final Pose2d[] REEF_RED_MIDDLE = {

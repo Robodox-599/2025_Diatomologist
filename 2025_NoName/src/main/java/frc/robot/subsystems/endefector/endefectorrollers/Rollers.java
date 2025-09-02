@@ -99,13 +99,13 @@ public class Rollers {
           setVelocity(EndefectorRollerStates.ENSURING_CORAL);
           break;
         case INTAKING_ALGAE:
-          setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
+          grabOrHoldAlgae();
           break;
         case HOLD_CORAL:
           stop();
           break;
         case HOLD_ALGAE:
-          holdAlgae();
+          grabOrHoldAlgae();
           break;
         case SCORING_CORAL_TROUGH:
           setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
@@ -134,8 +134,8 @@ public class Rollers {
     return io.getVelocity();
   }
 
-  public void holdAlgae() {
-    io.holdAlgae();
+  public void grabOrHoldAlgae() {
+    io.grabOrHoldAlgae();
   }
 
   public void stop() {

@@ -108,7 +108,7 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void holdAlgae() {
+  public void grabOrHoldAlgae() {
     rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
   }
 }

@@ -19,7 +19,7 @@ public abstract class RollersIO {
 
   public void setVelocity(RollersConstants.EndefectorRollerStates state) {}
 
-  public void holdAlgae() {}
+  public void grabOrHoldAlgae() {}
 
   public double getVelocity() {
     return velocity;

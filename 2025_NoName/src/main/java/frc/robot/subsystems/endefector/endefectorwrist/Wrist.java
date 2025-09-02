@@ -90,7 +90,11 @@ public class Wrist {
         currentState = CurrentState.POSITION_TROUGH;
         break;
       case SCORING_ALGAE_BARGE:
-        currentState = CurrentState.SCORING_ALGAE_BARGE;
+        if (subsystemChecker.isAtSetpointElevator()) {
+          currentState = CurrentState.SCORING_ALGAE_BARGE;
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
         break;
       case STOPPED:
         currentState = CurrentState.STOPPED;

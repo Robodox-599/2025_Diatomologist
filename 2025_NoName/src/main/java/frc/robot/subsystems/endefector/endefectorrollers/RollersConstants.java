@@ -31,7 +31,7 @@ public class RollersConstants {
     0.0, // VELOCITY NOT USED - holding algae
     0.3, // scoring coral trough
     -0.4, // scoring coral branch
-    -0.2, // scoring algae
+    -0.6, // scoring algae
     0.0, // stopped
   };
 

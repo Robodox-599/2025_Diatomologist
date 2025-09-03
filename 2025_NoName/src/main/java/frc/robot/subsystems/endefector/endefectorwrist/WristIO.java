@@ -8,7 +8,7 @@ public abstract class WristIO {
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double targetPosition = 0.0;
-  protected double currentPositionDegrees = 0.0;
+  protected double currentPosition = 0.0;
   protected boolean atSetpoint = false;
 
   public void updateInputs() {}

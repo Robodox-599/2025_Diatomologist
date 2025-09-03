@@ -24,11 +24,7 @@ public class AutoAlignPoseGenerator {
 
     // Find the nearest center face and its index
     for (int i = 0; i < 6; i++) {
-      Pose2d centerFace =
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[i]
-              : REEF_RED_MIDDLE[i];
-
+      Pose2d centerFace = REEF_BLUE_MIDDLE[i];
       double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
 
       if (distance < minDistance) {
@@ -38,16 +34,13 @@ public class AutoAlignPoseGenerator {
     }
 
     Pose2d targetPose;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      targetPose =
-          useLeftBranch ? REEF_BLUE_LEFT[nearestFaceIndex] : REEF_BLUE_RIGHT[nearestFaceIndex];
-    } else {
-      targetPose =
-          useLeftBranch ? REEF_RED_LEFT[nearestFaceIndex] : REEF_RED_RIGHT[nearestFaceIndex];
-    }
+    targetPose =
+        useLeftBranch ? REEF_BLUE_LEFT[nearestFaceIndex] : REEF_BLUE_RIGHT[nearestFaceIndex];
 
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
+    DogLog.log(
+        "ClosestFace/Alliance", DriverStation.getAlliance().orElse(Alliance.Blue).toString());
     return targetPose;
   }
 
@@ -63,10 +56,7 @@ public class AutoAlignPoseGenerator {
 
     // Find the nearest center face and its index
     for (int i = 0; i < 6; i++) {
-      Pose2d centerFace =
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[i]
-              : REEF_RED_MIDDLE[i];
+      Pose2d centerFace = REEF_BLUE_MIDDLE[i];
 
       double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
 
@@ -77,33 +67,19 @@ public class AutoAlignPoseGenerator {
     }
 
     Pose2d targetPose = new Pose2d();
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      if (troughIndex == 1) { // left
-        targetPose =
-            REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
-                new Transform2d(0.0, 0.45, new Rotation2d(0)));
-      } else if (troughIndex == 2) { // middle
-        targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex];
-      } else if (troughIndex == 3) { // right
-        targetPose =
-            REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
-                new Transform2d(0.0, -0.45, new Rotation2d(0)));
-      }
-    } else {
-      if (troughIndex == 1) { // left
-        targetPose =
-            REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
-                new Transform2d(0.0, 0.45, new Rotation2d(0)));
-      } else if (troughIndex == 2) { // middle
-        targetPose = REEF_RED_MIDDLE[nearestFaceIndex];
-      } else if (troughIndex == 3) { // right
-        targetPose =
-            REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
-                new Transform2d(0.0, -0.45, new Rotation2d(0)));
-      }
+    if (troughIndex == 1) { // left
+      targetPose =
+          REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              new Transform2d(0.0, 0.45, new Rotation2d(0)));
+    } else if (troughIndex == 2) { // middle
+      targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex];
+    } else if (troughIndex == 3) { // right
+      targetPose =
+          REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              new Transform2d(0.0, -0.45, new Rotation2d(0)));
     }
 
-    targetPose = targetPose.transformBy(new Transform2d(0.38, 0, new Rotation2d(0)));
+    targetPose = targetPose.transformBy(new Transform2d(-0.38, 0, new Rotation2d(0)));
 
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
@@ -123,10 +99,7 @@ public class AutoAlignPoseGenerator {
 
     // Find the nearest center face and its index
     for (int i = 0; i < 6; i++) {
-      Pose2d centerFace =
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[i]
-              : REEF_RED_MIDDLE[i];
+      Pose2d centerFace = REEF_BLUE_MIDDLE[i];
 
       double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
 
@@ -138,7 +111,7 @@ public class AutoAlignPoseGenerator {
     }
 
     if (shiftBackFromReefFace) {
-      nearestFace = nearestFace.transformBy(new Transform2d(0.4, 0, new Rotation2d(0)));
+      nearestFace = nearestFace.transformBy(new Transform2d(-0.4, 0, new Rotation2d(0)));
     }
 
     DogLog.log("ClosestFace/TargetPose", nearestFace);

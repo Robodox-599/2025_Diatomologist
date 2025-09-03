@@ -1,8 +1,9 @@
 package frc.robot.util;
 
 import dev.doglog.DogLog;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
-public class SafetyChecker {
+public class SubsystemChecker {
   private double elevatorInches, wristDegrees;
   private final double maximumElevatorSwingThroughHeight =
       12.6; // maximum height that the elevator can be so the endefector can swing through the
@@ -84,5 +85,9 @@ public class SafetyChecker {
 
   public boolean isAtSetpointElevator() {
     return isAtSetpointElevator;
+  }
+
+  public boolean isWristAtPrepared() {
+    return Math.abs(wristDegrees - 0.79) < WristConstants.wristPositionTolerance;
   }
 }

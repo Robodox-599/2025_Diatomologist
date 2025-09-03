@@ -2,12 +2,12 @@ package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
-import frc.robot.util.SafetyChecker;
+import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
 public class Elevator {
   private final ElevatorIO io;
-  private final SafetyChecker safetyChecker;
+  private final SubsystemChecker subsystemChecker;
   private WantedState wantedState = WantedState.STOPPED;
   private CurrentState currentState = CurrentState.STOPPED;
   private CurrentState previousState = CurrentState.STOPPED;
@@ -15,6 +15,7 @@ public class Elevator {
   public enum WantedState {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
@@ -30,6 +31,7 @@ public class Elevator {
   public enum CurrentState {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
+    INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_L2,
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
@@ -42,15 +44,15 @@ public class Elevator {
     STOPPED,
   }
 
-  public Elevator(ElevatorIO io, SafetyChecker safetyChecker) {
+  public Elevator(ElevatorIO io, SubsystemChecker subsystemChecker) {
     this.io = io;
-    this.safetyChecker = safetyChecker;
+    this.subsystemChecker = subsystemChecker;
   }
 
   public void updateInputs() {
     Tracer.traceFunc("UpdateIO", io::updateInputs);
-    safetyChecker.setCurrentElevatorInches(io.positionInches);
-    safetyChecker.updateIsAtSetpointElevator(isAtSetpoint());
+    subsystemChecker.setCurrentElevatorInches(io.positionInches);
+    subsystemChecker.updateIsAtSetpointElevator(isAtSetpoint());
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Elevator/CurrentState", currentState);
@@ -59,13 +61,16 @@ public class Elevator {
 
   private void handleStateTransitions() {
     previousState = currentState;
-    if (safetyChecker.isSafeElevator()) {
+    if (subsystemChecker.isSafeElevator()) {
       switch (wantedState) {
         case INTAKING_CORAL_STATION:
           currentState = CurrentState.INTAKING_CORAL_STATION;
           break;
         case INTAKING_ALGAE_GROUND:
           currentState = CurrentState.INTAKING_ALGAE_GROUND;
+          break;
+        case INTAKING_ALGAE_LOLLIPOP:
+          currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
           break;
         case INTAKING_ALGAE_L2:
           currentState = CurrentState.INTAKING_ALGAE_L2;
@@ -115,6 +120,9 @@ public class Elevator {
         case INTAKING_ALGAE_GROUND:
           setHeight(ElevatorStates.INTAKING_ALGAE_GROUND);
           break;
+        case INTAKING_ALGAE_LOLLIPOP:
+          setHeight(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
+          break;
         case INTAKING_ALGAE_L2:
           setHeight(ElevatorStates.INTAKING_ALGAE_L2);
           break;
@@ -157,6 +165,10 @@ public class Elevator {
     io.setHeight(state);
   }
 
+  public double getPositionInches() {
+    return io.positionInches;
+  }
+
   public void stop() {
     io.stop();
   }
@@ -165,8 +177,20 @@ public class Elevator {
     this.wantedState = wantedState;
   }
 
+  public void getWantedState(WantedState wantedState) {
+    this.wantedState = wantedState;
+  }
+
+  public void getCurrentState(CurrentState currentState) {
+    this.currentState = currentState;
+  }
+
   public boolean isAtSetpoint() {
     return io.atSetpoint;
+  }
+
+  public boolean isAtHeight(double height) {
+    return Math.abs(io.positionInches - height) < ElevatorConstants.positionToleranceInches;
   }
 
   public ElevatorIO getIO() {

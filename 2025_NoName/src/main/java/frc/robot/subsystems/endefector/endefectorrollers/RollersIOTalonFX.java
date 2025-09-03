@@ -57,6 +57,7 @@ public class RollersIOTalonFX extends RollersIO {
 
     coralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
     ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
+    algaeStallDebouncer.setDebounceType(DebounceType.kBoth);
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
@@ -108,7 +109,7 @@ public class RollersIOTalonFX extends RollersIO {
   }
 
   @Override
-  public void holdAlgae() {
+  public void grabOrHoldAlgae() {
     rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
   }
 }

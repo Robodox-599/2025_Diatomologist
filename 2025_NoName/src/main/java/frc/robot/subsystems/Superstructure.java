@@ -251,11 +251,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -268,11 +269,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -285,11 +287,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -302,11 +305,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
@@ -319,11 +323,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
@@ -336,11 +341,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
@@ -353,11 +359,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
@@ -370,11 +377,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
@@ -387,11 +395,12 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && subsystemChecker.isReadyToScore()
+            && wrist.isAtSetpoint()
+            && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
+        } else if (drivetrain.isWithinCoralRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;

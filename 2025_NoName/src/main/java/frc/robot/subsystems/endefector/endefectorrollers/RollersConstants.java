@@ -25,7 +25,7 @@ public class RollersConstants {
 
   public static final double[] rollersVelocities = {
     -0.15, // intaking coral station
-    0.05, // ensuring coral
+    0.04, // ensuring coral
     0.6, // intaking algae
     0.0, // holding coral
     0.0, // VELOCITY NOT USED - holding algae
@@ -62,8 +62,8 @@ public class RollersConstants {
 
   public static final int beakBreakPort = 3;
 
-  public static final double beamBreakDebounce = 0.4;
-  public static final double ensureCoralDebounce = 0.8;
+  public static final double beamBreakDebounce = 0.3;
+  public static final double ensureCoralDebounce = 0.6;
   public static final double algaeDebounce = 0.5;
 
   public static final double rotationsToMoveAfterDetectingCoral = 0.0;

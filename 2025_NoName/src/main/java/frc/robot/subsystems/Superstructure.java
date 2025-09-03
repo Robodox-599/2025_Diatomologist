@@ -247,7 +247,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
         break;
       case AUTO_SCORE_L1_LEFT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -265,7 +265,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L1_MIDDLE:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -283,7 +283,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L1_RIGHT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -301,7 +301,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L2_LEFT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -319,7 +319,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L2_RIGHT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -337,7 +337,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L3_LEFT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -355,7 +355,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L3_RIGHT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -373,7 +373,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L4_LEFT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -391,7 +391,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L4_RIGHT:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -423,7 +423,7 @@ public class Superstructure extends SubsystemBase {
         //   }
         //   break;
       case SCORING_CORAL:
-        if (!rollers.isCoralDetected()) {
+        if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {

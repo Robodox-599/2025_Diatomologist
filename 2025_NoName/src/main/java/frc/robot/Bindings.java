@@ -139,15 +139,17 @@ public class Bindings extends SubsystemBase {
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
-    operator
-        .x()
-        .and(operator.leftTrigger())
-        .onTrue(
-            Commands.either(
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
+    // operator
+    //     .x()
+    //     .and(operator.leftTrigger())
+    //     .onTrue(
+    //         Commands.either(
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
+    //                 this::isGamePieceStateCoral)
+    //             .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
     operator
         .a()
@@ -158,16 +160,17 @@ public class Bindings extends SubsystemBase {
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
-    operator
-        .a()
-        .and(operator.leftTrigger())
-        .onTrue(
-            Commands.either(
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
-                    superstructure.setWantedSuperStateCommand(
-                        WantedSuperState.POSITION_ALGAE_PROCESSOR),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
+    // operator
+    //     .a()
+    //     .and(operator.leftTrigger())
+    //     .onTrue(
+    //         Commands.either(
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
+    //                 superstructure.setWantedSuperStateCommand(
+    //                     WantedSuperState.POSITION_ALGAE_PROCESSOR),
+    //                 this::isGamePieceStateCoral)
+    //             .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L3 OR QUEUE ALGAE L3
     operator
         .b()
@@ -178,15 +181,17 @@ public class Bindings extends SubsystemBase {
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L3 OR SET WANTED STATE TO ALGAE L3
-    operator
-        .b()
-        .and(operator.leftTrigger())
-        .onTrue(
-            Commands.either(
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
+    // operator
+    //     .b()
+    //     .and(operator.leftTrigger())
+    //     .onTrue(
+    //         Commands.either(
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
+    //                 this::isGamePieceStateCoral)
+    //             .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L4 OR QUEUE ALGAE BARGE
     operator
         .y()
@@ -197,16 +202,17 @@ public class Bindings extends SubsystemBase {
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L4 OR SET WANTED STATE TO ALGAE BARGE
-    operator
-        .y()
-        .and(operator.leftTrigger())
-        .onTrue(
-            Commands.either(
-                    superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
-                    superstructure.setWantedSuperStateCommand(
-                        WantedSuperState.POSITION_ALGAE_BARGE),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
+    // operator
+    //     .y()
+    //     .and(operator.leftTrigger())
+    //     .onTrue(
+    //         Commands.either(
+    //
+    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
+    //                 superstructure.setWantedSuperStateCommand(
+    //                     WantedSuperState.POSITION_ALGAE_BARGE),
+    //                 this::isGamePieceStateCoral)
+    //             .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO CORAL STATION INTAKE
     operator
         .rightBumper()

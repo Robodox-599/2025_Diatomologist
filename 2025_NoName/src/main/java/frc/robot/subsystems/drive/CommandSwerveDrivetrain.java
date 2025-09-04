@@ -63,9 +63,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static boolean withinAlgaeRaiseDistance = false;
   private static boolean atDriveToPointSetpoints = false;
 
-  private final PIDController choreoXController = new PIDController(7, 0, 0);
-  private final PIDController choreoYController = new PIDController(7, 0, 0);
-  private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
+  private final PIDController choreoXController = new PIDController(0.4, 0, 0);
+  private final PIDController choreoYController = new PIDController(0.4, 0, 0);
+  private final PIDController choreoThetaPID = new PIDController(1, 0, 0);
   private SwerveSample choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
@@ -329,7 +329,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double yVelocity = velocityOutput * direction.getSin();
 
         DogLog.log("Drive/DriveToPose/TargetPoseForDriveToPoint", targetPoseForDriveToPoint);
-        DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
         DogLog.log("Drive/DriveToPose/VelocityOutput", velocityOutput);
         DogLog.log("Drive/DriveToPose/XVelocity", xVelocity);
         DogLog.log("Drive/DriveToPose/YVelocity", yVelocity);
@@ -377,16 +376,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         (targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation()))
             .getNorm();
 
-    if (linearDistance <= 0.15) { // 0.15 meters (~0.5 feet)
+    if (linearDistance <= 1) {
       withinCoralRaiseDistance = true;
       withinAlgaeRaiseDistance = true;
-    } else {
-      withinCoralRaiseDistance = false;
-      if (linearDistance <= 0.5) { // 1 meter (~3.3 feet)
-        withinAlgaeRaiseDistance = true;
-      } else {
-        withinAlgaeRaiseDistance = false;
-      }
     }
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
@@ -394,6 +386,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         driveAtAngle.HeadingController.getPositionError() < DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE;
     atDriveToPointSetpoints = atDriveToPointTranslationSetpoint && atDriveToPointAngularSetpoint;
 
+    DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
     DogLog.log(

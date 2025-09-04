@@ -247,7 +247,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
         break;
       case AUTO_SCORE_L1_LEFT:
-        if (!rollers.isCoralEnsured()) {
+        if (!rollers.isCoralDetected()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -257,7 +257,7 @@ public class Superstructure extends SubsystemBase {
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
         } else if (drivetrain.isWithinCoralRaiseDistance()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
         } else {
@@ -265,7 +265,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L1_MIDDLE:
-        if (!rollers.isCoralEnsured()) {
+        if (!rollers.isCoralDetected()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -283,7 +283,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_SCORE_L1_RIGHT:
-        if (!rollers.isCoralEnsured()) {
+        if (!rollers.isCoralDetected()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -293,7 +293,7 @@ public class Superstructure extends SubsystemBase {
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
         } else if (drivetrain.isWithinCoralRaiseDistance()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
         } else {
@@ -383,6 +383,7 @@ public class Superstructure extends SubsystemBase {
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isWithinCoralRaiseDistance()
+            && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
@@ -401,6 +402,7 @@ public class Superstructure extends SubsystemBase {
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isWithinCoralRaiseDistance()
+            && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
@@ -460,91 +462,89 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void applyStates() {
-    if (currentSuperState != previousSuperState) {
-      switch (currentSuperState) {
-        case INTAKING_CORAL_STATION:
-          intakeCoralStation();
-          break;
-        case ENSURING_CORAL:
-          ensureCoral();
-          break;
-        case INTAKING_ALGAE_GROUND:
-          intakeAlgaeGround();
-          break;
-        case INTAKING_ALGAE_LOLLIPOP:
-          intakeAlgaeLollipop();
-          break;
-        case INTAKING_ALGAE_L2:
-          intakeAlgaeL2();
-          break;
-        case INTAKING_ALGAE_L3:
-          intakeAlgaeL3();
-          break;
-        case POSITION_PREPARED:
-          prepare();
-          break;
-        case POSITION_CORAL_L1:
-          positionToCoralL1();
-          break;
-        case POSITION_CORAL_L2:
-          positionToCoralL2();
-          break;
-        case POSITION_CORAL_L3:
-          positionToCoralL3();
-          break;
-        case POSITION_CORAL_L4:
-          positionToCoralL4();
-          break;
-        case AUTO_ALIGN_LEFT_BRANCH:
-          autoAlignToBranch(true);
-          break;
-        case AUTO_ALIGN_LEFT_TROUGH:
-          autoAlignToTrough(1);
-          break;
-        case AUTO_ALIGN_MIDDLE_TROUGH:
-          autoAlignToTrough(2);
-          break;
-        case AUTO_ALIGN_RIGHT_BRANCH:
-          autoAlignToBranch(false);
-          break;
-        case AUTO_ALIGN_RIGHT_TROUGH:
-          autoAlignToTrough(3);
-          break;
-        case AUTO_ALIGN_MIDDLE_ALGAE:
-          autoAlignToAlgaeReefFace(false);
-          break;
-        case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
-          autoAlignToAlgaeReefFace(true);
-          positionToAlgaeProcessor();
-          break;
-        case POSITION_ALGAE_PROCESSOR:
-          positionToAlgaeProcessor();
-          break;
-        case POSITION_ALGAE_BARGE:
-          positionToAlgaeBarge();
-          break;
-        case POSITION_CLIMB_PREPARED:
-          positionToClimbPrepared();
-          break;
-        case SCORING_CORAL_TROUGH:
-          scoreCoralInTrough();
-          break;
-        case SCORING_CORAL_BRANCH:
-          scoreCoralOnBranch();
-          break;
-        case SCORING_ALGAE:
-          scoreAlgae();
-          break;
-        case CLIMBING:
-          climbing();
-          break;
-        case STOPPED:
-          stop();
-          break;
-        default:
-          stop();
-          break;
-      }
+    switch (currentSuperState) {
+      case INTAKING_CORAL_STATION:
+        intakeCoralStation();
+        break;
+      case ENSURING_CORAL:
+        ensureCoral();
+        break;
+      case INTAKING_ALGAE_GROUND:
+        intakeAlgaeGround();
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        intakeAlgaeLollipop();
+        break;
+      case INTAKING_ALGAE_L2:
+        intakeAlgaeL2();
+        break;
+      case INTAKING_ALGAE_L3:
+        intakeAlgaeL3();
+        break;
+      case POSITION_PREPARED:
+        prepare();
+        break;
+      case POSITION_CORAL_L1:
+        positionToCoralL1();
+        break;
+      case POSITION_CORAL_L2:
+        positionToCoralL2();
+        break;
+      case POSITION_CORAL_L3:
+        positionToCoralL3();
+        break;
+      case POSITION_CORAL_L4:
+        positionToCoralL4();
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH:
+        autoAlignToBranch(true);
+        break;
+      case AUTO_ALIGN_LEFT_TROUGH:
+        autoAlignToTrough(1);
+        break;
+      case AUTO_ALIGN_MIDDLE_TROUGH:
+        autoAlignToTrough(2);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH:
+        autoAlignToBranch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_TROUGH:
+        autoAlignToTrough(3);
+        break;
+      case AUTO_ALIGN_MIDDLE_ALGAE:
+        autoAlignToAlgaeReefFace(false);
+        break;
+      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
+        autoAlignToAlgaeReefFace(true);
+        positionToAlgaeProcessor();
+        break;
+      case POSITION_ALGAE_PROCESSOR:
+        positionToAlgaeProcessor();
+        break;
+      case POSITION_ALGAE_BARGE:
+        positionToAlgaeBarge();
+        break;
+      case POSITION_CLIMB_PREPARED:
+        positionToClimbPrepared();
+        break;
+      case SCORING_CORAL_TROUGH:
+        scoreCoralInTrough();
+        break;
+      case SCORING_CORAL_BRANCH:
+        scoreCoralOnBranch();
+        break;
+      case SCORING_ALGAE:
+        scoreAlgae();
+        break;
+      case CLIMBING:
+        climbing();
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 
@@ -639,7 +639,7 @@ public class Superstructure extends SubsystemBase {
   private void positionToAlgaeProcessor() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_PROCESSOR);
     rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
-    wrist.setWantedState(Wrist.WantedState.SCORING_ALGAE_BARGE);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
@@ -730,6 +730,15 @@ public class Superstructure extends SubsystemBase {
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     switch (currentSuperState) {
       case AUTO_ALIGN_LEFT_BRANCH:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_LEFT_TROUGH:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_MIDDLE_TROUGH:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_RIGHT_TROUGH:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case AUTO_ALIGN_RIGHT_BRANCH:

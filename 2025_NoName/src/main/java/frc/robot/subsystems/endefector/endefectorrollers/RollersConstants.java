@@ -29,7 +29,7 @@ public class RollersConstants {
     0.6, // intaking algae
     0.0, // holding coral
     0.0, // VELOCITY NOT USED - holding algae
-    0.3, // scoring coral trough
+    0.25, // scoring coral trough
     -0.4, // scoring coral branch
     -0.6, // scoring algae
     0.0, // stopped
@@ -58,13 +58,14 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersDutyCycleOutHoldAlgae = 0.25;
+  public static final double rollersDutyCycleOutHoldAlgae = 0.2;
 
   public static final int beakBreakPort = 3;
 
   public static final double beamBreakDebounce = 0.3;
   public static final double ensureCoralDebounce = 0.6;
   public static final double algaeDebounce = 0.5;
+  public static final double coralL1Debounce = 1;
 
   public static final double rotationsToMoveAfterDetectingCoral = 0.0;
 }

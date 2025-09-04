@@ -77,6 +77,10 @@ public class Bindings extends SubsystemBase {
                 .setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_LOLLIPOP)
                 .alongWith(rumbleDriver(driver)));
     driver
+        .leftBumper()
+        .onFalse(
+            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
+    driver
         .leftTrigger()
         .onFalse(
             superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));

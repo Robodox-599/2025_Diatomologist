@@ -99,7 +99,7 @@ public class Rollers {
           setVelocity(EndefectorRollerStates.ENSURING_CORAL);
           break;
         case INTAKING_ALGAE:
-          grabOrHoldAlgae();
+          setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
           break;
         case HOLD_CORAL:
           stop();

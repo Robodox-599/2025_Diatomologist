@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
 import dev.doglog.DogLog;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.SubsystemChecker;
@@ -70,7 +71,8 @@ public class Wrist {
         currentState = CurrentState.INTAKING_ALGAE_GROUND;
         break;
       case INTAKING_ALGAE_LOLLIPOP:
-        if (subsystemChecker.isAtSetpointElevator()) {
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.INTAKING_ALGAE_LOLLIPOP)) {
           currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
         } else {
           currentState = CurrentState.POSITION_PREPARED;

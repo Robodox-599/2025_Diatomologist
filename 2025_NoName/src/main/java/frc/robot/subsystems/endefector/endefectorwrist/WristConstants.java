@@ -66,6 +66,6 @@ public class WristConstants {
     0.79, // POSITION PREPARED
     1.05, // POSITION TROUGH
     0.79, // SCORING CORAL
-    0.67 // SCORING ALGAE BARGE
+    0.79 // SCORING ALGAE BARGE
   };
 }

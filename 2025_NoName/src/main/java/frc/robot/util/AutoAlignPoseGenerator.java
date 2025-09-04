@@ -111,7 +111,7 @@ public class AutoAlignPoseGenerator {
     }
 
     if (shiftBackFromReefFace) {
-      nearestFace = nearestFace.transformBy(new Transform2d(-0.4, 0, new Rotation2d(0)));
+      nearestFace = nearestFace.transformBy(new Transform2d(-0.6, 0, new Rotation2d(0)));
     }
 
     DogLog.log("ClosestFace/TargetPose", nearestFace);

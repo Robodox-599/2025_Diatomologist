@@ -200,7 +200,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         } else if (rollers.isAlgaeDetected()) {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR;
-        } else if (drivetrain.isAtDriveToPointSetpoints()
+        } else if (drivetrain.isWithinAlgaeRaiseDistance()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3)) {
@@ -256,7 +256,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isWithinTroughRaiseDistance()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -275,7 +275,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isWithinTroughRaiseDistance()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -294,7 +294,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isWithinTroughRaiseDistance()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {

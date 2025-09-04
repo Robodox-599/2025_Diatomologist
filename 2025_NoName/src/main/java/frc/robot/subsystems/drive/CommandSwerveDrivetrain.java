@@ -382,15 +382,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     if (distanceFromCenter <= 1.6) { // distance from center + half bumper width + reef zone
       withinCoralRaiseDistance = true;
-      withinAlgaeRaiseDistance = true;
     } else {
       withinCoralRaiseDistance = false;
-      withinAlgaeRaiseDistance = false;
     }
     if (distanceFromCenter <= 2.25) {
       withinTroughRaiseDistance = true;
+      withinAlgaeRaiseDistance = true;
     } else {
       withinTroughRaiseDistance = false;
+      withinAlgaeRaiseDistance = false;
     }
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
@@ -424,6 +424,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public boolean isWithinAlgaeRaiseDistance() {
     return withinAlgaeRaiseDistance;
+  }
+
+  public boolean isWithinTroughRaiseDistance() {
+    return withinTroughRaiseDistance;
   }
 
   public boolean isAtDriveToPointSetpoints() {

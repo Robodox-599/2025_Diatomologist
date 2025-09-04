@@ -55,7 +55,7 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    coralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
+    coralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
     ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
     algaeStallDebouncer.setDebounceType(DebounceType.kBoth);
 

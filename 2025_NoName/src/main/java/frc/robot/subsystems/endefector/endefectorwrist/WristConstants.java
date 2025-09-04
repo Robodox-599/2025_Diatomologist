@@ -61,7 +61,7 @@ public class WristConstants {
   public static final double[] setpoints = {
     0.664, // INTAKING CORAL STATION
     0.99, // INTAKING ALGAE GROUND
-    0.95, // INTAKING ALGAE LOLLIPOP
+    0.85, // INTAKING ALGAE LOLLIPOP
     0.91, // INTAKING ALGAE REEF
     0.79, // POSITION PREPARED
     1.05, // POSITION TROUGH

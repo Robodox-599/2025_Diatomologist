@@ -56,7 +56,7 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
     coralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
-    ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
+    ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
     algaeStallDebouncer.setDebounceType(DebounceType.kBoth);
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));

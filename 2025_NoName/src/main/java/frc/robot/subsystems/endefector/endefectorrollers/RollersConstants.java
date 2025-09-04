@@ -64,7 +64,7 @@ public class RollersConstants {
 
   public static final double beamBreakDebounce = 0.3;
   public static final double ensureCoralDebounce = 0.6;
-  public static final double algaeDebounce = 0.5;
+  public static final double algaeDebounce = 0.2;
   public static final double coralL1Debounce = 1;
 
   public static final double rotationsToMoveAfterDetectingCoral = 0.0;

@@ -26,10 +26,6 @@ public class AutoRoutines {
     AutoTrajectory LtoHP = routine.trajectory("LtoHP");
     AutoTrajectory HPtoK = routine.trajectory("HPtoK");
 
-    Trigger withinCoralRaiseDistance =
-        new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.hasCoral());
-
     routine
         .active()
         .onTrue(
@@ -39,11 +35,13 @@ public class AutoRoutines {
                     WantedSuperState.POSITION_PREPARED),
                 LEFTtoJ.cmd()));
 
-    // LEFTtoJ.active()
-    //     .and(withinCoralRaiseDistance)
-    //     .onTrue(
-    //
-    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    LEFTtoJ.active()
+        .and(
+            () ->
+                (superstructureCommands.isWithinCoralRaiseDistance()
+                    && superstructureCommands.isCoralEnsured()))
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     LEFTtoJ.done()
         .onTrue(
@@ -51,7 +49,7 @@ public class AutoRoutines {
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     LEFTtoJ.recentlyDone()
-        .and(() -> !superstructureCommands.hasCoral())
+        .and(() -> !superstructureCommands.isCoralEnsured())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
@@ -60,11 +58,13 @@ public class AutoRoutines {
 
     JtoHP.done().onTrue(Commands.sequence(HPtoL.cmd()));
 
-    // HPtoL.active()
-    //     .and(withinCoralRaiseDistance)
-    //     .onTrue(
-    //
-    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    HPtoL.active()
+        .and(
+            () ->
+                (superstructureCommands.isWithinCoralRaiseDistance()
+                    && superstructureCommands.isCoralEnsured()))
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoL.done()
         .onTrue(
@@ -72,7 +72,7 @@ public class AutoRoutines {
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     HPtoL.recentlyDone()
-        .and(() -> !superstructureCommands.hasCoral())
+        .and(() -> !superstructureCommands.isCoralEnsured())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
@@ -81,11 +81,13 @@ public class AutoRoutines {
 
     LtoHP.done().onTrue(Commands.sequence(HPtoK.cmd()));
 
-    // HPtoK.active()
-    //     .and(withinCoralRaiseDistance)
-    //     .onTrue(
-    //
-    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    HPtoK.active()
+        .and(
+            () ->
+                (superstructureCommands.isWithinCoralRaiseDistance()
+                    && superstructureCommands.isCoralEnsured()))
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoK.done()
         .onTrue(
@@ -105,7 +107,7 @@ public class AutoRoutines {
 
     Trigger withinCoralRaiseDistance =
         new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.hasCoral());
+    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.isCoralEnsured());
 
     routine
         .active()
@@ -163,7 +165,7 @@ public class AutoRoutines {
 
     Trigger withinCoralRaiseDistance =
         new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.hasCoral());
+    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.isCoralEnsured());
 
     routine
         .active()

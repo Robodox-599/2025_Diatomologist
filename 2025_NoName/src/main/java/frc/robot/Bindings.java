@@ -344,7 +344,7 @@ public class Bindings extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoAlignCoralState() {
-    if (superstructure.hasCoral()) {
+    if (superstructure.isCoralEnsured()) {
       if (automationLevel == AutomationLevel.AUTO_ACTION) {
         switch (coralScoreLevel) {
           case POSITION_CORAL_L1:

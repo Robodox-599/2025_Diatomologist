@@ -5,6 +5,7 @@ import static frc.robot.FieldConstants.*;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -57,6 +58,8 @@ public final class ChoreoVariableWriter {
     for (int i = 0; i < REEF_RED_MIDDLE.length; i++) {
       namedPosesMap.put(redMiddleNames[i], REEF_RED_MIDDLE[i]);
     }
+
+    namedPosesMap.put("REEF_CENTER", new Pose2d(Reef.center, new Rotation2d(0)));
 
     try (FileReader reader = new FileReader(filePath)) {
       System.out.println("[ChoreoVariableWriter]: " + filePath + " read successfully.");

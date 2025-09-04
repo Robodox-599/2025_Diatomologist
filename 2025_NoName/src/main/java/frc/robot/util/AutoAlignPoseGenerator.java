@@ -70,13 +70,13 @@ public class AutoAlignPoseGenerator {
     if (troughIndex == 1) { // left
       targetPose =
           REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
-              new Transform2d(0.0, 0.15, new Rotation2d(0)));
+              new Transform2d(0.0, 0.3, new Rotation2d(0)));
     } else if (troughIndex == 2) { // middle
       targetPose = REEF_BLUE_MIDDLE[nearestFaceIndex];
     } else if (troughIndex == 3) { // right
       targetPose =
           REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
-              new Transform2d(0.0, -0.15, new Rotation2d(0)));
+              new Transform2d(0.0, -0.3, new Rotation2d(0)));
     }
 
     targetPose = targetPose.transformBy(new Transform2d(-0.37, 0, new Rotation2d(0)));

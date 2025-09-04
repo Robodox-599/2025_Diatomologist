@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.Tracer;
@@ -61,6 +62,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
   private static boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;
+  private static boolean withinTroughRaiseDistance = false;
   private static boolean atDriveToPointSetpoints = false;
 
   private final PIDController choreoXController = new PIDController(0.4, 0, 0);
@@ -372,13 +374,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void updateDistancesAndSetpoints() {
+    double distanceFromCenter =
+        (FieldConstants.Reef.center.minus(getState().Pose.getTranslation())).getNorm();
     double linearDistance =
         (targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation()))
             .getNorm();
 
-    if (linearDistance <= 1) {
+    if (distanceFromCenter <= 1.6) { // distance from center + half bumper width + reef zone
       withinCoralRaiseDistance = true;
       withinAlgaeRaiseDistance = true;
+    } else {
+      withinCoralRaiseDistance = false;
+      withinAlgaeRaiseDistance = false;
+    }
+    if (distanceFromCenter <= 2.25) {
+      withinTroughRaiseDistance = true;
+    } else {
+      withinTroughRaiseDistance = false;
     }
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
@@ -389,6 +401,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
+    DogLog.log("Drive/DriveToPose/WithinTroughRaiseDistance", withinTroughRaiseDistance);
     DogLog.log(
         "Drive/DriveToPose/AtDriveToPointTranslationSetpoint", atDriveToPointTranslationSetpoint);
     DogLog.log("Drive/DriveToPose/AtDriveToPointAngularSetpoint", atDriveToPointAngularSetpoint);

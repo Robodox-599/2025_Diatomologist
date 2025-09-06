@@ -33,15 +33,17 @@ public class AutoRoutines {
                 LEFTtoJ.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
+                superstructureCommands.setCoralStateSimCommand(true),
                 LEFTtoJ.cmd()));
 
-    LEFTtoJ.active()
-        .and(
-            () ->
-                (superstructureCommands.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    // LEFTtoJ.active()
+    //     .and(
+    //         () ->
+    //             (superstructureCommands.isWithinCoralRaiseDistance()
+    //                 && superstructureCommands.isCoralEnsured()))
+    //     .onTrue(
+    //
+    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     LEFTtoJ.done()
         .onTrue(
@@ -58,13 +60,14 @@ public class AutoRoutines {
 
     JtoHP.done().onTrue(Commands.sequence(HPtoL.cmd()));
 
-    HPtoL.active()
-        .and(
-            () ->
-                (superstructureCommands.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    // HPtoL.active()
+    //     .and(
+    //         () ->
+    //             (superstructureCommands.isWithinCoralRaiseDistance()
+    //                 && superstructureCommands.isCoralEnsured()))
+    //     .onTrue(
+    //
+    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoL.done()
         .onTrue(
@@ -81,13 +84,14 @@ public class AutoRoutines {
 
     LtoHP.done().onTrue(Commands.sequence(HPtoK.cmd()));
 
-    HPtoK.active()
-        .and(
-            () ->
-                (superstructureCommands.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+    // HPtoK.active()
+    //     .and(
+    //         () ->
+    //             (superstructureCommands.isWithinCoralRaiseDistance()
+    //                 && superstructureCommands.isCoralEnsured()))
+    //     .onTrue(
+    //
+    // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     HPtoK.done()
         .onTrue(

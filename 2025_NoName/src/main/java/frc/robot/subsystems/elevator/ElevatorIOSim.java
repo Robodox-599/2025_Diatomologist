@@ -34,15 +34,13 @@ public class ElevatorIOSim extends ElevatorIO {
   @Override
   public void updateInputs() {
     elevatorSim.update(0.02);
-
-    super.positionInches = (Units.metersToInches(elevatorSim.getPositionMeters()));
     // super.velocityInchesPerSec =
     // (Units.metersToInches(elevatorSim.getVelocityMetersPerSecond()));
     super.appliedVolts = elevatorSim.getInput().get(0, 0);
     super.currentAmps = elevatorSim.getCurrentDrawAmps();
     super.targetPositionInches = targetPositionInches;
     super.tempCelsius = 25.0;
-    super.atSetpoint = positionController.atSetpoint();
+    super.atSetpoint = true;
 
     DogLog.log("Elevator/CurrentAmps", elevatorSim.getCurrentDrawAmps());
     DogLog.log("Elevator/AppliedVoltage", elevatorSim.getInput().get(0, 0));
@@ -59,6 +57,7 @@ public class ElevatorIOSim extends ElevatorIO {
             SubsystemUtil.elevatorStateToHeightTicks(state),
             ElevatorConstants.elevatorLowerLimit,
             ElevatorConstants.elevatorUpperLimit);
+    positionInches = targetPositionInches;
   }
 
   @Override

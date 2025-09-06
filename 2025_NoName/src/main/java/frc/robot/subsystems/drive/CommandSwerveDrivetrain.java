@@ -366,6 +366,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                   .withSpeeds(targetSpeeds)
                   .withWheelForceFeedforwardsX(sample.moduleForcesX())
                   .withWheelForceFeedforwardsY(sample.moduleForcesY()));
+        } else {
+          setControl(drive.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
         }
         break;
       default:

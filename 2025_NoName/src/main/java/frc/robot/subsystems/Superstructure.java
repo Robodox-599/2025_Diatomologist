@@ -825,6 +825,10 @@ public class Superstructure extends SubsystemBase {
     return rollers.isAlgaeDetected();
   }
 
+  public Command setCoralStateSimCommand(boolean state) {
+    return this.runOnce(() -> rollers.setCoralStateSim(state));
+  }
+
   public WantedSuperState getWantedSuperState() {
     return wantedSuperState;
   }

@@ -42,7 +42,8 @@ public record VisionConstants(
    * in the Vision class.
    */
   public double linearStdDevBaseline() {
-    return 0.02;
+    return 0.1; // 0.3 m
+    // if jittery, increase; if odom dominates too much, decrease
   }
 
   /**
@@ -51,6 +52,7 @@ public record VisionConstants(
    * tags), in the Vision class.
    */
   public double angularStdDevBaseline() {
-    return 0.06;
+    return 0.06; // 0.2 rad
+    // if jittery, increase; if odom dominates too much, decrease
   }
 }

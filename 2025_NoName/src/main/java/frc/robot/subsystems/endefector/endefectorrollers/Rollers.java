@@ -165,4 +165,8 @@ public class Rollers {
   public boolean isAlgaeDetected() {
     return io.isAlgaeDetected;
   }
+
+  public void setCoralStateSim(boolean state) {
+    io.setCoralStateSim(state);
+  }
 }

@@ -24,4 +24,8 @@ public abstract class RollersIO {
   public double getVelocity() {
     return velocity;
   }
+
+  public void setCoralStateSim(boolean state) {
+    isCoralDetected = state;
+  }
 }

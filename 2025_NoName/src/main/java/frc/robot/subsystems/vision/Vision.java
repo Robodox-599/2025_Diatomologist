@@ -66,8 +66,10 @@ public class Vision {
         double stdDevFactor =
             Math.pow(observation.averageTagDistance(), 2.0) / observation.getTagCount();
 
-        double linearStdDev = camera.getConstants().linearStdDevBaseline() * stdDevFactor;
-        double angularStdDev = camera.getConstants().angularStdDevBaseline() * stdDevFactor;
+        double linearStdDev =
+            camera.getConstants().linearStdDevBaseline() * stdDevFactor;
+        double angularStdDev =
+            camera.getConstants().angularStdDevBaseline() * stdDevFactor;
 
         linearStdDev *= camera.getConstants().cameraStdDevFactor();
         angularStdDev *= camera.getConstants().cameraStdDevFactor();

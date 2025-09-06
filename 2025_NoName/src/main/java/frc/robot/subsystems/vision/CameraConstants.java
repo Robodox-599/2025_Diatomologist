@@ -104,7 +104,7 @@ public class CameraConstants {
               new Translation3d(frontLeftCameraPoseX, frontLeftCameraPoseY, frontLeftCameraPoseZ),
               new Rotation3d(
                   frontLeftCameraPoseRoll, frontLeftCameraPosePitch, frontLeftCameraPoseYaw)),
-          1.0);
+          0.9);
 
   public static final VisionConstants frontRightCameraConstants =
       new VisionConstants(
@@ -114,7 +114,7 @@ public class CameraConstants {
                   frontRightCameraPoseX, frontRightCameraPoseY, frontRightCameraPoseZ),
               new Rotation3d(
                   frontRightCameraPoseRoll, frontRightCameraPosePitch, frontRightCameraPoseYaw)),
-          1.0);
+          0.9);
   public static final VisionConstants backCameraConstants =
       new VisionConstants(
           backCameraName,

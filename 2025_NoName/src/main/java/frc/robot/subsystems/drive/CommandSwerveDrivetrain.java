@@ -421,7 +421,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public boolean isReadyToRaiseAutoScoreCoral() {
-    return isWithinCoralRaiseDistance();
+    return isWithinCoralRaiseDistance() && this.wantedState == WantedState.DRIVE_TO_POINT;
   }
 
   public boolean isWithinAlgaeRaiseDistance() {

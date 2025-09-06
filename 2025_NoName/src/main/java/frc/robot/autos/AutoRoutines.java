@@ -4,6 +4,7 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
@@ -33,7 +34,6 @@ public class AutoRoutines {
                 LEFTtoJ.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
-                superstructureCommands.setCoralStateSimCommand(true),
                 LEFTtoJ.cmd()));
 
     // LEFTtoJ.active()
@@ -109,10 +109,6 @@ public class AutoRoutines {
     AutoTrajectory CtoHP = routine.trajectory("CtoHP");
     AutoTrajectory HPtoD = routine.trajectory("HPtoD");
 
-    Trigger withinCoralRaiseDistance =
-        new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.isCoralEnsured());
-
     routine
         .active()
         .onTrue(
@@ -120,43 +116,54 @@ public class AutoRoutines {
                 RIGHTtoE.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED),
+                superstructureCommands.setCoralStateSimCommand(true),
                 RIGHTtoE.cmd()));
-
-    RIGHTtoE.active()
-        .and(withinCoralRaiseDistance)
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     RIGHTtoE.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.AUTO_SCORE_L4_LEFT),
+                new WaitCommand(0.5),
+                superstructureCommands.setCoralStateSimCommand(false)));
 
-    RIGHTtoE.recentlyDone().and(hasNoCoral).onTrue(EtoHP.cmd());
+    RIGHTtoE.recentlyDone()
+        .and(() -> !superstructureCommands.isCoralEnsured())
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.INTAKING_CORAL_STATION),
+                superstructureCommands.setCoralStateSimCommand(true),
+                EtoHP.cmd()));
 
     EtoHP.done().onTrue(HPtoC.cmd());
 
-    HPtoC.active()
-        .and(withinCoralRaiseDistance)
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
-
     HPtoC.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.AUTO_SCORE_L4_LEFT),
+                new WaitCommand(0.5),
+                superstructureCommands.setCoralStateSimCommand(false)));
 
-    HPtoC.recentlyDone().and(hasNoCoral).onTrue(CtoHP.cmd());
+    HPtoC.recentlyDone()
+        .and(() -> !superstructureCommands.isCoralEnsured())
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.INTAKING_CORAL_STATION),
+                superstructureCommands.setCoralStateSimCommand(true),
+                CtoHP.cmd()));
 
     CtoHP.done().onTrue(HPtoD.cmd());
 
-    HPtoD.active()
-        .and(withinCoralRaiseDistance)
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
-
     HPtoD.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                WantedSuperState.AUTO_SCORE_L4_RIGHT));
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.AUTO_SCORE_L4_RIGHT),
+                new WaitCommand(0.5),
+                superstructureCommands.setCoralStateSimCommand(false)));
 
     return routine;
   }

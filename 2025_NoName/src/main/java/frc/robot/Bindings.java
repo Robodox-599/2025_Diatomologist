@@ -27,7 +27,8 @@ public class Bindings extends SubsystemBase {
 
   public enum TroughAutoAlignSide {
     LEFT,
-    MIDDLE,
+    MIDDLE_LEFT,
+    MIDDLE_RIGHT,
     RIGHT,
   }
 
@@ -236,17 +237,23 @@ public class Bindings extends SubsystemBase {
         .povLeft()
         .onTrue(
             setAutoAlignSideCommand(TroughAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
+    // // SET AUTO ALIGN TO MIDDLE LEFT
+    operator
+        .povUp()
+        .onTrue(
+            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE_LEFT)
+                .alongWith(rumbleOperator(operator)));
+    // // SET AUTO ALIGN TO MIDDLE RIGHT
+    operator
+        .povDown()
+        .onTrue(
+            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE_RIGHT)
+                .alongWith(rumbleOperator(operator)));
     // // SET AUTO ALIGN TO RIGHT
     operator
         .povRight()
         .onTrue(
             setAutoAlignSideCommand(TroughAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
-    // // SET AUTO ALIGN TO MIDDLE
-    operator
-        .povUp()
-        .onTrue(
-            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE)
-                .alongWith(rumbleOperator(operator)));
     // // SET GAME PIECE STATE TO CORAL
     operator
         .rightTrigger()
@@ -307,8 +314,13 @@ public class Bindings extends SubsystemBase {
         branchAutoAlignSide = BranchAutoAlignSide.LEFT;
         troughAutoAlignSide = TroughAutoAlignSide.LEFT;
         break;
-      case MIDDLE:
-        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE;
+      case MIDDLE_LEFT:
+        branchAutoAlignSide = BranchAutoAlignSide.LEFT;
+        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE_LEFT;
+        break;
+      case MIDDLE_RIGHT:
+        branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
+        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE_RIGHT;
         break;
       case RIGHT:
         branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
@@ -352,8 +364,10 @@ public class Bindings extends SubsystemBase {
               default:
               case LEFT:
                 return WantedSuperState.AUTO_SCORE_L1_LEFT;
-              case MIDDLE:
-                return WantedSuperState.AUTO_SCORE_L1_MIDDLE;
+              case MIDDLE_LEFT:
+                return WantedSuperState.AUTO_SCORE_L1_MIDDLE_LEFT;
+              case MIDDLE_RIGHT:
+                return WantedSuperState.AUTO_SCORE_L1_MIDDLE_RIGHT;
               case RIGHT:
                 return WantedSuperState.AUTO_SCORE_L1_RIGHT;
             }
@@ -377,8 +391,10 @@ public class Bindings extends SubsystemBase {
         default:
         case LEFT:
           return WantedSuperState.AUTO_ALIGN_LEFT_TROUGH;
-        case MIDDLE:
-          return WantedSuperState.AUTO_ALIGN_MIDDLE_TROUGH;
+        case MIDDLE_LEFT:
+          return WantedSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
+        case MIDDLE_RIGHT:
+          return WantedSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
         case RIGHT:
           return WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
       }

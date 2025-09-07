@@ -57,7 +57,7 @@ public class Bindings extends SubsystemBase {
   private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
   private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
   private GamePieceState gamePieceState = GamePieceState.CORAL;
-  private AutomationLevel automationLevel = AutomationLevel.AUTO_ALIGN;
+  private AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
 
   public Bindings(
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {

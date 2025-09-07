@@ -36,7 +36,9 @@ public class Superstructure extends SubsystemBase {
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
+    POSITION_ALGAE_L2,
     INTAKING_ALGAE_L2,
+    POSITION_ALGAE_L3,
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
@@ -50,7 +52,6 @@ public class Superstructure extends SubsystemBase {
     AUTO_ALIGN_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_BRANCH,
     AUTO_ALIGN_MIDDLE_ALGAE,
-    AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     POSITION_CLIMB_PREPARED,
@@ -66,7 +67,9 @@ public class Superstructure extends SubsystemBase {
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
+    POSITION_ALGAE_L2,
     INTAKING_ALGAE_L2,
+    POSITION_ALGAE_L3,
     INTAKING_ALGAE_L3,
     AUTO_INTAKE_ALGAE,
     POSITION_PREPARED,
@@ -178,39 +181,53 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_LOLLIPOP;
         }
         break;
+      case POSITION_ALGAE_L2:
+        currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
+        break;
       case INTAKING_ALGAE_L2:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
         }
         break;
+      case POSITION_ALGAE_L3:
+        currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
+        break;
       case INTAKING_ALGAE_L3:
         if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
           currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
         }
         break;
       case AUTO_INTAKE_ALGAE:
-        if (rollers.isAlgaeDetected()
-            && drivetrain.isAtDriveToPointSetpoints()
-            && currentSuperState
-                == CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR) {
+        if (rollers.isAlgaeDetected()) {
+          if (currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2) {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
+          } else if (currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3) {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
+          }
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
-          currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
-        } else if (rollers.isAlgaeDetected()) {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR;
-        } else if (drivetrain.isWithinAlgaeRaiseDistance()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE
+        } else if (drivetrain.isWithinReefZone()
+            && drivetrain.isYErrorWithinTolerance()
+            && drivetrain.isDrivingToPointOrAtSetpoints()
+            && (currentSuperState == CurrentSuperState.POSITION_ALGAE_L2
+                || currentSuperState == CurrentSuperState.POSITION_ALGAE_L3
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3)) {
           if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
           } else {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
+          }
+        } else if (drivetrain.isReadyToRaiseAutoIntakeAlgae()) {
+          if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
+          } else {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
           }
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
@@ -262,7 +279,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinTroughRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoTroughCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -281,7 +298,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinTroughRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoTroughCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -300,7 +317,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinTroughRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoTroughCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -319,7 +336,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isWithinTroughRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoTroughCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
@@ -338,7 +355,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
@@ -357,7 +374,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
@@ -376,7 +393,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
@@ -395,7 +412,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
@@ -414,7 +431,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
@@ -433,7 +450,7 @@ public class Superstructure extends SubsystemBase {
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_BRANCH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
-        } else if (drivetrain.isWithinCoralRaiseDistance()
+        } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
@@ -443,6 +460,21 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case POSITION_ALGAE_PROCESSOR:
+        if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L2) {
+          if (drivetrain.isWithinAlgaeRaiseDistance() && rollers.isAlgaeDetected()) {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
+          } else {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          }
+          break;
+        } else if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L3) {
+          if (drivetrain.isWithinAlgaeRaiseDistance() && rollers.isAlgaeDetected()) {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
+          } else {
+            currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
+          }
+          break;
+        }
         currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
         break;
       case POSITION_ALGAE_BARGE:
@@ -507,8 +539,14 @@ public class Superstructure extends SubsystemBase {
       case INTAKING_ALGAE_LOLLIPOP:
         intakeAlgaeLollipop();
         break;
+      case POSITION_ALGAE_L2:
+        positionAlgaeL2();
+        break;
       case INTAKING_ALGAE_L2:
         intakeAlgaeL2();
+        break;
+      case POSITION_ALGAE_L3:
+        positionAlgaeL3();
         break;
       case INTAKING_ALGAE_L3:
         intakeAlgaeL3();
@@ -548,10 +586,6 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_ALIGN_MIDDLE_ALGAE:
         autoAlignToAlgaeReefFace(false);
-        break;
-      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
-        autoAlignToAlgaeReefFace(true);
-        positionToAlgaeProcessor();
         break;
       case POSITION_ALGAE_PROCESSOR:
         positionToAlgaeProcessor();
@@ -615,16 +649,38 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
+  private void positionAlgaeL2() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    if (rollers.isAlgaeDetected()) {
+      leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
+    } else {
+      leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L2);
+    }
+  }
+
   private void intakeAlgaeL2() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_L2);
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L2);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
+  private void positionAlgaeL3() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L3);
+    rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    if (rollers.isAlgaeDetected()) {
+      leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
+    } else {
+      leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L3);
+    }
+  }
+
   private void intakeAlgaeL3() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_ALGAE_L3);
+    elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
     wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L3);
@@ -725,8 +781,7 @@ public class Superstructure extends SubsystemBase {
    */
   private void autoAlignToAlgaeReefFace(boolean shiftBackFromReefFace) {
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(
-            drivetrain.getPose(), shiftBackFromReefFace));
+        AutoAlignPoseGenerator.getNearestAlgaeReefFacePosition(drivetrain.getPose()));
   }
 
   private void scoreCoralOnBranch() {
@@ -785,9 +840,6 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_MIDDLE_ALGAE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case AUTO_ALIGN_MIDDLE_BACK_AND_POSITION_ALGAE_PROCESSOR:
-        wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        break;
       case POSITION_CORAL_L1:
         wantedSuperState = WantedSuperState.POSITION_CORAL_L1;
         break;
@@ -800,11 +852,17 @@ public class Superstructure extends SubsystemBase {
       case POSITION_CORAL_L4:
         wantedSuperState = WantedSuperState.POSITION_CORAL_L4;
         break;
+      case POSITION_ALGAE_L2:
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_L2;
+        break;
       case INTAKING_ALGAE_L2:
-        wantedSuperState = WantedSuperState.INTAKING_ALGAE_L2;
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_L2;
+        break;
+      case POSITION_ALGAE_L3:
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;
         break;
       case INTAKING_ALGAE_L3:
-        wantedSuperState = WantedSuperState.INTAKING_ALGAE_L3;
+        wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;
         break;
       case SCORING_CORAL_TROUGH:
         wantedSuperState = WantedSuperState.SCORING_CORAL;

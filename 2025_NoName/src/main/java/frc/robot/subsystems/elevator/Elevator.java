@@ -16,8 +16,8 @@ public class Elevator {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
-    INTAKING_ALGAE_L2,
-    INTAKING_ALGAE_L3,
+    POSITION_ALGAE_L2,
+    POSITION_ALGAE_L3,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
@@ -32,8 +32,8 @@ public class Elevator {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
-    INTAKING_ALGAE_L2,
-    INTAKING_ALGAE_L3,
+    POSITION_ALGAE_L2,
+    POSITION_ALGAE_L3,
     POSITION_PREPARED,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
@@ -72,11 +72,11 @@ public class Elevator {
         case INTAKING_ALGAE_LOLLIPOP:
           currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
           break;
-        case INTAKING_ALGAE_L2:
-          currentState = CurrentState.INTAKING_ALGAE_L2;
+        case POSITION_ALGAE_L2:
+          currentState = CurrentState.POSITION_ALGAE_L2;
           break;
-        case INTAKING_ALGAE_L3:
-          currentState = CurrentState.INTAKING_ALGAE_L3;
+        case POSITION_ALGAE_L3:
+          currentState = CurrentState.POSITION_ALGAE_L3;
           break;
         case POSITION_PREPARED:
           currentState = CurrentState.POSITION_PREPARED;
@@ -123,11 +123,11 @@ public class Elevator {
         case INTAKING_ALGAE_LOLLIPOP:
           setHeight(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
           break;
-        case INTAKING_ALGAE_L2:
-          setHeight(ElevatorStates.INTAKING_ALGAE_L2);
+        case POSITION_ALGAE_L2:
+          setHeight(ElevatorStates.POSITION_ALGAE_L2);
           break;
-        case INTAKING_ALGAE_L3:
-          setHeight(ElevatorStates.INTAKING_ALGAE_L3);
+        case POSITION_ALGAE_L3:
+          setHeight(ElevatorStates.POSITION_ALGAE_L3);
           break;
         case POSITION_PREPARED:
           setHeight(ElevatorStates.POSITION_PREPARED);

@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
             drivetrain::getPose,
             drivetrain::resetPose,
             drivetrain::setDesiredChoreoTrajectory,
-            false,
+            true,
             drivetrain);
 
     superstructure =

@@ -120,8 +120,7 @@ public class AutoAlignPoseGenerator {
    * @param robotPose robot pose
    * @param shiftBackFromReefFace true if the target pose should be shifted back from the reef face
    */
-  public static Pose2d getNearestAlgaeReefFacePosition(
-      Pose2d robotPose, boolean shiftBackFromReefFace) {
+  public static Pose2d getNearestAlgaeReefFacePosition(Pose2d robotPose) {
     Pose2d nearestFace = null;
     double minDistance = Double.MAX_VALUE;
 
@@ -141,9 +140,7 @@ public class AutoAlignPoseGenerator {
       }
     }
 
-    if (shiftBackFromReefFace) {
-      nearestFace = nearestFace.transformBy(new Transform2d(-0.6, 0, new Rotation2d(0)));
-    }
+    nearestFace = nearestFace.transformBy(new Transform2d(-0.03, 0, new Rotation2d(0)));
 
     DogLog.log("ClosestFace/TargetPose", nearestFace);
     DogLog.log("ClosestFace/RobotPose", robotPose);

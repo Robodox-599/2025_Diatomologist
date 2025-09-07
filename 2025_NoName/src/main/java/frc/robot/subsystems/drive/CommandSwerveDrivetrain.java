@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import choreo.trajectory.SwerveSample;
+import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,11 +61,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
+  private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.03; // 3 cm
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
-  private static boolean withinCoralRaiseDistance = false;
+  private boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;
   private static boolean withinTroughRaiseDistance = false;
   private static boolean atDriveToPointSetpoints = false;
+  private static boolean withinReefZone = false;
+  private static double driveToPointXError;
+  private static double driveToPointYError;
 
   private final PIDController choreoXController = new PIDController(0.4, 0, 0);
   private final PIDController choreoYController = new PIDController(0.4, 0, 0);
@@ -377,33 +383,48 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void updateDistancesAndSetpoints() {
     double distanceFromCenter =
-        (FieldConstants.Reef.center.minus(getState().Pose.getTranslation())).getNorm();
-    double linearDistance =
-        (targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation()))
-            .getNorm();
+        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? (FieldConstants.Reef.center.minus(getState().Pose.getTranslation())).getNorm()
+            : ChoreoAllianceFlipUtil.flip(new Pose2d(FieldConstants.Reef.center, new Rotation2d()))
+                .getTranslation()
+                .minus(getState().Pose.getTranslation())
+                .getNorm();
+    Translation2d translationToTarget =
+        targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
+    double linearDistance = translationToTarget.getNorm();
 
     if (distanceFromCenter <= 1.6) { // distance from center + half bumper width + reef zone
       withinCoralRaiseDistance = true;
+      withinReefZone = true;
     } else {
       withinCoralRaiseDistance = false;
+      withinReefZone = false;
     }
-    if (distanceFromCenter <= 2.25) {
-      withinTroughRaiseDistance = true;
+    if (distanceFromCenter <= 2.0) {
       withinAlgaeRaiseDistance = true;
     } else {
-      withinTroughRaiseDistance = false;
       withinAlgaeRaiseDistance = false;
+    }
+    if (distanceFromCenter <= 2.5) {
+      withinTroughRaiseDistance = true;
+    } else {
+      withinTroughRaiseDistance = false;
     }
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
     boolean atDriveToPointAngularSetpoint =
         driveAtAngle.HeadingController.getPositionError() < DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE;
     atDriveToPointSetpoints = atDriveToPointTranslationSetpoint && atDriveToPointAngularSetpoint;
+    driveToPointXError = translationToTarget.getX();
+    driveToPointYError = translationToTarget.getY();
 
     DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
+    DogLog.log("Drive/DriveToPose/xError", driveToPointXError);
+    DogLog.log("Drive/DriveToPose/yError", driveToPointYError);
     DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
     DogLog.log("Drive/DriveToPose/WithinTroughRaiseDistance", withinTroughRaiseDistance);
+    DogLog.log("Drive/DriveToPose/WithinReefZone", withinReefZone);
     DogLog.log(
         "Drive/DriveToPose/AtDriveToPointTranslationSetpoint", atDriveToPointTranslationSetpoint);
     DogLog.log("Drive/DriveToPose/AtDriveToPointAngularSetpoint", atDriveToPointAngularSetpoint);
@@ -416,24 +437,44 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.wantedState = WantedState.DRIVE_TO_POINT;
   }
 
+  public boolean isDrivingToPointOrAtSetpoints() {
+    return this.wantedState == WantedState.DRIVE_TO_POINT || atDriveToPointSetpoints;
+  }
+
   public boolean isWithinCoralRaiseDistance() {
     return withinCoralRaiseDistance;
   }
 
   public boolean isReadyToRaiseAutoScoreCoral() {
-    return isWithinCoralRaiseDistance() && this.wantedState == WantedState.DRIVE_TO_POINT;
+    return isWithinCoralRaiseDistance() && isDrivingToPointOrAtSetpoints();
   }
 
   public boolean isWithinAlgaeRaiseDistance() {
     return withinAlgaeRaiseDistance;
   }
 
+  public boolean isReadyToRaiseAutoIntakeAlgae() {
+    return isWithinAlgaeRaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
   public boolean isWithinTroughRaiseDistance() {
     return withinTroughRaiseDistance;
   }
 
+  public boolean isReadyToRaiseAutoTroughCoral() {
+    return isWithinTroughRaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
+  public boolean isWithinReefZone() {
+    return withinReefZone;
+  }
+
   public boolean isAtDriveToPointSetpoints() {
     return atDriveToPointSetpoints;
+  }
+
+  public boolean isYErrorWithinTolerance() {
+    return Math.abs(driveToPointYError) < DRIVE_TO_POINT_Y_ERROR_TOLERANCE;
   }
 
   public void resetDriveToPoint() {

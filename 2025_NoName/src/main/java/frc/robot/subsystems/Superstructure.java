@@ -663,7 +663,7 @@ public class Superstructure extends SubsystemBase {
   private void intakeAlgaeL2() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
-    wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
+    wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF_L2);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L2);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
@@ -682,7 +682,7 @@ public class Superstructure extends SubsystemBase {
   private void intakeAlgaeL3() {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.INTAKING_ALGAE);
-    wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF);
+    wrist.setWantedState(Wrist.WantedState.INTAKING_ALGAE_REEF_L3);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L3);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }

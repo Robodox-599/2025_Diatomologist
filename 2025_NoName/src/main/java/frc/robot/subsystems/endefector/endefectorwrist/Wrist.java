@@ -24,7 +24,8 @@ public class Wrist {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
-    INTAKING_ALGAE_REEF,
+    INTAKING_ALGAE_REEF_L2,
+    INTAKING_ALGAE_REEF_L3,
     POSITION_PREPARED,
     POSITION_TROUGH,
     HOLDING_ALGAE,
@@ -37,7 +38,8 @@ public class Wrist {
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
-    INTAKING_ALGAE_REEF,
+    INTAKING_ALGAE_REEF_L2,
+    INTAKING_ALGAE_REEF_L3,
     POSITION_PREPARED,
     POSITION_TROUGH,
     HOLDING_ALGAE,
@@ -78,9 +80,17 @@ public class Wrist {
           currentState = CurrentState.POSITION_PREPARED;
         }
         break;
-      case INTAKING_ALGAE_REEF:
+      case INTAKING_ALGAE_REEF_L2:
         if (subsystemChecker.isAtSetpointElevator()) {
-          currentState = CurrentState.INTAKING_ALGAE_REEF;
+          currentState = CurrentState.INTAKING_ALGAE_REEF_L2;
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
+        break;
+      case INTAKING_ALGAE_REEF_L3:
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.POSITION_ALGAE_L3)) {
+          currentState = CurrentState.INTAKING_ALGAE_REEF_L3;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
         }
@@ -92,7 +102,8 @@ public class Wrist {
         currentState = CurrentState.POSITION_TROUGH;
         break;
       case SCORING_ALGAE_BARGE:
-        if (subsystemChecker.isAtSetpointElevator()) {
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.POSITION_ALGAE_BARGE)) {
           currentState = CurrentState.SCORING_ALGAE_BARGE;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
@@ -119,7 +130,10 @@ public class Wrist {
         case INTAKING_ALGAE_LOLLIPOP:
           setAngle(WristStates.INTAKING_ALGAE_LOLLIPOP);
           break;
-        case INTAKING_ALGAE_REEF:
+        case INTAKING_ALGAE_REEF_L2:
+          setAngle(WristStates.INTAKING_ALGAE_REEF);
+          break;
+        case INTAKING_ALGAE_REEF_L3:
           setAngle(WristStates.INTAKING_ALGAE_REEF);
           break;
         case POSITION_PREPARED:

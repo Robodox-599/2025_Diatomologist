@@ -431,7 +431,7 @@ public class Bindings extends SubsystemBase {
     if (superstructure.hasAlgae()) {
       if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
         return WantedSuperState.POSITION_ALGAE_BARGE;
-      } else if (wantedSuperState == WantedSuperState.POSITION_ALGAE_BARGE) {
+      } else {
         return WantedSuperState.POSITION_ALGAE_PROCESSOR;
       }
     }

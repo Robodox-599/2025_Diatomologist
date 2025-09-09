@@ -81,7 +81,8 @@ public class Wrist {
         }
         break;
       case INTAKING_ALGAE_REEF_L2:
-        if (subsystemChecker.isAtSetpointElevator()) {
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.POSITION_ALGAE_L2)) {
           currentState = CurrentState.INTAKING_ALGAE_REEF_L2;
         } else {
           currentState = CurrentState.POSITION_PREPARED;

@@ -855,13 +855,21 @@ public class Superstructure extends SubsystemBase {
         wantedSuperState = WantedSuperState.POSITION_CORAL_L4;
         break;
       case POSITION_ALGAE_L2:
-        wantedSuperState = WantedSuperState.POSITION_ALGAE_L2;
+        if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+        } else {
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_L2;
+        }
         break;
       case INTAKING_ALGAE_L2:
         wantedSuperState = WantedSuperState.POSITION_ALGAE_L2;
         break;
       case POSITION_ALGAE_L3:
-        wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;
+        if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
+        } else {
+          wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;
+        }
         break;
       case INTAKING_ALGAE_L3:
         wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;

@@ -61,7 +61,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
-  private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.03; // 3 cm
+  private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.05; // 5 cm
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
   private boolean withinCoralRaiseDistance = false;
   private static boolean withinAlgaeRaiseDistance = false;

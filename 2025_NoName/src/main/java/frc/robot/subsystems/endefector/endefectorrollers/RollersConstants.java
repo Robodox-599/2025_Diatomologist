@@ -25,11 +25,11 @@ public class RollersConstants {
 
   public static final double[] rollersVelocities = {
     -0.15, // intaking coral station
-    0.05, // ensuring coral
+    0.07, // ensuring coral
     0.6, // intaking algae
     0.0, // holding coral
     0.0, // VELOCITY NOT USED - holding algae
-    0.25, // scoring coral trough
+    0.15, // scoring coral trough
     -0.4, // scoring coral branch
     -0.6, // scoring algae
     0.0, // stopped

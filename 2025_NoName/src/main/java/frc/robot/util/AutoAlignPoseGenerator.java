@@ -107,7 +107,7 @@ public class AutoAlignPoseGenerator {
                   new Transform2d(0.0, -0.3, new Rotation2d(0)));
     }
 
-    targetPose = targetPose.transformBy(new Transform2d(-0.37, 0, new Rotation2d(0)));
+    targetPose = targetPose.transformBy(new Transform2d(-0.34, 0, new Rotation2d(0)));
 
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);

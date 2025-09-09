@@ -45,7 +45,7 @@ public class AutoRoutines {
     //
     // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
-    LEFTtoJ.done()
+    LEFTtoJ.recentlyDone()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
@@ -69,7 +69,7 @@ public class AutoRoutines {
     //
     // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
-    HPtoL.done()
+    HPtoL.recentlyDone()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
@@ -93,7 +93,7 @@ public class AutoRoutines {
     //
     // superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
-    HPtoK.done()
+    HPtoK.recentlyDone()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 

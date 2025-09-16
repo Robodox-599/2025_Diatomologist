@@ -52,7 +52,7 @@ public final class ElevatorConstants {
   public static final String followerMotorCANbus = "rio";
   public static final boolean followerInverted = true;
 
-  public static final double gearRatio = 5.4;
+  public static final double gearRatio = 6.0;
   public static final double inchesPerRev = 1.435406698564593;
 
   /* Position Setpoints (in inches) */

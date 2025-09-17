@@ -28,6 +28,8 @@ public abstract class ClimbIO {
 
   public void stallRollers() {}
 
+  public void releaseRampServo() {}
+
   public void stop() {}
 
   public void enableBrakeMode(boolean enable) {}

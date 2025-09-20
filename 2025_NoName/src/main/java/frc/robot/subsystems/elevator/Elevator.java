@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import dev.doglog.DogLog;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
@@ -19,6 +20,7 @@ public class Elevator {
     POSITION_ALGAE_L2,
     POSITION_ALGAE_L3,
     POSITION_PREPARED,
+    POSITION_PREPARED_AUTO,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
@@ -35,6 +37,7 @@ public class Elevator {
     POSITION_ALGAE_L2,
     POSITION_ALGAE_L3,
     POSITION_PREPARED,
+    POSITION_PREPARED_AUTO,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
@@ -80,6 +83,13 @@ public class Elevator {
           break;
         case POSITION_PREPARED:
           currentState = CurrentState.POSITION_PREPARED;
+          break;
+        case POSITION_PREPARED_AUTO:
+          if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
+            currentState = CurrentState.POSITION_PREPARED_AUTO;
+          } else {
+            currentState = CurrentState.STOPPED;
+          }
           break;
         case POSITION_CORAL_L1:
           currentState = CurrentState.POSITION_CORAL_L1;

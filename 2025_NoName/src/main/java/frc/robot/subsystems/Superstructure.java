@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,6 +42,7 @@ public class Superstructure extends SubsystemBase {
     POSITION_ALGAE_L3,
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
+    POSITION_PREPARED_AUTO,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
@@ -73,6 +75,7 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_L3,
     AUTO_INTAKE_ALGAE,
     POSITION_PREPARED,
+    POSITION_PREPARED_AUTO,
     POSITION_CORAL_L1,
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
@@ -235,6 +238,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case POSITION_PREPARED:
         currentSuperState = CurrentSuperState.POSITION_PREPARED;
+        break;
+      case POSITION_PREPARED_AUTO:
+        currentSuperState = CurrentSuperState.POSITION_PREPARED_AUTO;
         break;
       case POSITION_CORAL_L1:
         currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
@@ -556,6 +562,9 @@ public class Superstructure extends SubsystemBase {
       case POSITION_PREPARED:
         prepare();
         break;
+      case POSITION_PREPARED_AUTO:
+        prepareInAuto();
+        break;
       case POSITION_CORAL_L1:
         positionToCoralL1();
         break;
@@ -690,6 +699,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void prepare() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void prepareInAuto() {
     elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
@@ -886,7 +903,11 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setWantedSuperStateCommand(WantedSuperState wantedState) {
-    return this.runOnce(() -> setWantedSuperState(wantedState));
+    return runOnce(() -> setWantedSuperState(wantedState));
+  }
+
+  public Command setWantedSuperStateInstantCommand(WantedSuperState wantedState) {
+    return new InstantCommand(() -> setWantedSuperState(wantedState));
   }
 
   private void setWantedSuperState(WantedSuperState state) {

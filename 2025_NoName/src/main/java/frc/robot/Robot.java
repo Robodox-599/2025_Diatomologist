@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 
     subsystemVisualizer = new SubsystemVisualizer(elevator, wrist, rollers);
 
-    autoRoutines = new AutoRoutines(autoFactory, superstructure);
+    autoRoutines = new AutoRoutines(autoFactory, superstructure, drivetrain);
 
     // Auto chooser setup
     RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());

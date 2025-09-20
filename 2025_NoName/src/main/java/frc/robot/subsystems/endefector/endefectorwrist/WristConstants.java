@@ -5,7 +5,7 @@ public class WristConstants {
   public static final int wristMotorID = 15;
   public static final int cancoderID = 17;
   public static final String wristMotorCANBus = "rio";
-  public static final double gearRatio = 58.78;
+  public static final double gearRatio = 35.0;
   public static final double wristMOI = 0.04;
   public static final double wristPositionTolerance = 0.02; // rotations
 

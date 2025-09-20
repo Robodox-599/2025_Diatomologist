@@ -71,9 +71,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static double driveToPointXError;
   private static double driveToPointYError;
 
-  private final PIDController choreoXController = new PIDController(0.4, 0, 0);
-  private final PIDController choreoYController = new PIDController(0.4, 0, 0);
-  private final PIDController choreoThetaPID = new PIDController(1, 0, 0);
+  private final PIDController choreoXController = new PIDController(7, 0, 0);
+  private final PIDController choreoYController = new PIDController(7, 0, 0);
+  private final PIDController choreoThetaPID = new PIDController(7, 0, 0);
   private SwerveSample choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();

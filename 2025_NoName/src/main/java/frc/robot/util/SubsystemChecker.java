@@ -93,6 +93,11 @@ public class SubsystemChecker {
         < ElevatorConstants.positionToleranceInches;
   }
 
+  public boolean isAtPositionWrist(WristConstants.WristStates state) {
+    return Math.abs(wristDegrees - SubsystemUtil.wristStateToSetpoint(state))
+        < WristConstants.wristPositionTolerance;
+  }
+
   public boolean isWristAtPrepared() {
     return Math.abs(wristDegrees - 0.79) < WristConstants.wristPositionTolerance;
   }

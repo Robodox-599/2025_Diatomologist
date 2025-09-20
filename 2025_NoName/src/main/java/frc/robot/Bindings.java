@@ -426,7 +426,7 @@ public class Bindings extends SubsystemBase {
 
   public WantedSuperState returnLogicState() {
     WantedSuperState wantedSuperState = superstructure.getWantedSuperState();
-    if (superstructure.hasAlgae()) {
+    if (superstructure.isAlgaeIntaked()) {
       if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
         return WantedSuperState.POSITION_ALGAE_BARGE;
       } else {
@@ -469,7 +469,7 @@ public class Bindings extends SubsystemBase {
   }
 
   public WantedSuperState returnGamePieceScoreState() {
-    if (superstructure.hasAlgae()) {
+    if (superstructure.isAlgaeIntaked()) {
       return WantedSuperState.SCORING_ALGAE;
     } else {
       return WantedSuperState.SCORING_CORAL;

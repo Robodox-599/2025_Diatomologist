@@ -9,9 +9,16 @@ public abstract class RollersIO {
   protected double velocity = 0.0;
   protected double desiredVelocity = 0.0;
   protected boolean atSetpoint = false;
+
+  protected boolean isCoralInRamp = false;
+  protected boolean isCoralIntakedInEndefector = false;
+  protected boolean isAlgaeIntaked = false;
+  protected boolean isCoralTroughScored = false;
+  protected boolean isCoralBranchScored = false;
+  protected boolean isAlgaeScored = false;
+
   protected boolean isAlgaeDetected = false;
   protected boolean isCoralDetected = false;
-  protected boolean isCoralEnsured = false;
 
   public void updateInputs() {}
 

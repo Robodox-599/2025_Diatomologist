@@ -44,7 +44,6 @@ public class RollersIOSim extends RollersIO {
     DogLog.log("Rollers/Temp", 60);
 
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
-    DogLog.log("Rollers/CoralEnsured", super.isCoralEnsured);
   }
 
   @Override
@@ -66,6 +65,5 @@ public class RollersIOSim extends RollersIO {
   @Override
   public void setCoralStateSim(boolean state) {
     super.isCoralDetected = state;
-    super.isCoralEnsured = state;
   }
 }

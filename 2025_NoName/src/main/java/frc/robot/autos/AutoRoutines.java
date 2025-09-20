@@ -26,22 +26,24 @@ public class AutoRoutines {
   public AutoRoutine leftAutoRoutine() {
     AutoRoutine routine = autoFactory.newRoutine("leftAuto");
 
-    AutoTrajectory LEFTtoJ = routine.trajectory("LEFTtoJ");
-    AutoTrajectory JtoHP = routine.trajectory("JtoHP");
+    AutoTrajectory LEFTtoI = routine.trajectory("LEFTtoI");
+    AutoTrajectory ItoHP = routine.trajectory("ItoHP");
     AutoTrajectory HPtoL = routine.trajectory("HPtoL");
     AutoTrajectory LtoHP = routine.trajectory("LtoHP");
     AutoTrajectory HPtoK = routine.trajectory("HPtoK");
+    AutoTrajectory KtoHP = routine.trajectory("KtoHP");
+    AutoTrajectory HPtoJ = routine.trajectory("HPtoJ");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                LEFTtoJ.resetOdometry(),
+                LEFTtoI.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.POSITION_PREPARED_AUTO),
-                LEFTtoJ.cmd()));
+                LEFTtoI.cmd()));
 
-    LEFTtoJ.active()
+    LEFTtoI.active()
         .and(
             () ->
                 (drivetrain.isWithinCoralRaiseDistance()
@@ -50,20 +52,20 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
 
-    LEFTtoJ.recentlyDone()
+    LEFTtoI.recentlyDone()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
-    LEFTtoJ.recentlyDone()
+    LEFTtoI.recentlyDone()
         .and(() -> !superstructureCommands.isCoralEnsured())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.INTAKING_CORAL_STATION),
-                JtoHP.cmd()));
+                ItoHP.cmd()));
 
-    JtoHP.done().onTrue(Commands.sequence(HPtoL.cmd()));
+    ItoHP.done().onTrue(Commands.sequence(HPtoL.cmd()));
 
     HPtoL.active()
         .and(
@@ -102,29 +104,17 @@ public class AutoRoutines {
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
-    return routine;
-  }
-
-  public AutoRoutine rightAutoRoutine() {
-    AutoRoutine routine = autoFactory.newRoutine("rightAuto");
-
-    AutoTrajectory RIGHTtoE = routine.trajectory("RIGHTtoE");
-    AutoTrajectory EtoHP = routine.trajectory("EtoHP");
-    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
-    AutoTrajectory CtoHP = routine.trajectory("CtoHP");
-    AutoTrajectory HPtoD = routine.trajectory("HPtoD");
-
-    routine
-        .active()
+    HPtoK.recentlyDone()
+        .and(() -> !superstructureCommands.isCoralEnsured())
         .onTrue(
-            Commands.sequence(
-                RIGHTtoE.resetOdometry(),
+            Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.POSITION_PREPARED),
-                superstructureCommands.setCoralStateSimCommand(true),
-                RIGHTtoE.cmd()));
+                    WantedSuperState.INTAKING_CORAL_STATION),
+                KtoHP.cmd()));
 
-    RIGHTtoE.active()
+    KtoHP.done().onTrue(HPtoJ.cmd());
+
+    HPtoJ.active()
         .and(
             () ->
                 (drivetrain.isWithinCoralRaiseDistance()
@@ -133,14 +123,51 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
 
-    RIGHTtoE.done()
+    HPtoJ.recentlyDone()
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+
+    return routine;
+  }
+
+  public AutoRoutine rightAutoRoutine() {
+    AutoRoutine routine = autoFactory.newRoutine("rightAuto");
+
+    AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
+    AutoTrajectory EtoHP = routine.trajectory("EtoHP");
+    AutoTrajectory HPtoC = routine.trajectory("HPtoC");
+    AutoTrajectory CtoHP = routine.trajectory("CtoHP");
+    AutoTrajectory HPtoD = routine.trajectory("HPtoD");
+    AutoTrajectory DtoHP = routine.trajectory("DtoHP");
+    AutoTrajectory HPtoE = routine.trajectory("HPtoE");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                RIGHTtoF.resetOdometry(),
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.POSITION_PREPARED),
+                superstructureCommands.setCoralStateSimCommand(true),
+                RIGHTtoF.cmd()));
+
+    RIGHTtoF.active()
+        .and(
+            () ->
+                (drivetrain.isWithinCoralRaiseDistance()
+                    && superstructureCommands.isCoralEnsured()))
+        .onTrue(
+            superstructureCommands.setWantedSuperStateInstantCommand(
+                WantedSuperState.POSITION_CORAL_L4));
+
+    RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.AUTO_SCORE_L4_LEFT),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
-    RIGHTtoE.recentlyDone()
+    RIGHTtoF.recentlyDone()
         .and(() -> !superstructureCommands.isCoralEnsured())
         .onTrue(
             Commands.sequence(

@@ -3,10 +3,10 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 public class RollersConstants {
   public static enum EndefectorRollerStates {
     INTAKING_CORAL_STATION(0),
-    ENSURING_CORAL(1),
-    INTAKING_ALGAE(2),
-    HOLD_CORAL(3),
-    HOLD_ALGAE(4),
+    ENSURING_CORAL_FORWARDS(1),
+    ENSURING_CORAL_BACKWARDS(2),
+    INTAKING_ALGAE(3),
+    HOLD_CORAL(4),
     SCORING_CORAL_TROUGH(5),
     SCORING_CORAL_BRANCH(6),
     SCORING_ALGAE(7),
@@ -24,14 +24,14 @@ public class RollersConstants {
   }
 
   public static final double[] rollersVelocities = {
-    -0.15, // intaking coral station
-    0.07, // ensuring coral
+    -0.3, // intaking coral station
+    0.2, // ensuring coral forwards
+    -0.2, // ensuring coral backwards
     0.6, // intaking algae
     0.0, // holding coral
-    0.0, // VELOCITY NOT USED - holding algae
     0.15, // scoring coral trough
     -0.4, // scoring coral branch
-    -0.6, // scoring algae
+    -0.8, // scoring algae
     0.0, // stopped
   };
 
@@ -60,12 +60,13 @@ public class RollersConstants {
 
   public static final double rollersDutyCycleOutHoldAlgae = 0.1;
 
-  public static final int beakBreakPort = 3;
+  public static final int rampBeamBreakPort = 3;
+  public static final int endefectorBeamBreakPort = 4;
 
-  public static final double beamBreakDebounce = 0.4;
-  public static final double ensureCoralDebounce = 0.7;
-  public static final double algaeDebounce = 0.4;
-  public static final double coralL1Debounce = 1;
-
-  public static final double rotationsToMoveAfterDetectingCoral = 0.0;
+  public static final double rampCoralDebounce = 0.1;
+  public static final double coralIntakeDebounce = 0.05;
+  public static final double algaeIntakeDebounce = 0.25;
+  public static final double coralTroughScoreDebounce = 0.3;
+  public static final double coralBranchScoreDebounce = 0.1;
+  public static final double algaeScoreDebounce = 0.5;
 }

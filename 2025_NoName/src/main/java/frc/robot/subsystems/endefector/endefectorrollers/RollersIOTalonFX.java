@@ -23,10 +23,14 @@ import frc.robot.util.SubsystemUtil;
 public class RollersIOTalonFX extends RollersIO {
   private final TalonFX rollersMotor;
   TalonFXConfiguration rollersConfig;
-  Debouncer algaeStallDebouncer = new Debouncer(algaeDebounce);
-  Debouncer coralBeamBreakDebouncer = new Debouncer(beamBreakDebounce);
-  Debouncer ensureCoralBeamBreakDebouncer = new Debouncer(ensureCoralDebounce);
-  private DigitalInput m_BeamBreak2;
+  Debouncer rampCoralDebouncer = new Debouncer(rampCoralDebounce);
+  Debouncer coralIntakeDebouncer = new Debouncer(coralIntakeDebounce);
+  Debouncer algaeIntakeDebouncer = new Debouncer(algaeIntakeDebounce);
+  Debouncer coralTroughScoreDebouncer = new Debouncer(coralTroughScoreDebounce);
+  Debouncer coralBranchScoreDebouncer = new Debouncer(coralBranchScoreDebounce);
+  Debouncer algaeScoreDebouncer = new Debouncer(algaeScoreDebounce);
+  private DigitalInput rampBeamBreak;
+  private DigitalInput endefectorBeamBreak;
 
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -38,7 +42,8 @@ public class RollersIOTalonFX extends RollersIO {
 
   public RollersIOTalonFX() {
     rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
-    m_BeamBreak2 = new DigitalInput(RollersConstants.beakBreakPort);
+    rampBeamBreak = new DigitalInput(RollersConstants.rampBeamBreakPort);
+    endefectorBeamBreak = new DigitalInput(RollersConstants.endefectorBeamBreakPort);
 
     rollersConfig = new TalonFXConfiguration();
 
@@ -55,9 +60,13 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    coralBeamBreakDebouncer.setDebounceType(DebounceType.kFalling);
-    ensureCoralBeamBreakDebouncer.setDebounceType(DebounceType.kBoth);
-    algaeStallDebouncer.setDebounceType(DebounceType.kBoth);
+    rampCoralDebouncer.setDebounceType(DebounceType.kFalling);
+    coralIntakeDebouncer.setDebounceType(DebounceType.kFalling);
+    coralTroughScoreDebouncer.setDebounceType(DebounceType.kRising);
+    coralBranchScoreDebouncer.setDebounceType(DebounceType.kRising);
+
+    algaeIntakeDebouncer.setDebounceType(DebounceType.kRising);
+    algaeScoreDebouncer.setDebounceType(DebounceType.kFalling);
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
     rollersMotor.optimizeBusUtilization();
@@ -80,9 +89,13 @@ public class RollersIOTalonFX extends RollersIO {
     super.velocity = velocity.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
-    super.isAlgaeDetected = algaeStallDebouncer.calculate(super.statorCurrentAmps >= 20);
-    super.isCoralDetected = coralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
-    super.isCoralEnsured = ensureCoralBeamBreakDebouncer.calculate(!m_BeamBreak2.get());
+
+    super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
+    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
+    super.isAlgaeIntaked = algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= 20);
+    super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());
+    super.isCoralBranchScored = coralBranchScoreDebouncer.calculate(endefectorBeamBreak.get());
+    super.isAlgaeScored = algaeScoreDebouncer.calculate(!(super.statorCurrentAmps >= 20));
 
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
@@ -93,8 +106,6 @@ public class RollersIOTalonFX extends RollersIO {
 
     DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
     DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
-    DogLog.log("Rollers/CoralEnsured", super.isCoralEnsured);
-    DogLog.log("Rollers/BeamBreak", m_BeamBreak2.get());
   }
 
   @Override

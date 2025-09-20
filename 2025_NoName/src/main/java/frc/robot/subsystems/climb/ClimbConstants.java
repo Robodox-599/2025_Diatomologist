@@ -6,6 +6,7 @@ public class ClimbConstants {
   public static final String climbMotorCANbus = "rio";
   public static final int rollersMotorID = 0;
   public static final String rollersMotorCANbus = "rio";
+  public static final int rampServoPort = 21;
   public static final double climbMOI = 0.15;
   public static final double rollersMOI = 0.04;
   public static final double gearRatio = 5.4;

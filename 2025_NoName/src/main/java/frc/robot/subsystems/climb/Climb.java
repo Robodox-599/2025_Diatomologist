@@ -63,6 +63,7 @@ public class Climb extends SubsystemBase {
       case CLIMB_PREPARED:
         setClimbPosition(ClimbStates.CLIMB_PREPARED);
         setRollersVelocity(0.5);
+        releaseRampServo();
         break;
       case CLIMBING:
         setClimbPosition(ClimbStates.CLIMBING);
@@ -84,6 +85,10 @@ public class Climb extends SubsystemBase {
 
   public void setRollersVelocity(double velocity) {
     io.setRollersVelocity(velocity);
+  }
+
+  public void releaseRampServo() {
+    io.releaseRampServo();
   }
 
   public boolean isAtTargetPosition() {

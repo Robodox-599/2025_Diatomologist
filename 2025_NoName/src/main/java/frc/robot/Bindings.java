@@ -384,22 +384,32 @@ public class Bindings extends SubsystemBase {
         }
       }
     }
-    if (coralScoreLevel == CoralScoreLevel.POSITION_CORAL_L1) {
-      switch (troughAutoAlignSide) {
-        default:
-        case LEFT:
-          return WantedSuperState.AUTO_ALIGN_LEFT_TROUGH;
-        case MIDDLE_LEFT:
-          return WantedSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
-        case MIDDLE_RIGHT:
-          return WantedSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
-        case RIGHT:
-          return WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
-      }
-    } else {
-      return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
-          ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH
-          : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+    switch (coralScoreLevel) {
+      default:
+      case POSITION_CORAL_L1:
+        switch (troughAutoAlignSide) {
+          default:
+          case LEFT:
+            return WantedSuperState.AUTO_ALIGN_LEFT_TROUGH;
+          case MIDDLE_LEFT:
+            return WantedSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
+          case MIDDLE_RIGHT:
+            return WantedSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
+          case RIGHT:
+            return WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
+        }
+      case POSITION_CORAL_L2:
+        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
+            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
+      case POSITION_CORAL_L3:
+        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
+            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
+      case POSITION_CORAL_L4:
+        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
+            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
     }
   }
 

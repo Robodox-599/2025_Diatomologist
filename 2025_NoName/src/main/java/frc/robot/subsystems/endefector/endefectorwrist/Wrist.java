@@ -113,7 +113,12 @@ public class Wrist {
         currentState = CurrentState.POSITION_BRANCH_L3;
         break;
       case POSITION_BRANCH_L4:
-        currentState = CurrentState.POSITION_BRANCH_L4;
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.POSITION_CORAL_L4)) {
+          currentState = CurrentState.POSITION_BRANCH_L4;
+        } else {
+          currentState = CurrentState.POSITION_BRANCH_L4;
+        }
         break;
       case SCORING_ALGAE_BARGE:
         if (subsystemChecker.isAtHeightElevator(

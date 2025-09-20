@@ -47,11 +47,15 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
     AUTO_ALIGN_LEFT_TROUGH,
-    AUTO_ALIGN_LEFT_BRANCH,
+    AUTO_ALIGN_LEFT_BRANCH_L2,
+    AUTO_ALIGN_LEFT_BRANCH_L3,
+    AUTO_ALIGN_LEFT_BRANCH_L4,
     AUTO_ALIGN_MIDDLE_LEFT_TROUGH,
     AUTO_ALIGN_MIDDLE_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_TROUGH,
-    AUTO_ALIGN_RIGHT_BRANCH,
+    AUTO_ALIGN_RIGHT_BRANCH_L2,
+    AUTO_ALIGN_RIGHT_BRANCH_L3,
+    AUTO_ALIGN_RIGHT_BRANCH_L4,
     AUTO_ALIGN_MIDDLE_ALGAE,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
@@ -79,11 +83,15 @@ public class Superstructure extends SubsystemBase {
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
     AUTO_ALIGN_LEFT_TROUGH,
-    AUTO_ALIGN_LEFT_BRANCH,
+    AUTO_ALIGN_LEFT_BRANCH_L2,
+    AUTO_ALIGN_LEFT_BRANCH_L3,
+    AUTO_ALIGN_LEFT_BRANCH_L4,
     AUTO_ALIGN_MIDDLE_LEFT_TROUGH,
     AUTO_ALIGN_MIDDLE_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_TROUGH,
-    AUTO_ALIGN_RIGHT_BRANCH,
+    AUTO_ALIGN_RIGHT_BRANCH_L2,
+    AUTO_ALIGN_RIGHT_BRANCH_L3,
+    AUTO_ALIGN_RIGHT_BRANCH_L4,
     AUTO_ALIGN_MIDDLE_ALGAE,
     AUTO_SCORE_L1_LEFT,
     AUTO_SCORE_L1_MIDDLE_LEFT,
@@ -244,8 +252,14 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_LEFT_TROUGH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH;
         break;
-      case AUTO_ALIGN_LEFT_BRANCH:
-        currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
+      case AUTO_ALIGN_LEFT_BRANCH_L2:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L2;
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L3:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L3;
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L4:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4;
         break;
       case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
@@ -256,8 +270,14 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_RIGHT_TROUGH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH;
         break;
-      case AUTO_ALIGN_RIGHT_BRANCH:
-        currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+      case AUTO_ALIGN_RIGHT_BRANCH_L2:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L3:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L4:
+        currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
         break;
       case AUTO_ALIGN_MIDDLE_ALGAE:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
@@ -350,11 +370,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L2;
         }
         break;
       case AUTO_SCORE_L2_RIGHT:
@@ -369,11 +389,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
         }
         break;
       case AUTO_SCORE_L3_LEFT:
@@ -388,11 +408,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L3;
         }
         break;
       case AUTO_SCORE_L3_RIGHT:
@@ -407,11 +427,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
         }
         break;
       case AUTO_SCORE_L4_LEFT:
@@ -426,11 +446,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4;
         }
         break;
       case AUTO_SCORE_L4_RIGHT:
@@ -445,11 +465,11 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_CORAL_BRANCH;
         } else if (drivetrain.isReadyToRaiseAutoScoreCoral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4
                 || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
           currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
         }
         break;
       case POSITION_ALGAE_PROCESSOR:
@@ -561,8 +581,14 @@ public class Superstructure extends SubsystemBase {
       case POSITION_CORAL_L4:
         positionToCoralL4();
         break;
-      case AUTO_ALIGN_LEFT_BRANCH:
-        autoAlignToBranch(true);
+      case AUTO_ALIGN_LEFT_BRANCH_L2:
+        autoAlignToL2orL3Branch(true);
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L3:
+        autoAlignToL2orL3Branch(true);
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L4:
+        autoAlignToL4Branch(true);
         break;
       case AUTO_ALIGN_LEFT_TROUGH:
         autoAlignToTrough(1);
@@ -573,8 +599,14 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
         autoAlignToTrough(3);
         break;
-      case AUTO_ALIGN_RIGHT_BRANCH:
-        autoAlignToBranch(false);
+      case AUTO_ALIGN_RIGHT_BRANCH_L2:
+        autoAlignToL2orL3Branch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L3:
+        autoAlignToL2orL3Branch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L4:
+        autoAlignToL4Branch(false);
         break;
       case AUTO_ALIGN_RIGHT_TROUGH:
         autoAlignToTrough(4);
@@ -752,9 +784,20 @@ public class Superstructure extends SubsystemBase {
    * @param useLeftBranch true if the target branch is the left branch, false if it is the right
    *     branch
    */
-  private void autoAlignToBranch(boolean useLeftBranch) {
+  private void autoAlignToL2orL3Branch(boolean useLeftBranch) {
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
+        AutoAlignPoseGenerator.getNearestL2orL3BranchPosition(drivetrain.getPose(), useLeftBranch));
+  }
+
+  /**
+   * Automatically drives to a branch
+   *
+   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
+   *     branch
+   */
+  private void autoAlignToL4Branch(boolean useLeftBranch) {
+    drivetrain.setTargetPoseForDriveToPoint(
+        AutoAlignPoseGenerator.getNearestL4BranchPosition(drivetrain.getPose(), useLeftBranch));
   }
 
   /**
@@ -814,7 +857,13 @@ public class Superstructure extends SubsystemBase {
   public void setTeleopDriveState() {
     drivetrain.setWantedState(CommandSwerveDrivetrain.WantedState.TELEOP_DRIVE);
     switch (currentSuperState) {
-      case AUTO_ALIGN_LEFT_BRANCH:
+      case AUTO_ALIGN_LEFT_BRANCH_L2:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L3:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L4:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case AUTO_ALIGN_LEFT_TROUGH:
@@ -829,7 +878,13 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_RIGHT_TROUGH:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case AUTO_ALIGN_RIGHT_BRANCH:
+      case AUTO_ALIGN_RIGHT_BRANCH_L2:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L3:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L4:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case AUTO_ALIGN_MIDDLE_ALGAE:

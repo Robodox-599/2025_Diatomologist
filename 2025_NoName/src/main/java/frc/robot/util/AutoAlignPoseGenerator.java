@@ -12,13 +12,25 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class AutoAlignPoseGenerator {
   private static int algaeReefFaceIndex = 0;
 
+  public static Pose2d getNearestL2orL3BranchPosition(Pose2d robotPose, boolean useLeftBranch) {
+    Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
+    Pose2d targetPose = branchPose.transformBy(new Transform2d(-0.3, 0, new Rotation2d(0)));
+    return targetPose;
+  }
+
+  public static Pose2d getNearestL4BranchPosition(Pose2d robotPose, boolean useLeftBranch) {
+    Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
+    Pose2d targetPose = branchPose.transformBy(new Transform2d(-0.12, 0, new Rotation2d(0)));
+    return targetPose;
+  }
+
   /**
    * Finds nearest branch position
    *
    * @param robotPose robot pose
    * @param useLeftBranch true if left branch, false if right branch
    */
-  public static Pose2d getNearestBranchPosition(Pose2d robotPose, boolean useLeftBranch) {
+  private static Pose2d getNearestBranchPosition(Pose2d robotPose, boolean useLeftBranch) {
     double minDistance = Double.MAX_VALUE;
     int nearestFaceIndex = -1;
 

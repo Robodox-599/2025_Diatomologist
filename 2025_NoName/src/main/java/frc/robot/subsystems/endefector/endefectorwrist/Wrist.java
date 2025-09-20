@@ -28,8 +28,10 @@ public class Wrist {
     INTAKING_ALGAE_REEF_L3,
     POSITION_PREPARED,
     POSITION_TROUGH,
+    POSITION_BRANCH_L2,
+    POSITION_BRANCH_L3,
+    POSITION_BRANCH_L4,
     HOLDING_ALGAE,
-    SCORING_CORAL,
     SCORING_ALGAE_BARGE,
     STOPPED,
   }
@@ -42,8 +44,10 @@ public class Wrist {
     INTAKING_ALGAE_REEF_L3,
     POSITION_PREPARED,
     POSITION_TROUGH,
+    POSITION_BRANCH_L2,
+    POSITION_BRANCH_L3,
+    POSITION_BRANCH_L4,
     HOLDING_ALGAE,
-    SCORING_CORAL,
     SCORING_ALGAE_BARGE,
     STOPPED,
   }
@@ -102,6 +106,15 @@ public class Wrist {
       case POSITION_TROUGH:
         currentState = CurrentState.POSITION_TROUGH;
         break;
+      case POSITION_BRANCH_L2:
+        currentState = CurrentState.POSITION_BRANCH_L2;
+        break;
+      case POSITION_BRANCH_L3:
+        currentState = CurrentState.POSITION_BRANCH_L3;
+        break;
+      case POSITION_BRANCH_L4:
+        currentState = CurrentState.POSITION_BRANCH_L4;
+        break;
       case SCORING_ALGAE_BARGE:
         if (subsystemChecker.isAtHeightElevator(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_BARGE)) {
@@ -142,6 +155,15 @@ public class Wrist {
           break;
         case POSITION_TROUGH:
           setAngle(WristStates.POSITION_TROUGH);
+          break;
+        case POSITION_BRANCH_L2:
+          setAngle(WristStates.POSITION_BRANCH_L2);
+          break;
+        case POSITION_BRANCH_L3:
+          setAngle(WristStates.POSITION_BRANCH_L3);
+          break;
+        case POSITION_BRANCH_L4:
+          setAngle(WristStates.POSITION_BRANCH_L4);
           break;
         case SCORING_ALGAE_BARGE:
           setAngle(WristStates.SCORING_ALGAE_BARGE);

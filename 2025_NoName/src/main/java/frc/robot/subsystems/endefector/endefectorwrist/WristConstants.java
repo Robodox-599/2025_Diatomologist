@@ -44,8 +44,10 @@ public class WristConstants {
     INTAKING_ALGAE_REEF(3),
     POSITION_PREPARED(4),
     POSITION_TROUGH(5),
-    SCORING_CORAL(6),
-    SCORING_ALGAE_BARGE(7);
+    POSITION_BRANCH_L2(6),
+    POSITION_BRANCH_L3(7),
+    POSITION_BRANCH_L4(8),
+    SCORING_ALGAE_BARGE(9);
 
     private final int index;
 
@@ -65,7 +67,9 @@ public class WristConstants {
     0.91, // INTAKING ALGAE REEF
     0.79, // POSITION PREPARED
     1.05, // POSITION TROUGH
-    0.79, // SCORING CORAL
+    0.95, // POSITION BRANCH L2
+    0.95, // POSITION BRANCH L3
+    0.70, // POSITION BRANCH L4
     0.79 // SCORING ALGAE BARGE
   };
 }

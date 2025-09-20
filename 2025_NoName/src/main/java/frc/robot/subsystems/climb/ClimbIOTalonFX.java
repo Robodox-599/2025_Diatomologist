@@ -86,7 +86,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     rollersCurrent = rollersMotor.getStatorCurrent();
     rollersTemperature = rollersMotor.getDeviceTemp();
     rollersStatorCurrent = rollersMotor.getStatorCurrent();
-    
+
     rampServo = new Servo(ClimbConstants.rampServoPort);
     cageDetectDebouncer.setDebounceType(Debouncer.DebounceType.kRising);
 

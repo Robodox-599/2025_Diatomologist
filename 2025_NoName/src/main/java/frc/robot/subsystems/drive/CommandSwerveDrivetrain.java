@@ -393,7 +393,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
     double linearDistance = translationToTarget.getNorm();
 
-    if (distanceFromCenter <= 1.6) { // distance from center + half bumper width + reef zone
+    if (distanceFromCenter <= 1.8) { // distance from center + half bumper width + reef zone
       withinCoralRaiseDistance = true;
       withinReefZone = true;
     } else {

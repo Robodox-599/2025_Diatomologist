@@ -17,9 +17,6 @@ public abstract class RollersIO {
   protected boolean isCoralBranchScored = false;
   protected boolean isAlgaeScored = false;
 
-  protected boolean isAlgaeDetected = false;
-  protected boolean isCoralDetected = false;
-
   public void updateInputs() {}
 
   public void stop() {}
@@ -32,7 +29,5 @@ public abstract class RollersIO {
     return velocity;
   }
 
-  public void setCoralStateSim(boolean state) {
-    isCoralDetected = state;
-  }
+  public void setCoralStateSim(boolean state) {}
 }

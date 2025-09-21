@@ -49,6 +49,7 @@ public class Rollers {
     Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
+    DogLog.log("Rollers/IsCoralEnsured", isCoralEnsured());
   }
 
   private void handleStateTransitions() {
@@ -94,10 +95,10 @@ public class Rollers {
         }
         break;
       case HOLD_ALGAE:
-        if (isAlgaeIntaked()) {
-          currentState = CurrentState.HOLD_ALGAE;
-        } else {
+        if (!isAlgaeIntaked()) {
           currentState = CurrentState.STOPPED;
+        } else {
+          currentState = CurrentState.HOLD_ALGAE;
         }
         break;
       case SCORING_CORAL_TROUGH:
@@ -216,5 +217,6 @@ public class Rollers {
 
   public void setCoralStateSim(boolean state) {
     io.setCoralStateSim(state);
+    wantedState = WantedState.HOLD_CORAL;
   }
 }

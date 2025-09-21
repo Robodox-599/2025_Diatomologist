@@ -104,8 +104,12 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
 
-    DogLog.log("Rollers/AlgaeDetected", super.isAlgaeDetected);
-    DogLog.log("Rollers/CoralDetected", super.isCoralDetected);
+    DogLog.log("Rollers/CoralInRamp", super.isCoralInRamp);
+    DogLog.log("Rollers/CoralIntakedInEndefector", super.isCoralIntakedInEndefector);
+    DogLog.log("Rollers/AlgaeIntaked", super.isAlgaeIntaked);
+    DogLog.log("Rollers/CoralTroughScored", super.isCoralTroughScored);
+    DogLog.log("Rollers/CoralBranchScored", super.isCoralBranchScored);
+    DogLog.log("Rollers/AlgaeScored", super.isAlgaeScored);
   }
 
   @Override

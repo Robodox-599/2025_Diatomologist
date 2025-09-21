@@ -708,7 +708,7 @@ public class Superstructure extends SubsystemBase {
 
   private void prepare() {
     elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -716,7 +716,7 @@ public class Superstructure extends SubsystemBase {
 
   private void prepareInAuto() {
     elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -724,7 +724,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToCoralL1() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_TROUGH);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L1);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -732,7 +732,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToCoralL2() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L2);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L2);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -740,7 +740,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToCoralL3() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L3);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L3);
     // climb.setWantedState(Climb.WantedState.STOWED);
@@ -748,7 +748,7 @@ public class Superstructure extends SubsystemBase {
 
   private void positionToCoralL4() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L4);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
     // climb.setWantedState(Climb.WantedState.STOWED);

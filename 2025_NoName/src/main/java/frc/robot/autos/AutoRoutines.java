@@ -54,8 +54,7 @@ public class AutoRoutines {
 
     LEFTtoI.recentlyDone()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                WantedSuperState.AUTO_SCORE_L4_RIGHT));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     LEFTtoI.recentlyDone()
         .and(() -> !superstructureCommands.isCoralEnsured())
@@ -125,7 +124,8 @@ public class AutoRoutines {
 
     HPtoJ.recentlyDone()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     return routine;
   }
@@ -134,7 +134,7 @@ public class AutoRoutines {
     AutoRoutine routine = autoFactory.newRoutine("rightAuto");
 
     AutoTrajectory RIGHTtoF = routine.trajectory("RIGHTtoF");
-    AutoTrajectory EtoHP = routine.trajectory("EtoHP");
+    AutoTrajectory FtoHP = routine.trajectory("FtoHP");
     AutoTrajectory HPtoC = routine.trajectory("HPtoC");
     AutoTrajectory CtoHP = routine.trajectory("CtoHP");
     AutoTrajectory HPtoD = routine.trajectory("HPtoD");
@@ -164,7 +164,7 @@ public class AutoRoutines {
         .onTrue(
             Commands.sequence(
                 superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.AUTO_SCORE_L4_LEFT),
+                    WantedSuperState.AUTO_SCORE_L4_RIGHT),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
     RIGHTtoF.recentlyDone()
@@ -174,9 +174,9 @@ public class AutoRoutines {
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.INTAKING_CORAL_STATION),
                 superstructureCommands.setCoralStateSimCommand(true),
-                EtoHP.cmd()));
+                FtoHP.cmd()));
 
-    EtoHP.done().onTrue(HPtoC.cmd());
+    FtoHP.done().onTrue(HPtoC.cmd());
 
     HPtoC.done()
         .onTrue(
@@ -201,6 +201,24 @@ public class AutoRoutines {
             Commands.sequence(
                 superstructureCommands.setWantedSuperStateCommand(
                     WantedSuperState.AUTO_SCORE_L4_RIGHT),
+                superstructureCommands.setCoralStateSimCommand(false)));
+
+    HPtoD.recentlyDone()
+        .and(() -> !superstructureCommands.isCoralEnsured())
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.INTAKING_CORAL_STATION),
+                superstructureCommands.setCoralStateSimCommand(true),
+                DtoHP.cmd()));
+
+    DtoHP.done().onTrue(HPtoE.cmd());
+
+    HPtoE.done()
+        .onTrue(
+            Commands.sequence(
+                superstructureCommands.setWantedSuperStateCommand(
+                    WantedSuperState.AUTO_SCORE_L4_LEFT),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
     return routine;

@@ -117,7 +117,7 @@ public class Wrist {
             ElevatorConstants.ElevatorStates.POSITION_CORAL_L4)) {
           currentState = CurrentState.POSITION_BRANCH_L4;
         } else {
-          currentState = CurrentState.POSITION_BRANCH_L4;
+          currentState = CurrentState.POSITION_PREPARED;
         }
         break;
       case SCORING_ALGAE_BARGE:

@@ -60,8 +60,8 @@ public class RollersConstants {
 
   public static final double rollersDutyCycleOutHoldAlgae = 0.1;
 
-  public static final int rampBeamBreakPort = 3;
-  public static final int endefectorBeamBreakPort = 4;
+  public static final int rampBeamBreakPort = 1;
+  public static final int endefectorBeamBreakPort = 0;
 
   public static final double rampCoralDebounce = 0.1;
   public static final double coralIntakeDebounce = 0.05;

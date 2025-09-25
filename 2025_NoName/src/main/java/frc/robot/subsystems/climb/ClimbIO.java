@@ -28,6 +28,8 @@ public abstract class ClimbIO {
 
   public void stallRollers() {}
 
+  public void holdRampServo() {}
+
   public void releaseRampServo() {}
 
   public void stop() {}

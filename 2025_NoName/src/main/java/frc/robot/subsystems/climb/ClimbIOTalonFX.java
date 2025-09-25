@@ -28,7 +28,8 @@ public class ClimbIOTalonFX extends ClimbIO {
   private final TalonFX climbMotor;
   private final TalonFX rollersMotor;
   private final BangBangController bangBangController;
-  private final Servo rampServo;
+  private final Servo rampServo1;
+  private final Servo rampServo2;
   Debouncer cageDetectDebouncer = new Debouncer(0.1);
 
   private final StatusSignal<Angle> climbPosition;
@@ -87,7 +88,9 @@ public class ClimbIOTalonFX extends ClimbIO {
     rollersTemperature = rollersMotor.getDeviceTemp();
     rollersStatorCurrent = rollersMotor.getStatorCurrent();
 
-    rampServo = new Servo(ClimbConstants.rampServoPort);
+    rampServo1 = new Servo(ClimbConstants.rampServoPort1);
+    rampServo2 = new Servo(ClimbConstants.rampServoPort2);    
+
     cageDetectDebouncer.setDebounceType(Debouncer.DebounceType.kRising);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -171,8 +174,15 @@ public class ClimbIOTalonFX extends ClimbIO {
   }
 
   @Override
+  public void holdRampServo() {
+    rampServo1.setAngle(0);
+    rampServo2.setAngle(0);
+  }
+
+  @Override
   public void releaseRampServo() {
-    rampServo.setAngle(180);
+    rampServo1.setAngle(180);
+    rampServo2.setAngle(180);
   }
 
   @Override

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.endefector.endefectorwrist;
 
+import frc.robot.Constants;
+
 public class WristConstants {
   // motor info
   public static final int wristMotorID = 15;
@@ -15,12 +17,12 @@ public class WristConstants {
   public static final int PeakCurrentLimit = 50;
   public static final double PeakCurrentDuration = 0.1;
 
-  public static final double realkP = 15.0;
+  public static final double realkP = 15;
   public static final double realkI = 0.0;
   public static final double realkD = 0.0;
-  public static final double realkS = -0.275;
-  public static final double realkV = 6.96078949;
-  public static final double realkG = -0.39;
+  public static final double realkS = -0.2;
+  public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
+  public static final double realkG = -0.5;
 
   // sim stuff
   public static final double simkP = 6.9;
@@ -30,11 +32,11 @@ public class WristConstants {
   public static final double simkS = 0.0;
   public static final double simVelocityConstant = 0.2;
 
-  public static final double cancoderOffset = -0.399658203125;
+  public static final double cancoderOffset = -0.13525390625;
 
   // setpoints
   public static final double wristMinAngle = 0.52;
-  public static final double wristMaxAngle = 1.1;
+  public static final double wristMaxAngle = 1.00;
 
   // wrist state stuff
   public static enum WristStates {
@@ -61,15 +63,15 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    0.664, // INTAKING CORAL STATION
+    0.706, // INTAKING CORAL STATION
     0.99, // INTAKING ALGAE GROUND
     0.85, // INTAKING ALGAE LOLLIPOP
     0.91, // INTAKING ALGAE REEF
     0.79, // POSITION PREPARED
-    1.05, // POSITION TROUGH
+    0.89, // POSITION TROUGH
     0.95, // POSITION BRANCH L2
     0.95, // POSITION BRANCH L3
-    0.70, // POSITION BRANCH L4
+    0.79, // POSITION BRANCH L4
     0.79 // SCORING ALGAE BARGE
   };
 }

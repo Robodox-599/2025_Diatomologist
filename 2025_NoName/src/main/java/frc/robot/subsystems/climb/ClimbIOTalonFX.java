@@ -104,6 +104,8 @@ public class ClimbIOTalonFX extends ClimbIO {
         rollersVelocity,
         rollersCurrent,
         rollersAppliedVolts);
+
+    zeroEncoder();
   }
 
   @Override
@@ -183,6 +185,11 @@ public class ClimbIOTalonFX extends ClimbIO {
   public void releaseRampServo() {
     rampServo1.setAngle(180);
     rampServo2.setAngle(180);
+  }
+
+  @Override
+  public void zeroEncoder() {
+    climbMotor.setPosition(0);
   }
 
   @Override

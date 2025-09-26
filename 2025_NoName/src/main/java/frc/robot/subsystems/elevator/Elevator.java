@@ -183,6 +183,10 @@ public class Elevator {
     io.stop();
   }
 
+  public void zeroEncoder() {
+    io.zeroEncoder();
+  }
+
   public void setWantedState(WantedState wantedState) {
     this.wantedState = wantedState;
   }

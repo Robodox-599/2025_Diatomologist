@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -41,6 +42,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
+
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     config.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.maxVelocityRotsPerSec;
     config.MotionMagic.MotionMagicAcceleration = ElevatorConstants.maxAccelerationRotationsPerSecSQ;

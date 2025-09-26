@@ -25,7 +25,7 @@ public final class Constants {
 
   public static final class kMotors {
     public static final class kKrakenX60Foc {
-      public static final double FREE_SPEED = (608.0 / (2.0 * Math.PI));
+      public static final double FREE_SPEED = (608.0 / (2.0 * Math.PI)); // rad/s to rotations/s
       public static final double FREE_CURRENT = 2.0;
       public static final double STALL_TORQUE = 9.37;
       public static final double STALL_CURRENT = 483.0;

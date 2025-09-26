@@ -91,6 +91,10 @@ public class Climb extends SubsystemBase {
     io.releaseRampServo();
   }
 
+  public void zeroEncoder() {
+    io.zeroEncoder();
+  }
+
   public boolean isAtTargetPosition() {
     return io.atSetpoint;
   }

@@ -38,6 +38,8 @@ public abstract class ClimbIO {
 
   public void setClimbVoltage(double voltage) {}
 
+  public void zeroEncoder() {}
+
   public double GetClimbCurrentVolts() {
     return climbAppliedVolts;
   }

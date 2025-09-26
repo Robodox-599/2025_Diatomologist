@@ -83,7 +83,7 @@ public class WristIOTalonFX extends WristIO {
 
     cancoderConfig.MagnetSensor.MagnetOffset = cancoderOffset;
     cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+    cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.4;
     PhoenixUtil.tryUntilOk(10, () -> wristMotor.getConfigurator().apply(wristConfig, 1));
     PhoenixUtil.tryUntilOk(10, () -> cancoder.getConfigurator().apply(cancoderConfig, 1));
     wristMotor.optimizeBusUtilization();

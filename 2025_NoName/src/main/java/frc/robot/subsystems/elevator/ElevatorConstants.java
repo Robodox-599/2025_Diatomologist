@@ -56,8 +56,8 @@ public final class ElevatorConstants {
   public static final double inchesPerRev = 1.435406698564593;
 
   /* Position Setpoints (in inches) */
-  public static final double elevatorLowerLimit = 0.0;
-  public static final double elevatorUpperLimit = 89.0;
+  public static final double elevatorHardLowerLimit = 0.0;
+  public static final double elevatorHardUpperLimit = 89.0;
   public static final double homePositionOffset = 1.0;
 
   public static final double kP = 1.0;

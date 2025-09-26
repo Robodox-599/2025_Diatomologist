@@ -9,6 +9,9 @@ public abstract class ElevatorIO {
   protected double targetPositionInches = 0.0;
   protected boolean atSetpoint = false;
 
+  protected double elevatorSoftLowerLimit = ElevatorConstants.elevatorHardLowerLimit;
+  protected double elevatorSoftUpperLimit = ElevatorConstants.elevatorHardUpperLimit;
+
   /** Updates the set of loggable inputs */
   public void updateInputs() {}
 

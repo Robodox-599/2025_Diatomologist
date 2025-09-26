@@ -116,9 +116,12 @@ public class Robot extends TimedRobot {
 
     superstructure =
         new Superstructure(
-            drivetrain, elevator, wrist, rollers, leds, vision, subsystemChecker, driver, operator);
+            drivetrain, elevator, wrist, rollers, leds, vision, driver, operator);
 
     new Bindings(driver, operator, superstructure);
+
+    subsystemChecker.setElevator(elevator);
+    subsystemChecker.setWrist(wrist);
 
     subsystemVisualizer = new SubsystemVisualizer(elevator, wrist, rollers);
 

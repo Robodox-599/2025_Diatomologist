@@ -1,104 +1,110 @@
 package frc.robot.util;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
-public class SubsystemChecker {
-  private double elevatorInches, wristDegrees;
+public class SubsystemChecker extends SubsystemBase {
+  private Elevator elevator;
+  private Wrist wrist;
+
+  public void setElevator(Elevator elevator) {
+    this.elevator = elevator;
+  }
+
+  public void setWrist(Wrist wrist) {
+    this.wrist = wrist;
+  }
+
   private final double maximumElevatorSwingThroughHeight =
-      12.6; // maximum height that the elevator can be so the endefector can swing through the
-  // elevator
+      12.6; // max height of elevator where endefector can safely swing through
   private final double minimumElevatorSwingAboveHeight =
-      18.0; // minimum height that the elevator can be so the endefector can swing above the
-  // elevator
-  private final double endefectorBehindElevatorDegrees =
-      0.728; // the degrees threshold that the endefector is behind the elevator
-  private boolean isAtSetpointElevator = false;
-  private boolean isAtSetpointWrist = false;
+      18.0; // min height of elevator where endefector can safely swing behind
+  private final double minimumElevatorSwingBelowHeight =
+      18.0; // min height of elevator where endefector can safely swing below
+  private final double endefectorBehindElevatorPosition =
+      SubsystemUtil.wristStateToSetpoint(
+          WristConstants.WristStates
+              .POSITION_PREPARED); // any wrist position less than this is behind the elevator
+  private final double endefectorBeyondHorizontalPosition = 0;
 
-  public void setCurrentElevatorInches(
-      double
-          elevatorInches) { // set current elevator degrees, this should be done before every safe
-    // check!
-    this.elevatorInches = elevatorInches;
-    DogLog.log("SafetyChecker/CurrentElevatorInches", this.elevatorInches);
+  public double calculateElevatorSoftLowerLimit() {
+    if (wrist.getPosition() > endefectorBeyondHorizontalPosition) {
+      return minimumElevatorSwingBelowHeight;
+      // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
+      // would make the limit dynamic based on wrist position
+    } else if (wrist.getPosition() < endefectorBehindElevatorPosition) {
+      return minimumElevatorSwingAboveHeight;
+    } else {
+      return ElevatorConstants.elevatorHardLowerLimit;
+    }
   }
 
-  public void setCurrentWristDegrees(
-      double wristDegrees) { // set the current wrist degrees, this should be done before every safe
-    // check!
-    this.wristDegrees = wristDegrees;
-    DogLog.log("SafetyChecker/CurrentWristDegrees", this.wristDegrees);
+  public double calculateElevatorSoftUpperLimit() {
+    if (wrist.getPosition() < endefectorBehindElevatorPosition) {
+      return maximumElevatorSwingThroughHeight;
+    } else {
+      return ElevatorConstants.elevatorHardUpperLimit;
+    }
   }
 
-  public void updateIsAtSetpointElevator(boolean value) {
-    isAtSetpointElevator = value;
-  }
-
-  public void updateIsAtSetpointWrist(boolean value) {
-    isAtSetpointWrist = value;
-  }
-
-  public boolean isSafeElevator() {
-    if (!isBehindElevator(wristDegrees)
-        || isUnderElevator(
-            elevatorInches)) { // if the wrist is NOT behind the elevator or if the endefector is
-      // BELOW
-      // the elevator swing height, elevator is safe
-      DogLog.log("SafetyChecker/isSafeElevator", true);
+  public boolean isEndefectorUnderElevator() {
+    if ((elevator.getHeightInches() < maximumElevatorSwingThroughHeight)) {
+      DogLog.log("SafetyChecker/isEndefectorUnderElevator", true);
       return true;
     }
-    DogLog.log("SafetyChecker/isSafeElevator", false);
+    DogLog.log("SafetyChecker/isEndefectorUnderElevator", false);
     return false;
-  }
-
-  public boolean isSafeWrist() {
-    if (isUnderElevator(elevatorInches)) {
-      DogLog.log("SafetyChecker/isSafeWrist", true);
-      return true;
-    }
-    DogLog.log("SafetyChecker/isSafeWrist", false);
-    return false;
-  }
-
-  public boolean isEndefectorBehindElevator() {
-    DogLog.log("SafetyChecker/isEndefectorBehindElevator", isBehindElevator(wristDegrees));
-    return isBehindElevator(wristDegrees);
-  }
-
-  public boolean isBehindElevator(double wristSupplyDegrees) {
-    return (endefectorBehindElevatorDegrees > wristSupplyDegrees);
-  }
-
-  public boolean isAboveElevator(double elevatorSupplyInches) {
-    return (elevatorSupplyInches > minimumElevatorSwingAboveHeight);
-  }
-
-  public boolean isUnderElevator(double elevatorSupplyInches) {
-    return (elevatorSupplyInches < maximumElevatorSwingThroughHeight);
-  }
-
-  public boolean isReadyToScore() {
-    DogLog.log("SafetyChecker/readyToScore", isAtSetpointElevator && isAtSetpointWrist);
-    return isAtSetpointElevator && isAtSetpointWrist;
-  }
-
-  public boolean isAtSetpointElevator() {
-    return isAtSetpointElevator;
   }
 
   public boolean isAtHeightElevator(ElevatorConstants.ElevatorStates state) {
-    return Math.abs(elevatorInches - SubsystemUtil.elevatorStateToHeightInches(state))
-        < ElevatorConstants.positionToleranceInches;
+    return elevator.isAtSetpoint(state);
   }
 
   public boolean isAtPositionWrist(WristConstants.WristStates state) {
-    return Math.abs(wristDegrees - SubsystemUtil.wristStateToSetpoint(state))
-        < WristConstants.wristPositionTolerance;
+    return wrist.isAtSetpoint(state);
   }
 
-  public boolean isWristAtPrepared() {
-    return Math.abs(wristDegrees - 0.79) < WristConstants.wristPositionTolerance;
-  }
+  // public boolean isSafeElevator() {
+  //   if (!isBehindElevator(wrist.getPosition())
+  //       || isUnderElevator(
+  //           elevator.getHeightInches())) { // if the wrist is NOT behind the elevator or if the
+  //     // endefector is
+  //     // BELOW
+  //     // the elevator swing height, elevator is safe
+  //     DogLog.log("SafetyChecker/isSafeElevator", true);
+  //     return true;
+  //   }
+  //   DogLog.log("SafetyChecker/isSafeElevator", false);
+  //   return false;
+  // }
+
+  // public boolean isEndefectorBehindElevator() {
+  //   DogLog.log("SafetyChecker/isEndefectorBehindElevator", isBehindElevator(wristDegrees));
+  //   return isBehindElevator(wristDegrees);
+  // }
+
+  // public boolean isBehindElevator(double wristSupplyDegrees) {
+  //   return (endefectorBehindElevatorDegrees > wristSupplyDegrees);
+  // }
+
+  // public boolean isAboveElevator(double elevatorSupplyInches) {
+  //   return (elevatorSupplyInches > minimumElevatorSwingAboveHeight);
+  // }
+
+  // public boolean isReadyToScore() {
+  //   DogLog.log("SafetyChecker/readyToScore", isAtSetpointElevator && isAtSetpointWrist);
+  //   return isAtSetpointElevator && isAtSetpointWrist;
+  // }
+
+  // public boolean isAtSetpointElevator() {
+  //   return isAtSetpointElevator;
+  // }
+
+  // public boolean isWristAtPrepared() {
+  //   return Math.abs(wristDegrees - 0.79) < WristConstants.wristPositionTolerance;
+  // }
 }

@@ -14,7 +14,6 @@ import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AutoAlignPoseGenerator;
-import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
 public class Superstructure extends SubsystemBase {
@@ -24,7 +23,6 @@ public class Superstructure extends SubsystemBase {
   private final Rollers rollers;
   private final LEDs leds;
   private final Vision vision;
-  private final SubsystemChecker subsystemChecker;
   private final CommandXboxController driver;
   private final CommandXboxController operator;
 
@@ -120,7 +118,6 @@ public class Superstructure extends SubsystemBase {
       Rollers rollers,
       LEDs LEDs,
       Vision vision,
-      SubsystemChecker subsystemChecker,
       CommandXboxController driver,
       CommandXboxController operator) {
     this.drivetrain = drivetrain;
@@ -129,7 +126,6 @@ public class Superstructure extends SubsystemBase {
     this.rollers = rollers;
     this.leds = LEDs;
     this.vision = vision;
-    this.subsystemChecker = subsystemChecker;
     this.driver = driver;
     this.operator = operator;
   }

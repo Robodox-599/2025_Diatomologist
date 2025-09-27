@@ -71,7 +71,7 @@ public final class ElevatorConstants {
   public static final double kS = 0.07;
   public static final double kG = 0.4;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
-  public static final double maxAccelerationRotationsPerSecSQ = 2 * maxVelocityRotsPerSec;
+  public static final double maxAccelerationRotationsPerSecSQ = maxVelocityRotsPerSec;
 
   // Add these for better PID tuning
   public static final double simkP = 8;

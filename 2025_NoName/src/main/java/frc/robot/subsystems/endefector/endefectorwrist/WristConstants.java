@@ -35,8 +35,8 @@ public class WristConstants {
   public static final double cancoderOffset = -0.14892578125;
 
   // setpoints
-  public static final double wristMinAngle = 0.52;
-  public static final double wristMaxAngle = 1.00;
+  public static final double wristMinAngle = -0.35;
+  public static final double wristMaxAngle = 0.1;
 
   // wrist state stuff
   public static enum WristStates {
@@ -64,11 +64,11 @@ public class WristConstants {
 
   public static final double[] setpoints = {
     -0.305, // INTAKING CORAL STATION
-    0.0, // INTAKING ALGAE GROUND
-    -0.05, // INTAKING ALGAE LOLLIPOP
+    -0.1, // INTAKING ALGAE GROUND
+    -0.2, // INTAKING ALGAE LOLLIPOP
     -0.1, // INTAKING ALGAE REEF
     -0.226, // POSITION PREPARED
-    -0.17, // POSITION TROUGH
+    -0.12, // POSITION TROUGH
     0.0, // POSITION BRANCH L2
     0.0, // POSITION BRANCH L3
     -0.226, // POSITION BRANCH L4

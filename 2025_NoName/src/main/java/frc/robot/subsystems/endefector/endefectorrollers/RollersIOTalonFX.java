@@ -110,6 +110,9 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/CoralTroughScored", super.isCoralTroughScored);
     DogLog.log("Rollers/CoralBranchScored", super.isCoralBranchScored);
     DogLog.log("Rollers/AlgaeScored", super.isAlgaeScored);
+
+    DogLog.log("Rollers/RampBeamBreak", rampBeamBreak.get());
+    DogLog.log("Rollers/EndefectorBeamBreak", endefectorBeamBreak.get());
   }
 
   @Override

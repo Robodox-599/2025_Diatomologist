@@ -33,7 +33,7 @@ public final class ElevatorConstants {
   // Setpoint positions in inches
   public static final double[] heights = {
     0.0, // INTAKING CORAL STATION
-    7.0, // INTAKING ALGAE GROUND
+    6.0, // INTAKING ALGAE GROUND
     7.0, // INTAKING ALGAE LOLLIPOP
     26.0, // INTAKING ALGAE L2 // 27.5
     38.5, // INTAKING ALGAE L3 // 42
@@ -43,7 +43,7 @@ public final class ElevatorConstants {
     37.0, // POSITION CORAL L3 // 33
     62.0, // POSITION CORAL L4 // 60
     12.0, // POSITION ALGAE PROCESSOR
-    87, // POSITION ALGAE BARGE
+    84, // POSITION ALGAE BARGE
   };
 
   public static final int leaderMotorID = 13;
@@ -53,11 +53,11 @@ public final class ElevatorConstants {
   public static final boolean followerInverted = true;
 
   public static final double gearRatio = 6.0;
-  public static final double inchesPerRev = 1.291;
+  public static final double inchesPerRev = 1.073;
 
   /* Position Setpoints (in inches) */
   public static final double elevatorHardLowerLimit = 0.0;
-  public static final double elevatorHardUpperLimit = 89.0;
+  public static final double elevatorHardUpperLimit = 85.0;
   public static final double homePositionOffset = 1.0;
 
   public static final double kP = 1.0;

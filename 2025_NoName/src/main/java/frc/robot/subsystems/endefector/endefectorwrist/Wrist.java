@@ -65,7 +65,8 @@ public class Wrist {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (subsystemChecker.isEndefectorUnderElevator()) {
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)) {
           currentState = CurrentState.INTAKING_CORAL_STATION;
         } else {
           currentState = CurrentState.POSITION_PREPARED;

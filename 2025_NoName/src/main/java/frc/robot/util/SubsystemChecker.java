@@ -20,23 +20,25 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   private final double maximumElevatorSwingThroughHeight =
-      12.6; // max height of elevator where endefector can safely swing through
+      12.4; // max height of elevator where endefector can safely swing through
   private final double minimumElevatorSwingAboveHeight =
-      18.0; // min height of elevator where endefector can safely swing behind
+      28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =
-      18.0; // min height of elevator where endefector can safely swing below
+      7.0; // min height of elevator where endefector can safely swing below
   private final double endefectorBehindElevatorPosition =
-      SubsystemUtil.wristStateToSetpoint(
-          WristConstants.WristStates
-              .POSITION_PREPARED); // any wrist position less than this is behind the elevator
-  private final double endefectorBeyondHorizontalPosition = 0;
+      SubsystemUtil.wristStateToSetpoint(WristConstants.WristStates.POSITION_PREPARED)
+          - WristConstants
+              .wristPositionTolerance; // any wrist position less than this is behind the elevator
+  private final double endefectorBeyondHorizontalPosition = 0.05;
 
   public double calculateElevatorSoftLowerLimit() {
-    if (wrist.getPosition() > endefectorBeyondHorizontalPosition) {
+    if (wrist.getPosition() > endefectorBeyondHorizontalPosition
+        && elevator.getHeightInches() > minimumElevatorSwingBelowHeight) {
       return minimumElevatorSwingBelowHeight;
       // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
       // would make the limit dynamic based on wrist position
-    } else if (wrist.getPosition() < endefectorBehindElevatorPosition) {
+    } else if (wrist.getPosition() < endefectorBehindElevatorPosition
+        && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
       return minimumElevatorSwingAboveHeight;
     } else {
       return ElevatorConstants.elevatorHardLowerLimit;
@@ -44,7 +46,8 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   public double calculateElevatorSoftUpperLimit() {
-    if (wrist.getPosition() < endefectorBehindElevatorPosition) {
+    if (wrist.getPosition() < endefectorBehindElevatorPosition
+        && elevator.getHeightInches() < maximumElevatorSwingThroughHeight) {
       return maximumElevatorSwingThroughHeight;
     } else {
       return ElevatorConstants.elevatorHardUpperLimit;

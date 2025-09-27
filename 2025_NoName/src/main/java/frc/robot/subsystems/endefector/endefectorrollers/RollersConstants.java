@@ -25,15 +25,15 @@ public class RollersConstants {
   }
 
   public static final double[] rollersVelocities = {
-    -0.3, // intaking coral station
-    0.2, // ensuring coral forwards
-    -0.2, // ensuring coral backwards
-    0.6, // intaking algae
-    0.0, // holding coral
-    0.15, // scoring coral trough
-    0.3, // scoring coral l2 or l3
-    -0.4, // scoring coral l4
-    -0.8, // scoring algae
+    0.3, // intaking coral station
+    -0.2, // ensuring coral forwards
+    0.2, // ensuring coral backwards
+    -0.6, // intaking algae
+    -0.0, // holding coral
+    -0.15, // scoring coral trough
+    -0.3, // scoring coral l2 or l3
+    0.4, // scoring coral l4
+    0.8, // scoring algae
     0.0, // stopped
   };
 
@@ -45,7 +45,7 @@ public class RollersConstants {
   public static final int PeakCurrentLimit = 50;
   public static final double PeakCurrentDuration = 0.1;
 
-  public static final double gearRatio = 1.5;
+  public static final double gearRatio = 6;
   public static final double rollersMOI = 0.04;
 
   public static final double simkP = 7.0;
@@ -60,7 +60,7 @@ public class RollersConstants {
   public static final double realS = 0.0;
   public static final double realV = 0.0;
 
-  public static final double rollersDutyCycleOutHoldAlgae = 0.1;
+  public static final double rollersDutyCycleOutHoldAlgae = -0.1;
 
   public static final int rampBeamBreakPort = 1;
   public static final int endefectorBeamBreakPort = 0;

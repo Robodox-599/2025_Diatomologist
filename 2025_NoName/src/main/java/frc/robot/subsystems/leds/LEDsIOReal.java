@@ -47,37 +47,37 @@ public class LEDsIOReal extends LEDsIO {
     candleReal.setControl(
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(kIntakingCoralStation)
-            .withFrameRate(10));
+            .withFrameRate(6));
   }
 
   @Override
   public void LEDsEnsuringCoral() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kEnsuringCoral).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kEnsuringCoral).withFrameRate(6));
   }
 
   @Override
   public void LEDsIntakingAlgae() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kIntakingAlgae).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kIntakingAlgae).withFrameRate(6));
   }
 
   @Override
   public void LEDsPositionPrepared() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPrepared).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPrepared).withFrameRate(6));
   }
 
   @Override
   public void LEDsPositionCoral() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionCoral).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionCoral).withFrameRate(6));
   }
 
   @Override
   public void LEDsPositionAlgae() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionAlgae).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kPositionAlgae).withFrameRate(6));
   }
 
   @Override
@@ -85,7 +85,7 @@ public class LEDsIOReal extends LEDsIO {
     candleReal.setControl(
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(KPositionClimbPrepared)
-            .withFrameRate(10));
+            .withFrameRate(6));
   }
 
   @Override
@@ -93,18 +93,18 @@ public class LEDsIOReal extends LEDsIO {
     candleReal.setControl(
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(kScoringGamePiece)
-            .withFrameRate(10));
+            .withFrameRate(6));
   }
 
   @Override
   public void LEDsClimbing() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kClimbing).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kClimbing).withFrameRate(6));
   }
 
   @Override
   public void LEDsStopped() {
     candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kStopped).withFrameRate(10));
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kStopped).withFrameRate(6));
   }
 }

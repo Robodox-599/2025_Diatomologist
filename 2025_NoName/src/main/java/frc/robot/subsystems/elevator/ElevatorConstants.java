@@ -53,7 +53,7 @@ public final class ElevatorConstants {
   public static final boolean followerInverted = true;
 
   public static final double gearRatio = 6.0;
-  public static final double inchesPerRev = 1.435406698564593;
+  public static final double inchesPerRev = 1.291;
 
   /* Position Setpoints (in inches) */
   public static final double elevatorHardLowerLimit = 0.0;
@@ -68,8 +68,8 @@ public final class ElevatorConstants {
           .kKrakenX60Foc
           .kV; // there is no sensor to mechanism ratio so kV is the same as the motor's kV
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
-  public static final double kS = 0.07;
-  public static final double kG = 0.4;
+  public static final double kS = 0.205;
+  public static final double kG = 0.295;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
   public static final double maxAccelerationRotationsPerSecSQ = maxVelocityRotsPerSec;
 

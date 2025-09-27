@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AutoAlignPoseGenerator {
   private static int algaeReefFaceIndex = 0;
+  public static final double L4_Reef_Face_Offset =
+      0.13; // distance from reef face to scoring for L4 in meters
 
   public static Pose2d getNearestL2orL3BranchPosition(Pose2d robotPose, boolean useLeftBranch) {
     Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
@@ -20,7 +22,8 @@ public class AutoAlignPoseGenerator {
 
   public static Pose2d getNearestL4BranchPosition(Pose2d robotPose, boolean useLeftBranch) {
     Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
-    Pose2d targetPose = branchPose.transformBy(new Transform2d(-0.12, 0, new Rotation2d(0)));
+    Pose2d targetPose =
+        branchPose.transformBy(new Transform2d(-L4_Reef_Face_Offset, 0, new Rotation2d(0)));
     return targetPose;
   }
 

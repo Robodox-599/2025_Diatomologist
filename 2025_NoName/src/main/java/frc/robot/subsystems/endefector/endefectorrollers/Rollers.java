@@ -25,7 +25,8 @@ public class Rollers {
     HOLD_CORAL,
     HOLD_ALGAE,
     SCORING_CORAL_TROUGH,
-    SCORING_CORAL_BRANCH,
+    SCORING_CORAL_L2_L3,
+    SCORING_CORAL_L4,
     SCORING_ALGAE,
     STOPPED,
   }
@@ -38,7 +39,8 @@ public class Rollers {
     HOLD_CORAL,
     HOLD_ALGAE,
     SCORING_CORAL_TROUGH,
-    SCORING_CORAL_BRANCH,
+    SCORING_CORAL_L2_L3,
+    SCORING_CORAL_L4,
     SCORING_ALGAE,
     STOPPED,
   }
@@ -104,8 +106,11 @@ public class Rollers {
       case SCORING_CORAL_TROUGH:
         currentState = CurrentState.SCORING_CORAL_TROUGH;
         break;
-      case SCORING_CORAL_BRANCH:
-        currentState = CurrentState.SCORING_CORAL_BRANCH;
+      case SCORING_CORAL_L2_L3:
+        currentState = CurrentState.SCORING_CORAL_L2_L3;
+        break;
+      case SCORING_CORAL_L4:
+        currentState = CurrentState.SCORING_CORAL_L4;
         break;
       case SCORING_ALGAE:
         currentState = CurrentState.SCORING_ALGAE;
@@ -143,8 +148,11 @@ public class Rollers {
         case SCORING_CORAL_TROUGH:
           setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
           break;
-        case SCORING_CORAL_BRANCH:
-          setVelocity(EndefectorRollerStates.SCORING_CORAL_BRANCH);
+        case SCORING_CORAL_L2_L3:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_L2_L3);
+          break;
+        case SCORING_CORAL_L4:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_L4);
           break;
         case SCORING_ALGAE:
           setVelocity(EndefectorRollerStates.SCORING_ALGAE);

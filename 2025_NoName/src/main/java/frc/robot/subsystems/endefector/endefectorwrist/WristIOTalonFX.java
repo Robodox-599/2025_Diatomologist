@@ -53,9 +53,9 @@ public class WristIOTalonFX extends WristIO {
     cancoder = new CANcoder(cancoderID, wristMotorCANBus);
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
 
-    wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV * 2;
+    wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV * 10;
 
-    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 8);
+    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 15);
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;

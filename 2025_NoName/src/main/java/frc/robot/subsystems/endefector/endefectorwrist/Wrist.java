@@ -54,8 +54,6 @@ public class Wrist {
 
   public void updateInputs() {
     Tracer.traceFunc("UpdateIO", io::updateInputs);
-    subsystemChecker.setCurrentWristDegrees(io.currentPosition);
-    subsystemChecker.updateIsAtSetpointWrist(isAtSetpoint());
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Wrist/CurrentState", currentState);
@@ -67,7 +65,8 @@ public class Wrist {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (subsystemChecker.isSafeWrist()) {
+        if (subsystemChecker.isAtHeightElevator(
+            ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)) {
           currentState = CurrentState.INTAKING_CORAL_STATION;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
@@ -187,7 +186,7 @@ public class Wrist {
     io.setAngle(state);
   }
 
-  public double getAngle() {
+  public double getPosition() {
     return io.currentPosition;
   }
 
@@ -205,6 +204,10 @@ public class Wrist {
 
   public boolean isAtSetpoint() {
     return io.atSetpoint;
+  }
+
+  public boolean isAtSetpoint(WristStates state) {
+    return isAtAngle(WristConstants.setpoints[state.getIndex()]);
   }
 
   public boolean isAtAngle(double angle) {

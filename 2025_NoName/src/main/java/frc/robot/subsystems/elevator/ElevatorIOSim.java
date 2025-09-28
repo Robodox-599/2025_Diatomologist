@@ -55,8 +55,8 @@ public class ElevatorIOSim extends ElevatorIO {
     targetPositionInches =
         MathUtil.clamp(
             SubsystemUtil.elevatorStateToHeightTicks(state),
-            ElevatorConstants.elevatorLowerLimit,
-            ElevatorConstants.elevatorUpperLimit);
+            ElevatorConstants.elevatorHardLowerLimit,
+            ElevatorConstants.elevatorHardUpperLimit);
     positionInches = targetPositionInches;
   }
 

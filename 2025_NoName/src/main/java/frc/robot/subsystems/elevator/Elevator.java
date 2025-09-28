@@ -4,6 +4,7 @@ import dev.doglog.DogLog;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.SubsystemChecker;
+import frc.robot.util.SubsystemUtil;
 import frc.robot.util.Tracer;
 
 public class Elevator {
@@ -54,70 +55,65 @@ public class Elevator {
 
   public void updateInputs() {
     Tracer.traceFunc("UpdateIO", io::updateInputs);
-    subsystemChecker.setCurrentElevatorInches(io.positionInches);
-    subsystemChecker.updateIsAtSetpointElevator(isAtSetpoint());
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
+    Tracer.traceFunc("CalculateSoftLimits", this::calculateSoftLimits);
     DogLog.log("Elevator/CurrentState", currentState);
     DogLog.log("Elevator/WantedState", wantedState);
   }
 
   private void handleStateTransitions() {
     previousState = currentState;
-    if (subsystemChecker.isSafeElevator()) {
-      switch (wantedState) {
-        case INTAKING_CORAL_STATION:
-          currentState = CurrentState.INTAKING_CORAL_STATION;
-          break;
-        case INTAKING_ALGAE_GROUND:
-          currentState = CurrentState.INTAKING_ALGAE_GROUND;
-          break;
-        case INTAKING_ALGAE_LOLLIPOP:
-          currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
-          break;
-        case POSITION_ALGAE_L2:
-          currentState = CurrentState.POSITION_ALGAE_L2;
-          break;
-        case POSITION_ALGAE_L3:
-          currentState = CurrentState.POSITION_ALGAE_L3;
-          break;
-        case POSITION_PREPARED:
-          currentState = CurrentState.POSITION_PREPARED;
-          break;
-        case POSITION_PREPARED_AUTO:
-          if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
-            currentState = CurrentState.POSITION_PREPARED_AUTO;
-          } else {
-            currentState = CurrentState.STOPPED;
-          }
-          break;
-        case POSITION_CORAL_L1:
-          currentState = CurrentState.POSITION_CORAL_L1;
-          break;
-        case POSITION_CORAL_L2:
-          currentState = CurrentState.POSITION_CORAL_L2;
-          break;
-        case POSITION_CORAL_L3:
-          currentState = CurrentState.POSITION_CORAL_L3;
-          break;
-        case POSITION_CORAL_L4:
-          currentState = CurrentState.POSITION_CORAL_L4;
-          break;
-        case POSITION_ALGAE_PROCESSOR:
-          currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
-          break;
-        case POSITION_ALGAE_BARGE:
-          currentState = CurrentState.POSITION_ALGAE_BARGE;
-          break;
-        case STOPPED:
+    switch (wantedState) {
+      case INTAKING_CORAL_STATION:
+        currentState = CurrentState.INTAKING_CORAL_STATION;
+        break;
+      case INTAKING_ALGAE_GROUND:
+        currentState = CurrentState.INTAKING_ALGAE_GROUND;
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
+        break;
+      case POSITION_ALGAE_L2:
+        currentState = CurrentState.POSITION_ALGAE_L2;
+        break;
+      case POSITION_ALGAE_L3:
+        currentState = CurrentState.POSITION_ALGAE_L3;
+        break;
+      case POSITION_PREPARED:
+        currentState = CurrentState.POSITION_PREPARED;
+        break;
+      case POSITION_PREPARED_AUTO:
+        if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
+          currentState = CurrentState.POSITION_PREPARED_AUTO;
+        } else {
           currentState = CurrentState.STOPPED;
-          break;
-        default:
-          currentState = CurrentState.STOPPED;
-          break;
-      }
-    } else {
-      currentState = CurrentState.STOPPED;
+        }
+        break;
+      case POSITION_CORAL_L1:
+        currentState = CurrentState.POSITION_CORAL_L1;
+        break;
+      case POSITION_CORAL_L2:
+        currentState = CurrentState.POSITION_CORAL_L2;
+        break;
+      case POSITION_CORAL_L3:
+        currentState = CurrentState.POSITION_CORAL_L3;
+        break;
+      case POSITION_CORAL_L4:
+        currentState = CurrentState.POSITION_CORAL_L4;
+        break;
+      case POSITION_ALGAE_PROCESSOR:
+        currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
+        break;
+      case POSITION_ALGAE_BARGE:
+        currentState = CurrentState.POSITION_ALGAE_BARGE;
+        break;
+      case STOPPED:
+        currentState = CurrentState.STOPPED;
+        break;
+      default:
+        currentState = CurrentState.STOPPED;
+        break;
     }
   }
 
@@ -170,12 +166,17 @@ public class Elevator {
     }
   }
 
+  public void calculateSoftLimits() {
+    io.elevatorSoftLowerLimit = subsystemChecker.calculateElevatorSoftLowerLimit();
+    io.elevatorSoftUpperLimit = subsystemChecker.calculateElevatorSoftUpperLimit();
+  }
+
   /* Moves the elevator to one of the states */
   public void setHeight(ElevatorStates state) {
     io.setHeight(state);
   }
 
-  public double getPositionInches() {
+  public double getHeightInches() {
     return io.positionInches;
   }
 
@@ -201,6 +202,10 @@ public class Elevator {
 
   public boolean isAtSetpoint() {
     return io.atSetpoint;
+  }
+
+  public boolean isAtSetpoint(ElevatorStates state) {
+    return isAtHeight(SubsystemUtil.elevatorStateToHeightInches(state));
   }
 
   public boolean isAtHeight(double height) {

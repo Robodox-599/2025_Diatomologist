@@ -50,11 +50,11 @@ public class SubsystemVisualizer extends SubsystemBase {
   }
 
   public void updateElevator() {
-    elevatorVis.setLength(Units.inchesToMeters(elevator.getPositionInches()) * 25);
+    elevatorVis.setLength(Units.inchesToMeters(elevator.getHeightInches()) * 25);
   }
 
   public void updateWrist() {
-    endefectorWristVis.setAngle(Units.inchesToMeters(endefectorWrist.getAngle()) * 25);
+    endefectorWristVis.setAngle(Units.inchesToMeters(endefectorWrist.getPosition()) * 25);
   }
 
   public void updateRollers() {

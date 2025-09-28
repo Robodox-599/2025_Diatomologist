@@ -17,12 +17,12 @@ public class WristConstants {
   public static final int PeakCurrentLimit = 50;
   public static final double PeakCurrentDuration = 0.1;
 
-  public static final double realkP = 15;
+  public static final double realkP = 16.0;
   public static final double realkI = 0.0;
   public static final double realkD = 0.0;
-  public static final double realkS = -0.2;
+  public static final double realkS = 0.07;
   public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
-  public static final double realkG = -0.5;
+  public static final double realkG = 0.43;
 
   // sim stuff
   public static final double simkP = 6.9;
@@ -32,11 +32,11 @@ public class WristConstants {
   public static final double simkS = 0.0;
   public static final double simVelocityConstant = 0.2;
 
-  public static final double cancoderOffset = -0.13525390625;
+  public static final double cancoderOffset = -0.14892578125;
 
   // setpoints
-  public static final double wristMinAngle = 0.52;
-  public static final double wristMaxAngle = 1.00;
+  public static final double wristMinAngle = -0.35;
+  public static final double wristMaxAngle = 0.1;
 
   // wrist state stuff
   public static enum WristStates {
@@ -63,15 +63,15 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    0.706, // INTAKING CORAL STATION
-    0.99, // INTAKING ALGAE GROUND
-    0.85, // INTAKING ALGAE LOLLIPOP
-    0.91, // INTAKING ALGAE REEF
-    0.79, // POSITION PREPARED
-    0.89, // POSITION TROUGH
-    0.95, // POSITION BRANCH L2
-    0.95, // POSITION BRANCH L3
-    0.79, // POSITION BRANCH L4
-    0.79 // SCORING ALGAE BARGE
+    -0.305, // INTAKING CORAL STATION
+    -0.1, // INTAKING ALGAE GROUND
+    -0.2, // INTAKING ALGAE LOLLIPOP
+    -0.1, // INTAKING ALGAE REEF
+    -0.226, // POSITION PREPARED
+    -0.12, // POSITION TROUGH
+    0.0, // POSITION BRANCH L2
+    0.0, // POSITION BRANCH L3
+    -0.226, // POSITION BRANCH L4
+    -0.226 // SCORING ALGAE BARGE
   };
 }

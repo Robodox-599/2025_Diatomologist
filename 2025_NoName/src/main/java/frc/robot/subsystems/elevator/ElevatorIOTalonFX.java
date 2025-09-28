@@ -105,8 +105,13 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     double position =
         MathUtil.clamp(
             SubsystemUtil.elevatorStateToHeightTicks(state),
-            ElevatorConstants.elevatorLowerLimit,
-            ElevatorConstants.elevatorUpperLimit);
+            super.elevatorSoftLowerLimit,
+            super.elevatorSoftUpperLimit);
+    position =
+        MathUtil.clamp(
+            position,
+            ElevatorConstants.elevatorHardLowerLimit,
+            ElevatorConstants.elevatorHardUpperLimit);
     motionMagicRequest.Position = position;
     leaderMotor.setControl(motionMagicRequest);
   }

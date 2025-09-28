@@ -128,7 +128,7 @@ public class Bindings extends SubsystemBase {
         .and(driver.a())
         .onTrue(
             superstructure
-                .setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED)
+                .setWantedSuperStateCommand(WantedSuperState.PREPARE_CLIMB)
                 .alongWith(rumbleControllers(driver, operator)));
 
     //                                OPERATOR BINDS

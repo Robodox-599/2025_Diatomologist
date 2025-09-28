@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
@@ -21,6 +22,7 @@ public class Superstructure extends SubsystemBase {
   private final Elevator elevator;
   private final Wrist wrist;
   private final Rollers rollers;
+  private final Climb climb;
   private final LEDs leds;
   private final Vision vision;
   private final CommandXboxController driver;
@@ -57,7 +59,7 @@ public class Superstructure extends SubsystemBase {
     AUTO_ALIGN_MIDDLE_ALGAE,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
-    POSITION_CLIMB_PREPARED,
+    PREPARE_CLIMB,
     SCORING_CORAL_TROUGH,
     SCORING_CORAL_L2_L3,
     SCORING_CORAL_L4,
@@ -104,7 +106,7 @@ public class Superstructure extends SubsystemBase {
     AUTO_SCORE_L4_RIGHT,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
-    POSITION_CLIMB_PREPARED,
+    PREPARE_CLIMB,
     SCORING_CORAL,
     SCORING_ALGAE,
     CLIMBING,
@@ -117,6 +119,7 @@ public class Superstructure extends SubsystemBase {
       Elevator elevator,
       Wrist wrist,
       Rollers rollers,
+      Climb climb,
       LEDs LEDs,
       Vision vision,
       CommandXboxController driver,
@@ -125,6 +128,7 @@ public class Superstructure extends SubsystemBase {
     this.elevator = elevator;
     this.wrist = wrist;
     this.rollers = rollers;
+    this.climb = climb;
     this.leds = LEDs;
     this.vision = vision;
     this.driver = driver;
@@ -140,7 +144,7 @@ public class Superstructure extends SubsystemBase {
     Tracer.traceFunc("RollersPeriodic", rollers::updateInputs);
     Tracer.traceFunc("WristPeriodic", wrist::updateInputs);
     Tracer.traceFunc("LedsPeriodic", leds::updateInputs);
-    // climb.updateInputs();
+    Tracer.traceFunc("ClimbPeriodic", climb::updateInputs);
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
 
@@ -492,14 +496,14 @@ public class Superstructure extends SubsystemBase {
       case POSITION_ALGAE_BARGE:
         currentSuperState = CurrentSuperState.POSITION_ALGAE_BARGE;
         break;
-        // case POSITION_CLIMB_PREPARED:
-        //   if (climb.isCageDetected()) {
-        //     currentSuperState = CurrentSuperState.CLIMBING;
-        //     wantedSuperState = WantedSuperState.CLIMBING;
-        //   } else {
-        //     currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
-        //   }
-        //   break;
+      case PREPARE_CLIMB:
+        if (climb.isClimbPrepared() && climb.isCageDetected()) {
+          currentSuperState = CurrentSuperState.CLIMBING;
+          wantedSuperState = WantedSuperState.CLIMBING;
+        } else {
+          currentSuperState = CurrentSuperState.PREPARE_CLIMB;
+        }
+        break;
       case SCORING_CORAL:
         if (!rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
@@ -524,13 +528,9 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.SCORING_ALGAE;
         }
         break;
-        // case CLIMBING:
-        //   if (!climb.isCageDetected()) {
-        //     currentSuperState = CurrentSuperState.POSITION_CLIMB_PREPARED;
-        //     wantedSuperState = WantedSuperState.POSITION_CLIMB_PREPARED;
-        //   } else {
-        //     currentSuperState = CurrentSuperState.CLIMBING;
-        //   }
+      case CLIMBING:
+        currentSuperState = CurrentSuperState.CLIMBING;
+        break;
       case STOPPED:
         currentSuperState = CurrentSuperState.STOPPED;
         break;
@@ -620,8 +620,8 @@ public class Superstructure extends SubsystemBase {
       case POSITION_ALGAE_BARGE:
         positionToAlgaeBarge();
         break;
-      case POSITION_CLIMB_PREPARED:
-        positionToClimbPrepared();
+      case PREPARE_CLIMB:
+        prepareClimb();
         break;
       case SCORING_CORAL_TROUGH:
         scoreCoralInTrough();
@@ -773,11 +773,11 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  private void positionToClimbPrepared() {
+  private void prepareClimb() {
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
-    // climb.setWantedState(Climb.WantedState.CLIMB_PREPARED);
+    climb.setWantedState(Climb.WantedState.CLIMB_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
@@ -846,7 +846,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void climbing() {
-    // climb.setWantedState(Climb.WantedState.CLIMBING);
+    climb.setWantedState(Climb.WantedState.CLIMBING);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 

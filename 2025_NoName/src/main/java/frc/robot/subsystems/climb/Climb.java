@@ -46,10 +46,10 @@ public class Climb extends SubsystemBase {
       case CLIMB_PREPARED:
         if (!io.isFlapsReleased) {
           currentState = CurrentState.RELEASE_FLAP;
-        } else if (!io.isRampReleased && io.isFlapsReleased) {
-          currentState = CurrentState.RELEASE_RAMP;
-        } else if (!io.isClimbDeployed && io.isRampReleased && io.isFlapsReleased) {
+        } else if (!io.isClimbDeployed && io.isFlapsReleased) {
           currentState = CurrentState.DEPLOY_CLIMB;
+        } else if (!io.isRampReleased && io.isClimbDeployed && io.isFlapsReleased) {
+          currentState = CurrentState.RELEASE_RAMP;
         } else if (isClimbPrepared()) {
           wantedState = WantedState.CLIMB_PREPARED;
           currentState = CurrentState.CLIMB_PREPARED;

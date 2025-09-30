@@ -61,6 +61,7 @@ public class RollersConstants {
   public static final double realV = 0.0;
 
   public static final double rollersDutyCycleOutHoldAlgae = -0.1;
+  public static final double algaeStallStatorCurrentAmps = 20;
 
   public static final int rampBeamBreakPort = 1;
   public static final int endefectorBeamBreakPort = 0;

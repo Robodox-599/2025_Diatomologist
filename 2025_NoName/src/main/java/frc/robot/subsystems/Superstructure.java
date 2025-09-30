@@ -501,7 +501,10 @@ public class Superstructure extends SubsystemBase {
         //   }
         //   break;
       case SCORING_CORAL:
-        if (!rollers.isCoralEnsured()) {
+        if (rollers.isCoralTroughScored() && currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
+          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
+          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+        } else if (rollers.isCoralBranchScored() && (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {

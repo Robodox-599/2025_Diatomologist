@@ -59,6 +59,8 @@ public class Wrist {
     DogLog.log("Wrist/CurrentState", currentState);
     DogLog.log("Wrist/WantedState", wantedState);
     SubsystemUtil.elevatorStateToHeightTicks(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
+
+    io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
   }
 
   private void handleStateTransitions() {

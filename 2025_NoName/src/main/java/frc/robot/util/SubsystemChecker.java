@@ -4,12 +4,14 @@ import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 
 public class SubsystemChecker extends SubsystemBase {
   private Elevator elevator;
   private Wrist wrist;
+  private Rollers rollers;
 
   public void setElevator(Elevator elevator) {
     this.elevator = elevator;
@@ -17,6 +19,10 @@ public class SubsystemChecker extends SubsystemBase {
 
   public void setWrist(Wrist wrist) {
     this.wrist = wrist;
+  }
+
+  public void setRollers(Rollers rollers) {
+    this.rollers = rollers;
   }
 
   private final double maximumElevatorSwingThroughHeight =
@@ -70,6 +76,10 @@ public class SubsystemChecker extends SubsystemBase {
 
   public boolean isAtPositionWrist(WristConstants.WristStates state) {
     return wrist.isAtSetpoint(state);
+  }
+
+  public boolean isCoralInEndefector() {
+    return rollers.isCoralIntakedInEndefector();
   }
 
   // public boolean isSafeElevator() {

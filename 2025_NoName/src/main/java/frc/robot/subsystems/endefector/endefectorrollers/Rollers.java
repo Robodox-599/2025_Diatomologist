@@ -79,7 +79,7 @@ public class Rollers {
         }
         break;
       case HOLD_ALGAE:
-        if (!isAlgaeIntaked()) {
+        if (isAlgaeScored()) {
           currentState = CurrentState.STOPPED;
         } else {
           currentState = CurrentState.HOLD_ALGAE;

@@ -11,6 +11,8 @@ public abstract class WristIO {
   protected double currentPosition = 0.0;
   protected boolean atSetpoint = false;
 
+  protected boolean isCoralInEndefector = false;
+
   public void updateInputs() {}
 
   public void setVoltage(double voltage) {}

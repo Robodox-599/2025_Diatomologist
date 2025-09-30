@@ -29,7 +29,8 @@ public class WristIOTalonFX extends WristIO {
 
   private final TalonFX wristMotor;
   TalonFXConfiguration wristConfig;
-  private final MotionMagicVoltage m_request;
+  private MotionMagicVoltage m_request;
+  private int slot = 0;
 
   private final CANcoder cancoder;
 
@@ -45,26 +46,29 @@ public class WristIOTalonFX extends WristIO {
 
     wristMotor = new TalonFX(wristMotorID, wristMotorCANBus);
     wristConfig = new TalonFXConfiguration();
-    m_request =
-        new MotionMagicVoltage(SubsystemUtil.wristStateToSetpoint(WristStates.POSITION_PREPARED))
-            .withSlot(0)
-            .withEnableFOC(true);
 
     cancoder = new CANcoder(cancoderID, wristMotorCANBus);
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
 
-    wristConfig.MotionMagic.MotionMagicCruiseVelocity = (12 - realkG - realkS) / realkV * 10;
-
-    wristConfig.MotionMagic.MotionMagicAcceleration = (((12 - realkG - realkS) / realkV) * 15);
+    wristConfig.MotionMagic.MotionMagicCruiseVelocity = maxWristVelocityWithCoral;
+    wristConfig.MotionMagic.MotionMagicAcceleration = maxWristAccelerationWithCoral;
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;
     wristConfig.Slot0.kD = realkD;
     wristConfig.Slot0.kV = realkV;
     wristConfig.Slot0.kS = realkS;
-    wristConfig.Slot0.kG = realkG;
+    wristConfig.Slot0.kG = realkGNoCoral;
+
+    wristConfig.Slot1.kP = realkP;
+    wristConfig.Slot1.kI = realkI;
+    wristConfig.Slot1.kD = realkD;
+    wristConfig.Slot1.kV = realkV;
+    wristConfig.Slot1.kS = realkS;
+    wristConfig.Slot1.kG = realKgWithCoral;
 
     wristConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    wristConfig.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
     wristConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     wristConfig.CurrentLimits.SupplyCurrentLimit = 40;
@@ -140,7 +144,11 @@ public class WristIOTalonFX extends WristIO {
     double position =
         MathUtil.clamp(SubsystemUtil.wristStateToSetpoint(state), wristMinAngle, wristMaxAngle);
     super.targetPosition = position;
-    m_request.withPosition(position);
+
+    slot = super.isCoralInEndefector ? 1 : 0;
+
+    m_request =
+        new MotionMagicVoltage(position).withSlot(slot).withEnableFOC(true);
     wristMotor.setControl(m_request);
   }
 }

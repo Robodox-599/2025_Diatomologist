@@ -22,7 +22,13 @@ public class WristConstants {
   public static final double realkD = 0.0;
   public static final double realkS = 0.075;
   public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
-  public static final double realkG = 0.42;
+  public static final double realkGNoCoral = 0.42;
+  public static final double realKgWithCoral = 0.52;
+
+  public static final double maxWristVelocityNoCoral = (12 - realkGNoCoral - realkS) / realkV;
+  public static final double maxWristVelocityWithCoral = (12 - realKgWithCoral - realkS) / realkV;
+  public static final double maxWristAccelerationNoCoral = maxWristVelocityNoCoral / 0.4; // set update to 150hz, set max accel to 5 * velocity, find the max accel, and multiply by 0.8 
+  public static final double maxWristAccelerationWithCoral = maxWristVelocityWithCoral / 0.4;
 
   // sim stuff
   public static final double simkP = 6.9;

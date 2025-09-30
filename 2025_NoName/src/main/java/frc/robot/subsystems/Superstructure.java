@@ -508,11 +508,15 @@ public class Superstructure extends SubsystemBase {
           if (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
               || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
+          } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
+              || currentSuperState == CurrentSuperState.POSITION_CORAL_L3
+              || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
+            currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
           } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
               || currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
           } else {
-            currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
+            currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
           }
         }
         break;

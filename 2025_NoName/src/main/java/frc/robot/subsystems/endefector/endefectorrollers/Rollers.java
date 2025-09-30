@@ -56,11 +56,13 @@ public class Rollers {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (isCoralInRamp() && isCoralIntakedInEndefector() && currentState == CurrentState.ENSURING_CORAL_BACKWARDS) {
+        if (isCoralInRamp()
+            && isCoralIntakedInEndefector()
+            && currentState == CurrentState.ENSURING_CORAL_BACKWARDS) {
           currentState = CurrentState.HOLD_CORAL;
         } else if (!isCoralInRamp() && isCoralIntakedInEndefector()) {
           currentState = CurrentState.ENSURING_CORAL_BACKWARDS;
-        } else if (isCoralInRamp() && isCoralIntakedInEndefector()) { 
+        } else if (isCoralInRamp() && isCoralIntakedInEndefector()) {
           currentState = CurrentState.ENSURING_CORAL_FORWARDS;
         } else {
           currentState = CurrentState.INTAKING_CORAL_STATION;
@@ -184,7 +186,10 @@ public class Rollers {
   }
 
   public boolean isCoralEnsured() {
-    return (currentState == CurrentState.HOLD_CORAL);
+    return (currentState == CurrentState.HOLD_CORAL)
+        || (currentState == CurrentState.SCORING_CORAL_TROUGH && !isCoralTroughScored())
+        || (currentState == CurrentState.SCORING_CORAL_L2_L3 && !isCoralBranchScored())
+        || (currentState == CurrentState.SCORING_CORAL_L4 && !isCoralBranchScored());
   }
 
   public boolean isCoralTroughScored() {

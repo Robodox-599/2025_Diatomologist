@@ -32,12 +32,13 @@ public class SubsystemChecker extends SubsystemBase {
   private final double endefectorBeyondHorizontalPosition = 0.05;
 
   public double calculateElevatorSoftLowerLimit() {
-    if (wrist.getPosition() > endefectorBeyondHorizontalPosition
-        && elevator.getHeightInches() > minimumElevatorSwingBelowHeight) {
-      return minimumElevatorSwingBelowHeight;
-      // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
-      // would make the limit dynamic based on wrist position
-    } else if (wrist.getPosition() < endefectorBehindElevatorPosition
+    // if (wrist.getPosition() > endefectorBeyondHorizontalPosition
+    //     && elevator.getHeightInches() > minimumElevatorSwingBelowHeight) {
+    //   return minimumElevatorSwingBelowHeight;
+    // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
+    // would make the limit dynamic based on wrist position
+    // } else
+    if (wrist.getPosition() < endefectorBehindElevatorPosition
         && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
       return minimumElevatorSwingAboveHeight;
     } else {

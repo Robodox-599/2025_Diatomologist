@@ -33,17 +33,17 @@ public final class ElevatorConstants {
   // Setpoint positions in inches
   public static final double[] heights = {
     0.0, // INTAKING CORAL STATION
-    6.0, // INTAKING ALGAE GROUND
+    2.0, // INTAKING ALGAE GROUND
     7.0, // INTAKING ALGAE LOLLIPOP
     26.0, // INTAKING ALGAE L2 // 27.5
     38.5, // INTAKING ALGAE L3 // 42
     12.0, // POSITION PREPARED
-    14.0, // POSITION CORAL L1 // 14
-    18.0, // POSITION CORAL L2 // 16
-    37.0, // POSITION CORAL L3 // 33
-    62.0, // POSITION CORAL L4 // 60
+    13.5, // POSITION CORAL L1 // 14
+    35.0, // POSITION CORAL L2 // 16
+    51.9, // POSITION CORAL L3 // 33
+    68.3, // POSITION CORAL L4 // 60
     12.0, // POSITION ALGAE PROCESSOR
-    84, // POSITION ALGAE BARGE
+    85.0, // POSITION ALGAE BARGE
   };
 
   public static final int leaderMotorID = 13;
@@ -60,7 +60,7 @@ public final class ElevatorConstants {
   public static final double elevatorHardUpperLimit = 85.0;
   public static final double homePositionOffset = 1.0;
 
-  public static final double kP = 1.0;
+  public static final double kP = 8.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kV =
@@ -68,8 +68,8 @@ public final class ElevatorConstants {
           .kKrakenX60Foc
           .kV; // there is no sensor to mechanism ratio so kV is the same as the motor's kV
   // if there is a sensor to mechanism ratio, kV = kV * sensor to mechanism ratio
-  public static final double kS = 0.205;
-  public static final double kG = 0.295;
+  public static final double kS = 0.135;
+  public static final double kG = 0.365;
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
   public static final double maxAccelerationRotationsPerSecSQ = maxVelocityRotsPerSec;
 

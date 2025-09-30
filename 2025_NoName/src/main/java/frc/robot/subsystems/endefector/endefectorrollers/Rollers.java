@@ -19,8 +19,6 @@ public class Rollers {
 
   public enum WantedState {
     INTAKING_CORAL_STATION,
-    ENSURING_CORAL_FORWARDS,
-    ENSURING_CORAL_BACKWARDS,
     INTAKING_ALGAE,
     HOLD_CORAL,
     HOLD_ALGAE,
@@ -58,34 +56,18 @@ public class Rollers {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (isCoralInRamp() && isCoralIntakedInEndefector()) {
-          wantedState = WantedState.ENSURING_CORAL_FORWARDS;
-          currentState = CurrentState.ENSURING_CORAL_FORWARDS;
-        } else {
-          currentState = CurrentState.INTAKING_CORAL_STATION;
-        }
-        break;
-      case ENSURING_CORAL_FORWARDS:
-        if (!isCoralInRamp() && isCoralIntakedInEndefector()) {
-          wantedState = WantedState.ENSURING_CORAL_BACKWARDS;
+        if (isCoralInRamp()
+            && isCoralIntakedInEndefector()
+            && currentState == CurrentState.ENSURING_CORAL_BACKWARDS) {
+          currentState = CurrentState.HOLD_CORAL;
+        } else if (!isCoralInRamp() && isCoralIntakedInEndefector()) {
           currentState = CurrentState.ENSURING_CORAL_BACKWARDS;
         } else if (isCoralInRamp() && isCoralIntakedInEndefector()) {
           currentState = CurrentState.ENSURING_CORAL_FORWARDS;
         } else {
-          wantedState = WantedState.INTAKING_CORAL_STATION;
           currentState = CurrentState.INTAKING_CORAL_STATION;
         }
         break;
-      case ENSURING_CORAL_BACKWARDS:
-        if (isCoralInRamp() && isCoralIntakedInEndefector()) {
-          wantedState = WantedState.HOLD_CORAL;
-          currentState = CurrentState.HOLD_CORAL;
-        } else if (!isCoralInRamp() && isCoralIntakedInEndefector()) {
-          currentState = CurrentState.ENSURING_CORAL_BACKWARDS;
-        } else {
-          wantedState = WantedState.INTAKING_CORAL_STATION;
-          currentState = CurrentState.INTAKING_CORAL_STATION;
-        }
       case INTAKING_ALGAE:
         currentState = CurrentState.INTAKING_ALGAE;
         break;
@@ -204,7 +186,10 @@ public class Rollers {
   }
 
   public boolean isCoralEnsured() {
-    return (currentState == CurrentState.HOLD_CORAL);
+    return (currentState == CurrentState.HOLD_CORAL)
+        || (currentState == CurrentState.SCORING_CORAL_TROUGH && !isCoralTroughScored())
+        || (currentState == CurrentState.SCORING_CORAL_L2_L3 && !isCoralBranchScored())
+        || (currentState == CurrentState.SCORING_CORAL_L4 && !isCoralBranchScored());
   }
 
   public boolean isCoralTroughScored() {

@@ -73,7 +73,7 @@ public final class ElevatorConstants {
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
   public static final double maxAccelerationRotationsPerSecSQ =
       maxVelocityRotsPerSec
-          / 0.07; // set update to 150hz, set max accel to 5 * velocity, find the max accel, and
+          / 0.07; // set update to 150hz, set max accel to 15 * velocity, find the max accel, and
   // multiply by 0.8
 
   // Add these for better PID tuning

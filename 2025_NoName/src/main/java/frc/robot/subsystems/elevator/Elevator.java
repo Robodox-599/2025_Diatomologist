@@ -60,6 +60,8 @@ public class Elevator {
     Tracer.traceFunc("CalculateSoftLimits", this::calculateSoftLimits);
     DogLog.log("Elevator/CurrentState", currentState);
     DogLog.log("Elevator/WantedState", wantedState);
+
+    subsystemChecker.setElevatorHeight(getHeightInches());
   }
 
   private void handleStateTransitions() {

@@ -92,10 +92,12 @@ public class RollersIOTalonFX extends RollersIO {
 
     super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
     super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
-    super.isAlgaeIntaked = algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
+    super.isAlgaeIntaked =
+        algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isCoralBranchScored = coralBranchScoreDebouncer.calculate(endefectorBeamBreak.get());
-    super.isAlgaeScored = algaeScoreDebouncer.calculate(!(super.statorCurrentAmps >= algaeStallStatorCurrentAmps));
+    super.isAlgaeScored =
+        algaeScoreDebouncer.calculate(!(super.statorCurrentAmps >= algaeStallStatorCurrentAmps));
 
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);

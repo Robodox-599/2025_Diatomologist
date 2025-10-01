@@ -147,8 +147,7 @@ public class WristIOTalonFX extends WristIO {
 
     slot = super.isCoralInEndefector ? 1 : 0;
 
-    m_request =
-        new MotionMagicVoltage(position).withSlot(slot).withEnableFOC(true);
+    m_request = new MotionMagicVoltage(position).withSlot(slot).withEnableFOC(true);
     wristMotor.setControl(m_request);
   }
 }

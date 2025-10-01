@@ -213,13 +213,13 @@ public class Superstructure extends SubsystemBase {
                 || currentSuperState == CurrentSuperState.POSITION_ALGAE_L3
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2
                 || currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3)) {
-          if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
+          if (AutoAlignPoseGenerator.getNearestReefFaceIndex() % 2 == 0) {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L3;
           } else {
             currentSuperState = CurrentSuperState.INTAKING_ALGAE_L2;
           }
         } else if (drivetrain.isReadyToRaiseAutoIntakeAlgae()) {
-          if (AutoAlignPoseGenerator.getReefFaceIndex() % 2 == 0) {
+          if (AutoAlignPoseGenerator.getNearestReefFaceIndex() % 2 == 0) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
           } else {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
@@ -501,10 +501,13 @@ public class Superstructure extends SubsystemBase {
         //   }
         //   break;
       case SCORING_CORAL:
-        if (rollers.isCoralTroughScored() && currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
+        if (rollers.isCoralTroughScored()
+            && currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else if (rollers.isCoralBranchScored() && (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
+        } else if (rollers.isCoralBranchScored()
+            && (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3
+                || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else {

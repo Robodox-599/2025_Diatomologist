@@ -60,6 +60,8 @@ public class Wrist {
     DogLog.log("Wrist/WantedState", wantedState);
     SubsystemUtil.elevatorStateToHeightTicks(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
 
+    subsystemChecker.setWristPosition(getPosition());
+
     io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
   }
 
@@ -105,13 +107,25 @@ public class Wrist {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_TROUGH:
-        currentState = CurrentState.POSITION_TROUGH;
+        if (subsystemChecker.isSafeDistanceFromReef(true)) {
+          currentState = CurrentState.POSITION_TROUGH;
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
         break;
       case POSITION_BRANCH_L2:
-        currentState = CurrentState.POSITION_BRANCH_L2;
+        if (subsystemChecker.isSafeDistanceFromReef(false)) {
+          currentState = CurrentState.POSITION_BRANCH_L2;
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
         break;
       case POSITION_BRANCH_L3:
-        currentState = CurrentState.POSITION_BRANCH_L3;
+        if (subsystemChecker.isSafeDistanceFromReef(false)) {
+          currentState = CurrentState.POSITION_BRANCH_L3;
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
         break;
       case POSITION_BRANCH_L4:
         if (subsystemChecker.isAtHeightElevator(

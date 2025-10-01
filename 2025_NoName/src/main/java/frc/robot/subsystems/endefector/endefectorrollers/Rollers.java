@@ -50,6 +50,8 @@ public class Rollers {
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
     DogLog.log("Rollers/IsCoralEnsured", isCoralEnsured());
+
+    subsystemChecker.setCoralInEndefector(isCoralIntakedInEndefector());
   }
 
   private void handleStateTransitions() {

@@ -1,29 +1,25 @@
 package frc.robot.util;
 
+import static frc.robot.FieldConstants.REEF_BLUE_MIDDLE;
+import static frc.robot.FieldConstants.REEF_RED_MIDDLE;
+
 import dev.doglog.DogLog;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
-import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 
 public class SubsystemChecker extends SubsystemBase {
-  private Elevator elevator;
-  private Wrist wrist;
-  private Rollers rollers;
-
-  public void setElevator(Elevator elevator) {
-    this.elevator = elevator;
-  }
-
-  public void setWrist(Wrist wrist) {
-    this.wrist = wrist;
-  }
-
-  public void setRollers(Rollers rollers) {
-    this.rollers = rollers;
-  }
+  private double wristPosition;
+  private double elevatorHeight;
+  private boolean isCoralIntakedInEndefector;
+  private Pose2d robotPose;
 
   private final double maximumElevatorSwingThroughHeight =
       12.4; // max height of elevator where endefector can safely swing through
@@ -36,6 +32,8 @@ public class SubsystemChecker extends SubsystemBase {
           - WristConstants
               .wristPositionTolerance; // any wrist position less than this is behind the elevator
   private final double endefectorBeyondHorizontalPosition = 0.05;
+  private final double endefectorOutsideBumpersPosition =
+      -0.10 - WristConstants.wristPositionTolerance;
 
   public double calculateElevatorSoftLowerLimit() {
     // if (wrist.getPosition() > endefectorBeyondHorizontalPosition
@@ -44,8 +42,8 @@ public class SubsystemChecker extends SubsystemBase {
     // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
     // would make the limit dynamic based on wrist position
     // } else
-    if (wrist.getPosition() < endefectorBehindElevatorPosition
-        && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
+    if (wristPosition < endefectorBehindElevatorPosition
+        && elevatorHeight > minimumElevatorSwingAboveHeight) {
       return minimumElevatorSwingAboveHeight;
     } else {
       return ElevatorConstants.elevatorHardLowerLimit;
@@ -53,8 +51,8 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   public double calculateElevatorSoftUpperLimit() {
-    if (wrist.getPosition() < endefectorBehindElevatorPosition
-        && elevator.getHeightInches() < maximumElevatorSwingThroughHeight) {
+    if (wristPosition < endefectorBehindElevatorPosition
+        && elevatorHeight < maximumElevatorSwingThroughHeight) {
       return maximumElevatorSwingThroughHeight;
     } else {
       return ElevatorConstants.elevatorHardUpperLimit;
@@ -62,7 +60,7 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   public boolean isEndefectorUnderElevator() {
-    if ((elevator.getHeightInches() < maximumElevatorSwingThroughHeight)) {
+    if ((elevatorHeight < maximumElevatorSwingThroughHeight)) {
       DogLog.log("SafetyChecker/isEndefectorUnderElevator", true);
       return true;
     }
@@ -70,16 +68,82 @@ public class SubsystemChecker extends SubsystemBase {
     return false;
   }
 
+  public boolean isEndefectorBeyondBumpers() {
+    if (wristPosition > endefectorOutsideBumpersPosition) {
+      DogLog.log("SafetyChecker/isEndefectorBeyondBumpers", true);
+      return true;
+    }
+    DogLog.log("SafetyChecker/isEndefectorBeyondBumpers", false);
+    return false;
+  }
+
+  public boolean isSafeDistanceFromReef(boolean isTrough) {
+    AutoAlignPoseGenerator.calculateNearestReefFacePosition(robotPose);
+    Translation2d translationToReef;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      translationToReef =
+          REEF_BLUE_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
+              .getTranslation()
+              .minus(robotPose.getTranslation());
+    } else {
+      translationToReef =
+          REEF_RED_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
+              .getTranslation()
+              .minus(robotPose.getTranslation());
+    }
+    double xDistance =
+        Math.abs(translationToReef.getX())
+            + CommandSwerveDrivetrain
+                .DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE; // +1 cm for extra tolerance
+    if (isTrough) {
+      return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
+    } else {
+      return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
+    }
+  }
+
   public boolean isAtHeightElevator(ElevatorConstants.ElevatorStates state) {
-    return elevator.isAtSetpoint(state);
+    return isAtElevatorSetpoint(state);
+  }
+
+  public boolean isAtElevatorSetpoint(ElevatorStates state) {
+    return isAtElevatorHeight(SubsystemUtil.elevatorStateToHeightInches(state));
+  }
+
+  public boolean isAtElevatorHeight(double height) {
+    return Math.abs(elevatorHeight - height) < ElevatorConstants.positionToleranceInches;
   }
 
   public boolean isAtPositionWrist(WristConstants.WristStates state) {
-    return wrist.isAtSetpoint(state);
+    return isAtWristSetpoint(state);
+  }
+
+  public boolean isAtWristSetpoint(WristStates state) {
+    return isAtWristAngle(WristConstants.setpoints[state.getIndex()]);
+  }
+
+  public boolean isAtWristAngle(double angle) {
+    return Math.abs(wristPosition - angle) < WristConstants.wristPositionTolerance;
   }
 
   public boolean isCoralInEndefector() {
-    return rollers.isCoralIntakedInEndefector();
+    return isCoralIntakedInEndefector;
+  }
+
+  public void setWristPosition(double position) {
+    wristPosition = position;
+  }
+
+  public void setElevatorHeight(double height) {
+    elevatorHeight = height;
+  }
+
+  public void setCoralInEndefector(boolean hasCoral) {
+    isCoralIntakedInEndefector = hasCoral;
+  }
+
+  public void setRobotPose(Pose2d pose) {
+    robotPose = pose;
   }
 
   // public boolean isSafeElevator() {

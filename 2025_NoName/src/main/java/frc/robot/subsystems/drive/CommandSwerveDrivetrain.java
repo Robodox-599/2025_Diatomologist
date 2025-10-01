@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 import java.util.function.Supplier;
 
@@ -44,6 +45,8 @@ import java.util.function.Supplier;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+  private final SubsystemChecker subsystemChecker;
+
   private final Telemetry telemetry =
       new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
   CommandXboxController driver;
@@ -60,7 +63,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               DriveRequestType.Velocity); // Use open-loop control for drive motors
 
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
-  private final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
+  public static final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 2 cm
   private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.05; // 5 cm
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
   private boolean withinCoralRaiseDistance = false;
@@ -186,6 +189,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public CommandSwerveDrivetrain(
       CommandXboxController driver,
+      SubsystemChecker subsystemChecker,
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
@@ -193,6 +197,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       startSimThread();
     }
     this.driver = driver;
+    this.subsystemChecker = subsystemChecker;
 
     driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
     driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -261,6 +266,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/WantedState", wantedState);
     DogLog.log("RobotPose", getState().Pose);
     updateDistancesAndSetpoints();
+
+    subsystemChecker.setRobotPose(getState().Pose);
   }
 
   public void setWantedState(WantedState wantedState) {

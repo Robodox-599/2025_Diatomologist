@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
         elevator = new Elevator(new ElevatorIOTalonFX(), subsystemChecker);
         rollers = new Rollers(new RollersIOTalonFX(), subsystemChecker);
         wrist = new Wrist(new WristIOTalonFX(), subsystemChecker);
-        drivetrain = TunerConstants.createDrivetrain(driver);
+        drivetrain = TunerConstants.createDrivetrain(driver, subsystemChecker);
         leds = new LEDs(new LEDsIOReal());
         // climb = new Climb(new ClimbIOTalonFX());
         vision =
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
         elevator = new Elevator(new ElevatorIOSim(), subsystemChecker);
         rollers = new Rollers(new RollersIOSim(), subsystemChecker);
         wrist = new Wrist(new WristIOSim(), subsystemChecker);
-        drivetrain = TunerConstants.createDrivetrain(driver);
+        drivetrain = TunerConstants.createDrivetrain(driver, subsystemChecker);
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
         vision =
@@ -118,9 +118,6 @@ public class Robot extends TimedRobot {
         new Superstructure(drivetrain, elevator, wrist, rollers, leds, vision, driver, operator);
 
     new Bindings(driver, operator, superstructure);
-
-    subsystemChecker.setElevator(elevator);
-    subsystemChecker.setWrist(wrist);
 
     subsystemVisualizer = new SubsystemVisualizer(elevator, wrist, rollers);
 

@@ -64,9 +64,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     PhoenixUtil.tryUntilOk(10, () -> leaderMotor.getConfigurator().apply(config, 1));
     PhoenixUtil.tryUntilOk(10, () -> followerMotor.getConfigurator().apply(config, 1));
 
-    leaderMotor.optimizeBusUtilization();
-    followerMotor.optimizeBusUtilization();
-
     position = leaderMotor.getPosition();
     velocity = leaderMotor.getVelocity();
     // acceleration = leaderMotor.getAcceleration();
@@ -74,7 +71,10 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     current = leaderMotor.getStatorCurrent();
     temperature = leaderMotor.getDeviceTemp();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, velocity, temperature, position, current, appliedVolts);
+        100.0, velocity, temperature, position, current, appliedVolts);
+
+    leaderMotor.optimizeBusUtilization();
+    followerMotor.optimizeBusUtilization();
 
     zeroEncoder();
   }

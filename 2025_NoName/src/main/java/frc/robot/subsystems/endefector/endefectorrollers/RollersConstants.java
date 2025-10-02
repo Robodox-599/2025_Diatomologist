@@ -1,5 +1,7 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
 
+import frc.robot.Constants;
+
 public class RollersConstants {
   public static enum EndefectorRollerStates {
     INTAKING_CORAL_STATION(0),
@@ -25,15 +27,15 @@ public class RollersConstants {
   }
 
   public static final double[] rollersVelocities = {
-    0.6, // intaking coral station
+    0.4, // intaking coral station
     0.4, // ensuring coral forwards
     -0.1, // ensuring coral backwards
-    -1.2, // intaking algae
+    -1.0, // intaking algae
     0.0, // holding coral
     -0.5, // scoring coral trough
     -0.6, // scoring coral l2 or l3
-    0.8, // scoring coral l4
-    1.6, // scoring algae
+    1.0, // scoring coral l4
+    1.0, // scoring algae
     0.0, // stopped
   };
 
@@ -57,8 +59,8 @@ public class RollersConstants {
   public static final double realP = 0.0;
   public static final double realI = 0.0;
   public static final double realD = 0.0;
-  public static final double realS = 0.0;
-  public static final double realV = 0.0;
+  public static final double realkS = 0.0;
+  public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
 
   public static final double rollersDutyCycleOutHoldAlgae = -0.1;
   public static final double algaeStallStatorCurrentAmps = 20;

@@ -5,6 +5,7 @@ public abstract class RollersIO {
   protected double statorCurrentAmps = 0.0;
   protected double supplyCurrentAmps = 0.0;
 
+  protected double position = 0.0;
   protected double appliedVolts = 0.0;
   protected double velocity = 0.0;
   protected double desiredVelocity = 0.0;
@@ -16,6 +17,7 @@ public abstract class RollersIO {
   protected boolean isCoralTroughScored = false;
   protected boolean isCoralBranchScored = false;
   protected boolean isAlgaeScored = false;
+  protected double holdCoralPosition = 0.0;
 
   public void updateInputs() {}
 
@@ -23,11 +25,17 @@ public abstract class RollersIO {
 
   public void setVelocity(RollersConstants.EndefectorRollerStates state) {}
 
-  public void grabOrHoldAlgae() {}
+  public void holdAlgae() {}
+
+  public void holdCoral() {}
+
+  public void setHoldCoralPosition() {}
 
   public double getVelocity() {
     return velocity;
   }
+
+  public void resetRollersPosition() {}
 
   public void setCoralStateSim(boolean state) {}
 }

@@ -17,7 +17,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -39,7 +38,7 @@ public class WristIOTalonFX extends WristIO {
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<AngularAcceleration> acceleration;
+  // private final StatusSignal<AngularAcceleration> acceleration;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> current;
   private final StatusSignal<Temperature> temperature;
@@ -97,25 +96,18 @@ public class WristIOTalonFX extends WristIO {
     absolutePosition = cancoder.getAbsolutePosition();
     position = wristMotor.getPosition();
     velocity = wristMotor.getVelocity();
-    acceleration = wristMotor.getAcceleration();
+    // acceleration = wristMotor.getAcceleration();
     appliedVolts = wristMotor.getMotorVoltage();
     current = wristMotor.getStatorCurrent();
     temperature = wristMotor.getDeviceTemp();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        absolutePosition,
-        temperature,
-        velocity,
-        acceleration,
-        position,
-        current,
-        appliedVolts);
+        50.0, absolutePosition, temperature, velocity, position, current, appliedVolts);
   }
 
   @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(
-        absolutePosition, temperature, velocity, acceleration, position, current, appliedVolts);
+        absolutePosition, temperature, velocity, position, current, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();
     super.currentAmps = current.getValueAsDouble();
     super.velocity = velocity.getValueAsDouble();
@@ -123,12 +115,12 @@ public class WristIOTalonFX extends WristIO {
     super.tempCelsius = temperature.getValueAsDouble();
     super.atSetpoint =
         Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance;
-    super.acceleration = acceleration.getValueAsDouble();
+    // super.acceleration = acceleration.getValueAsDouble();
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
     DogLog.log("Wrist/CurrentAmps", super.currentAmps);
     DogLog.log("Wrist/Velocity", super.velocity);
-    DogLog.log("Wrist/Acceleration", super.acceleration);
+    // DogLog.log("Wrist/Acceleration", super.acceleration);
     DogLog.log("Wrist/Temperature", super.tempCelsius);
     DogLog.log("Wrist/CurrentPosition", super.currentPosition);
     DogLog.log("Wrist/WristAtSetpoint", super.atSetpoint);

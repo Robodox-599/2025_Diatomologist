@@ -909,16 +909,16 @@ public class Superstructure extends SubsystemBase {
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_CORAL_L1:
-        wantedSuperState = WantedSuperState.POSITION_CORAL_L1;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_CORAL_L2:
-        wantedSuperState = WantedSuperState.POSITION_CORAL_L2;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_CORAL_L3:
-        wantedSuperState = WantedSuperState.POSITION_CORAL_L3;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_CORAL_L4:
-        wantedSuperState = WantedSuperState.POSITION_CORAL_L4;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_ALGAE_L2:
         if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
@@ -941,13 +941,13 @@ public class Superstructure extends SubsystemBase {
         wantedSuperState = WantedSuperState.POSITION_ALGAE_L3;
         break;
       case SCORING_CORAL_TROUGH:
-        wantedSuperState = WantedSuperState.SCORING_CORAL;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case SCORING_CORAL_L2_L3:
-        wantedSuperState = WantedSuperState.SCORING_CORAL;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case SCORING_CORAL_L4:
-        wantedSuperState = WantedSuperState.SCORING_CORAL;
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       default:
         break;

@@ -83,11 +83,7 @@ public class Elevator {
         currentState = CurrentState.POSITION_ALGAE_L3;
         break;
       case POSITION_PREPARED:
-        if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
-          currentState = CurrentState.POSITION_PREPARED;
-        } else {
-          currentState = CurrentState.STOPPED;
-        }
+        currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_PREPARED_AUTO:
         if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {

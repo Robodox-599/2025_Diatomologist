@@ -22,7 +22,11 @@ public class SubsystemChecker extends SubsystemBase {
   private Pose2d robotPose;
 
   private final double maximumElevatorSwingThroughHeight =
-      8.2; // max height of elevator where endefector can safely swing through
+      SubsystemUtil.elevatorStateToHeightInches(
+              ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)
+          + ElevatorConstants
+              .positionToleranceInches; // max height of elevator where endefector can safely swing
+  // through (8.2)
   private final double minimumElevatorSwingAboveHeight =
       28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =
@@ -93,8 +97,8 @@ public class SubsystemChecker extends SubsystemBase {
     }
     double xDistance =
         Math.abs(translationToReef.getX())
-            + CommandSwerveDrivetrain
-                .DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE; // +1 cm for extra tolerance
+            + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
+            + 0.05; // +5 cm for extra tolerance
     if (isTrough) {
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
     } else {

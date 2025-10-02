@@ -107,25 +107,28 @@ public class Wrist {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_TROUGH:
-        if (subsystemChecker.isSafeDistanceFromReef(true)) {
-          currentState = CurrentState.POSITION_TROUGH;
-        } else {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
+        // if (subsystemChecker.isSafeDistanceFromReef(true)) {
+        //   currentState = CurrentState.POSITION_TROUGH;
+        // } else {
+        //   currentState = CurrentState.POSITION_PREPARED;
+        // }
+        currentState = CurrentState.POSITION_TROUGH;
         break;
       case POSITION_BRANCH_L2:
-        if (subsystemChecker.isSafeDistanceFromReef(false)) {
-          currentState = CurrentState.POSITION_BRANCH_L2;
-        } else {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
+        // if (subsystemChecker.isSafeDistanceFromReef(false)) {
+        //   currentState = CurrentState.POSITION_BRANCH_L2;
+        // } else {
+        //   currentState = CurrentState.POSITION_PREPARED;
+        // }
+        currentState = CurrentState.POSITION_BRANCH_L2;
         break;
       case POSITION_BRANCH_L3:
-        if (subsystemChecker.isSafeDistanceFromReef(false)) {
-          currentState = CurrentState.POSITION_BRANCH_L3;
-        } else {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
+        // if (subsystemChecker.isSafeDistanceFromReef(false)) {
+        //   currentState = CurrentState.POSITION_BRANCH_L3;
+        // } else {
+        //   currentState = CurrentState.POSITION_PREPARED;
+        // }
+        currentState = CurrentState.POSITION_BRANCH_L3;
         break;
       case POSITION_BRANCH_L4:
         if (subsystemChecker.isAtHeightElevator(
@@ -153,48 +156,46 @@ public class Wrist {
   }
 
   private void applyStates() {
-    if (currentState != previousState) {
-      switch (currentState) {
-        case INTAKING_CORAL_STATION:
-          setAngle(WristStates.INTAKING_CORAL_STATION);
-          break;
-        case INTAKING_ALGAE_GROUND:
-          setAngle(WristStates.INTAKING_ALGAE_GROUND);
-          break;
-        case INTAKING_ALGAE_LOLLIPOP:
-          setAngle(WristStates.INTAKING_ALGAE_LOLLIPOP);
-          break;
-        case INTAKING_ALGAE_REEF_L2:
-          setAngle(WristStates.INTAKING_ALGAE_REEF);
-          break;
-        case INTAKING_ALGAE_REEF_L3:
-          setAngle(WristStates.INTAKING_ALGAE_REEF);
-          break;
-        case POSITION_PREPARED:
-          setAngle(WristStates.POSITION_PREPARED);
-          break;
-        case POSITION_TROUGH:
-          setAngle(WristStates.POSITION_TROUGH);
-          break;
-        case POSITION_BRANCH_L2:
-          setAngle(WristStates.POSITION_BRANCH_L2);
-          break;
-        case POSITION_BRANCH_L3:
-          setAngle(WristStates.POSITION_BRANCH_L3);
-          break;
-        case POSITION_BRANCH_L4:
-          setAngle(WristStates.POSITION_BRANCH_L4);
-          break;
-        case SCORING_ALGAE_BARGE:
-          setAngle(WristStates.SCORING_ALGAE_BARGE);
-          break;
-        case STOPPED:
-          stop();
-          break;
-        default:
-          stop();
-          break;
-      }
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
+        setAngle(WristStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE_GROUND:
+        setAngle(WristStates.INTAKING_ALGAE_GROUND);
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        setAngle(WristStates.INTAKING_ALGAE_LOLLIPOP);
+        break;
+      case INTAKING_ALGAE_REEF_L2:
+        setAngle(WristStates.INTAKING_ALGAE_REEF);
+        break;
+      case INTAKING_ALGAE_REEF_L3:
+        setAngle(WristStates.INTAKING_ALGAE_REEF);
+        break;
+      case POSITION_PREPARED:
+        setAngle(WristStates.POSITION_PREPARED);
+        break;
+      case POSITION_TROUGH:
+        setAngle(WristStates.POSITION_TROUGH);
+        break;
+      case POSITION_BRANCH_L2:
+        setAngle(WristStates.POSITION_BRANCH_L2);
+        break;
+      case POSITION_BRANCH_L3:
+        setAngle(WristStates.POSITION_BRANCH_L3);
+        break;
+      case POSITION_BRANCH_L4:
+        setAngle(WristStates.POSITION_BRANCH_L4);
+        break;
+      case SCORING_ALGAE_BARGE:
+        setAngle(WristStates.SCORING_ALGAE_BARGE);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 

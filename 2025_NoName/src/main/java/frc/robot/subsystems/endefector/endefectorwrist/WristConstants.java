@@ -9,7 +9,7 @@ public class WristConstants {
   public static final String wristMotorCANBus = "rio";
   public static final double gearRatio = 35.0;
   public static final double wristMOI = 0.04;
-  public static final double wristPositionTolerance = 0.01; // rotations
+  public static final double wristPositionTolerance = 0.03; // rotations
 
   // current limit stuff
   public static final boolean EnableCurrentLimit = true;
@@ -17,21 +17,24 @@ public class WristConstants {
   public static final int PeakCurrentLimit = 50;
   public static final double PeakCurrentDuration = 0.1;
 
-  public static final double realkP = 38;
+  public static final double realkP = 45.0;
   public static final double realkI = 0.0;
-  public static final double realkD = 0.0;
-  public static final double realkS = 0.075;
+  public static final double realkD = 6.0;
+  public static final double realkSNoCoral = 0.075;
+  public static final double realKsWithCoral = 0.05;
   public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
-  public static final double realkGNoCoral = 0.42;
-  public static final double realKgWithCoral = 0.52;
+  public static final double realkGNoCoral = 0.425;
+  public static final double realKgWithCoral = 0.45;
 
-  public static final double maxWristVelocityNoCoral = (12 - realkGNoCoral - realkS) / realkV;
-  public static final double maxWristVelocityWithCoral = (12 - realKgWithCoral - realkS) / realkV;
+  public static final double maxWristVelocityNoCoral =
+      (12 - realkGNoCoral - realkSNoCoral) / realkV;
+  public static final double maxWristVelocityWithCoral =
+      (12 - realKgWithCoral - realKsWithCoral) / realkV;
   public static final double maxWristAccelerationNoCoral =
       maxWristVelocityNoCoral
-          / 0.4; // set update to 150hz, set max accel to 5 * velocity, find the max accel, and
+          / 0.5; // set update to 150hz, set max accel to 5 * velocity, find the max accel, and
   // multiply by 0.8
-  public static final double maxWristAccelerationWithCoral = maxWristVelocityWithCoral / 0.4;
+  public static final double maxWristAccelerationWithCoral = maxWristVelocityWithCoral / 0.5;
 
   // sim stuff
   public static final double simkP = 6.9;

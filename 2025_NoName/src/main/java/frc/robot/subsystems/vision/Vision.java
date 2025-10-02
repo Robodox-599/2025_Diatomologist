@@ -70,7 +70,7 @@ public class Vision {
         double angularStdDev = camera.getConstants().angularStdDevBaseline() * stdDevFactor;
 
         linearStdDev *= camera.getConstants().cameraStdDevFactor();
-        angularStdDev *= camera.getConstants().cameraStdDevFactor();
+        angularStdDev *= 10 * camera.getConstants().cameraStdDevFactor();
 
         // Check whether to reject pose
 

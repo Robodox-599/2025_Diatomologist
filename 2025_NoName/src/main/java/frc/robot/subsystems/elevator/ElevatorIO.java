@@ -7,6 +7,7 @@ public abstract class ElevatorIO {
   protected double appliedVolts = 0.0;
   protected double currentAmps = 0.0;
   protected double targetPositionInches = 0.0;
+  protected double acceleration = 0.0;
   protected boolean atSetpoint = false;
 
   protected double elevatorSoftLowerLimit = ElevatorConstants.elevatorHardLowerLimit;

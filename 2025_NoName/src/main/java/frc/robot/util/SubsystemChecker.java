@@ -22,7 +22,7 @@ public class SubsystemChecker extends SubsystemBase {
   private Pose2d robotPose;
 
   private final double maximumElevatorSwingThroughHeight =
-      12.4; // max height of elevator where endefector can safely swing through
+      8.2; // max height of elevator where endefector can safely swing through
   private final double minimumElevatorSwingAboveHeight =
       28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =

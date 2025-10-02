@@ -83,7 +83,11 @@ public class Elevator {
         currentState = CurrentState.POSITION_ALGAE_L3;
         break;
       case POSITION_PREPARED:
-        currentState = CurrentState.POSITION_PREPARED;
+        if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
+          currentState = CurrentState.POSITION_PREPARED;
+        } else {
+          currentState = CurrentState.STOPPED;
+        }
         break;
       case POSITION_PREPARED_AUTO:
         if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
@@ -120,51 +124,49 @@ public class Elevator {
   }
 
   private void applyStates() {
-    if (currentState != previousState) {
-      switch (currentState) {
-        case INTAKING_CORAL_STATION:
-          setHeight(ElevatorStates.INTAKING_CORAL_STATION);
-          break;
-        case INTAKING_ALGAE_GROUND:
-          setHeight(ElevatorStates.INTAKING_ALGAE_GROUND);
-          break;
-        case INTAKING_ALGAE_LOLLIPOP:
-          setHeight(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
-          break;
-        case POSITION_ALGAE_L2:
-          setHeight(ElevatorStates.POSITION_ALGAE_L2);
-          break;
-        case POSITION_ALGAE_L3:
-          setHeight(ElevatorStates.POSITION_ALGAE_L3);
-          break;
-        case POSITION_PREPARED:
-          setHeight(ElevatorStates.POSITION_PREPARED);
-          break;
-        case POSITION_CORAL_L1:
-          setHeight(ElevatorStates.POSITION_CORAL_L1);
-          break;
-        case POSITION_CORAL_L2:
-          setHeight(ElevatorStates.POSITION_CORAL_L2);
-          break;
-        case POSITION_CORAL_L3:
-          setHeight(ElevatorStates.POSITION_CORAL_L3);
-          break;
-        case POSITION_CORAL_L4:
-          setHeight(ElevatorStates.POSITION_CORAL_L4);
-          break;
-        case POSITION_ALGAE_PROCESSOR:
-          setHeight(ElevatorStates.POSITION_ALGAE_PROCESSOR);
-          break;
-        case POSITION_ALGAE_BARGE:
-          setHeight(ElevatorStates.POSITION_ALGAE_BARGE);
-          break;
-        case STOPPED:
-          stop();
-          break;
-        default:
-          stop();
-          break;
-      }
+    switch (currentState) {
+      case INTAKING_CORAL_STATION:
+        setHeight(ElevatorStates.INTAKING_CORAL_STATION);
+        break;
+      case INTAKING_ALGAE_GROUND:
+        setHeight(ElevatorStates.INTAKING_ALGAE_GROUND);
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        setHeight(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
+        break;
+      case POSITION_ALGAE_L2:
+        setHeight(ElevatorStates.POSITION_ALGAE_L2);
+        break;
+      case POSITION_ALGAE_L3:
+        setHeight(ElevatorStates.POSITION_ALGAE_L3);
+        break;
+      case POSITION_PREPARED:
+        setHeight(ElevatorStates.POSITION_PREPARED);
+        break;
+      case POSITION_CORAL_L1:
+        setHeight(ElevatorStates.POSITION_CORAL_L1);
+        break;
+      case POSITION_CORAL_L2:
+        setHeight(ElevatorStates.POSITION_CORAL_L2);
+        break;
+      case POSITION_CORAL_L3:
+        setHeight(ElevatorStates.POSITION_CORAL_L3);
+        break;
+      case POSITION_CORAL_L4:
+        setHeight(ElevatorStates.POSITION_CORAL_L4);
+        break;
+      case POSITION_ALGAE_PROCESSOR:
+        setHeight(ElevatorStates.POSITION_ALGAE_PROCESSOR);
+        break;
+      case POSITION_ALGAE_BARGE:
+        setHeight(ElevatorStates.POSITION_ALGAE_BARGE);
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 

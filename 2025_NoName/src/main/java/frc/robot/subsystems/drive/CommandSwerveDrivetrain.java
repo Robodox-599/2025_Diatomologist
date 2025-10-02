@@ -82,7 +82,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
   private final PIDController driveToPointController =
-      new PIDController(3.0, 0.0, 0.0); // P: 3.0/3.6, D: 0.1
+      new PIDController(2.5, 0.0, 0.0); // P: 3.0/3.6, D: 0.1
   private final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
@@ -400,7 +400,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
     double linearDistance = translationToTarget.getNorm();
 
-    if (distanceFromCenter <= 1.6) { // distance from center + half bumper width + reef zone
+    if (distanceFromCenter <= 2) { // distance from center + half bumper width + reef zone
       withinCoralRaiseDistance = true;
       withinReefZone = true;
     } else {

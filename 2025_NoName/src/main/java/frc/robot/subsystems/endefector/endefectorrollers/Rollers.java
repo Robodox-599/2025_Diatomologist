@@ -109,43 +109,45 @@ public class Rollers {
   }
 
   private void applyStates() {
-    switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
-        break;
-      case ENSURING_CORAL_FORWARDS:
-        setVelocity(EndefectorRollerStates.ENSURING_CORAL_FORWARDS);
-        break;
-      case ENSURING_CORAL_BACKWARDS:
-        setVelocity(EndefectorRollerStates.ENSURING_CORAL_BACKWARDS);
-        break;
-      case INTAKING_ALGAE:
-        setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
-        break;
-      case HOLD_CORAL:
-        stop();
-        break;
-      case HOLD_ALGAE:
-        grabOrHoldAlgae();
-        break;
-      case SCORING_CORAL_TROUGH:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
-        break;
-      case SCORING_CORAL_L2_L3:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL_L2_L3);
-        break;
-      case SCORING_CORAL_L4:
-        setVelocity(EndefectorRollerStates.SCORING_CORAL_L4);
-        break;
-      case SCORING_ALGAE:
-        setVelocity(EndefectorRollerStates.SCORING_ALGAE);
-        break;
-      case STOPPED:
-        stop();
-        break;
-      default:
-        stop();
-        break;
+    if (currentState != previousState) {
+      switch (currentState) {
+        case INTAKING_CORAL_STATION:
+          setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
+          break;
+        case ENSURING_CORAL_FORWARDS:
+          setVelocity(EndefectorRollerStates.ENSURING_CORAL_FORWARDS);
+          break;
+        case ENSURING_CORAL_BACKWARDS:
+          setVelocity(EndefectorRollerStates.ENSURING_CORAL_BACKWARDS);
+          break;
+        case INTAKING_ALGAE:
+          setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
+          break;
+        case HOLD_CORAL:
+          stop();
+          break;
+        case HOLD_ALGAE:
+          grabOrHoldAlgae();
+          break;
+        case SCORING_CORAL_TROUGH:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
+          break;
+        case SCORING_CORAL_L2_L3:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_L2_L3);
+          break;
+        case SCORING_CORAL_L4:
+          setVelocity(EndefectorRollerStates.SCORING_CORAL_L4);
+          break;
+        case SCORING_ALGAE:
+          setVelocity(EndefectorRollerStates.SCORING_ALGAE);
+          break;
+        case STOPPED:
+          stop();
+          break;
+        default:
+          stop();
+          break;
+      }
     }
   }
 

@@ -15,47 +15,47 @@ public class CameraConstants {
   public static final String frontLeftCameraName = "FL_Camera";
 
   // CAMERA 1 POSE (X)
-  public static final double frontLeftCameraPoseX = Units.inchesToMeters(4.726); //
+  public static final double frontLeftCameraPoseX = Units.inchesToMeters(7.28); //
 
   // CAMERA 1 POSE (Y)
   public static final double frontLeftCameraPoseY =
-      Units.inchesToMeters(11.601); // (should be positive)
+      Units.inchesToMeters(9.21); // (should be positive)
 
   // CAMERA 1 POSE (Z)
-  public static final double frontLeftCameraPoseZ = Units.inchesToMeters(7.030); //
+  public static final double frontLeftCameraPoseZ = Units.inchesToMeters(7.88); //
 
   // CAMERA 1 POSE (ROLL)
   public static final double frontLeftCameraPoseRoll = Units.degreesToRadians(0); // 0
 
   // CAMERA 1 POSE (PITCH)
-  public static final double frontLeftCameraPosePitch = Units.degreesToRadians(-15); // -15
+  public static final double frontLeftCameraPosePitch = Units.degreesToRadians(-16.98); // -15
 
   // CAMERA 1 POSE (YAW)
   public static final double frontLeftCameraPoseYaw =
-      Units.degreesToRadians(-31.741); // (should be negative)
+      Units.degreesToRadians(-28.66); // (should be negative)
 
   // FRONT RIGHT CAMERA
   public static final String frontRightCameraName = "FR_Camera";
 
   // CAMERA 2 POSE (X)
-  public static final double frontRightCameraPoseX = Units.inchesToMeters(4.726); // 3.906
+  public static final double frontRightCameraPoseX = Units.inchesToMeters(7.28); // 3.906
 
   // CAMERA 2 POSE (Y)
   public static final double frontRightCameraPoseY =
-      Units.inchesToMeters(-11.601); // (should be negative)
+      Units.inchesToMeters(-9.21); // (should be negative)
 
   // CAMERA 2 POSE (Z)
-  public static final double frontRightCameraPoseZ = Units.inchesToMeters(7.030);
+  public static final double frontRightCameraPoseZ = Units.inchesToMeters(7.88);
 
   // CAMERA 2 POSE (ROLL)
   public static final double frontRightCameraPoseRoll = Units.degreesToRadians(0);
 
   // CAMERA 2 POSE (PITCH)
-  public static final double frontRightCameraPosePitch = Units.degreesToRadians(-15); // -15
+  public static final double frontRightCameraPosePitch = Units.degreesToRadians(-16.98); // -15
 
   // CAMERA 2 POSE (YAW)
   public static final double frontRightCameraPoseYaw =
-      Units.degreesToRadians(31.741); // (should be positive)
+      Units.degreesToRadians(28.66); // (should be positive)
 
   // BACK CAMERA
   public static final String backCameraName = "B_Camera";

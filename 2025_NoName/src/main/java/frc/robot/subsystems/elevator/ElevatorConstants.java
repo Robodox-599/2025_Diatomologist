@@ -60,7 +60,7 @@ public final class ElevatorConstants {
   public static final double elevatorHardUpperLimit = 85.0;
   public static final double homePositionOffset = 1.0;
 
-  public static final double kP = 1.5;
+  public static final double kP = 8.0;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kV =
@@ -73,7 +73,7 @@ public final class ElevatorConstants {
   public static final double maxVelocityRotsPerSec = (12.0 - kS - kG) / kV;
   public static final double maxAccelerationRotationsPerSecSQ =
       maxVelocityRotsPerSec
-          / 0.15; // set update to 150hz, set max accel to 15 * velocity, find the max accel, and
+          / 0.07; // set update to 150hz, set max accel to 15 * velocity, find the max accel, and
   // multiply by 0.8
 
   // Add these for better PID tuning

@@ -28,7 +28,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
   private final MotionMagicVoltage motionMagicRequest;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
-  // private final StatusSignal<AngularAcceleration> acceleration;
   private final StatusSignal<Voltage> appliedVolts;
   private final StatusSignal<Current> current;
   private final StatusSignal<Temperature> temperature;
@@ -69,7 +68,6 @@ public class ElevatorIOTalonFX extends ElevatorIO {
 
     position = leaderMotor.getPosition();
     velocity = leaderMotor.getVelocity();
-    // acceleration = leaderMotor.getAcceleration();
     appliedVolts = leaderMotor.getMotorVoltage();
     current = leaderMotor.getStatorCurrent();
     temperature = leaderMotor.getDeviceTemp();
@@ -85,18 +83,17 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     super.positionInches = position.getValueAsDouble() * ElevatorConstants.inchesPerRev;
     super.velocityInchesPerSec = velocity.getValueAsDouble() * ElevatorConstants.inchesPerRev;
     super.appliedVolts = appliedVolts.getValueAsDouble();
-    // super.acceleration = acceleration.getValueAsDouble() * ElevatorConstants.inchesPerRev;
     super.currentAmps = current.getValueAsDouble();
     super.targetPositionInches = motionMagicRequest.Position * ElevatorConstants.inchesPerRev;
 
     /* Determines if the elevator is at a setpoint */
-    super.atSetpoint =
-        Math.abs(super.targetPositionInches - super.positionInches)
-            < ElevatorConstants.positionToleranceInches;
+    double positionError = Math.abs(super.targetPositionInches - super.positionInches);
+    super.atSetpoint = positionError < ElevatorConstants.positionToleranceInches;
 
     DogLog.log("Elevator/StatorCurrentAmps", super.currentAmps);
     DogLog.log("Elevator/AppliedVoltage", super.appliedVolts);
     DogLog.log("Elevator/TempCelcius", super.tempCelsius);
+
     DogLog.log("Elevator/PositionInches", super.positionInches);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/ElevatorAtSetpoint", super.atSetpoint);

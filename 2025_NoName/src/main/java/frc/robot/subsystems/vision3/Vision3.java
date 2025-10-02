@@ -43,7 +43,7 @@ public class Vision3 {
     for (Vision3IOReal camera : cameras) {
       List<VisionUpdate> visionUpdates = camera.update();
       for (VisionUpdate update : visionUpdates) {
-        if (update.equals(VisionUpdate.empty())) {
+        if (!update.equals(VisionUpdate.empty())) {
           consumer.accept(update.pose, update.timestamp, update.visionMeasurementStdDevs);
         }
       }

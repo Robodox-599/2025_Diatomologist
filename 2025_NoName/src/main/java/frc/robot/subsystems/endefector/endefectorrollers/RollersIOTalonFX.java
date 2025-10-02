@@ -6,11 +6,13 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -37,6 +39,7 @@ public class RollersIOTalonFX extends RollersIO {
   private final StatusSignal<Current> statorCurrent;
   private final StatusSignal<Current> supplyCurrent;
   private final StatusSignal<Temperature> temperature;
+  private final StatusSignal<Angle> position;
 
   private double desiredVelocity;
 
@@ -52,8 +55,8 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.Slot0.kP = realP;
     rollersConfig.Slot0.kI = realI;
     rollersConfig.Slot0.kD = realD;
-    rollersConfig.Slot0.kS = realS;
-    rollersConfig.Slot0.kV = realV;
+    rollersConfig.Slot0.kS = realkS;
+    rollersConfig.Slot0.kV = realkV;
 
     rollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
@@ -69,23 +72,27 @@ public class RollersIOTalonFX extends RollersIO {
     algaeScoreDebouncer.setDebounceType(DebounceType.kFalling);
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
-    rollersMotor.optimizeBusUtilization();
+    position = rollersMotor.getPosition();
     velocity = rollersMotor.getVelocity();
     appliedVolts = rollersMotor.getMotorVoltage();
     statorCurrent = rollersMotor.getStatorCurrent();
     temperature = rollersMotor.getDeviceTemp();
     supplyCurrent = rollersMotor.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
+        100.0, position, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
+
+    rollersMotor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs() {
-    BaseStatusSignal.refreshAll(velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
+    BaseStatusSignal.refreshAll(
+        position, velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();
     super.statorCurrentAmps = statorCurrent.getValueAsDouble();
     super.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
 
+    super.position = position.getValueAsDouble();
     super.velocity = velocity.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
@@ -102,6 +109,7 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
     DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
 
+    DogLog.log("Rollers/Position", super.position);
     DogLog.log("Rollers/Velocity", super.velocity);
     DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
     DogLog.log("Rollers/TempCelcius", super.tempCelsius);
@@ -112,6 +120,8 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/CoralTroughScored", super.isCoralTroughScored);
     DogLog.log("Rollers/CoralBranchScored", super.isCoralBranchScored);
     DogLog.log("Rollers/AlgaeScored", super.isAlgaeScored);
+
+    DogLog.log("Rollers/holdCoralPosition", super.holdCoralPosition);
 
     DogLog.log("Rollers/RampBeamBreak", rampBeamBreak.get());
     DogLog.log("Rollers/EndefectorBeamBreak", endefectorBeamBreak.get());
@@ -124,12 +134,26 @@ public class RollersIOTalonFX extends RollersIO {
 
   @Override
   public void setVelocity(EndefectorRollerStates state) {
-    double velocity = SubsystemUtil.rollersStateToVelocity(state);
-    rollersMotor.set(velocity);
+    rollersMotor.set(SubsystemUtil.rollersStateToVelocity(state));
   }
 
   @Override
-  public void grabOrHoldAlgae() {
+  public void holdAlgae() {
     rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
+  }
+
+  @Override
+  public void setHoldCoralPosition() {
+    super.holdCoralPosition = rollersMotor.getPosition().getValueAsDouble();
+  }
+
+  @Override
+  public void holdCoral() {
+    rollersMotor.setControl(new PositionDutyCycle(super.holdCoralPosition));
+  }
+
+  @Override
+  public void resetRollersPosition() {
+    rollersMotor.setPosition(0.0);
   }
 }

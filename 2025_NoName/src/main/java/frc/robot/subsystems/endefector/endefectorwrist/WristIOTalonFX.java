@@ -91,8 +91,6 @@ public class WristIOTalonFX extends WristIO {
     cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.4;
     PhoenixUtil.tryUntilOk(10, () -> wristMotor.getConfigurator().apply(wristConfig, 1));
     PhoenixUtil.tryUntilOk(10, () -> cancoder.getConfigurator().apply(cancoderConfig, 1));
-    wristMotor.optimizeBusUtilization();
-    cancoder.optimizeBusUtilization();
     absolutePosition = cancoder.getAbsolutePosition();
     position = wristMotor.getPosition();
     velocity = wristMotor.getVelocity();
@@ -101,7 +99,10 @@ public class WristIOTalonFX extends WristIO {
     current = wristMotor.getStatorCurrent();
     temperature = wristMotor.getDeviceTemp();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, absolutePosition, temperature, velocity, position, current, appliedVolts);
+        100.0, absolutePosition, temperature, velocity, position, current, appliedVolts);
+
+    wristMotor.optimizeBusUtilization();
+    cancoder.optimizeBusUtilization();
   }
 
   @Override

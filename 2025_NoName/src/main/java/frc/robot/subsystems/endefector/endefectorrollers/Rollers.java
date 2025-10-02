@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endefector.endefectorrollers;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
@@ -50,6 +51,11 @@ public class Rollers {
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
     DogLog.log("Rollers/IsCoralEnsured", isCoralEnsured());
+
+    if (DriverStation.isDisabled() && (io.position > 50)) {
+      io.resetRollersPosition();
+      io.setHoldCoralPosition();
+    }
 
     subsystemChecker.setCoralInEndefector(isCoralIntakedInEndefector());
   }
@@ -123,10 +129,13 @@ public class Rollers {
         setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
         break;
       case HOLD_CORAL:
-        stop();
+        if (previousState != CurrentState.HOLD_CORAL) {
+          io.setHoldCoralPosition();
+        }
+        io.holdCoral();
         break;
       case HOLD_ALGAE:
-        grabOrHoldAlgae();
+        holdAlgae();
         break;
       case SCORING_CORAL_TROUGH:
         setVelocity(EndefectorRollerStates.SCORING_CORAL_TROUGH);
@@ -157,8 +166,12 @@ public class Rollers {
     return io.getVelocity();
   }
 
-  public void grabOrHoldAlgae() {
-    io.grabOrHoldAlgae();
+  public void holdAlgae() {
+    io.holdAlgae();
+  }
+
+  public void resetRollersPosition() {
+    io.resetRollersPosition();
   }
 
   public void stop() {

@@ -63,7 +63,7 @@ public class RollersIOSim extends RollersIO {
   }
 
   @Override
-  public void grabOrHoldAlgae() {
+  public void holdAlgae() {
     rollersSim.setInputVoltage(RollersConstants.rollersDutyCycleOutHoldAlgae);
   }
 

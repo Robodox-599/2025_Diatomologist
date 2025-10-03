@@ -3,7 +3,6 @@ package frc.robot.subsystems.endefector.endefectorwrist;
 import static frc.robot.subsystems.endefector.endefectorwrist.WristConstants.*;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -22,8 +21,9 @@ public class WristIOSim extends WristIO {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(WRIST_GEARBOX, wristMOI, gearRatio), WRIST_GEARBOX);
 
-    wristPID = new PIDController(WristConstants.simkP, WristConstants.simkI, WristConstants.simkD);
-    wristPID.setTolerance(WristConstants.wristPositionTolerance);
+    // wristPID = new PIDController(WristConstants.simkP, WristConstants.simkI,
+    // WristConstants.simkD);
+    // wristPID.setTolerance(WristConstants.wristPositionTolerance);
   }
 
   @Override
@@ -60,8 +60,9 @@ public class WristIOSim extends WristIO {
 
   @Override
   public void setAngle(WristStates state) {
-    targetPosition =
-        MathUtil.clamp(WristConstants.setpoints[state.getIndex()], wristMinAngle, wristMaxAngle);
-    wristSim.setInputVoltage(wristPID.calculate(targetPosition));
+    // targetPosition =
+    //     MathUtil.clamp(WristConstants.setpoints[state.getIndex()], wristMinAngle, wristMaxAngle);
+    // wristSim.setInputVoltage(wristPID.calculate(targetPosition));
+    currentPosition = WristConstants.setpoints[state.getIndex()];
   }
 }

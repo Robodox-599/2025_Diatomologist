@@ -69,7 +69,7 @@ public class RollersIOSim extends RollersIO {
 
   @Override
   public void setCoralStateSim(boolean state) {
-    this.isCoralInRamp = state;
-    this.isCoralIntakedInEndefector = state;
+    super.isCoralInRamp = state;
+    super.isCoralIntakedInEndefector = state;
   }
 }

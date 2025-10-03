@@ -90,8 +90,8 @@ public class RollersIOTalonFX extends RollersIO {
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
 
-    super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
-    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
+    super.isCoralInRamp = rampCoralDebouncer.calculate(rampBeamBreak.get());
+    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(endefectorBeamBreak.get());
     super.isAlgaeIntaked =
         algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());

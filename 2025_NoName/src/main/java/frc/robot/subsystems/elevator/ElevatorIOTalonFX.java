@@ -101,6 +101,8 @@ public class ElevatorIOTalonFX extends ElevatorIO {
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/ElevatorAtSetpoint", super.atSetpoint);
     DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
+    DogLog.log("Elevator/SoftUpperLimit", super.elevatorSoftUpperLimit);
+    DogLog.log("Elevator/SoftLowerLimit", super.elevatorSoftLowerLimit);
   }
 
   @Override

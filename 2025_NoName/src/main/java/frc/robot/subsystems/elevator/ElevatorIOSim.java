@@ -48,6 +48,8 @@ public class ElevatorIOSim extends ElevatorIO {
     // DogLog.log("Elevator/VelocityInchesPerSec", super.velocityInchesPerSec);
     DogLog.log("Elevator/TargetPositionInches", super.targetPositionInches);
     DogLog.log("Elevator/AtSetpoint", super.atSetpoint);
+    DogLog.log("Elevator/SoftUpperLimit", super.elevatorSoftUpperLimit);
+    DogLog.log("Elevator/SoftLowerLimit", super.elevatorSoftLowerLimit);
   }
 
   @Override

@@ -65,19 +65,19 @@ public class SubsystemChecker extends SubsystemBase {
 
   public boolean isEndefectorUnderElevator() {
     if ((elevatorHeight < maximumElevatorSwingThroughHeight)) {
-      DogLog.log("SafetyChecker/isEndefectorUnderElevator", true);
+      DogLog.log("SubsystemChecker/isEndefectorUnderElevator", true);
       return true;
     }
-    DogLog.log("SafetyChecker/isEndefectorUnderElevator", false);
+    DogLog.log("SubsystemChecker/isEndefectorUnderElevator", false);
     return false;
   }
 
   public boolean isEndefectorBeyondBumpers() {
     if (wristPosition > endefectorOutsideBumpersPosition) {
-      DogLog.log("SafetyChecker/isEndefectorBeyondBumpers", true);
+      DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", true);
       return true;
     }
-    DogLog.log("SafetyChecker/isEndefectorBeyondBumpers", false);
+    DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", false);
     return false;
   }
 
@@ -100,14 +100,22 @@ public class SubsystemChecker extends SubsystemBase {
             + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
             + 0.05; // +5 cm for extra tolerance
     if (isTrough) {
+      DogLog.log(
+          "SubsystemChecker/isSafeDistanceFromReef",
+          xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
     } else {
+      DogLog.log(
+          "SubsystemChecker/isSafeDistanceFromReef",
+          xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
     }
   }
 
   public boolean isAtHeightElevator(ElevatorConstants.ElevatorStates state) {
-    return isAtElevatorSetpoint(state);
+    boolean isAtHeightElevator = isAtElevatorSetpoint(state);
+    DogLog.log("SubsystemChecker/isAtHeightElevator", isAtHeightElevator);
+    return isAtHeightElevator;
   }
 
   public boolean isAtElevatorSetpoint(ElevatorStates state) {
@@ -119,7 +127,9 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   public boolean isAtPositionWrist(WristConstants.WristStates state) {
-    return isAtWristSetpoint(state);
+    boolean isAtPositionWrist = isAtWristSetpoint(state);
+    DogLog.log("SubsystemChecker/isAtPositionWrist", isAtPositionWrist);
+    return isAtPositionWrist;
   }
 
   public boolean isAtWristSetpoint(WristStates state) {
@@ -131,6 +141,7 @@ public class SubsystemChecker extends SubsystemBase {
   }
 
   public boolean isCoralInEndefector() {
+    DogLog.log("SubsystemChecker/isCoralInEndefector", isCoralIntakedInEndefector);
     return isCoralIntakedInEndefector;
   }
 

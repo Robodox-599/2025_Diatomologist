@@ -993,6 +993,10 @@ public class Superstructure extends SubsystemBase {
     return rollers.isCoralEnsured();
   }
 
+  public boolean isCoralBranchScored() {
+    return rollers.isCoralBranchScored();
+  }
+
   public boolean isAlgaeIntaked() {
     return rollers.isAlgaeIntaked();
   }

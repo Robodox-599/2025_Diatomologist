@@ -58,7 +58,7 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     LEFTtoI.recentlyDone()
-        .and(() -> !superstructureCommands.isCoralEnsured())
+        .and(() -> superstructureCommands.isCoralBranchScored())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
@@ -82,7 +82,7 @@ public class AutoRoutines {
                 WantedSuperState.AUTO_SCORE_L4_RIGHT));
 
     HPtoL.recentlyDone()
-        .and(() -> !superstructureCommands.isCoralEnsured())
+        .and(() -> superstructureCommands.isCoralBranchScored())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(
@@ -105,7 +105,7 @@ public class AutoRoutines {
             superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
 
     HPtoK.recentlyDone()
-        .and(() -> !superstructureCommands.isCoralEnsured())
+        .and(() -> superstructureCommands.isCoralBranchScored())
         .onTrue(
             Commands.parallel(
                 superstructureCommands.setWantedSuperStateCommand(

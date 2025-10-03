@@ -2,14 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems.vision4.camera;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.vision4.camera.Camera.CameraConstants;
 
-public class CameraConstants {
+public class CameraTransforms {
   /* VISION */
   // FRONT LEFT CAMERA
   public static final String frontLeftCameraName = "FL_Camera";
@@ -97,31 +98,29 @@ public class CameraConstants {
   //   // CAMERA 4 POSE (YAW)
   //   public static final double camera4PoseYaw = Units.degreesToRadians(-28.6588);
 
-  public static final VisionConstants frontLeftCameraConstants =
-      new VisionConstants(
+  public static final CameraConstants frontLeftCameraConstants =
+      new CameraConstants(
           frontLeftCameraName,
           new Transform3d(
               new Translation3d(frontLeftCameraPoseX, frontLeftCameraPoseY, frontLeftCameraPoseZ),
               new Rotation3d(
-                  frontLeftCameraPoseRoll, frontLeftCameraPosePitch, frontLeftCameraPoseYaw)),
-          0.9);
+                  frontLeftCameraPoseRoll, frontLeftCameraPosePitch, frontLeftCameraPoseYaw)));
 
-  public static final VisionConstants frontRightCameraConstants =
-      new VisionConstants(
+  public static final CameraConstants frontRightCameraConstants =
+      new CameraConstants(
           frontRightCameraName,
           new Transform3d(
               new Translation3d(
                   frontRightCameraPoseX, frontRightCameraPoseY, frontRightCameraPoseZ),
               new Rotation3d(
-                  frontRightCameraPoseRoll, frontRightCameraPosePitch, frontRightCameraPoseYaw)),
-          0.9);
-  public static final VisionConstants backCameraConstants =
-      new VisionConstants(
-          backCameraName,
-          new Transform3d(
-              new Translation3d(backCameraPoseX, backCameraPoseY, backCameraPoseZ),
-              new Rotation3d(backCameraPoseRoll, backCameraPosePitch, backCameraPoseYaw)),
-          1.0);
+                  frontRightCameraPoseRoll, frontRightCameraPosePitch, frontRightCameraPoseYaw)));
+
+  //   public static final CameraConstants backCameraConstants =
+  //       new CameraConstants(
+  //           backCameraName,
+  //           new Transform3d(
+  //               new Translation3d(backCameraPoseX, backCameraPoseY, backCameraPoseZ),
+  //               new Rotation3d(backCameraPoseRoll, backCameraPosePitch, backCameraPoseYaw)));
   //   public static final VisionConstants cam4Constants =
   //       new VisionConstants(
   //           camera4Name,

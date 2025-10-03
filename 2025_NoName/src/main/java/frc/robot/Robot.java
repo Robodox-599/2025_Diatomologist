@@ -31,9 +31,10 @@ import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.leds.LEDsIOReal;
 import frc.robot.subsystems.leds.LEDsIOSim;
 import frc.robot.subsystems.subsystemVisualizer.SubsystemVisualizer;
-import frc.robot.subsystems.vision.CameraConstants;
-import frc.robot.subsystems.vision.CameraReal;
-import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision4.Vision4;
+import frc.robot.subsystems.vision4.camera.Camera;
+import frc.robot.subsystems.vision4.camera.CameraIOReal;
+import frc.robot.subsystems.vision4.camera.CameraTransforms;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
   final Wrist wrist;
   final Rollers rollers;
   final LEDs leds;
-  final Vision vision;
+  final Vision4 vision;
   final AutoFactory autoFactory;
   final AutoRoutines autoRoutines;
   final SubsystemVisualizer subsystemVisualizer;
@@ -84,11 +85,13 @@ public class Robot extends TimedRobot {
         leds = new LEDs(new LEDsIOReal());
         // climb = new Climb(new ClimbIOTalonFX());
         vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                new CameraReal(CameraConstants.frontLeftCameraConstants),
-                new CameraReal(CameraConstants.frontRightCameraConstants),
-                new CameraReal(CameraConstants.backCameraConstants));
+            new Vision4(
+                new Camera(
+                    new CameraIOReal(CameraTransforms.frontLeftCameraConstants),
+                    drivetrain::addVisionMeasurement),
+                new Camera(
+                    new CameraIOReal(CameraTransforms.frontRightCameraConstants),
+                    drivetrain::addVisionMeasurement));
         break;
       default: // SIMULATION
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -99,11 +102,13 @@ public class Robot extends TimedRobot {
         leds = new LEDs(new LEDsIOSim());
         // climb = new Climb(new ClimbIOSim());
         vision =
-            new Vision(
-                drivetrain::addVisionMeasurement,
-                new CameraReal(CameraConstants.frontLeftCameraConstants),
-                new CameraReal(CameraConstants.frontRightCameraConstants),
-                new CameraReal(CameraConstants.backCameraConstants));
+            new Vision4(
+                new Camera(
+                    new CameraIOReal(CameraTransforms.frontLeftCameraConstants),
+                    drivetrain::addVisionMeasurement),
+                new Camera(
+                    new CameraIOReal(CameraTransforms.frontRightCameraConstants),
+                    drivetrain::addVisionMeasurement));
         break;
     }
     autoFactory =

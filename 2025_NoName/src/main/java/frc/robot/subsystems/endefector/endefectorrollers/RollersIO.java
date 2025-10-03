@@ -18,6 +18,7 @@ public abstract class RollersIO {
   protected boolean isCoralBranchScored = false;
   protected boolean isAlgaeScored = false;
   protected double holdCoralPosition = 0.0;
+  protected boolean isCoralHeld = false;
 
   public void updateInputs() {}
 

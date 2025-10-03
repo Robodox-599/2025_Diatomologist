@@ -53,16 +53,16 @@ public class Wrist {
   }
 
   public void updateInputs() {
+    subsystemChecker.setWristPosition(getPosition());
+
+    io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
+
     Tracer.traceFunc("UpdateIO", io::updateInputs);
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
     DogLog.log("Wrist/CurrentState", currentState);
     DogLog.log("Wrist/WantedState", wantedState);
     SubsystemUtil.elevatorStateToHeightTicks(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
-
-    subsystemChecker.setWristPosition(getPosition());
-
-    io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
   }
 
   private void handleStateTransitions() {

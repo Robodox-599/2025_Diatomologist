@@ -17,7 +17,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.AsynchronousInterrupt;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
@@ -33,6 +35,8 @@ public class RollersIOTalonFX extends RollersIO {
   Debouncer algaeScoreDebouncer = new Debouncer(algaeScoreDebounce);
   private DigitalInput rampBeamBreak;
   private DigitalInput endefectorBeamBreak;
+  private AsynchronousInterrupt rampInterrupt;
+  private AsynchronousInterrupt endefectorInterrupt;
 
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> appliedVolts;
@@ -81,11 +85,54 @@ public class RollersIOTalonFX extends RollersIO {
     BaseStatusSignal.setUpdateFrequencyForAll(
         100.0, position, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
 
+    rampInterrupt.enable();
+    endefectorInterrupt.disable();
+
+    rampInterrupt =
+        new AsynchronousInterrupt(
+            rampBeamBreak,
+            (rising, falling) -> {
+              if (rising) { // coral detected -> not detected
+                super.isCoralHeld = false;
+                endefectorInterrupt.enable();
+              }
+              if (falling) { // coral not detected -> coral detected
+                endefectorInterrupt.disable();
+                super.isCoralHeld = false;
+              }
+            });
+
+    endefectorInterrupt =
+        new AsynchronousInterrupt(
+            endefectorBeamBreak,
+            (rising, falling) -> {
+              if (falling) { // coral not detected -> coral detected
+                setHoldCoralPosition();
+                holdCoral();
+                super.isCoralHeld = true;
+              }
+              if (rising) { // coral detected -> not detected
+                super.isCoralHeld = false;
+                // endefectorInterrupt.disable(); idk i should put this or not
+              }
+            });
+
+    rampInterrupt.setInterruptEdges(true, true);
+
+    endefectorInterrupt.setInterruptEdges(true, true);
+
     rollersMotor.optimizeBusUtilization();
   }
 
   @Override
   public void updateInputs() {
+    if (DriverStation.isDisabled()) {
+      rampInterrupt.disable();
+      endefectorInterrupt.disable();
+    } else {
+      rampInterrupt.enable();
+    }
+
     BaseStatusSignal.refreshAll(
         position, velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
     super.appliedVolts = appliedVolts.getValueAsDouble();
@@ -97,8 +144,8 @@ public class RollersIOTalonFX extends RollersIO {
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
 
-    super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
-    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
+    super.isCoralInRamp = rampCoralDebouncer.calculate(rampBeamBreak.get());
+    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(endefectorBeamBreak.get());
     super.isAlgaeIntaked =
         algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());

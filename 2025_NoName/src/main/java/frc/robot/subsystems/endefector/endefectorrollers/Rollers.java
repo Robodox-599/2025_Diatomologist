@@ -45,6 +45,8 @@ public class Rollers {
   }
 
   public void updateInputs() {
+    subsystemChecker.setCoralInEndefector(isCoralIntakedInEndefector());
+
     Tracer.traceFunc("UpdateIO", io::updateInputs);
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
@@ -56,22 +58,14 @@ public class Rollers {
       io.resetRollersPosition();
       io.setHoldCoralPosition();
     }
-
-    subsystemChecker.setCoralInEndefector(isCoralIntakedInEndefector());
   }
 
   private void handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (isCoralInRamp()
-            && isCoralIntakedInEndefector()
-            && currentState == CurrentState.ENSURING_CORAL_BACKWARDS) {
+        if (isCoralHeld()) {
           currentState = CurrentState.HOLD_CORAL;
-        } else if (!isCoralInRamp() && isCoralIntakedInEndefector()) {
-          currentState = CurrentState.ENSURING_CORAL_BACKWARDS;
-        } else if (isCoralInRamp() && isCoralIntakedInEndefector()) {
-          currentState = CurrentState.ENSURING_CORAL_FORWARDS;
         } else {
           currentState = CurrentState.INTAKING_CORAL_STATION;
         }
@@ -119,19 +113,16 @@ public class Rollers {
       case INTAKING_CORAL_STATION:
         setVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
         break;
-      case ENSURING_CORAL_FORWARDS:
-        setVelocity(EndefectorRollerStates.ENSURING_CORAL_FORWARDS);
-        break;
-      case ENSURING_CORAL_BACKWARDS:
-        setVelocity(EndefectorRollerStates.ENSURING_CORAL_BACKWARDS);
-        break;
+        // case ENSURING_CORAL_FORWARDS:
+        //   setVelocity(EndefectorRollerStates.ENSURING_CORAL_FORWARDS);
+        //   break;
+        // case ENSURING_CORAL_BACKWARDS:
+        //   setVelocity(EndefectorRollerStates.ENSURING_CORAL_BACKWARDS);
+        //   break;
       case INTAKING_ALGAE:
         setVelocity(EndefectorRollerStates.INTAKING_ALGAE);
         break;
       case HOLD_CORAL:
-        if (previousState != CurrentState.HOLD_CORAL) {
-          io.setHoldCoralPosition();
-        }
         io.holdCoral();
         break;
       case HOLD_ALGAE:
@@ -203,6 +194,10 @@ public class Rollers {
         || (currentState == CurrentState.SCORING_CORAL_TROUGH && !isCoralTroughScored())
         || (currentState == CurrentState.SCORING_CORAL_L2_L3 && !isCoralBranchScored())
         || (currentState == CurrentState.SCORING_CORAL_L4 && !isCoralBranchScored());
+  }
+
+  public boolean isCoralHeld() {
+    return io.isCoralHeld;
   }
 
   public boolean isCoralTroughScored() {

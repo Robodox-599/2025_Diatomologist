@@ -63,8 +63,8 @@ public class RollersIOTalonFX extends RollersIO {
     rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
     rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
 
-    rampCoralDebouncer.setDebounceType(DebounceType.kFalling);
-    coralIntakeDebouncer.setDebounceType(DebounceType.kFalling);
+    rampCoralDebouncer.setDebounceType(DebounceType.kRising);
+    coralIntakeDebouncer.setDebounceType(DebounceType.kRising);
     coralTroughScoreDebouncer.setDebounceType(DebounceType.kRising);
     coralBranchScoreDebouncer.setDebounceType(DebounceType.kRising);
 
@@ -97,8 +97,8 @@ public class RollersIOTalonFX extends RollersIO {
     super.tempCelsius = temperature.getValueAsDouble();
     super.desiredVelocity = desiredVelocity;
 
-    super.isCoralInRamp = rampCoralDebouncer.calculate(rampBeamBreak.get());
-    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(endefectorBeamBreak.get());
+    super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
+    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
     super.isAlgaeIntaked =
         algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());

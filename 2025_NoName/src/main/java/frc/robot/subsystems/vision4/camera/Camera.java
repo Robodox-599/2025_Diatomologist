@@ -90,7 +90,7 @@ public class Camera {
       return invalidDevs;
     }
     if (DriverStation.isDisabled()) {
-      return visionPointBlankDevs.times(0.5);
+      return visionPointBlankDevs.times(0.75);
     }
     ChassisSpeeds speeds = subsystemChecker.getChassisSpeeds();
     deviation =

@@ -128,8 +128,8 @@ public class Robot extends TimedRobot {
 
     /** AUTO ROUTINES */
     // COMPETITION
-    autoChooser.addRoutine("Left Auto - 3 Coral", autoRoutines::leftAutoRoutine);
-    autoChooser.addRoutine("Right Auto - 3 Coral", autoRoutines::rightAutoRoutine);
+    autoChooser.addRoutine("Left Auto - 4 Coral", autoRoutines::leftAutoRoutine);
+    autoChooser.addRoutine("Right Auto - 4 Coral", autoRoutines::rightAutoRoutine);
     autoChooser.addRoutine(
         "Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
     autoChooser.addRoutine("Middle Auto - 1 Coral", autoRoutines::middleAutoRoutine);

@@ -30,7 +30,7 @@ public final class ChoreoVariableWriter {
           (REEF_BLUE_LEFT[i])
               .transformBy(
                   new Transform2d(
-                      -AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET, 0.0, new Rotation2d(0))));
+                      AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET, 0.0, new Rotation2d(0))));
     }
     String[] blueRightNames = {
       "REEF_BLUE_B", "REEF_BLUE_D", "REEF_BLUE_F", "REEF_BLUE_H", "REEF_BLUE_J", "REEF_BLUE_L"
@@ -39,8 +39,7 @@ public final class ChoreoVariableWriter {
       namedPosesMap.put(
           blueRightNames[i],
           REEF_BLUE_RIGHT[i].transformBy(
-              new Transform2d(
-                  -AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET, 0.0, new Rotation2d(0))));
+              new Transform2d(AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET, 0.0, new Rotation2d(0))));
     }
     String[] blueMiddleNames = {
       "REEF_BLUE_AB", "REEF_BLUE_CD", "REEF_BLUE_EF", "REEF_BLUE_GH", "REEF_BLUE_IJ", "REEF_BLUE_KL"

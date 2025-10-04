@@ -88,10 +88,12 @@ public class Robot extends TimedRobot {
             new Vision4(
                 new Camera(
                     new CameraIOReal(CameraTransforms.frontLeftCameraConstants),
-                    drivetrain::addVisionMeasurement),
+                    drivetrain::addVisionMeasurement,
+                    subsystemChecker),
                 new Camera(
                     new CameraIOReal(CameraTransforms.frontRightCameraConstants),
-                    drivetrain::addVisionMeasurement));
+                    drivetrain::addVisionMeasurement,
+                    subsystemChecker));
         break;
       default: // SIMULATION
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -105,10 +107,12 @@ public class Robot extends TimedRobot {
             new Vision4(
                 new Camera(
                     new CameraIOReal(CameraTransforms.frontLeftCameraConstants),
-                    drivetrain::addVisionMeasurement),
+                    drivetrain::addVisionMeasurement,
+                    subsystemChecker),
                 new Camera(
                     new CameraIOReal(CameraTransforms.frontRightCameraConstants),
-                    drivetrain::addVisionMeasurement));
+                    drivetrain::addVisionMeasurement,
+                    subsystemChecker));
         break;
     }
     autoFactory =

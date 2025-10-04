@@ -268,6 +268,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     updateDistancesAndSetpoints();
 
     subsystemChecker.setRobotPose(getState().Pose);
+    subsystemChecker.setChassisSpeeds(getChassisSpeeds());
   }
 
   public void setWantedState(WantedState wantedState) {

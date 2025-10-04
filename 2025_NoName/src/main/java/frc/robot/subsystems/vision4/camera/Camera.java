@@ -14,9 +14,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructSubscriber;
 import frc.robot.FieldConstants;
+import frc.robot.util.SubsystemChecker;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator;
@@ -28,8 +27,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class Camera {
   public record CameraConstants(String name, Transform3d robotToCamera) {}
 
-  private static StructSubscriber<ChassisSpeeds> speedsSub;
-
   private final PhotonPoseEstimator poseEstimator =
       new PhotonPoseEstimator(
           FieldConstants.AprilTags.aprilTagFieldLayout,
@@ -37,6 +34,7 @@ public class Camera {
           null);
   private final CameraIO io;
   private final VisionConsumer consumer;
+  private final SubsystemChecker subsystemChecker;
 
   public static final Matrix<N3, N1> visionPointBlankDevs =
       new Matrix<N3, N1>(Nat.N3(), Nat.N1(), new double[] {0.6, 0.6, 0.5});
@@ -45,24 +43,14 @@ public class Camera {
           Nat.N3(), Nat.N1(), new double[] {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE});
   public static final double distanceFactor = 3.0;
 
-  public Camera(CameraIOReal io, VisionConsumer consumer) {
+  public Camera(CameraIOReal io, VisionConsumer consumer, SubsystemChecker subsystemChecker) {
     this.io = io;
     poseEstimator.setRobotToCameraTransform(io.getCameraConstants().robotToCamera());
     this.consumer = consumer;
     poseEstimator.setTagModel(TargetModel.kAprilTag36h11);
     poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-    // Get the default NetworkTable instance (shared across robot code)
-    var ntInstance = NetworkTableInstance.getDefault();
-
-    // Access the same table the Drive subsystem published to
-    var driveStateTable = ntInstance.getTable("DriveState");
-
-    // Subscribe to the "Speeds" topic
-    speedsSub =
-        driveStateTable
-            .getStructTopic("Speeds", ChassisSpeeds.struct)
-            .subscribe(new ChassisSpeeds()); // default value
+    this.subsystemChecker = subsystemChecker;
   }
 
   // Functional interface for vision consumer
@@ -83,7 +71,7 @@ public class Camera {
     return poseEstimator.update(result);
   }
 
-  public static Matrix<N3, N1> findVisionMeasurementStdDevs(EstimatedRobotPose estimation) {
+  public Matrix<N3, N1> findVisionMeasurementStdDevs(EstimatedRobotPose estimation) {
     double sumDistance = 0;
     for (PhotonTrackedTarget target : estimation.targetsUsed) {
       Transform3d t3d = target.getBestCameraToTarget();
@@ -100,7 +88,7 @@ public class Camera {
         && estimation.targetsUsed.get(0).poseAmbiguity > CameraErrorConstants.maxAmbiguity) {
       return invalidDevs;
     }
-    ChassisSpeeds speeds = speedsSub.get();
+    ChassisSpeeds speeds = subsystemChecker.getChassisSpeeds();
     deviation =
         deviation.times(
             CameraErrorConstants.LINEAR_VELOCITY_STD_DEV_COEFFICIENT.lerp(

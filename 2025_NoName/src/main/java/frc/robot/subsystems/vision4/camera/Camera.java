@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.FieldConstants;
 import frc.robot.util.SubsystemChecker;
 import java.util.Optional;
@@ -88,6 +89,9 @@ public class Camera {
         && estimation.targetsUsed.get(0).poseAmbiguity > CameraErrorConstants.maxAmbiguity) {
       return invalidDevs;
     }
+    if (DriverStation.isDisabled()) {
+      return visionPointBlankDevs.times(0.5);
+    }
     ChassisSpeeds speeds = subsystemChecker.getChassisSpeeds();
     deviation =
         deviation.times(
@@ -109,6 +113,7 @@ public class Camera {
   }
 
   public void updateInputs() {
+    io.updateInputs();
     Optional<EstimatedRobotPose> estPose = update(io.result);
     if (estPose.isPresent()) {
       Pose3d visionPose = estPose.get().estimatedPose;

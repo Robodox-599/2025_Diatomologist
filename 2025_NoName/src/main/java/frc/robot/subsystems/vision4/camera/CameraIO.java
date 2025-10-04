@@ -7,7 +7,7 @@ public abstract class CameraIO {
   public PhotonPipelineResult result = new PhotonPipelineResult();
   public boolean stale = true;
 
-  public void updateInputs(CameraIOReal inputs) {}
+  public void updateInputs() {}
 
   public String getName() {
     return "";

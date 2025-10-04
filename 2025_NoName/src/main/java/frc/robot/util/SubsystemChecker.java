@@ -20,7 +20,7 @@ public class SubsystemChecker {
   private double elevatorHeight;
   private boolean isCoralIntakedInEndefector;
   private Pose2d robotPose;
-  private ChassisSpeeds speeds;
+  private ChassisSpeeds speeds = new ChassisSpeeds();
 
   private final double maximumElevatorSwingThroughHeight =
       SubsystemUtil.elevatorStateToHeightInches(
@@ -99,10 +99,18 @@ public class SubsystemChecker {
     double xDistance =
         Math.abs(translationToReef.getX())
             + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.05; // +5 cm for extra tolerance
+            + 0.07; // +7 cm for extra tolerance
+
+    DogLog.log("SafetyChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
+      DogLog.log(
+          "SafetyChecker/isSafeDistanceFromReef",
+          xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
     } else {
+      DogLog.log(
+          "SafetyChecker/isSafeDistanceFromReef",
+          xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
     }
   }

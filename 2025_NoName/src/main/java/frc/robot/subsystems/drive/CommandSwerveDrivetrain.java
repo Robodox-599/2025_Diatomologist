@@ -82,7 +82,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
   private final PIDController driveToPointController =
-      new PIDController(2.5, 0.0, 0.0); // P: 3.0/3.6, D: 0.1
+      new PIDController(4.5, 0.0, 0.1); // P: 3.0/3.6, D: 0.1
   private final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);

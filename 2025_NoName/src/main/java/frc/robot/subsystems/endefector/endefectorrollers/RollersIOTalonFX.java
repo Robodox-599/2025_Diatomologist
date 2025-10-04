@@ -79,7 +79,7 @@ public class RollersIOTalonFX extends RollersIO {
     temperature = rollersMotor.getDeviceTemp();
     supplyCurrent = rollersMotor.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0, position, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
+        50.0, position, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
 
     rollersMotor.optimizeBusUtilization();
   }

@@ -28,9 +28,9 @@ public class RollersConstants {
 
   public static final double[] rollersVelocities = {
     0.4, // intaking coral station
-    0.4, // ensuring coral forwards
+    0.25, // ensuring coral forwards
     -0.1, // ensuring coral backwards
-    -1.0, // intaking algae
+    -0.6, // intaking algae
     0.0, // holding coral
     -0.5, // scoring coral trough
     -0.6, // scoring coral l2 or l3
@@ -56,19 +56,19 @@ public class RollersConstants {
   public static final double simkS = 0.0;
   public static final double simkV = 0.0;
 
-  public static final double realP = 0.0;
+  public static final double realP = 3.0;
   public static final double realI = 0.0;
   public static final double realD = 0.0;
-  public static final double realkS = 0.0;
+  public static final double realkS = 0.02;
   public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
 
-  public static final double rollersDutyCycleOutHoldAlgae = -0.1;
+  public static final double rollersDutyCycleOutHoldAlgae = -0.06;
   public static final double algaeStallStatorCurrentAmps = 20;
 
   public static final int rampBeamBreakPort = 1;
   public static final int endefectorBeamBreakPort = 0;
 
-  public static final double rampCoralDebounce = 0.1;
+  public static final double rampCoralDebounce = 0.05;
   public static final double coralIntakeDebounce = 0.05;
   public static final double algaeIntakeDebounce = 0.25;
   public static final double coralTroughScoreDebounce = 0.3;

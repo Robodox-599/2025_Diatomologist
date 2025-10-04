@@ -16,7 +16,7 @@ public class CameraIOReal extends CameraIO {
   }
 
   @Override
-  public void updateInputs(CameraIOReal inputs) {
+  public void updateInputs() {
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
     if (results.size() > 0) {

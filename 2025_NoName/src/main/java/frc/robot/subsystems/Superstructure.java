@@ -11,8 +11,9 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
 import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.subsystems.leds.LEDs;
-import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision4.Vision4;
 import frc.robot.util.AutoAlignPoseGenerator;
 import frc.robot.util.Tracer;
 
@@ -22,7 +23,7 @@ public class Superstructure extends SubsystemBase {
   private final Wrist wrist;
   private final Rollers rollers;
   private final LEDs leds;
-  private final Vision vision;
+  private final Vision4 vision;
   private final CommandXboxController driver;
   private final CommandXboxController operator;
 
@@ -118,7 +119,7 @@ public class Superstructure extends SubsystemBase {
       Wrist wrist,
       Rollers rollers,
       LEDs LEDs,
-      Vision vision,
+      Vision4 vision,
       CommandXboxController driver,
       CommandXboxController operator) {
     this.drivetrain = drivetrain;
@@ -134,8 +135,8 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     Tracer.startTrace("SuperstructurePeriodic");
-    Tracer.traceFunc("VisionPeriodic", vision::updateInputs);
     Tracer.traceFunc("DrivetrainPeriodic", drivetrain::updateInputs);
+    Tracer.traceFunc("VisionPeriodic", vision::updateInputs);
     Tracer.traceFunc("ElevatorPeriodic", elevator::updateInputs);
     Tracer.traceFunc("RollersPeriodic", rollers::updateInputs);
     Tracer.traceFunc("WristPeriodic", wrist::updateInputs);
@@ -284,7 +285,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
@@ -303,7 +304,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
@@ -322,7 +323,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
@@ -341,7 +342,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
@@ -360,7 +361,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
@@ -379,7 +380,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
@@ -398,7 +399,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
@@ -417,7 +418,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
@@ -436,7 +437,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
@@ -455,7 +456,7 @@ public class Superstructure extends SubsystemBase {
           currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint()
+            && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
@@ -471,7 +472,7 @@ public class Superstructure extends SubsystemBase {
         break;
       case POSITION_ALGAE_PROCESSOR:
         if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L2) {
-          if (drivetrain.isWithinAlgaeRaiseDistance() && rollers.isAlgaeIntaked()) {
+          if (drivetrain.isWithinAlgaeRaiseDistance() && !rollers.isAlgaeScored()) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
             break;
           } else {
@@ -479,7 +480,7 @@ public class Superstructure extends SubsystemBase {
             break;
           }
         } else if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L3) {
-          if (drivetrain.isWithinAlgaeRaiseDistance() && rollers.isAlgaeIntaked()) {
+          if (drivetrain.isWithinAlgaeRaiseDistance() && !rollers.isAlgaeScored()) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
             break;
           } else {
@@ -685,7 +686,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L2);
     rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    if (rollers.isAlgaeIntaked()) {
+    if (!rollers.isAlgaeScored()) {
       leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
     } else {
       leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L2);
@@ -704,7 +705,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.POSITION_ALGAE_L3);
     rollers.setWantedState(Rollers.WantedState.HOLD_ALGAE);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    if (rollers.isAlgaeIntaked()) {
+    if (!rollers.isAlgaeScored()) {
       leds.setCurrentState(LEDs.CurrentState.POSITION_ALGAE_PROCESSOR);
     } else {
       leds.setCurrentState(LEDs.CurrentState.INTAKING_ALGAE_L3);

@@ -6,20 +6,21 @@ import static frc.robot.FieldConstants.REEF_RED_MIDDLE;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 
-public class SubsystemChecker extends SubsystemBase {
+public class SubsystemChecker {
   private double wristPosition;
   private double elevatorHeight;
   private boolean isCoralIntakedInEndefector;
   private Pose2d robotPose;
+  private ChassisSpeeds speeds = new ChassisSpeeds();
 
   private final double maximumElevatorSwingThroughHeight =
       SubsystemUtil.elevatorStateToHeightInches(
@@ -98,15 +99,17 @@ public class SubsystemChecker extends SubsystemBase {
     double xDistance =
         Math.abs(translationToReef.getX())
             + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.05; // +5 cm for extra tolerance
+            + 0.07; // +7 cm for extra tolerance
+
+    DogLog.log("SafetyChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
       DogLog.log(
-          "SubsystemChecker/isSafeDistanceFromReef",
+          "SafetyChecker/isSafeDistanceFromReef",
           xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
     } else {
       DogLog.log(
-          "SubsystemChecker/isSafeDistanceFromReef",
+          "SafetyChecker/isSafeDistanceFromReef",
           xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
     }
@@ -159,6 +162,14 @@ public class SubsystemChecker extends SubsystemBase {
 
   public void setRobotPose(Pose2d pose) {
     robotPose = pose;
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+    this.speeds = chassisSpeeds;
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return this.speeds;
   }
 
   // public boolean isSafeElevator() {

@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AutoAlignPoseGenerator {
   public static final double L4_REEF_FACE_OFFSET =
-      -0.115; // distance from reef face to scoring for L4 in meters
+      -0.09; // distance from reef face to scoring for L4 in meters
   public static final double L2_L3_REEF_FACE_OFFSET =
-      -0.23; // distance from reef face to scoring for L2 and L3 in meters
+      -0.27; // distance from reef face to scoring for L2 and L3 in meters
   public static final double L1_REEF_FACE_OFFSET =
       -0.3; // distance from reef face to scoring for L1 in meters
   public static final double ALGAE_REEF_FACE_OFFSET =
-      -0.115; // distance from reef face to scoring for algae in meters
+      -0.09; // distance from reef face to scoring for algae in meters
   public static int nearestFaceIndex = 0;
 
   public static Pose2d getNearestL2orL3BranchPosition(Pose2d robotPose, boolean useLeftBranch) {

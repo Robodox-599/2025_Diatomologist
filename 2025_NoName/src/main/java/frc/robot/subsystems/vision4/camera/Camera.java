@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.vision4.camera;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -75,8 +76,10 @@ public class Camera {
 
   public Optional<EstimatedRobotPose> update(PhotonPipelineResult result) {
     if (result.getTargets().size() < 1) {
+      DogLog.log("Vision/Camera/" + io.getName() + "/Targets", 0);
       return Optional.empty();
     }
+    DogLog.log("Vision/Camera/" + io.getName() + "/Targets", result.getTargets().size());
     return poseEstimator.update(result);
   }
 
@@ -90,24 +93,24 @@ public class Camera {
 
     Matrix<N3, N1> deviation =
         visionPointBlankDevs.times(Math.max(avgDistance, 0.0) * distanceFactor);
-    if (estimation.targetsUsed.size() == 1) {
-      deviation = deviation.times(3);
-    }
+    // if (estimation.targetsUsed.size() == 1) {
+    //   deviation = deviation.times(3);
+    // }
     if (estimation.targetsUsed.size() == 1
         && estimation.targetsUsed.get(0).poseAmbiguity > CameraErrorConstants.maxAmbiguity) {
       return invalidDevs;
     }
     ChassisSpeeds speeds = speedsSub.get();
-    if (speeds.vxMetersPerSecond > 4.0 || speeds.vyMetersPerSecond > 4.0) {
-      return invalidDevs;
-    } else if (speeds.vxMetersPerSecond > 2.5 || speeds.vyMetersPerSecond > 2.5) {
-      deviation = deviation.times(1.3);
-    }
-    if (speeds.omegaRadiansPerSecond > 9.0) {
-      return invalidDevs;
-    } else if (speeds.omegaRadiansPerSecond > 5.0) {
-      deviation = deviation.times(1.5);
-    }
+    deviation =
+        deviation.times(
+            CameraErrorConstants.LINEAR_VELOCITY_STD_DEV_COEFFICIENT.lerp(
+                Math.sqrt(
+                    Math.pow(speeds.vxMetersPerSecond, 2)
+                        + Math.pow(speeds.vyMetersPerSecond, 2))));
+    deviation =
+        deviation.times(
+            CameraErrorConstants.ANGULAR_VELOCITY_STD_DEV_COEFFICIENT.lerp(
+                speeds.omegaRadiansPerSecond));
     // }
     // TAG_COUNT_DEVIATION_PARAMS
     //     .get(
@@ -123,6 +126,8 @@ public class Camera {
       Pose3d visionPose = estPose.get().estimatedPose;
       if (isPoseValid(visionPose)) {
         Matrix<N3, N1> deviations = findVisionMeasurementStdDevs(estPose.get());
+        DogLog.log("Vision/Camera/" + io.getName() + "/Deviations", deviations);
+        DogLog.log("Vision/Camera/" + io.getName() + "/EstimatedPose", visionPose.toPose2d());
         consumer.accept(visionPose.toPose2d(), io.result.getTimestampSeconds(), deviations);
       }
     }

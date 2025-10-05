@@ -16,8 +16,9 @@ public final class ElevatorConstants {
     POSITION_CORAL_L2(7),
     POSITION_CORAL_L3(8),
     POSITION_CORAL_L4(9),
-    POSITION_ALGAE_PROCESSOR(10),
-    POSITION_ALGAE_BARGE(11);
+    POSITION_CORAL_L4_AUTO(10),
+    POSITION_ALGAE_PROCESSOR(11),
+    POSITION_ALGAE_BARGE(12);
 
     private final int index;
 
@@ -42,6 +43,7 @@ public final class ElevatorConstants {
     35.0, // POSITION CORAL L2 // 16
     51.9, // POSITION CORAL L3 // 33
     67.0, // POSITION CORAL L4 // 60
+    60.0, // POSITION CORAL L4 AUTO
     12.0, // POSITION ALGAE PROCESSOR
     85.0, // POSITION ALGAE BARGE
   };

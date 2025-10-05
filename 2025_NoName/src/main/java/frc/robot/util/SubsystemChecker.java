@@ -83,18 +83,14 @@ public class SubsystemChecker {
   }
 
   public boolean isSafeDistanceFromReef(boolean isTrough) {
-    AutoAlignPoseGenerator.calculateNearestReefFacePosition(robotPose);
+    int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
     Translation2d translationToReef;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       translationToReef =
-          REEF_BLUE_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
-              .getTranslation()
-              .minus(robotPose.getTranslation());
+          REEF_BLUE_MIDDLE[nearestFaceIndex].getTranslation().minus(robotPose.getTranslation());
     } else {
       translationToReef =
-          REEF_RED_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
-              .getTranslation()
-              .minus(robotPose.getTranslation());
+          REEF_RED_MIDDLE[nearestFaceIndex].getTranslation().minus(robotPose.getTranslation());
     }
     double xDistance =
         Math.abs(translationToReef.getX())

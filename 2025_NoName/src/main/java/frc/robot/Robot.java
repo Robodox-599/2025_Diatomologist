@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.autos.AutoRoutines;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain.WantedState;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -139,8 +141,9 @@ public class Robot extends TimedRobot {
     // COMPETITION
     autoChooser.addRoutine("Left Auto - 4 Coral", autoRoutines::leftAutoRoutine);
     autoChooser.addRoutine("Right Auto - 4 Coral", autoRoutines::rightAutoRoutine);
-    autoChooser.addRoutine(
-        "Middle Auto & Algae - 1 Coral + Grab Algae", autoRoutines::middleAutoAndGrabAlgaeRoutine);
+    // autoChooser.addRoutine(
+    //     "Middle Auto & Algae - 1 Coral + Grab Algae",
+    // autoRoutines::middleAutoAndGrabAlgaeRoutine);
     autoChooser.addRoutine("Middle Auto - 1 Coral", autoRoutines::middleAutoRoutine);
     autoChooser.addRoutine("Taxi Auto - Taxi", autoRoutines::taxiAutoRoutine);
 
@@ -172,6 +175,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousExit() {
     scheduler.cancelAll();
+    superstructure.setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
+    drivetrain.setWantedState(WantedState.TELEOP_DRIVE);
   }
 
   @Override

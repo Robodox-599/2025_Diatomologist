@@ -63,9 +63,16 @@ public class Bindings extends SubsystemBase {
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
     this.superstructure = superstructure;
     //                               DRIVER BINDS
+    // COMMENT OUT FOR COMPETITION ROBOT
     // ZERO GYRO
     driver.y().onTrue(superstructure.zeroGyroCommand());
+    // SET DRIVE VELOCITY FOR TUNING
+    driver.b().onTrue(setDriveVelocity(1.5));
+    driver.b().onFalse(setDriveVelocity(0.0));
+    driver.a().onTrue(setDriveVelocity(-2.5));
+    driver.a().onFalse(setDriveVelocity(0.0));
 
+    // KEEP FOR COMPETITION ROBOT:
     // // SET WANTED STATE TO A LOGIC STATE
     driver
         .rightBumper()
@@ -123,13 +130,13 @@ public class Bindings extends SubsystemBase {
             setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN)
                 .alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO PREPARE CLIMB
-    driver
-        .x()
-        .and(driver.a())
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED)
-                .alongWith(rumbleControllers(driver, operator)));
+    // driver
+    //     .x()
+    //     .and(driver.a())
+    //     .onTrue(
+    //         superstructure
+    //             .setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED)
+    //             .alongWith(rumbleControllers(driver, operator)));
 
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
@@ -484,5 +491,10 @@ public class Bindings extends SubsystemBase {
     } else {
       return WantedSuperState.SCORING_CORAL;
     }
+  }
+
+  /* TUNING ONLY */
+  public Command setDriveVelocity(double velocity) {
+    return superstructure.setVelocity(velocity);
   }
 }

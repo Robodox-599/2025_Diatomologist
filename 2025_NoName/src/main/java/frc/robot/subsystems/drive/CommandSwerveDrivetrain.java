@@ -3,7 +3,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import choreo.trajectory.SwerveSample;
-import choreo.util.ChoreoAllianceFlipUtil;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -36,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants;
 import frc.robot.subsystems.drive.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.AutoAlignPoseGenerator;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 import java.util.function.Supplier;
@@ -64,11 +64,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
   public static final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 1.5 cm
+  public static final double DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT = 0.02;
   private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.05; // 5 cm
-  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(8);
-  private boolean withinCoralRaiseDistance = false;
+  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(5);
   private static boolean withinAlgaeRaiseDistance = false;
   private static boolean withinTroughRaiseDistance = false;
+  private static boolean withinL2L3RaiseDistance = false;
+  private static boolean withinL4RaiseDistance = false;
   private static boolean atDriveToPointSetpoints = false;
   private static boolean withinReefZone = false;
   private static double driveToPointXError;
@@ -82,7 +84,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
   private final PIDController driveToPointController =
-      new PIDController(4.5, 0.0, 0.1); // P: 3.0/3.6, D: 0.1
+      new PIDController(3.6, 0.0, 0.1); // P: 3.0/3.6, D: 0.1
   private final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
@@ -334,11 +336,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
 
         double linearDistance = translationToTarget.getNorm();
+        double frictionConstant = 0.0;
+        // if (linearDistance >= 0.02) {
+        //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT * TunerConstants.MAX_LINEAR_SPEED;
+        // }
 
         Rotation2d direction = translationToTarget.getAngle();
         double velocityOutput =
             Math.min(
-                Math.abs(driveToPointController.calculate(linearDistance, 0)),
+                Math.abs(driveToPointController.calculate(linearDistance, 0)) + frictionConstant,
                 DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT);
 
         double xVelocity = velocityOutput * direction.getCos();
@@ -390,34 +396,57 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void updateDistancesAndSetpoints() {
-    double distanceFromCenter =
-        DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-            ? (FieldConstants.Reef.center.minus(getState().Pose.getTranslation())).getNorm()
-            : ChoreoAllianceFlipUtil.flip(new Pose2d(FieldConstants.Reef.center, new Rotation2d()))
-                .getTranslation()
-                .minus(getState().Pose.getTranslation())
-                .getNorm();
+    double distanceFromNearestReefFace;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      distanceFromNearestReefFace =
+          getState()
+              .Pose
+              .getTranslation()
+              .minus(
+                  FieldConstants.REEF_BLUE_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
+                      .getTranslation())
+              .getNorm();
+    } else {
+      distanceFromNearestReefFace =
+          getState()
+              .Pose
+              .getTranslation()
+              .minus(
+                  FieldConstants.REEF_RED_MIDDLE[AutoAlignPoseGenerator.getNearestReefFaceIndex()]
+                      .getTranslation())
+              .getNorm();
+    }
+
+    if (distanceFromNearestReefFace
+        <= 0.78105) { // distance from reef face: 30.75 in to m (robot + bumpers)
+      withinReefZone = true;
+      withinAlgaeRaiseDistance = true;
+      withinL4RaiseDistance = true;
+      withinTroughRaiseDistance = true;
+      withinL2L3RaiseDistance = true;
+    } else if (distanceFromNearestReefFace <= 0.83105) {
+      withinReefZone = false;
+      withinAlgaeRaiseDistance = false;
+      withinL4RaiseDistance = false;
+      withinTroughRaiseDistance = true;
+      withinL2L3RaiseDistance = true;
+    } else {
+      withinReefZone = false;
+      withinAlgaeRaiseDistance = false;
+      withinL4RaiseDistance = false;
+      withinTroughRaiseDistance = false;
+      withinL2L3RaiseDistance = false;
+    }
+
+    DogLog.log("Drive/DriveToPose/WithinReefZone", withinReefZone);
+    DogLog.log("Drive/DriveToPose/WithinTroughRaiseDistance", withinTroughRaiseDistance);
+    DogLog.log("Drive/DriveToPose/WithinL2L3RaiseDistance", withinL2L3RaiseDistance);
+    DogLog.log("Drive/DriveToPose/WithinL4RaiseDistance", withinL4RaiseDistance);
+    DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
     Translation2d translationToTarget =
         targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
     double linearDistance = translationToTarget.getNorm();
 
-    if (distanceFromCenter <= 2.5) { // distance from center + half bumper width + reef zone
-      withinCoralRaiseDistance = true;
-      withinReefZone = true;
-    } else {
-      withinCoralRaiseDistance = false;
-      withinReefZone = false;
-    }
-    if (distanceFromCenter <= 2.0) {
-      withinAlgaeRaiseDistance = true;
-    } else {
-      withinAlgaeRaiseDistance = false;
-    }
-    if (distanceFromCenter <= 2.5) {
-      withinTroughRaiseDistance = true;
-    } else {
-      withinTroughRaiseDistance = false;
-    }
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
     boolean atDriveToPointAngularSetpoint =
@@ -429,16 +458,55 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/xError", driveToPointXError);
     DogLog.log("Drive/DriveToPose/yError", driveToPointYError);
-    DogLog.log("Drive/DriveToPose/WithinCoralRaiseDistance", withinCoralRaiseDistance);
-    DogLog.log("Drive/DriveToPose/WithinAlgaeRaiseDistance", withinAlgaeRaiseDistance);
-    DogLog.log("Drive/DriveToPose/WithinTroughRaiseDistance", withinTroughRaiseDistance);
-    DogLog.log("Drive/DriveToPose/WithinReefZone", withinReefZone);
     DogLog.log(
         "Drive/DriveToPose/AtDriveToPointTranslationSetpoint", atDriveToPointTranslationSetpoint);
     DogLog.log("Drive/DriveToPose/AtDriveToPointAngularSetpoint", atDriveToPointAngularSetpoint);
     DogLog.log("Drive/DriveToPose/AtDriveToPointSetpoints", atDriveToPointSetpoints);
   }
 
+  /* SET VELOCITY */
+  public void setVelocity(double velocity) {
+    setControl(drive.withVelocityX(velocity).withVelocityY(0).withRotationalRate(0));
+  }
+
+  /* DISTANCE BOOLEANS */
+  public boolean isWithinReefZone() {
+    return withinReefZone;
+  }
+
+  public boolean isWithinTroughRaiseDistance() {
+    return withinTroughRaiseDistance;
+  }
+
+  public boolean isWithinL2L3RaiseDistance() {
+    return withinL2L3RaiseDistance;
+  }
+
+  public boolean isWithinL4RaiseDistance() {
+    return withinL4RaiseDistance;
+  }
+
+  public boolean isWithinAlgaeRaiseDistance() {
+    return withinAlgaeRaiseDistance;
+  }
+
+  public boolean isReadyToRaiseAutoScoreTroughCoral() {
+    return isWithinTroughRaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
+  public boolean isReadyToRaiseAutoScoreL2L3Coral() {
+    return isWithinL2L3RaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
+  public boolean isReadyToRaiseAutoScoreL4Coral() {
+    return isWithinL4RaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
+  public boolean isReadyToRaiseAutoIntakeAlgae() {
+    return isWithinAlgaeRaiseDistance() && isDrivingToPointOrAtSetpoints();
+  }
+
+  /* DRIVE TO POINT */
   public void setTargetPoseForDriveToPoint(Pose2d targetPose) {
     resetDriveToPoint();
     this.targetPoseForDriveToPoint = targetPose;
@@ -447,34 +515,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public boolean isDrivingToPointOrAtSetpoints() {
     return this.wantedState == WantedState.DRIVE_TO_POINT || atDriveToPointSetpoints;
-  }
-
-  public boolean isWithinCoralRaiseDistance() {
-    return withinCoralRaiseDistance;
-  }
-
-  public boolean isReadyToRaiseAutoScoreCoral() {
-    return isWithinCoralRaiseDistance() && isDrivingToPointOrAtSetpoints();
-  }
-
-  public boolean isWithinAlgaeRaiseDistance() {
-    return withinAlgaeRaiseDistance;
-  }
-
-  public boolean isReadyToRaiseAutoIntakeAlgae() {
-    return isWithinAlgaeRaiseDistance() && isDrivingToPointOrAtSetpoints();
-  }
-
-  public boolean isWithinTroughRaiseDistance() {
-    return withinTroughRaiseDistance;
-  }
-
-  public boolean isReadyToRaiseAutoTroughCoral() {
-    return isWithinTroughRaiseDistance() && isDrivingToPointOrAtSetpoints();
-  }
-
-  public boolean isWithinReefZone() {
-    return withinReefZone;
   }
 
   public boolean isAtDriveToPointSetpoints() {
@@ -490,24 +530,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     driveAtAngle.HeadingController.reset();
   }
 
+  /* CHOREO TRAJECTORY */
   public void setDesiredChoreoTrajectory(SwerveSample sample) {
     this.choreoSampleToBeApplied = sample;
     this.wantedState = WantedState.CHOREO_TRAJECTORY;
   }
 
+  /* DATA */
   public ChassisSpeeds getChassisSpeeds() {
     return getState().Speeds;
-  }
-
-  private static double joystickDeadbandApply(double x) {
-    return MathUtil.applyDeadband(
-        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 
   public Pose2d getPose() {
     return getState().Pose;
   }
 
+  /* GYRO */
   public void zeroGyro() {
     resetRotation(new Rotation2d(0.0));
   }
@@ -517,6 +555,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         () -> {
           resetRotation(new Rotation2d(0.0));
         });
+  }
+
+  /* JOYSTICK DEADBAND */
+  private static double joystickDeadbandApply(double x) {
+    return MathUtil.applyDeadband(
+        (Math.signum(x) * (1.01 * Math.pow(x, 2) - 0.0202 * x + 0.0101)), 0.02);
   }
 
   private void startSimThread() {

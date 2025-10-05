@@ -5,7 +5,6 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
@@ -46,9 +45,7 @@ public class AutoRoutines {
 
     LEFTtoI.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
@@ -69,9 +66,7 @@ public class AutoRoutines {
 
     HPtoL.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
@@ -93,9 +88,7 @@ public class AutoRoutines {
 
     HPtoK.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
@@ -116,9 +109,7 @@ public class AutoRoutines {
 
     HPtoJ.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
                 WantedSuperState.POSITION_CORAL_L4));
@@ -154,19 +145,17 @@ public class AutoRoutines {
 
     RIGHTtoF.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
-                WantedSuperState.POSITION_CORAL_L4));
+                WantedSuperState.POSITION_CORAL_L4_AUTO));
 
     RIGHTtoF.done()
         .onTrue(
             Commands.sequence(
                 Commands.deadline(
                     superstructureCommands.setWantedSuperStateCommand(
-                        WantedSuperState.AUTO_SCORE_L4_RIGHT),
+                        WantedSuperState.AUTO_SCORE_L4_RIGHT_AUTO),
                     new WaitCommand(0.5)),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
@@ -183,19 +172,17 @@ public class AutoRoutines {
 
     HPtoC.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
-                WantedSuperState.POSITION_CORAL_L4));
+                WantedSuperState.POSITION_CORAL_L4_AUTO));
 
     HPtoC.done()
         .onTrue(
             Commands.sequence(
                 Commands.deadline(
                     superstructureCommands.setWantedSuperStateCommand(
-                        WantedSuperState.AUTO_SCORE_L4_LEFT),
+                        WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO),
                     new WaitCommand(0.5)),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
@@ -212,19 +199,17 @@ public class AutoRoutines {
 
     HPtoD.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
-                WantedSuperState.POSITION_CORAL_L4));
+                WantedSuperState.POSITION_CORAL_L4_AUTO));
 
     HPtoD.done()
         .onTrue(
             Commands.sequence(
                 Commands.deadline(
                     superstructureCommands.setWantedSuperStateCommand(
-                        WantedSuperState.AUTO_SCORE_L4_RIGHT),
+                        WantedSuperState.AUTO_SCORE_L4_RIGHT_AUTO),
                     new WaitCommand(0.5)),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
@@ -241,19 +226,17 @@ public class AutoRoutines {
 
     HPtoE.active()
         .and(
-            () ->
-                (drivetrain.isWithinCoralRaiseDistance()
-                    && superstructureCommands.isCoralEnsured()))
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
             superstructureCommands.setWantedSuperStateInstantCommand(
-                WantedSuperState.POSITION_CORAL_L4));
+                WantedSuperState.POSITION_CORAL_L4_AUTO));
 
     HPtoE.done()
         .onTrue(
             Commands.sequence(
                 Commands.deadline(
                     superstructureCommands.setWantedSuperStateCommand(
-                        WantedSuperState.AUTO_SCORE_L4_LEFT),
+                        WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO),
                     new WaitCommand(1)),
                 superstructureCommands.setCoralStateSimCommand(false)));
 
@@ -266,10 +249,6 @@ public class AutoRoutines {
     AutoTrajectory MIDtoG = routine.trajectory("MIDDLEtoG");
     AutoTrajectory GtoGH = routine.trajectory("GtoGH");
 
-    Trigger withinCoralRaiseDistance =
-        new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-    Trigger hasNoCoral = new Trigger(() -> superstructureCommands.isCoralEnsured());
-
     routine
         .active()
         .onTrue(
@@ -280,15 +259,18 @@ public class AutoRoutines {
                 MIDtoG.cmd()));
 
     MIDtoG.active()
-        .and(withinCoralRaiseDistance)
+        .and(
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.POSITION_CORAL_L4_AUTO));
 
     MIDtoG.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO));
 
-    MIDtoG.recentlyDone().and(hasNoCoral).onTrue(GtoGH.cmd());
+    // MIDtoG.recentlyDone().and(hasNoCoral).onTrue(GtoGH.cmd());
 
     // GtoGH.done()
     //     .onTrue(
@@ -303,26 +285,19 @@ public class AutoRoutines {
 
     AutoTrajectory MIDtoG = routine.trajectory("MIDDLEtoG");
 
-    Trigger withinCoralRaiseDistance =
-        new Trigger(() -> superstructureCommands.isWithinCoralRaiseDistance());
-
     routine
         .active()
         .onTrue(
             Commands.sequence(
                 MIDtoG.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.POSITION_PREPARED),
+                    WantedSuperState.POSITION_PREPARED_AUTO),
                 MIDtoG.cmd()));
-
-    MIDtoG.active()
-        .and(withinCoralRaiseDistance)
-        .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     MIDtoG.done()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO));
 
     return routine;
   }
@@ -344,7 +319,7 @@ public class AutoRoutines {
   //                 new WaitUntilCommand(() -> superstructureCommands.isAtEndOfChoreoTrajectory())
   //                     .andThen(autoScore(scoreLeft))))
   //         .alongWith(
-  //             new WaitUntilCommand(() -> superstructureCommands.isWithinCoralRaiseDistance())
+  //             new WaitUntilCommand(() -> superstructureCommands.isWithinL4RaiseDistance())
   //                 .andThen(
   //                     superstructureCommands.setWantedSuperStateCommand(
   //                         WantedSuperState.POSITION_CORAL_L4)));

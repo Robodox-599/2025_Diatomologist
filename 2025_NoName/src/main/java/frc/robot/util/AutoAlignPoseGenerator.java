@@ -18,7 +18,36 @@ public class AutoAlignPoseGenerator {
       -0.3; // distance from reef face to scoring for L1 in meters
   public static final double ALGAE_REEF_FACE_OFFSET =
       -0.09; // distance from reef face to scoring for algae in meters
-  public static int nearestFaceIndex = 0;
+  public static int nearestReefFaceIndex = 0;
+
+  public static void updateNearestReefFaceIndex(Pose2d robotPose) {
+    nearestReefFaceIndex = calculateNearestReefFaceIndex(robotPose);
+    DogLog.log("ClosestFace/NearestFaceIndex", nearestReefFaceIndex);
+  }
+
+  public static int getNearestReefFaceIndex() {
+    return nearestReefFaceIndex;
+  }
+
+  private static int calculateNearestReefFaceIndex(Pose2d robotPose) {
+    double minDistance = Double.MAX_VALUE;
+    int nearestFaceIndex = -1;
+
+    // Find the nearest center face and its index
+    for (int i = 0; i < 6; i++) {
+      Pose2d centerFace =
+          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+              ? REEF_BLUE_MIDDLE[i]
+              : REEF_RED_MIDDLE[i];
+      double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestFaceIndex = i;
+      }
+    }
+    return nearestFaceIndex;
+  }
 
   public static Pose2d getNearestL2orL3BranchPosition(Pose2d robotPose, boolean useLeftBranch) {
     Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
@@ -34,40 +63,24 @@ public class AutoAlignPoseGenerator {
     return targetPose;
   }
 
-  public static void calculateNearestReefFacePosition(Pose2d robotPose) {
-    double minDistance = Double.MAX_VALUE;
-    nearestFaceIndex = -1;
-
-    // Find the nearest center face and its index
-    for (int i = 0; i < 6; i++) {
-      Pose2d centerFace =
-          DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[i]
-              : REEF_RED_MIDDLE[i];
-      double distance = robotPose.getTranslation().getDistance(centerFace.getTranslation());
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearestFaceIndex = i;
-      }
-    }
-  }
-
   /**
    * Finds nearest branch position
    *
    * @param robotPose robot pose
    * @param useLeftBranch true if left branch, false if right branch
    */
-  private static Pose2d getNearestBranchPosition(Pose2d robotPose, boolean useLeftBranch) {
-    calculateNearestReefFacePosition(robotPose);
+  public static Pose2d getNearestBranchPosition(Pose2d robotPose, boolean useLeftBranch) {
     Pose2d targetPose;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       targetPose =
-          useLeftBranch ? REEF_BLUE_LEFT[nearestFaceIndex] : REEF_BLUE_RIGHT[nearestFaceIndex];
+          useLeftBranch
+              ? REEF_BLUE_LEFT[nearestReefFaceIndex]
+              : REEF_BLUE_RIGHT[nearestReefFaceIndex];
     } else {
       targetPose =
-          useLeftBranch ? REEF_RED_LEFT[nearestFaceIndex] : REEF_RED_RIGHT[nearestFaceIndex];
+          useLeftBranch
+              ? REEF_RED_LEFT[nearestReefFaceIndex]
+              : REEF_RED_RIGHT[nearestReefFaceIndex];
     }
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
@@ -83,36 +96,35 @@ public class AutoAlignPoseGenerator {
    * @param useLeftBranch true if left branch, false if right branch
    */
   public static Pose2d getNearestTroughPosition(Pose2d robotPose, int troughIndex) {
-    calculateNearestReefFacePosition(robotPose);
 
     Pose2d targetPose = new Pose2d();
     if (troughIndex == 1) { // left
       targetPose =
           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              ? REEF_BLUE_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, 0.3, new Rotation2d(0)))
-              : REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+              : REEF_RED_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, 0.3, new Rotation2d(0)));
     } else if (troughIndex == 2) { // middle left
       targetPose =
           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              ? REEF_BLUE_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, 0.06, new Rotation2d(0)))
-              : REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+              : REEF_RED_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, 0.06, new Rotation2d(0)));
     } else if (troughIndex == 3) { // middle right
       targetPose =
           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              ? REEF_BLUE_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, -0.06, new Rotation2d(0)))
-              : REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+              : REEF_RED_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, -0.06, new Rotation2d(0)));
     } else if (troughIndex == 4) { // right
       targetPose =
           DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-              ? REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+              ? REEF_BLUE_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, -0.3, new Rotation2d(0)))
-              : REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+              : REEF_RED_MIDDLE[nearestReefFaceIndex].transformBy(
                   new Transform2d(0.0, -0.3, new Rotation2d(0)));
     }
 
@@ -130,25 +142,20 @@ public class AutoAlignPoseGenerator {
    * @param shiftBackFromReefFace true if the target pose should be shifted back from the reef face
    */
   public static Pose2d getNearestAlgaeReefFacePosition(Pose2d robotPose) {
-    calculateNearestReefFacePosition(robotPose);
 
     Pose2d targetPose;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       targetPose =
-          REEF_BLUE_MIDDLE[nearestFaceIndex].transformBy(
+          REEF_BLUE_MIDDLE[nearestReefFaceIndex].transformBy(
               new Transform2d(ALGAE_REEF_FACE_OFFSET, 0, new Rotation2d(0)));
     } else {
       targetPose =
-          REEF_RED_MIDDLE[nearestFaceIndex].transformBy(
+          REEF_RED_MIDDLE[nearestReefFaceIndex].transformBy(
               new Transform2d(ALGAE_REEF_FACE_OFFSET, 0, new Rotation2d(0)));
     }
 
     DogLog.log("ClosestFace/TargetPose", targetPose);
     DogLog.log("ClosestFace/RobotPose", robotPose);
     return targetPose;
-  }
-
-  public static int getNearestReefFaceIndex() {
-    return nearestFaceIndex;
   }
 }

@@ -26,6 +26,7 @@ public class Elevator {
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
+    POSITION_CORAL_L4_AUTO,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     STOPPED,
@@ -43,6 +44,7 @@ public class Elevator {
     POSITION_CORAL_L2,
     POSITION_CORAL_L3,
     POSITION_CORAL_L4,
+    POSITION_CORAL_L4_AUTO,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     STOPPED,
@@ -104,6 +106,9 @@ public class Elevator {
       case POSITION_CORAL_L4:
         currentState = CurrentState.POSITION_CORAL_L4;
         break;
+      case POSITION_CORAL_L4_AUTO:
+        currentState = CurrentState.POSITION_CORAL_L4_AUTO;
+        break;
       case POSITION_ALGAE_PROCESSOR:
         currentState = CurrentState.POSITION_ALGAE_PROCESSOR;
         break;
@@ -150,6 +155,9 @@ public class Elevator {
         break;
       case POSITION_CORAL_L4:
         setHeight(ElevatorStates.POSITION_CORAL_L4);
+        break;
+      case POSITION_PREPARED_AUTO:
+        setHeight(ElevatorStates.POSITION_CORAL_L4_AUTO);
         break;
       case POSITION_ALGAE_PROCESSOR:
         setHeight(ElevatorStates.POSITION_ALGAE_PROCESSOR);

@@ -64,7 +64,7 @@ public class TunerConstants {
           .withKP(45) // 60
           .withKI(0.0) // N/A
           .withKD(0.0) // N/A
-          .withKS(0.15) // 0.15
+          .withKS(0.0) // 0.15
           .withKA(0.0) // N/A
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
@@ -74,7 +74,7 @@ public class TunerConstants {
           .withKP(0.35) // 0.35
           .withKI(0.0) // N/A
           .withKD(0.0) // N/A
-          .withKS(0.2) // 0.20
+          .withKS(0.2) // could be < 0.15?
           .withKV(Constants.kMotors.kKrakenX60Foc.kV);
 
   /*

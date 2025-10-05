@@ -22,7 +22,7 @@ public class AutoAlignPoseGenerator {
 
   public static void updateNearestReefFaceIndex(Pose2d robotPose) {
     nearestReefFaceIndex = calculateNearestReefFaceIndex(robotPose);
-    DogLog.log("ClosestFace/NearestFaceIndex", nearestReefFaceIndex);
+    DogLog.log("AutoAlignPoseGenerator/NearestFaceIndex", nearestReefFaceIndex);
   }
 
   public static int getNearestReefFaceIndex() {
@@ -82,10 +82,11 @@ public class AutoAlignPoseGenerator {
               ? REEF_RED_LEFT[nearestReefFaceIndex]
               : REEF_RED_RIGHT[nearestReefFaceIndex];
     }
-    DogLog.log("ClosestFace/TargetPose", targetPose);
-    DogLog.log("ClosestFace/RobotPose", robotPose);
+    DogLog.log("AutoAlignPoseGenerator/TargetPose", targetPose);
+    DogLog.log("AutoAlignPoseGenerator/RobotPose", robotPose);
     DogLog.log(
-        "ClosestFace/Alliance", DriverStation.getAlliance().orElse(Alliance.Blue).toString());
+        "AutoAlignPoseGenerator/Alliance",
+        DriverStation.getAlliance().orElse(Alliance.Blue).toString());
     return targetPose;
   }
 
@@ -130,8 +131,8 @@ public class AutoAlignPoseGenerator {
 
     targetPose = targetPose.transformBy(new Transform2d(L1_REEF_FACE_OFFSET, 0, new Rotation2d(0)));
 
-    DogLog.log("ClosestFace/TargetPose", targetPose);
-    DogLog.log("ClosestFace/RobotPose", robotPose);
+    DogLog.log("AutoAlignPoseGenerator/TargetPose", targetPose);
+    DogLog.log("AutoAlignPoseGenerator/RobotPose", robotPose);
     return targetPose;
   }
 
@@ -154,8 +155,8 @@ public class AutoAlignPoseGenerator {
               new Transform2d(ALGAE_REEF_FACE_OFFSET, 0, new Rotation2d(0)));
     }
 
-    DogLog.log("ClosestFace/TargetPose", targetPose);
-    DogLog.log("ClosestFace/RobotPose", robotPose);
+    DogLog.log("AutoAlignPoseGenerator/TargetPose", targetPose);
+    DogLog.log("AutoAlignPoseGenerator/RobotPose", robotPose);
     return targetPose;
   }
 }

@@ -5,7 +5,6 @@ import static frc.robot.FieldConstants.REEF_RED_MIDDLE;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -84,28 +83,26 @@ public class SubsystemChecker {
 
   public boolean isSafeDistanceFromReef(boolean isTrough) {
     int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
-    Translation2d translationToReef;
+    Pose2d transformToReef;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      translationToReef =
-          REEF_BLUE_MIDDLE[nearestFaceIndex].getTranslation().minus(robotPose.getTranslation());
+      transformToReef = REEF_BLUE_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
     } else {
-      translationToReef =
-          REEF_RED_MIDDLE[nearestFaceIndex].getTranslation().minus(robotPose.getTranslation());
+      transformToReef = REEF_RED_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
     }
     double xDistance =
-        Math.abs(translationToReef.getX())
+        Math.abs(transformToReef.getX())
             + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.07; // +7 cm for extra tolerance
+            + 0.02; // +2 cm for extra tolerance
 
-    DogLog.log("SafetyChecker/DistanceFromReefForTrough", xDistance);
+    DogLog.log("SubsystemChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
       DogLog.log(
-          "SafetyChecker/isSafeDistanceFromReef",
+          "SubsystemChecker/isSafeDistanceFromReef",
           xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L1_REEF_FACE_OFFSET);
     } else {
       DogLog.log(
-          "SafetyChecker/isSafeDistanceFromReef",
+          "SubsystemChecker/isSafeDistanceFromReef",
           xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
     }

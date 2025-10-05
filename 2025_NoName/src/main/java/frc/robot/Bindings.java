@@ -63,16 +63,20 @@ public class Bindings extends SubsystemBase {
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
     this.superstructure = superstructure;
     //                               DRIVER BINDS
-    // COMMENT OUT FOR COMPETITION ROBOT
-    // ZERO GYRO
-    driver.y().onTrue(superstructure.zeroGyroCommand());
-    // SET DRIVE VELOCITY FOR TUNING
-    driver.b().onTrue(setDriveVelocity(1.5));
-    driver.b().onFalse(setDriveVelocity(0.0));
-    driver.a().onTrue(setDriveVelocity(-2.5));
-    driver.a().onFalse(setDriveVelocity(0.0));
+    /* COMMENT OUT FOR COMPETITION ROBOT */ 
+    // // // ZERO GYRO
+    // driver.y().onTrue(superstructure.zeroGyroCommand());
+    // // // SET DRIVE VELOCITY FOR TUNING
+    // driver.b().onTrue(setDriveVelocity(1.5));
+    // driver.b().onFalse(setDriveVelocity(0.0));
+    // driver.a().onTrue(setDriveVelocity(-2.5));
+    // driver.a().onFalse(setDriveVelocity(0.0));
 
-    // KEEP FOR COMPETITION ROBOT:
+    /* SIMULATION ONLY */
+    // driver.leftTrigger().onTrue(superstructure.setCoralStateSimCommand(true));
+    // driver.leftBumper().onTrue(superstructure.setCoralStateSimCommand(false));
+
+    /* KEEP FOR COMPETITION BOT  */
     // // SET WANTED STATE TO A LOGIC STATE
     driver
         .rightBumper()
@@ -87,8 +91,12 @@ public class Bindings extends SubsystemBase {
     driver
         .leftBumper()
         .onFalse(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
-    // // SET WANTED STATE TO INTAKING ALGAE GROUND
+            superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
+    // // SET WANTED STATE TO SCORING GAME PIECE
+    driver
+        .rightTrigger()
+        .onTrue(setGamePieceScoreStateCommand().alongWith(rumbleControllers(driver, operator)));
+    // SET WANTED STATE TO INTAKING ALGAE GROUND
     driver
         .leftTrigger()
         .whileTrue(
@@ -98,13 +106,7 @@ public class Bindings extends SubsystemBase {
     driver
         .leftTrigger()
         .onFalse(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
-    // driver.leftTrigger().onTrue(superstructure.setCoralStateSimCommand(true));
-    // driver.leftBumper().onTrue(superstructure.setCoralStateSimCommand(false));
-    // // SET WANTED STATE TO SCORING GAME PIECE
-    driver
-        .rightTrigger()
-        .onTrue(setGamePieceScoreStateCommand().alongWith(rumbleControllers(driver, operator)));
+            superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()
@@ -141,7 +143,7 @@ public class Bindings extends SubsystemBase {
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
     operator
-        .x()
+        .a()
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
@@ -162,7 +164,7 @@ public class Bindings extends SubsystemBase {
     //             .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
     operator
-        .a()
+        .x()
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),

@@ -172,7 +172,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case INTAKING_ALGAE_GROUND:
-        if (rollers.isAlgaeIntaked()) {
+        if (rollers.isGroundAlgaeIntaked()) {
           currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
@@ -180,7 +180,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case INTAKING_ALGAE_LOLLIPOP:
-        if (rollers.isAlgaeIntaked()) {
+        if (rollers.isReefAlgaeIntaked()) {
           currentSuperState = CurrentSuperState.POSITION_ALGAE_PROCESSOR;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
@@ -191,7 +191,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
         break;
       case INTAKING_ALGAE_L2:
-        if (rollers.isAlgaeIntaked()) {
+        if (rollers.isReefAlgaeIntaked()) {
           currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
@@ -202,7 +202,7 @@ public class Superstructure extends SubsystemBase {
         currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
         break;
       case INTAKING_ALGAE_L3:
-        if (rollers.isAlgaeIntaked()) {
+        if (rollers.isReefAlgaeIntaked()) {
           currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
           wantedSuperState = WantedSuperState.POSITION_ALGAE_PROCESSOR;
         } else {
@@ -210,7 +210,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case AUTO_INTAKE_ALGAE:
-        if (rollers.isAlgaeIntaked()) {
+        if (rollers.isReefAlgaeIntaked()) {
           if (currentSuperState == CurrentSuperState.INTAKING_ALGAE_L2) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
           } else if (currentSuperState == CurrentSuperState.INTAKING_ALGAE_L3) {
@@ -1078,8 +1078,8 @@ public class Superstructure extends SubsystemBase {
     return rollers.isCoralBranchScored();
   }
 
-  public boolean isAlgaeIntaked() {
-    return rollers.isAlgaeIntaked();
+  public boolean isAlgaeScored() {
+    return rollers.isAlgaeScored();
   }
 
   public Command setCoralStateSimCommand(boolean state) {

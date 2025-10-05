@@ -338,7 +338,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double linearDistance = translationToTarget.getNorm();
         double frictionConstant = 0.0;
         // if (linearDistance >= 0.02) {
-        //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT * TunerConstants.MAX_LINEAR_SPEED;
+        //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT *
+        // TunerConstants.MAX_LINEAR_SPEED;
         // }
 
         Rotation2d direction = translationToTarget.getAngle();

@@ -13,7 +13,8 @@ public abstract class RollersIO {
 
   protected boolean isCoralInRamp = false;
   protected boolean isCoralIntakedInEndefector = false;
-  protected boolean isAlgaeIntaked = false;
+  protected boolean isGroundAlgaeIntaked = false;
+  protected boolean isReefAlgaeIntaked = false;
   protected boolean isCoralTroughScored = false;
   protected boolean isCoralBranchScored = false;
   protected boolean isAlgaeScored = false;

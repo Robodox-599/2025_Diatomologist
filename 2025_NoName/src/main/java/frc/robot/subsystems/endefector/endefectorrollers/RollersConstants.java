@@ -70,7 +70,8 @@ public class RollersConstants {
 
   public static final double rampCoralDebounce = 0.05;
   public static final double coralIntakeDebounce = 0.05;
-  public static final double algaeIntakeDebounce = 0.25;
+  public static final double algaeGroundIntakeDebounce = 0.25;
+  public static final double algaeReefIntakeDebounce = 0.5;
   public static final double coralTroughScoreDebounce = 0.3;
   public static final double coralBranchScoreDebounce = 0.1;
   public static final double algaeScoreDebounce = 0.5;

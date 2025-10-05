@@ -213,8 +213,12 @@ public class Rollers {
     return io.isCoralBranchScored;
   }
 
-  public boolean isAlgaeIntaked() {
-    return io.isAlgaeIntaked;
+  public boolean isGroundAlgaeIntaked() {
+    return io.isGroundAlgaeIntaked;
+  }
+
+  public boolean isReefAlgaeIntaked() {
+    return io.isReefAlgaeIntaked;
   }
 
   public boolean isAlgaeScored() {

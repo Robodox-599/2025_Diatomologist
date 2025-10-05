@@ -27,7 +27,8 @@ public class RollersIOTalonFX extends RollersIO {
   TalonFXConfiguration rollersConfig;
   Debouncer rampCoralDebouncer = new Debouncer(rampCoralDebounce);
   Debouncer coralIntakeDebouncer = new Debouncer(coralIntakeDebounce);
-  Debouncer algaeIntakeDebouncer = new Debouncer(algaeIntakeDebounce);
+  Debouncer algaeGroundIntakeDebouncer = new Debouncer(algaeGroundIntakeDebounce);
+  Debouncer algaeReefIntakeDebouncer = new Debouncer(algaeReefIntakeDebounce);
   Debouncer coralTroughScoreDebouncer = new Debouncer(coralTroughScoreDebounce);
   Debouncer coralBranchScoreDebouncer = new Debouncer(coralBranchScoreDebounce);
   Debouncer algaeScoreDebouncer = new Debouncer(algaeScoreDebounce);
@@ -68,7 +69,8 @@ public class RollersIOTalonFX extends RollersIO {
     coralTroughScoreDebouncer.setDebounceType(DebounceType.kRising);
     coralBranchScoreDebouncer.setDebounceType(DebounceType.kRising);
 
-    algaeIntakeDebouncer.setDebounceType(DebounceType.kRising);
+    algaeGroundIntakeDebouncer.setDebounceType(DebounceType.kRising);
+    algaeReefIntakeDebouncer.setDebounceType(DebounceType.kRising);
     algaeScoreDebouncer.setDebounceType(DebounceType.kFalling);
 
     PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
@@ -99,8 +101,11 @@ public class RollersIOTalonFX extends RollersIO {
 
     super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
     super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
-    super.isAlgaeIntaked =
-        algaeIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
+    super.isGroundAlgaeIntaked =
+        algaeGroundIntakeDebouncer.calculate(
+            super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
+    super.isReefAlgaeIntaked =
+        algaeReefIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isCoralBranchScored = coralBranchScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isAlgaeScored =
@@ -116,7 +121,8 @@ public class RollersIOTalonFX extends RollersIO {
 
     DogLog.log("Rollers/CoralInRamp", super.isCoralInRamp);
     DogLog.log("Rollers/CoralIntakedInEndefector", super.isCoralIntakedInEndefector);
-    DogLog.log("Rollers/AlgaeIntaked", super.isAlgaeIntaked);
+    DogLog.log("Rollers/GroundAlgaeIntaked", super.isGroundAlgaeIntaked);
+    DogLog.log("Rollers/ReefAlgaeIntaked", super.isReefAlgaeIntaked);
     DogLog.log("Rollers/CoralTroughScored", super.isCoralTroughScored);
     DogLog.log("Rollers/CoralBranchScored", super.isCoralBranchScored);
     DogLog.log("Rollers/AlgaeScored", super.isAlgaeScored);

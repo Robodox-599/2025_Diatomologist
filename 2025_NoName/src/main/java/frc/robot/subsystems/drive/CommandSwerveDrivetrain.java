@@ -425,7 +425,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       withinL4RaiseDistance = true;
       withinTroughRaiseDistance = true;
       withinL2L3RaiseDistance = true;
-    } else if (distanceFromNearestReefFace <= 0.83105) {
+    } else if (distanceFromNearestReefFace <= 1.0) {
       withinReefZone = false;
       withinAlgaeRaiseDistance = false;
       withinL4RaiseDistance = false;

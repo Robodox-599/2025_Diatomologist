@@ -17,7 +17,7 @@ public class AutoAlignPoseGenerator {
   public static final double L1_REEF_FACE_OFFSET =
       -0.3; // distance from reef face to scoring for L1 in meters
   public static final double ALGAE_REEF_FACE_OFFSET =
-      -0.09; // distance from reef face to scoring for algae in meters
+      0.0; // distance from reef face to scoring for algae in meters
   public static int nearestReefFaceIndex = 0;
 
   public static void updateNearestReefFaceIndex(Pose2d robotPose) {

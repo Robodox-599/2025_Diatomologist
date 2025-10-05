@@ -523,7 +523,7 @@ public class Superstructure extends SubsystemBase {
         break;
       case POSITION_ALGAE_PROCESSOR:
         if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L2) {
-          if (drivetrain.isWithinReefZone() && !rollers.isAlgaeScored()) {
+          if (drivetrain.isWithinReefZone()) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L2;
             break;
           } else {
@@ -531,7 +531,7 @@ public class Superstructure extends SubsystemBase {
             break;
           }
         } else if (currentSuperState == CurrentSuperState.POSITION_ALGAE_L3) {
-          if (drivetrain.isWithinReefZone() && !rollers.isAlgaeScored()) {
+          if (drivetrain.isWithinReefZone()) {
             currentSuperState = CurrentSuperState.POSITION_ALGAE_L3;
             break;
           } else {

@@ -63,7 +63,7 @@ public class Bindings extends SubsystemBase {
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
     this.superstructure = superstructure;
     //                               DRIVER BINDS
-    /* COMMENT OUT FOR COMPETITION ROBOT */ 
+    /* COMMENT OUT FOR COMPETITION ROBOT */
     // // // ZERO GYRO
     // driver.y().onTrue(superstructure.zeroGyroCommand());
     // // // SET DRIVE VELOCITY FOR TUNING

@@ -107,7 +107,7 @@ public class Wrist {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_TROUGH:
-        if (subsystemChecker.isSafeDistanceFromReef(true)) {
+        if (subsystemChecker.isSafeDistanceFromReefL1L2L3(true)) {
           currentState = CurrentState.POSITION_TROUGH;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
@@ -115,7 +115,7 @@ public class Wrist {
         // currentState = CurrentState.POSITION_TROUGH;
         break;
       case POSITION_BRANCH_L2:
-        if (subsystemChecker.isSafeDistanceFromReef(false)) {
+        if (subsystemChecker.isSafeDistanceFromReefL1L2L3(false)) {
           currentState = CurrentState.POSITION_BRANCH_L2;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
@@ -123,7 +123,7 @@ public class Wrist {
         // currentState = CurrentState.POSITION_BRANCH_L2;
         break;
       case POSITION_BRANCH_L3:
-        if (subsystemChecker.isSafeDistanceFromReef(false)) {
+        if (subsystemChecker.isSafeDistanceFromReefL1L2L3(false)) {
           currentState = CurrentState.POSITION_BRANCH_L3;
         } else {
           currentState = CurrentState.POSITION_PREPARED;

@@ -81,20 +81,9 @@ public class SubsystemChecker {
     return false;
   }
 
-  public boolean isSafeDistanceFromReef(boolean isTrough) {
-    int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
-    Pose2d transformToReef;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      transformToReef = REEF_BLUE_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
-    } else {
-      transformToReef = REEF_RED_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
-    }
-    double xDistance =
-        Math.abs(transformToReef.getX())
-            + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.02; // +2 cm for extra tolerance
+  public boolean isSafeDistanceFromReefL1L2L3(boolean isTrough) {
+    double xDistance = getDistanceFromReef();
 
-    DogLog.log("SubsystemChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
       DogLog.log(
           "SubsystemChecker/isSafeDistanceFromReef",
@@ -106,6 +95,31 @@ public class SubsystemChecker {
           xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET));
       return xDistance >= Math.abs(AutoAlignPoseGenerator.L2_L3_REEF_FACE_OFFSET);
     }
+  }
+
+  public boolean isSafeDistanceFromReefL4Auto() {
+    double xDistance = getDistanceFromReef();
+
+    DogLog.log(
+        "SubsystemChecker/isSafeDistanceFromReef",
+        xDistance >= Math.abs(AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET_AUTO));
+    return xDistance >= Math.abs(AutoAlignPoseGenerator.L4_REEF_FACE_OFFSET_AUTO);
+  }
+
+  private double getDistanceFromReef() {
+    int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
+    Pose2d transformToReef;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      transformToReef = REEF_BLUE_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
+    } else {
+      transformToReef = REEF_RED_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
+    }
+    double xDistance =
+        Math.abs(transformToReef.getX())
+            + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
+            + 0.02; // +2 cm for extra tolerance
+    DogLog.log("SubsystemChecker/DistanceFromReef", xDistance);
+    return xDistance;
   }
 
   public boolean isAtHeightElevator(ElevatorConstants.ElevatorStates state) {

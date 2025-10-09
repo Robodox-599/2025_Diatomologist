@@ -5,11 +5,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
+import frc.robot.util.SubsystemUtil;
 
 public class Climb extends SubsystemBase {
   private final ClimbIO io;
-  private WantedState wantedState = WantedState.STOPPED;
-  private CurrentState currentState = CurrentState.STOPPED;
+  private WantedState wantedState = WantedState.STOWED;
+  private CurrentState currentState = CurrentState.STOWED;
 
   public Climb(ClimbIO io) {
     this.io = io;
@@ -23,6 +24,9 @@ public class Climb extends SubsystemBase {
   }
 
   public enum CurrentState {
+    RELEASE_FLAP,
+    RELEASE_RAMP,
+    DEPLOY_CLIMB,
     CLIMB_PREPARED,
     CLIMBING,
     STOWED,
@@ -40,10 +44,19 @@ public class Climb extends SubsystemBase {
   private CurrentState handleStateTransitions() {
     switch (wantedState) {
       case CLIMB_PREPARED:
-        currentState = CurrentState.CLIMB_PREPARED;
+        if (!io.isFlapsReleased) {
+          currentState = CurrentState.RELEASE_FLAP;
+        } else if (!io.isClimbDeployed && io.isFlapsReleased) {
+          currentState = CurrentState.DEPLOY_CLIMB;
+        } else if (!io.isRampReleased && io.isClimbDeployed && io.isFlapsReleased) {
+          currentState = CurrentState.RELEASE_RAMP;
+        } else if (isClimbPrepared()) {
+          wantedState = WantedState.CLIMB_PREPARED;
+          currentState = CurrentState.CLIMB_PREPARED;
+        }
         break;
       case CLIMBING:
-        currentState = CurrentState.CLIMB_PREPARED;
+        currentState = CurrentState.CLIMBING;
         break;
       case STOWED:
         currentState = CurrentState.STOWED;
@@ -60,17 +73,27 @@ public class Climb extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
+      case RELEASE_FLAP:
+        releaseFlapServos();
+        break;
+      case RELEASE_RAMP:
+        releaseRampServos();
+        break;
+      case DEPLOY_CLIMB:
+        setClimbVoltage(ClimbStates.DEPLOYING_CLIMB);
+        setRollersVelocity(0);
+        break;
       case CLIMB_PREPARED:
-        setClimbPosition(ClimbStates.CLIMB_PREPARED);
-        setRollersVelocity(0.5);
+        setClimbVoltage(ClimbStates.STOPPED);
+        setRollersVelocity(6);
         releaseRampServo();
         break;
       case CLIMBING:
-        setClimbPosition(ClimbStates.CLIMBING);
-        io.stallRollers();
+        setClimbVoltage(ClimbStates.CLIMBING);
+        setRollersVelocity(0);
         break;
       case STOWED:
-        setClimbPosition(ClimbStates.STOWED);
+        setClimbVoltage(ClimbStates.STOPPED);
         setRollersVelocity(0);
         break;
       case STOPPED:
@@ -79,8 +102,20 @@ public class Climb extends SubsystemBase {
     }
   }
 
-  public void setClimbPosition(ClimbStates state) {
-    io.setClimbPosition(state);
+  public void releaseFlapServos() {
+    io.releaseFlapServos();
+  }
+
+  public void releaseRampServos() {
+    io.releaseRampServos();
+  }
+
+  public boolean isClimbPrepared() {
+    return io.isClimbDeployed && io.isRampReleased && io.isFlapsReleased;
+  }
+
+  public void setClimbVoltage(ClimbStates state) {
+    io.setClimbVoltage(SubsystemUtil.climbStateToVoltage(state));
   }
 
   public void setRollersVelocity(double velocity) {
@@ -88,7 +123,7 @@ public class Climb extends SubsystemBase {
   }
 
   public void releaseRampServo() {
-    io.releaseRampServo();
+    io.releaseRampServos();
   }
 
   public void zeroEncoder() {

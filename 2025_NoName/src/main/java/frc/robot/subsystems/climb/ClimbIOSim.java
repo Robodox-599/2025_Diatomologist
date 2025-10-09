@@ -1,12 +1,10 @@
 package frc.robot.subsystems.climb;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 
 public class ClimbIOSim extends ClimbIO {
   private final DCMotorSim climbSim;
@@ -65,15 +63,15 @@ public class ClimbIOSim extends ClimbIO {
     DogLog.log("Climb/Rollers/Temperature", super.rollersTempCelsius);
   }
 
-  @Override
-  public void setClimbPosition(ClimbStates state) {
-    targetPositionDegrees =
-        MathUtil.clamp(
-            ClimbConstants.setpoint[state.getIndex()],
-            ClimbConstants.climbLowerLimit,
-            ClimbConstants.climbUpperLimit);
-    climbSim.setInputVoltage(simPidController.calculate(targetPositionDegrees));
-  }
+  // @Override
+  // public void setClimbPosition(ClimbStates state) {
+  //   targetPositionDegrees =
+  //       MathUtil.clamp(
+  //           ClimbConstants.setpoint[state.getIndex()],
+  //           ClimbConstants.climbLowerLimit,
+  //           ClimbConstants.climbUpperLimit);
+  //   climbSim.setInputVoltage(simPidController.calculate(targetPositionDegrees));
+  // }
 
   @Override
   public void setRollersVelocity(double velocity) {

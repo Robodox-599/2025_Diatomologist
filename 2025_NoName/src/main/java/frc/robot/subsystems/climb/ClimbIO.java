@@ -1,7 +1,5 @@
 package frc.robot.subsystems.climb;
 
-import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
-
 public abstract class ClimbIO {
   protected double rollersTempCelsius = 0.0;
   protected double rollersVelocity = 0.0;
@@ -16,21 +14,24 @@ public abstract class ClimbIO {
   protected double climbCurrentAmps = 0.0;
   protected double targetPositionDegrees = 0.0;
 
+  protected boolean isFlapsReleased = false;
+  protected boolean isRampReleased = false;
+
+  protected boolean isClimbDeployed = false;
   protected boolean isCageDetected = false;
+  protected boolean isClimbed = false;
 
   protected boolean atSetpoint = false;
 
   public void updateInputs() {}
 
-  public void setClimbPosition(ClimbStates state) {}
-
   public void setRollersVelocity(double velocity) {}
 
   public void stallRollers() {}
 
-  public void holdRampServo() {}
+  public void releaseRampServos() {}
 
-  public void releaseRampServo() {}
+  public void releaseFlapServos() {}
 
   public void stop() {}
 

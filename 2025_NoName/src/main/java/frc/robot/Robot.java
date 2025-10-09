@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.autos.AutoRoutines;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.climb.ClimbIOSim;
+import frc.robot.subsystems.climb.ClimbIOTalonFX;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain.WantedState;
 import frc.robot.subsystems.drive.constants.TunerConstants;
@@ -54,6 +57,7 @@ public class Robot extends TimedRobot {
   final Elevator elevator;
   final Wrist wrist;
   final Rollers rollers;
+  final Climb climb;
   final LEDs leds;
   final Vision4 vision;
   final AutoFactory autoFactory;
@@ -85,7 +89,7 @@ public class Robot extends TimedRobot {
         wrist = new Wrist(new WristIOTalonFX(), subsystemChecker);
         drivetrain = TunerConstants.createDrivetrain(driver, subsystemChecker);
         leds = new LEDs(new LEDsIOReal());
-        // climb = new Climb(new ClimbIOTalonFX());
+        climb = new Climb(new ClimbIOTalonFX());
         vision =
             new Vision4(
                 new Camera(
@@ -104,7 +108,7 @@ public class Robot extends TimedRobot {
         wrist = new Wrist(new WristIOSim(), subsystemChecker);
         drivetrain = TunerConstants.createDrivetrain(driver, subsystemChecker);
         leds = new LEDs(new LEDsIOSim());
-        // climb = new Climb(new ClimbIOSim());
+        climb = new Climb(new ClimbIOSim());
         vision =
             new Vision4(
                 new Camera(
@@ -126,7 +130,8 @@ public class Robot extends TimedRobot {
             drivetrain);
 
     superstructure =
-        new Superstructure(drivetrain, elevator, wrist, rollers, leds, vision, driver, operator);
+        new Superstructure(
+            drivetrain, elevator, wrist, rollers, climb, leds, vision, driver, operator);
 
     new Bindings(driver, operator, superstructure);
 

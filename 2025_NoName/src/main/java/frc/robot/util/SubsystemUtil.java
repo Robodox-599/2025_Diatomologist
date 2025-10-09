@@ -23,8 +23,8 @@ public class SubsystemUtil {
     return RollersConstants.rollersVelocities[state.getIndex()];
   }
 
-  public static double climbStateToHeight(ClimbConstants.ClimbStates state) {
-    return (ClimbConstants.setpoint[state.getIndex()]);
+  public static double climbStateToVoltage(ClimbConstants.ClimbStates state) {
+    return (ClimbConstants.voltage[state.getIndex()]);
   }
 
   public static double wristStateToSetpoint(WristConstants.WristStates state) {

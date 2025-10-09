@@ -63,7 +63,7 @@ public class Bindings extends SubsystemBase {
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
     this.superstructure = superstructure;
     //                               DRIVER BINDS
-    /* COMMENT OUT FOR COMPETITION ROBOT */ 
+    /* COMMENT OUT FOR COMPETITION ROBOT */
     // // // ZERO GYRO
     // driver.y().onTrue(superstructure.zeroGyroCommand());
     // // // SET DRIVE VELOCITY FOR TUNING
@@ -131,14 +131,6 @@ public class Bindings extends SubsystemBase {
         .onTrue(
             setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN)
                 .alongWith(rumbleControllers(driver, operator)));
-    // // SET WANTED STATE TO PREPARE CLIMB
-    // driver
-    //     .x()
-    //     .and(driver.a())
-    //     .onTrue(
-    //         superstructure
-    //             .setWantedSuperStateCommand(WantedSuperState.POSITION_CLIMB_PREPARED)
-    //             .alongWith(rumbleControllers(driver, operator)));
 
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
@@ -269,6 +261,40 @@ public class Bindings extends SubsystemBase {
     operator
         .leftTrigger()
         .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
+    // // SET WANTED STATE TO PREPARE CLIMB
+    operator
+        .leftStick()
+        .and(operator.rightStick())
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.PREPARE_CLIMB)
+                .alongWith(rumbleControllers(driver, operator)));
+    // // SET WANTED STATE TO CLIMB UP
+    operator
+        .start()
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.CLIMBING_UP)
+                .alongWith(rumbleControllers(driver, operator)));
+    // // SET WANTED STATE TO CLIMB DOWN
+    operator
+        .back()
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.CLIMBING_DOWN)
+                .alongWith(rumbleControllers(driver, operator)));
+    operator
+        .start()
+        .onFalse(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
+                .alongWith(rumbleControllers(driver, operator)));
+    operator
+        .back()
+        .onFalse(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
+                .alongWith(rumbleControllers(driver, operator)));
   }
 
   @Override

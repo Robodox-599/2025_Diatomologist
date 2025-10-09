@@ -25,9 +25,9 @@ public class ClimbIOTalonFX extends ClimbIO {
   private final TalonFX climbMotor;
   private final TalonFX rollersMotor;
   // private final BangBangController bangBangController;
-  private final DigitalInput cageLimitSwitch;
+  // private final DigitalInput cageLimitSwitch;
   private final DigitalInput deployLimitSwitch;
-  private final DigitalInput climbLimitSwitch;
+  // private final DigitalInput climbLimitSwitch;
   private final Servo flapServo1;
   private final Servo flapServo2;
   private final Servo rampServo1;
@@ -53,9 +53,9 @@ public class ClimbIOTalonFX extends ClimbIO {
     rollersMotor = new TalonFX(ClimbConstants.rollersMotorID, ClimbConstants.rollersMotorCANbus);
     // bangBangController = new BangBangController();
 
-    cageLimitSwitch = new DigitalInput(ClimbConstants.rollersLimitSwitchDioPort);
+    // cageLimitSwitch = new DigitalInput(ClimbConstants.rollersLimitSwitchDioPort);
     deployLimitSwitch = new DigitalInput(ClimbConstants.deployLimitSwitchDioPort);
-    climbLimitSwitch = new DigitalInput(ClimbConstants.climbLimitSwitchDioPort);
+    // climbLimitSwitch = new DigitalInput(ClimbConstants.climbLimitSwitchDioPort);
 
     rampServo1 = new Servo(ClimbConstants.rampServoPWMPort1);
     rampServo2 = new Servo(ClimbConstants.rampServoPWMPort2);
@@ -147,8 +147,8 @@ public class ClimbIOTalonFX extends ClimbIO {
     super.isRampReleased = rampServo1.getAngle() > 90 && rampServo2.getAngle() > 90;
 
     super.isClimbDeployed = deployDebouncer.calculate(deployLimitSwitch.get());
-    super.isCageDetected = cageDetectDebouncer.calculate(cageLimitSwitch.get());
-    super.isClimbed = climbDebouncer.calculate(climbLimitSwitch.get());
+    super.isCageDetected = cageDetectDebouncer.calculate(super.rollersStatorCurrent >= 20);
+    // super.isClimbed = climbDebouncer.calculate(climbLimitSwitch.get());
 
     // super.atSetpoint = bangBangController.atSetpoint();
     // super.atSetpoint =
@@ -176,10 +176,10 @@ public class ClimbIOTalonFX extends ClimbIO {
     rollersMotor.set(velocity);
   }
 
-  // @Override
-  // public void stallRollers() {
-  //   rollersMotor.setControl(new DutyCycleOut(ClimbConstants.stallRollersVoltage));
-  // }
+  @Override
+  public void stallRollers() {
+    rollersMotor.setControl(new DutyCycleOut(ClimbConstants.stallRollersVoltage));
+  }
 
   @Override
   public void setClimbVoltage(double voltage) {
@@ -194,8 +194,8 @@ public class ClimbIOTalonFX extends ClimbIO {
 
   @Override
   public void releaseRampServos() {
-    rampServo1.setAngle(180);
-    rampServo2.setAngle(180);
+    rampServo1.setAngle(15);
+    rampServo2.setAngle(135);
   }
 
   // @Override

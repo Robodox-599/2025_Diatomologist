@@ -11,13 +11,13 @@ public class ClimbConstants {
   public static final double gearRatio = 5.4;
 
   // servos and limit switches
-  public static final int rollersLimitSwitchDioPort = 0;
+  // public static final int rollersLimitSwitchDioPort = 0;
   public static final int deployLimitSwitchDioPort = 1;
-  public static final int climbLimitSwitchDioPort = 2;
-  public static final int flapServoPWMPort1 = 3;
-  public static final int flapServoPWMPort2 = 4;
-  public static final int rampServoPWMPort1 = 5;
-  public static final int rampServoPWMPort2 = 6;
+  // public static final int climbLimitSwitchDioPort = 2;
+  public static final int flapServoPWMPort1 = 0;
+  public static final int flapServoPWMPort2 = 1;
+  public static final int rampServoPWMPort1 = 2;
+  public static final int rampServoPWMPort2 = 3;
 
   // current limits
   public static final boolean EnableCurrentLimit = true;
@@ -41,13 +41,14 @@ public class ClimbConstants {
   public static final double climbLowerLimit = 0.0;
   public static final double climbUpperLimit = 48.0;
   public static final double homePositionOffset = 1.0;
-  public static final double stallRollersVoltage = 0.2;
+  public static final double stallRollersVoltage = 0.1;
 
   // climb states
   public static enum ClimbStates {
     DEPLOYING_CLIMB(0),
-    CLIMBING(1),
-    STOPPED(2);
+    CLIMBING_UP(1),
+    CLIMBING_DOWN(2),
+    STOPPED(3);
 
     private final int index;
 
@@ -64,8 +65,9 @@ public class ClimbConstants {
   public static final int movingDownSlot = 0;
 
   public static final double[] voltage = {
-    3.0, // deploying climb
-    11.0, // climbing
+    6.0, // deploying climb
+    11.0, // climbing up
+    -3.0, // climbing down
     0.0 // stowed
   };
 

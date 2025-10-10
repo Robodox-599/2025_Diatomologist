@@ -68,6 +68,13 @@ public class Elevator {
 
   private void handleStateTransitions() {
     previousState = currentState;
+    if (currentState == CurrentState.POSITION_CORAL_L4
+        && wantedState != WantedState.POSITION_CORAL_L4) {
+      if (!subsystemChecker.isAtWristSetpoint(WristStates.POSITION_PREPARED)) {
+        currentState = CurrentState.POSITION_CORAL_L4;
+        return;
+      }
+    }
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
         currentState = CurrentState.INTAKING_CORAL_STATION;

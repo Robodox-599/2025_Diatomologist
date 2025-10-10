@@ -6,6 +6,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.FieldConstants.Reef;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -24,13 +25,39 @@ public final class ChoreoVariableWriter {
       "REEF_BLUE_A", "REEF_BLUE_C", "REEF_BLUE_E", "REEF_BLUE_G", "REEF_BLUE_I", "REEF_BLUE_K"
     };
     for (int i = 0; i < REEF_BLUE_LEFT.length; i++) {
-      namedPosesMap.put(blueLeftNames[i], REEF_BLUE_LEFT[i]);
+      namedPosesMap.put(blueLeftNames[i], (REEF_BLUE_LEFT[i]));
+    }
+    String[] blueLeftBackNames = {
+      "REEF_BLUE_A_BACK",
+      "REEF_BLUE_C_BACK",
+      "REEF_BLUE_E_BACK",
+      "REEF_BLUE_G_BACK",
+      "REEF_BLUE_I_BACK",
+      "REEF_BLUE_K_BACK"
+    };
+    for (int i = 0; i < REEF_BLUE_LEFT.length; i++) {
+      namedPosesMap.put(
+          blueLeftBackNames[i],
+          (REEF_BLUE_LEFT[i]).transformBy(new Transform2d(-0.35, 0.0, new Rotation2d(0))));
     }
     String[] blueRightNames = {
       "REEF_BLUE_B", "REEF_BLUE_D", "REEF_BLUE_F", "REEF_BLUE_H", "REEF_BLUE_J", "REEF_BLUE_L"
     };
     for (int i = 0; i < REEF_BLUE_RIGHT.length; i++) {
-      namedPosesMap.put(blueRightNames[i], REEF_BLUE_RIGHT[i]);
+      namedPosesMap.put(blueRightNames[i], (REEF_BLUE_RIGHT[i]));
+    }
+    String[] blueRightBackNames = {
+      "REEF_BLUE_B_BACK",
+      "REEF_BLUE_D_BACK",
+      "REEF_BLUE_F_BACK",
+      "REEF_BLUE_H_BACK",
+      "REEF_BLUE_J_BACK",
+      "REEF_BLUE_L_BACK"
+    };
+    for (int i = 0; i < REEF_BLUE_LEFT.length; i++) {
+      namedPosesMap.put(
+          blueRightBackNames[i],
+          (REEF_BLUE_RIGHT[i]).transformBy(new Transform2d(-0.35, 0.0, new Rotation2d(0))));
     }
     String[] blueMiddleNames = {
       "REEF_BLUE_AB", "REEF_BLUE_CD", "REEF_BLUE_EF", "REEF_BLUE_GH", "REEF_BLUE_IJ", "REEF_BLUE_KL"

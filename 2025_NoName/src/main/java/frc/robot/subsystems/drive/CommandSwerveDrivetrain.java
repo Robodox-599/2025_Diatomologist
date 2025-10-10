@@ -335,6 +335,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Translation2d translationToTarget =
             targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
 
+        Rotation2d targetRotation = targetPoseForDriveToPoint.getRotation();
+
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+          translationToTarget =
+              translationToTarget.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+          targetRotation = targetRotation.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+        }
+
         double linearDistance = translationToTarget.getNorm();
         double frictionConstant = 0.0;
         if (linearDistance >= 0.02) {
@@ -360,7 +368,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             driveAtAngle
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
-                .withTargetDirection(targetPoseForDriveToPoint.getRotation()));
+                .withTargetDirection(targetRotation));
         break;
       case CHOREO_TRAJECTORY:
         if (choreoSampleToBeApplied != null) {

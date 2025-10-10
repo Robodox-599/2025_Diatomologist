@@ -66,7 +66,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(ItoHP, IBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoLBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(1), HPtoLBack.cmd()));
 
     HPtoLBack.done()
         .onTrue(
@@ -87,7 +87,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(LtoHP, LBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoKBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(1), HPtoKBack.cmd()));
 
     HPtoKBack.done()
         .onTrue(
@@ -108,7 +108,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(KtoHP, KBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoJBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(1), HPtoJBack.cmd()));
 
     HPtoJBack.recentlyDone()
         .onTrue(

@@ -165,6 +165,12 @@ public class SubsystemChecker {
     return this.speeds;
   }
 
+  public boolean isSpeedsSettled() {
+    return Math.abs(this.speeds.vxMetersPerSecond) < 0.1
+        && Math.abs(this.speeds.vyMetersPerSecond) < 0.1
+        && Math.abs(this.speeds.omegaRadiansPerSecond) < 0.1;
+  }
+
   // public boolean isSafeElevator() {
   //   if (!isBehindElevator(wrist.getPosition())
   //       || isUnderElevator(

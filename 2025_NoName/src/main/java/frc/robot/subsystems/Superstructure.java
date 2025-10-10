@@ -17,6 +17,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristState
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision4.Vision4;
 import frc.robot.util.AutoAlignPoseGenerator;
+import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
 public class Superstructure extends SubsystemBase {
@@ -27,6 +28,7 @@ public class Superstructure extends SubsystemBase {
   private final Climb climb;
   private final LEDs leds;
   private final Vision4 vision;
+  private final SubsystemChecker subsystemChecker;
   private final CommandXboxController driver;
   private final CommandXboxController operator;
 
@@ -136,6 +138,7 @@ public class Superstructure extends SubsystemBase {
       Climb climb,
       LEDs LEDs,
       Vision4 vision,
+      SubsystemChecker subsystemChecker,
       CommandXboxController driver,
       CommandXboxController operator) {
     this.drivetrain = drivetrain;
@@ -145,6 +148,7 @@ public class Superstructure extends SubsystemBase {
     this.climb = climb;
     this.leds = LEDs;
     this.vision = vision;
+    this.subsystemChecker = subsystemChecker;
     this.driver = driver;
     this.operator = operator;
   }
@@ -310,6 +314,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
@@ -329,6 +334,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
@@ -348,6 +354,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
@@ -367,6 +374,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
@@ -386,6 +394,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
@@ -405,6 +414,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
@@ -424,6 +434,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
@@ -443,6 +454,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
@@ -462,6 +474,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
@@ -481,6 +494,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
@@ -500,6 +514,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4_AUTO)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
@@ -519,6 +534,7 @@ public class Superstructure extends SubsystemBase {
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4_AUTO)
+            && subsystemChecker.isSpeedsSettled()
             && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;

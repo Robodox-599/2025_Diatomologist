@@ -63,10 +63,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               DriveRequestType.Velocity); // Use open-loop control for drive motors
 
   private final double DRIVE_TO_POINT_MAX_VELOCITY_OUTPUT = 3.0;
-  public static final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.01; // 1 cm
+  public static final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.02; // 1 cm
   public static final double DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT = 0.02;
   private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.05; // 5 cm
-  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(1);
+  private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(2);
   private static boolean withinAlgaeRaiseDistance = false;
   private static boolean withinTroughRaiseDistance = false;
   private static boolean withinL2L3RaiseDistance = false;
@@ -76,9 +76,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static double driveToPointXError;
   private static double driveToPointYError;
 
-  private final PIDController choreoXController = new PIDController(3.2, 0, 0);
-  private final PIDController choreoYController = new PIDController(3.2, 0, 0);
-  private final PIDController choreoThetaPID = new PIDController(3.2, 0, 0);
+  private final PIDController choreoXController = new PIDController(5, 0, 0);
+  private final PIDController choreoYController = new PIDController(5, 0, 0);
+  private final PIDController choreoThetaPID = new PIDController(5, 0, 0);
   private SwerveSample choreoSampleToBeApplied;
 
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
@@ -337,10 +337,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         double linearDistance = translationToTarget.getNorm();
         double frictionConstant = 0.0;
-        // if (linearDistance >= 0.02) {
-        //   frictionConstant = DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT *
-        // TunerConstants.MAX_LINEAR_SPEED;
-        // }
+        if (linearDistance >= 0.02) {
+          frictionConstant =
+              DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT * TunerConstants.MAX_LINEAR_SPEED;
+        }
 
         Rotation2d direction = translationToTarget.getAngle();
         double velocityOutput =

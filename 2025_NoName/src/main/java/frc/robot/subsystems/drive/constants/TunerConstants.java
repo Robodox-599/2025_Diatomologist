@@ -74,7 +74,7 @@ public class TunerConstants {
           .withKP(0.35) // 0.35
           .withKI(0.0) // N/A
           .withKD(0.0) // N/A
-          .withKS(0.2) // could be < 0.15?
+          .withKS(0.15) // could be < 0.15?
           .withKV(Constants.kMotors.kKrakenX60Foc.kV);
 
   /*

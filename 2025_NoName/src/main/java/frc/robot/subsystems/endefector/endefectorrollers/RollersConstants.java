@@ -32,9 +32,9 @@ public class RollersConstants {
     -0.1, // ensuring coral backwards
     -0.6, // intaking algae
     0.0, // holding coral
-    -0.5, // scoring coral trough
+    -0.6, // scoring coral trough
     -0.6, // scoring coral l2 or l3
-    1.0, // scoring coral l4
+    1, // scoring coral l4
     1.0, // scoring algae
     0.0, // stopped
   };
@@ -65,10 +65,10 @@ public class RollersConstants {
   public static final double rollersDutyCycleOutHoldAlgae = -0.06;
   public static final double algaeStallStatorCurrentAmps = 20;
 
-  public static final int rampBeamBreakPort = 1;
-  public static final int endefectorBeamBreakPort = 0;
+  public static final int rampBeamBreakPort = 0;
+  public static final int endefectorBeamBreakPort = 1;
 
-  public static final double rampCoralDebounce = 0.05;
+  public static final double rampCoralDebounce = 0.1;
   public static final double coralIntakeDebounce = 0.05;
   public static final double algaeGroundIntakeDebounce = 0.25;
   public static final double algaeReefIntakeDebounce = 0.5;

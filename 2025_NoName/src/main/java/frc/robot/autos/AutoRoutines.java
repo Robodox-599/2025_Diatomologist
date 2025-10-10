@@ -62,7 +62,7 @@ public class AutoRoutines {
                     WantedSuperState.INTAKING_CORAL_STATION),
                 ItoHP.cmd()));
 
-    ItoHP.done().onTrue(Commands.sequence(HPtoL.cmd()));
+    ItoHP.done().onTrue(Commands.sequence(new WaitCommand(0.5), HPtoL.cmd()));
 
     HPtoL.active()
         .and(
@@ -84,7 +84,7 @@ public class AutoRoutines {
                     WantedSuperState.INTAKING_CORAL_STATION),
                 LtoHP.cmd()));
 
-    LtoHP.done().onTrue(Commands.sequence(HPtoK.cmd()));
+    LtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.5), HPtoK.cmd()));
 
     HPtoK.active()
         .and(
@@ -105,7 +105,7 @@ public class AutoRoutines {
                     WantedSuperState.INTAKING_CORAL_STATION),
                 KtoHP.cmd()));
 
-    KtoHP.done().onTrue(HPtoJ.cmd());
+    KtoHP.done().onTrue(Commands.sequence(new WaitCommand(0.5), HPtoJ.cmd()));
 
     HPtoJ.active()
         .and(

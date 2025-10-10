@@ -65,7 +65,7 @@ public class Bindings extends SubsystemBase {
     //                               DRIVER BINDS
     /* COMMENT OUT FOR COMPETITION ROBOT */
     // // // ZERO GYRO
-    // driver.y().onTrue(superstructure.zeroGyroCommand());
+    driver.y().onTrue(superstructure.zeroGyroCommand());
     // // // SET DRIVE VELOCITY FOR TUNING
     // driver.b().onTrue(setDriveVelocity(1.5));
     // driver.b().onFalse(setDriveVelocity(0.0));
@@ -91,7 +91,7 @@ public class Bindings extends SubsystemBase {
     driver
         .leftBumper()
         .onFalse(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
+            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // // SET WANTED STATE TO SCORING GAME PIECE
     driver
         .rightTrigger()
@@ -106,7 +106,7 @@ public class Bindings extends SubsystemBase {
     driver
         .leftTrigger()
         .onFalse(
-            superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION));
+            superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()
@@ -471,7 +471,7 @@ public class Bindings extends SubsystemBase {
 
   public WantedSuperState returnLogicState() {
     WantedSuperState wantedSuperState = superstructure.getWantedSuperState();
-    if (superstructure.isAlgaeScored()) {
+    if (!superstructure.isAlgaeScored()) {
       if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
         return WantedSuperState.POSITION_ALGAE_BARGE;
       } else {

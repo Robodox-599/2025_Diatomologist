@@ -2,9 +2,9 @@ package frc.robot.subsystems.climb;
 
 public class ClimbConstants {
   // motor information
-  public static final int climbMotorID = 20;
+  public static final int climbMotorID = 26;
   public static final String climbMotorCANbus = "rio";
-  public static final int rollersMotorID = 0;
+  public static final int rollersMotorID = 25;
   public static final String rollersMotorCANbus = "rio";
   public static final double climbMOI = 0.15;
   public static final double rollersMOI = 0.04;
@@ -12,7 +12,7 @@ public class ClimbConstants {
 
   // servos and limit switches
   // public static final int rollersLimitSwitchDioPort = 0;
-  public static final int deployLimitSwitchDioPort = 1;
+  public static final int deployLimitSwitchDioPort = 2;
   // public static final int climbLimitSwitchDioPort = 2;
   public static final int flapServoPWMPort1 = 0;
   public static final int flapServoPWMPort2 = 1;

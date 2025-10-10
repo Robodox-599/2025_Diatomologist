@@ -91,8 +91,8 @@ public class SubsystemChecker {
     }
     double xDistance =
         Math.abs(transformToReef.getX())
-            + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.02; // +2 cm for extra tolerance
+            + CommandSwerveDrivetrain
+                .DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE; // +2 cm for extra tolerance
 
     DogLog.log("SubsystemChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {

@@ -180,7 +180,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousExit() {
     scheduler.cancelAll();
-    superstructure.setWantedSuperState(WantedSuperState.INTAKING_CORAL_STATION);
     drivetrain.setWantedState(WantedState.TELEOP_DRIVE);
   }
 

@@ -42,8 +42,8 @@ public final class ElevatorConstants {
     13.5, // POSITION CORAL L1 // 14
     36.0, // POSITION CORAL L2 // 16
     51.9, // POSITION CORAL L3 // 33
-    65.0, // POSITION CORAL L4 // 60
-    65.0, // POSITION CORAL L4 AUTO
+    64.0, // POSITION CORAL L4 // 60
+    64.0, // POSITION CORAL L4 AUTO
     12.0, // POSITION ALGAE PROCESSOR
     85.0, // POSITION ALGAE BARGE
   };

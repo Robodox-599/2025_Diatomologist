@@ -139,7 +139,7 @@ public class Bindings extends SubsystemBase {
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
-                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
+                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
@@ -160,7 +160,7 @@ public class Bindings extends SubsystemBase {
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
-                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
+                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
                     this::isGamePieceStateCoral)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
@@ -219,14 +219,14 @@ public class Bindings extends SubsystemBase {
     //             .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO CORAL STATION INTAKE
     operator
-        .rightBumper()
+        .leftBumper()
         .onTrue(
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION)
                 .alongWith(rumbleOperator(operator)));
     // // SET WANTED STATE TO PREPARE
     operator
-        .leftBumper()
+        .rightBumper()
         .onTrue(
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED)

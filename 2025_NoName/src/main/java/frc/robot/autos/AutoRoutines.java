@@ -14,6 +14,7 @@ public class AutoRoutines {
   private AutoFactory autoFactory;
   private Superstructure superstructureCommands;
   private CommandSwerveDrivetrain drivetrain;
+  private double waitTimeAtHP = 0.5;
 
   public AutoRoutines(
       AutoFactory autoFactory,
@@ -66,7 +67,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(ItoHP, IBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(1), HPtoLBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoLBack.cmd()));
 
     HPtoLBack.done()
         .onTrue(
@@ -87,7 +88,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(LtoHP, LBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(1), HPtoKBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoKBack.cmd()));
 
     HPtoKBack.done()
         .onTrue(
@@ -108,7 +109,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(KtoHP, KBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(1), HPtoJBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoJBack.cmd()));
 
     HPtoJBack.recentlyDone()
         .onTrue(
@@ -160,7 +161,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(FtoHP, FBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoCBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoCBack.cmd()));
 
     HPtoCBack.done()
         .onTrue(
@@ -181,7 +182,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(CtoHP, CBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoDBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoDBack.cmd()));
 
     HPtoDBack.done()
         .onTrue(
@@ -202,7 +203,7 @@ public class AutoRoutines {
 
     routine
         .anyDone(DtoHP, DBacktoHP)
-        .onTrue(Commands.sequence(new WaitCommand(0.5), HPtoEBack.cmd()));
+        .onTrue(Commands.sequence(new WaitCommand(waitTimeAtHP), HPtoEBack.cmd()));
 
     HPtoEBack.recentlyDone()
         .onTrue(

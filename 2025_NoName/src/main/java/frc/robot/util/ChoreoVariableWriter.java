@@ -16,6 +16,10 @@ import java.util.Map;
 // IN TERMINAL: "./gradlew writePosesToChoreo"
 
 public final class ChoreoVariableWriter {
+  private static final double furtherReefFaceOffsetForAuto = -1.0;
+  private static final double closerReefFaceOffsetForAuto = -0.35;
+
+  // I, J, F, E
   public static void writeToChoreo() {
     String filePath = "src/main/deploy/choreo/jaiden's autos 2025.chor"; // Path to your JSON file
 
@@ -36,9 +40,18 @@ public final class ChoreoVariableWriter {
       "REEF_BLUE_K_BACK"
     };
     for (int i = 0; i < REEF_BLUE_LEFT.length; i++) {
-      namedPosesMap.put(
-          blueLeftBackNames[i],
-          (REEF_BLUE_LEFT[i]).transformBy(new Transform2d(-0.35, 0.0, new Rotation2d(0))));
+      if (i == 2 || i == 4) {
+        namedPosesMap.put(
+            blueLeftBackNames[i],
+            (REEF_BLUE_LEFT[i])
+                .transformBy(new Transform2d(closerReefFaceOffsetForAuto, 0.0, new Rotation2d(0))));
+      } else {
+        namedPosesMap.put(
+            blueLeftBackNames[i],
+            (REEF_BLUE_LEFT[i])
+                .transformBy(
+                    new Transform2d(furtherReefFaceOffsetForAuto, 0.0, new Rotation2d(0))));
+      }
     }
     String[] blueRightNames = {
       "REEF_BLUE_B", "REEF_BLUE_D", "REEF_BLUE_F", "REEF_BLUE_H", "REEF_BLUE_J", "REEF_BLUE_L"
@@ -54,10 +67,19 @@ public final class ChoreoVariableWriter {
       "REEF_BLUE_J_BACK",
       "REEF_BLUE_L_BACK"
     };
-    for (int i = 0; i < REEF_BLUE_LEFT.length; i++) {
-      namedPosesMap.put(
-          blueRightBackNames[i],
-          (REEF_BLUE_RIGHT[i]).transformBy(new Transform2d(-0.35, 0.0, new Rotation2d(0))));
+    for (int i = 0; i < REEF_BLUE_RIGHT.length; i++) {
+      if (i == 2 || i == 4) {
+        namedPosesMap.put(
+            blueRightBackNames[i],
+            (REEF_BLUE_RIGHT[i])
+                .transformBy(new Transform2d(closerReefFaceOffsetForAuto, 0.0, new Rotation2d(0))));
+      } else {
+        namedPosesMap.put(
+            blueRightBackNames[i],
+            (REEF_BLUE_RIGHT[i])
+                .transformBy(
+                    new Transform2d(furtherReefFaceOffsetForAuto, 0.0, new Rotation2d(0))));
+      }
     }
     String[] blueMiddleNames = {
       "REEF_BLUE_AB", "REEF_BLUE_CD", "REEF_BLUE_EF", "REEF_BLUE_GH", "REEF_BLUE_IJ", "REEF_BLUE_KL"

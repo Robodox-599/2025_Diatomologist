@@ -12,7 +12,7 @@ public class ClimbConstants {
 
   // servos and limit switches
   // public static final int rollersLimitSwitchDioPort = 0;
-  public static final int deployLimitSwitchDioPort = 2;
+  public static final int deployLimitSwitchDioPort = 5;
   // public static final int climbLimitSwitchDioPort = 2;
   public static final int flapServoPWMPort1 = 0;
   public static final int flapServoPWMPort2 = 1;

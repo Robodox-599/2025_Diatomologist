@@ -62,11 +62,11 @@ public class RollersConstants {
   public static final double realkS = 0.02;
   public static final double realkV = Constants.kMotors.kKrakenX60Foc.kV * gearRatio;
 
-  public static final double rollersDutyCycleOutHoldAlgae = -0.06;
+  public static final double rollersDutyCycleOutHoldAlgae = -0.1;
   public static final double algaeStallStatorCurrentAmps = 20;
 
-  public static final int rampBeamBreakPort = 0;
-  public static final int endefectorBeamBreakPort = 1;
+  public static final int rampBeamBreakPort = 1;
+  public static final int endefectorBeamBreakPort = 2;
 
   public static final double rampCoralDebounce = 0.1;
   public static final double coralIntakeDebounce = 0.05;

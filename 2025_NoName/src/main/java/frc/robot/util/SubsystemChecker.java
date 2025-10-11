@@ -166,8 +166,7 @@ public class SubsystemChecker {
   }
 
   public boolean isSpeedsSettled() {
-    return Math.abs(this.speeds.vxMetersPerSecond) < 0.1
-        && Math.abs(this.speeds.vyMetersPerSecond) < 0.1
+    return Math.abs(this.speeds.vyMetersPerSecond) < 0.1
         && Math.abs(this.speeds.omegaRadiansPerSecond) < 0.1;
   }
 

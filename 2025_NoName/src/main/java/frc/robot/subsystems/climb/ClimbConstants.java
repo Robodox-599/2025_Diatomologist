@@ -12,7 +12,7 @@ public class ClimbConstants {
 
   // servos and limit switches
   // public static final int rollersLimitSwitchDioPort = 0;
-  public static final int deployLimitSwitchDioPort = 5;
+  public static final int deployLimitSwitchDioPort = 4;
   // public static final int climbLimitSwitchDioPort = 2;
   public static final int flapServoPWMPort1 = 0;
   public static final int flapServoPWMPort2 = 1;
@@ -65,7 +65,7 @@ public class ClimbConstants {
   public static final int movingDownSlot = 0;
 
   public static final double[] voltage = {
-    6.0, // deploying climb
+    4.0, // deploying climb
     11.0, // climbing up
     -3.0, // climbing down
     0.0 // stowed

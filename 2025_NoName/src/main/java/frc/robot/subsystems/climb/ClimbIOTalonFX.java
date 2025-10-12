@@ -35,6 +35,8 @@ public class ClimbIOTalonFX extends ClimbIO {
   Debouncer deployDebouncer = new Debouncer(0.1);
   Debouncer cageDetectDebouncer = new Debouncer(0.1);
   Debouncer climbDebouncer = new Debouncer(0.1);
+  Debouncer flapDeployDebouncer = new Debouncer(0.75);
+  Debouncer rampDeployDebouncer = new Debouncer(0.75);
 
   private final StatusSignal<Angle> climbPosition;
   private final StatusSignal<AngularVelocity> climbVelocity;
@@ -71,12 +73,12 @@ public class ClimbIOTalonFX extends ClimbIO {
     // climbConfig.Slot0.kV = ClimbConstants.kV;
     // climbConfig.Slot0.kS = ClimbConstants.kS;
 
-    climbConfig.CurrentLimits.SupplyCurrentLimit = 40;
-    climbConfig.CurrentLimits.StatorCurrentLimit = 60;
+    climbConfig.CurrentLimits.SupplyCurrentLimit = 120;
+    climbConfig.CurrentLimits.StatorCurrentLimit = 120;
     climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     climbConfig.Feedback.RotorToSensorRatio = gearRatio;
-    climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     rollersConfig.CurrentLimits.SupplyCurrentLimit = 40;
     rollersConfig.CurrentLimits.StatorCurrentLimit = 60;
     rollersConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -143,10 +145,12 @@ public class ClimbIOTalonFX extends ClimbIO {
     super.rollersTempCelsius = rollersTemperature.getValueAsDouble();
     super.rollersStatorCurrent = rollersStatorCurrent.getValueAsDouble();
 
-    super.isFlapsReleased = flapServo1.getAngle() > 90 && flapServo2.getAngle() > 90;
-    super.isRampReleased = rampServo1.getAngle() > 90 && rampServo2.getAngle() > 90;
+    super.isFlapsReleased =
+        flapDeployDebouncer.calculate(flapServo1.getAngle() > 170 && flapServo2.getAngle() > 170);
+    super.isRampReleased =
+        rampDeployDebouncer.calculate(rampServo1.getAngle() > 125 && rampServo2.getAngle() < 25);
 
-    super.isClimbDeployed = deployDebouncer.calculate(deployLimitSwitch.get());
+    super.isClimbDeployed = deployDebouncer.calculate(!deployLimitSwitch.get());
     super.isCageDetected = cageDetectDebouncer.calculate(super.rollersStatorCurrent >= 20);
     // super.isClimbed = climbDebouncer.calculate(climbLimitSwitch.get());
 
@@ -158,6 +162,9 @@ public class ClimbIOTalonFX extends ClimbIO {
     DogLog.log("Climb/IsClimbDeployed", super.isClimbDeployed);
     DogLog.log("Climb/IsCageDetected", super.isCageDetected);
     DogLog.log("Climb/IsClimbed", super.isClimbed);
+
+    DogLog.log("Climb/isFlapsReleased", super.isFlapsReleased);
+    DogLog.log("Climb/isRampReleased", super.isRampReleased);
 
     DogLog.log("Climb/StatorCurrentAmps", super.climbCurrentAmps);
     DogLog.log("Climb/AppliedVoltage", super.climbAppliedVolts);
@@ -194,8 +201,8 @@ public class ClimbIOTalonFX extends ClimbIO {
 
   @Override
   public void releaseRampServos() {
-    rampServo1.setAngle(15);
-    rampServo2.setAngle(135);
+    rampServo1.setAngle(135);
+    rampServo2.setAngle(15);
   }
 
   // @Override

@@ -14,7 +14,7 @@ public class AutoRoutines {
   private AutoFactory autoFactory;
   private Superstructure superstructureCommands;
   private CommandSwerveDrivetrain drivetrain;
-  private double waitTimeAtHP = 0.5;
+  private double waitTimeAtHP = 0.3;
 
   public AutoRoutines(
       AutoFactory autoFactory,

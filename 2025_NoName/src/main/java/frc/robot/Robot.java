@@ -166,6 +166,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     Tracer.traceFunc("CommandScheduler", scheduler::run);
+    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
   }
 
   @Override

@@ -91,8 +91,8 @@ public class SubsystemChecker {
     }
     double xDistance =
         Math.abs(transformToReef.getX())
-            + CommandSwerveDrivetrain
-                .DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE; // +2 cm for extra tolerance
+            + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
+            + 0.03; // +2 cm for extra tolerance
 
     DogLog.log("SubsystemChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
@@ -166,8 +166,9 @@ public class SubsystemChecker {
   }
 
   public boolean isSpeedsSettled() {
-    return Math.abs(this.speeds.vyMetersPerSecond) < 0.1
-        && Math.abs(this.speeds.omegaRadiansPerSecond) < 0.1;
+    return Math.abs(this.speeds.vxMetersPerSecond) < 0.05
+        && Math.abs(this.speeds.vyMetersPerSecond) < 0.05
+        && Math.abs(this.speeds.omegaRadiansPerSecond) < 0.05;
   }
 
   // public boolean isSafeElevator() {

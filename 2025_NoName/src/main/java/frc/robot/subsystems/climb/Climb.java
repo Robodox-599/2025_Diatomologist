@@ -18,6 +18,7 @@ public class Climb extends SubsystemBase {
 
   public enum WantedState {
     PREPARE_CLIMB,
+    READY_TO_CLIMB,
     CLIMBING_UP,
     CLIMBING_DOWN,
     STOWED,
@@ -63,6 +64,9 @@ public class Climb extends SubsystemBase {
         } else {
           currentState = CurrentState.STOPPED;
         }
+        break;
+      case READY_TO_CLIMB:
+        currentState = CurrentState.READY_TO_CLIMB;
         break;
       case CLIMBING_UP:
         currentState = CurrentState.CLIMBING_UP;

@@ -30,12 +30,12 @@ public class RollersConstants {
     0.4, // intaking coral station
     0.25, // ensuring coral forwards
     -0.1, // ensuring coral backwards
-    -0.75, // intaking algae
+    -0.6, // intaking algae
     0.0, // holding coral
     -0.6, // scoring coral trough
     -0.6, // scoring coral l2 or l3
     1.0, // scoring coral l4
-    1.0, // scoring algae
+    0.3, // scoring algae
     0.0, // stopped
   };
 
@@ -74,5 +74,5 @@ public class RollersConstants {
   public static final double algaeReefIntakeDebounce = 0.3;
   public static final double coralTroughScoreDebounce = 0.3;
   public static final double coralBranchScoreDebounce = 0.1;
-  public static final double algaeScoreDebounce = 0.5;
+  public static final double algaeScoreDebounce = 1.0;
 }

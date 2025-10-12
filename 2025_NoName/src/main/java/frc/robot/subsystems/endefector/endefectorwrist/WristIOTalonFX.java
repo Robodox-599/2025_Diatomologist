@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -31,6 +32,7 @@ public class WristIOTalonFX extends WristIO {
   TalonFXConfiguration wristConfig;
   private MotionMagicVoltage m_request;
   private int slot = 0;
+  private Debouncer wristAtSetpointDebouncer = new Debouncer(0.5);
 
   private final CANcoder cancoder;
 
@@ -115,7 +117,8 @@ public class WristIOTalonFX extends WristIO {
     super.currentPosition = position.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.atSetpoint =
-        Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance;
+        wristAtSetpointDebouncer.calculate(
+            Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance);
     // super.acceleration = acceleration.getValueAsDouble();
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);

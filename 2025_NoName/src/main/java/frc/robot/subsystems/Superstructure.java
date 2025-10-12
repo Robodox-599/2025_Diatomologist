@@ -613,12 +613,8 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case READY_TO_CLIMB:
-        if (!climb.isClimbReady()) {
-          wantedSuperState = WantedSuperState.PREPARE_CLIMB;
-          currentSuperState = CurrentSuperState.PREPARE_CLIMB;
-        } else {
-          currentSuperState = CurrentSuperState.READY_TO_CLIMB;
-        }
+        currentSuperState = CurrentSuperState.READY_TO_CLIMB;
+        break;
       case CLIMBING_UP:
         currentSuperState = CurrentSuperState.CLIMBING_UP;
         break;
@@ -980,7 +976,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.PREPARE_CLIMB);
+    climb.setWantedState(Climb.WantedState.READY_TO_CLIMB);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 

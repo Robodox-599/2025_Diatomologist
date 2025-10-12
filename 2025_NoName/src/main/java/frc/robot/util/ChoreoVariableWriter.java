@@ -16,7 +16,7 @@ import java.util.Map;
 // IN TERMINAL: "./gradlew writePosesToChoreo"
 
 public final class ChoreoVariableWriter {
-  private static final double furtherReefFaceOffsetForAuto = -1.0;
+  private static final double furtherReefFaceOffsetForAuto = -0.6;
   private static final double closerReefFaceOffsetForAuto = -0.35;
 
   // I, J, F, E

@@ -597,12 +597,7 @@ public class Superstructure extends SubsystemBase {
         }
         break;
       case SCORING_ALGAE:
-        if (rollers.isAlgaeScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else {
-          currentSuperState = CurrentSuperState.SCORING_ALGAE;
-        }
+        currentSuperState = CurrentSuperState.SCORING_ALGAE;
         break;
       case PREPARE_CLIMB:
         if (climb.isClimbReady()) {

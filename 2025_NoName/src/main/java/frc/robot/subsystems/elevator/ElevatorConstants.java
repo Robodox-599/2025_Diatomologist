@@ -37,7 +37,7 @@ public final class ElevatorConstants {
     0.0, // INTAKING ALGAE GROUND
     7.0, // INTAKING ALGAE LOLLIPOP
     22.0, // INTAKING ALGAE L2 // 27.5
-    38.0, // INTAKING ALGAE L3 // 42
+    36.5, // INTAKING ALGAE L3 // 42
     12.0, // POSITION PREPARED
     14.0, // POSITION CORAL L1 // 14
     34.5, // POSITION CORAL L2 // 16

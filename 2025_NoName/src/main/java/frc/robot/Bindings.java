@@ -471,13 +471,13 @@ public class Bindings extends SubsystemBase {
 
   public WantedSuperState returnLogicState() {
     WantedSuperState wantedSuperState = superstructure.getWantedSuperState();
-    // if (!superstructure.isAlgaeScored()) {
-    //   if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
-    //     return WantedSuperState.POSITION_ALGAE_BARGE;
-    //   } else {
-    //     return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-    //   }
-    // }
+    if (!superstructure.isAlgaeScored()) {
+      if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
+        return WantedSuperState.POSITION_ALGAE_BARGE;
+      } else {
+        return WantedSuperState.POSITION_ALGAE_PROCESSOR;
+      }
+    }
     switch (gamePieceState) {
       default:
       case CORAL:

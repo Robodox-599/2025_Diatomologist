@@ -141,6 +141,11 @@ public class Robot extends TimedRobot {
             driver,
             operator);
 
+    subsystemChecker.addDrivetrain(drivetrain);
+    subsystemChecker.addElevator(elevator);
+    subsystemChecker.addWrist(wrist);
+    subsystemChecker.addRollers(rollers);
+
     new Bindings(driver, operator, superstructure);
 
     subsystemVisualizer = new SubsystemVisualizer(elevator, wrist, rollers);

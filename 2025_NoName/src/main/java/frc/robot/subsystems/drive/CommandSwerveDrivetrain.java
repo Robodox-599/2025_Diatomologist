@@ -268,9 +268,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/WantedState", wantedState);
     DogLog.log("RobotPose", getState().Pose);
     updateDistancesAndSetpoints();
-
-    subsystemChecker.setRobotPose(getState().Pose);
-    subsystemChecker.setChassisSpeeds(getChassisSpeeds());
   }
 
   public void setWantedState(WantedState wantedState) {

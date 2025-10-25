@@ -62,15 +62,13 @@ public class Elevator {
     Tracer.traceFunc("CalculateSoftLimits", this::calculateSoftLimits);
     DogLog.log("Elevator/CurrentState", currentState);
     DogLog.log("Elevator/WantedState", wantedState);
-
-    subsystemChecker.setElevatorHeight(getHeightInches());
   }
 
   private void handleStateTransitions() {
     previousState = currentState;
     if (currentState == CurrentState.POSITION_CORAL_L4
         && wantedState != WantedState.POSITION_CORAL_L4) {
-      if (!subsystemChecker.isAtWristSetpoint(WristStates.POSITION_PREPARED)) {
+      if (!subsystemChecker.isAtWristPosition(WristStates.POSITION_PREPARED)) {
         currentState = CurrentState.POSITION_CORAL_L4;
         return;
       }
@@ -95,7 +93,7 @@ public class Elevator {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_PREPARED_AUTO:
-        if (subsystemChecker.isAtPositionWrist(WristStates.POSITION_PREPARED)) {
+        if (subsystemChecker.isAtWristPosition(WristStates.POSITION_PREPARED)) {
           currentState = CurrentState.POSITION_PREPARED_AUTO;
         } else {
           currentState = CurrentState.STOPPED;

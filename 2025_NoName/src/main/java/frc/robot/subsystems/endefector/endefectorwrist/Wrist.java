@@ -60,8 +60,6 @@ public class Wrist {
     DogLog.log("Wrist/WantedState", wantedState);
     SubsystemUtil.elevatorStateToHeightTicks(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
 
-    subsystemChecker.setWristPosition(getPosition());
-
     io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
   }
 
@@ -69,7 +67,7 @@ public class Wrist {
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)) {
           currentState = CurrentState.INTAKING_CORAL_STATION;
         } else {
@@ -80,7 +78,7 @@ public class Wrist {
         currentState = CurrentState.INTAKING_ALGAE_GROUND;
         break;
       case INTAKING_ALGAE_LOLLIPOP:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.INTAKING_ALGAE_LOLLIPOP)) {
           currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
         } else {
@@ -88,7 +86,7 @@ public class Wrist {
         }
         break;
       case INTAKING_ALGAE_REEF_L2:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_L2)) {
           currentState = CurrentState.INTAKING_ALGAE_REEF_L2;
         } else {
@@ -96,7 +94,7 @@ public class Wrist {
         }
         break;
       case INTAKING_ALGAE_REEF_L3:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_L3)) {
           currentState = CurrentState.INTAKING_ALGAE_REEF_L3;
         } else {
@@ -131,7 +129,7 @@ public class Wrist {
         // currentState = CurrentState.POSITION_BRANCH_L3;
         break;
       case POSITION_BRANCH_L4:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_CORAL_L4)) {
           currentState = CurrentState.POSITION_BRANCH_L4;
         } else {
@@ -139,7 +137,7 @@ public class Wrist {
         }
         break;
       case SCORING_ALGAE_BARGE:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_BARGE)) {
           currentState = CurrentState.SCORING_ALGAE_BARGE;
         } else {

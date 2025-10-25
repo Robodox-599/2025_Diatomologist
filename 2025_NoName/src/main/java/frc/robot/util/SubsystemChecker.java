@@ -9,17 +9,19 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
+import frc.robot.subsystems.endefector.endefectorrollers.Rollers;
+import frc.robot.subsystems.endefector.endefectorwrist.Wrist;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants;
 import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 
 public class SubsystemChecker {
-  private double wristPosition;
-  private double elevatorHeight;
-  private boolean isCoralIntakedInEndefector;
-  private Pose2d robotPose;
-  private ChassisSpeeds speeds = new ChassisSpeeds();
+  private CommandSwerveDrivetrain drivetrain;
+  private Elevator elevator;
+  private Wrist wrist;
+  private Rollers rollers;
 
   private final double maximumElevatorSwingThroughHeight =
       SubsystemUtil.elevatorStateToHeightInches(
@@ -39,6 +41,22 @@ public class SubsystemChecker {
   private final double endefectorOutsideBumpersPosition =
       -0.10 - WristConstants.wristPositionTolerance;
 
+  public void addDrivetrain(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
+  }
+
+  public void addElevator(Elevator elevator) {
+    this.elevator = elevator;
+  }
+
+  public void addWrist(Wrist wrist) {
+    this.wrist = wrist;
+  }
+
+  public void addRollers(Rollers rollers) {
+    this.rollers = rollers;
+  }
+
   public double calculateElevatorSoftLowerLimit() {
     // if (wrist.getPosition() > endefectorBeyondHorizontalPosition
     //     && elevator.getHeightInches() > minimumElevatorSwingBelowHeight) {
@@ -46,25 +64,31 @@ public class SubsystemChecker {
     // return minimumElevatorSwingBelowHeight * (Math.sin(-2 * wrist.getPosition())); <- this
     // would make the limit dynamic based on wrist position
     // } else
-    if (wristPosition < endefectorBehindElevatorPosition
-        && elevatorHeight > minimumElevatorSwingAboveHeight) {
-      return minimumElevatorSwingAboveHeight;
+    double elevatorSoftLowerLimit;
+    if (wrist.getPosition() < endefectorBehindElevatorPosition
+        && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
+      elevatorSoftLowerLimit = minimumElevatorSwingAboveHeight;
     } else {
-      return ElevatorConstants.elevatorHardLowerLimit;
+      elevatorSoftLowerLimit = ElevatorConstants.elevatorHardLowerLimit;
     }
+    DogLog.log("SubsystemChecker/ElevatorSoftLowerLimit", elevatorSoftLowerLimit);
+    return elevatorSoftLowerLimit;
   }
 
   public double calculateElevatorSoftUpperLimit() {
-    if (wristPosition < endefectorBehindElevatorPosition
-        && elevatorHeight < maximumElevatorSwingThroughHeight) {
-      return maximumElevatorSwingThroughHeight;
+    double elevatorSoftUpperLimit;
+    if (wrist.getPosition() < endefectorBehindElevatorPosition
+        && elevator.getHeightInches() < maximumElevatorSwingThroughHeight) {
+      elevatorSoftUpperLimit = maximumElevatorSwingThroughHeight;
     } else {
-      return ElevatorConstants.elevatorHardUpperLimit;
+      elevatorSoftUpperLimit = ElevatorConstants.elevatorHardUpperLimit;
     }
+    DogLog.log("SubsystemChecker/ElevatorSoftUpperLimit", elevatorSoftUpperLimit);
+    return elevatorSoftUpperLimit;
   }
 
   public boolean isEndefectorUnderElevator() {
-    if ((elevatorHeight < maximumElevatorSwingThroughHeight)) {
+    if ((elevator.getHeightInches() < maximumElevatorSwingThroughHeight)) {
       DogLog.log("SubsystemChecker/isEndefectorUnderElevator", true);
       return true;
     }
@@ -73,7 +97,7 @@ public class SubsystemChecker {
   }
 
   public boolean isEndefectorBeyondBumpers() {
-    if (wristPosition > endefectorOutsideBumpersPosition) {
+    if (wrist.getPosition() > endefectorOutsideBumpersPosition) {
       DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", true);
       return true;
     }
@@ -85,14 +109,14 @@ public class SubsystemChecker {
     int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
     Pose2d transformToReef;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      transformToReef = REEF_BLUE_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
+      transformToReef = REEF_BLUE_MIDDLE[nearestFaceIndex].relativeTo(drivetrain.getPose());
     } else {
-      transformToReef = REEF_RED_MIDDLE[nearestFaceIndex].relativeTo(robotPose);
+      transformToReef = REEF_RED_MIDDLE[nearestFaceIndex].relativeTo(drivetrain.getPose());
     }
     double xDistance =
         Math.abs(transformToReef.getX())
             + CommandSwerveDrivetrain.DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE
-            + 0.03; // +2 cm for extra tolerance
+            + 0.02; // +2 cm for extra tolerance
 
     DogLog.log("SubsystemChecker/DistanceFromReefForTrough", xDistance);
     if (isTrough) {
@@ -108,67 +132,74 @@ public class SubsystemChecker {
     }
   }
 
-  public boolean isAtHeightElevator(ElevatorConstants.ElevatorStates state) {
-    boolean isAtHeightElevator = isAtElevatorSetpoint(state);
-    DogLog.log("SubsystemChecker/isAtHeightElevator", isAtHeightElevator);
-    return isAtHeightElevator;
+  public boolean isAtElevatorHeight(ElevatorStates state) {
+    boolean isAtElevatorHeight = elevator.isAtSetpoint(state);
+    DogLog.log("SubsystemChecker/isAtElevatorHeight", isAtElevatorHeight);
+    return isAtElevatorHeight;
   }
 
-  public boolean isAtElevatorSetpoint(ElevatorStates state) {
-    return isAtElevatorHeight(SubsystemUtil.elevatorStateToHeightInches(state));
+  // public boolean isAtElevatorSetpoint(ElevatorStates state) {
+  //   return isAtElevatorHeight(SubsystemUtil.elevatorStateToHeightInches(state));
+  // }
+
+  // public boolean isAtElevatorHeight(double height) {
+  //   return Math.abs(elevatorHeight - height) < ElevatorConstants.positionToleranceInches;
+  // }
+
+  // public boolean isAtPositionWrist(WristConstants.WristStates state) {
+  //   boolean isAtPositionWrist = wrist.isAtSetpoint(state);
+  //   DogLog.log("SubsystemChecker/isAtPositionWrist", isAtPositionWrist);
+  //   return isAtPositionWrist;
+  // }
+
+  public boolean isAtWristPosition(WristStates state) {
+    boolean isAtWristPosition = wrist.isAtSetpoint(state);
+    DogLog.log("SubsystemChecker/isAtWristSetpoint", isAtWristPosition);
+    return isAtWristPosition;
   }
 
-  public boolean isAtElevatorHeight(double height) {
-    return Math.abs(elevatorHeight - height) < ElevatorConstants.positionToleranceInches;
-  }
-
-  public boolean isAtPositionWrist(WristConstants.WristStates state) {
-    boolean isAtPositionWrist = isAtWristSetpoint(state);
-    DogLog.log("SubsystemChecker/isAtPositionWrist", isAtPositionWrist);
-    return isAtPositionWrist;
-  }
-
-  public boolean isAtWristSetpoint(WristStates state) {
-    return isAtWristAngle(WristConstants.setpoints[state.getIndex()]);
-  }
-
-  public boolean isAtWristAngle(double angle) {
-    return Math.abs(wristPosition - angle) < WristConstants.wristPositionTolerance;
-  }
+  // public boolean isAtWristAngle(double angle) {
+  //   return Math.abs(wristPosition - angle) < WristConstants.wristPositionTolerance;
+  // }
 
   public boolean isCoralInEndefector() {
+    boolean isCoralIntakedInEndefector = rollers.isCoralIntakedInEndefector();
     DogLog.log("SubsystemChecker/isCoralInEndefector", isCoralIntakedInEndefector);
     return isCoralIntakedInEndefector;
   }
 
-  public void setWristPosition(double position) {
-    wristPosition = position;
-  }
+  // public void setWristPosition(double position) {
+  //   wristPosition = position;
+  // }
 
-  public void setElevatorHeight(double height) {
-    elevatorHeight = height;
-  }
+  // public void setElevatorHeight(double height) {
+  //   elevatorHeight = height;
+  // }
 
-  public void setCoralInEndefector(boolean hasCoral) {
-    isCoralIntakedInEndefector = hasCoral;
-  }
+  // public void setCoralInEndefector(boolean hasCoral) {
+  //   isCoralIntakedInEndefector = hasCoral;
+  // }
 
-  public void setRobotPose(Pose2d pose) {
-    robotPose = pose;
-  }
+  // public void setRobotPose(Pose2d pose) {
+  //   robotPose = pose;
+  // }
 
-  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    this.speeds = chassisSpeeds;
-  }
+  // public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+  //   this.speeds = chassisSpeeds;
+  // }
 
   public ChassisSpeeds getChassisSpeeds() {
-    return this.speeds;
+    return drivetrain.getChassisSpeeds();
   }
 
   public boolean isSpeedsSettled() {
-    return Math.abs(this.speeds.vxMetersPerSecond) < 0.01
-        && Math.abs(this.speeds.vyMetersPerSecond) < 0.01
-        && Math.abs(this.speeds.omegaRadiansPerSecond) < 0.01;
+    ChassisSpeeds speeds = getChassisSpeeds();
+    boolean isSpeedsSettled =
+        Math.abs(speeds.vxMetersPerSecond) < 0.01
+            && Math.abs(speeds.vyMetersPerSecond) < 0.01
+            && Math.abs(speeds.omegaRadiansPerSecond) < 0.01;
+    DogLog.log("isSpeedsSettled", isSpeedsSettled);
+    return isSpeedsSettled;
   }
 
   // public boolean isSafeElevator() {

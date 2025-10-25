@@ -56,8 +56,6 @@ public class Rollers {
       io.resetRollersPosition();
       io.setHoldCoralPosition();
     }
-
-    subsystemChecker.setCoralInEndefector(isCoralIntakedInEndefector());
   }
 
   private void handleStateTransitions() {

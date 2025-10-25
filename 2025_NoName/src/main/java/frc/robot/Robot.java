@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
   final Vision4 vision;
   final AutoFactory autoFactory;
   final AutoRoutines autoRoutines;
+
   // final SubsystemVisualizer subsystemVisualizer;
 
   @Override

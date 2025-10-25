@@ -6,6 +6,8 @@ public class ClimbConstants {
   public static final String climbMotorCANbus = "rio";
   public static final int rollersMotorID = 25;
   public static final String rollersMotorCANbus = "rio";
+  public static final int cancoderID = 27;
+  public static final String cancoderCANbus = "rio";
   public static final double climbMOI = 0.15;
   public static final double rollersMOI = 0.04;
   public static final double gearRatio = 5.4;
@@ -42,12 +44,13 @@ public class ClimbConstants {
   public static final double climbUpperLimit = 48.0;
   public static final double homePositionOffset = 1.0;
   public static final double stallRollersVoltage = 0.1;
+  public static final double cancoderOffset = 0.0;
 
   // climb states
   public static enum ClimbStates {
     DEPLOYING_CLIMB(0),
-    CLIMBING_UP(1),
-    CLIMBING_DOWN(2),
+    CLIMBING(1),
+    STOWED(2),
     STOPPED(3);
 
     private final int index;
@@ -66,8 +69,15 @@ public class ClimbConstants {
 
   public static final double[] voltage = {
     4.0, // deploying climb
-    11.0, // climbing up
-    -3.0, // climbing down
+    11.0, // climbing
+    0.0, // stopped
+    0.0 // stowed
+  };
+
+  public static final double[] position = {
+    0.5, // deploying climb
+    0.0, // climbing
+    0.0, // stopped
     0.0 // stowed
   };
 

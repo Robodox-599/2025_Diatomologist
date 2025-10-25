@@ -67,13 +67,11 @@ public class Superstructure extends SubsystemBase {
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     PREPARE_CLIMB,
-    READY_TO_CLIMB,
     SCORING_CORAL_TROUGH,
     SCORING_CORAL_L2_L3,
     SCORING_CORAL_L4,
     SCORING_ALGAE,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     HOLD_CLIMB,
     STOPPED,
   }
@@ -120,11 +118,9 @@ public class Superstructure extends SubsystemBase {
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     PREPARE_CLIMB,
-    READY_TO_CLIMB,
     SCORING_CORAL,
     SCORING_ALGAE,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     HOLD_CLIMB,
     STOPPED,
     NO_STATE,
@@ -601,20 +597,14 @@ public class Superstructure extends SubsystemBase {
         break;
       case PREPARE_CLIMB:
         if (climb.isClimbReady()) {
-          wantedSuperState = WantedSuperState.READY_TO_CLIMB;
-          currentSuperState = CurrentSuperState.READY_TO_CLIMB;
+          wantedSuperState = WantedSuperState.CLIMBING;
+          currentSuperState = CurrentSuperState.CLIMBING;
         } else {
           currentSuperState = CurrentSuperState.PREPARE_CLIMB;
         }
         break;
-      case READY_TO_CLIMB:
-        currentSuperState = CurrentSuperState.READY_TO_CLIMB;
-        break;
-      case CLIMBING_UP:
-        currentSuperState = CurrentSuperState.CLIMBING_UP;
-        break;
-      case CLIMBING_DOWN:
-        currentSuperState = CurrentSuperState.CLIMBING_DOWN;
+      case CLIMBING:
+        currentSuperState = CurrentSuperState.CLIMBING;
         break;
       case HOLD_CLIMB:
         currentSuperState = CurrentSuperState.HOLD_CLIMB;
@@ -721,14 +711,8 @@ public class Superstructure extends SubsystemBase {
         case PREPARE_CLIMB:
           prepareClimb();
           break;
-        case READY_TO_CLIMB:
-          readyToClimb();
-          break;
-        case CLIMBING_UP:
-          climbingUp();
-          break;
-        case CLIMBING_DOWN:
-          climbingDown();
+        case CLIMBING:
+          climbing();
           break;
         case SCORING_CORAL_TROUGH:
           scoreCoralInTrough();
@@ -969,27 +953,11 @@ public class Superstructure extends SubsystemBase {
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
-  private void readyToClimb() {
+  private void climbing() {
     elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.READY_TO_CLIMB);
-    leds.setCurrentState(LEDs.CurrentState.CLIMBING);
-  }
-
-  private void climbingUp() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.CLIMBING_UP);
-    leds.setCurrentState(LEDs.CurrentState.CLIMBING);
-  }
-
-  private void climbingDown() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.CLIMBING_DOWN);
+    climb.setWantedState(Climb.WantedState.CLIMBING);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 

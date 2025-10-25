@@ -9,7 +9,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -184,14 +183,14 @@ public class RollersIOTalonFX extends RollersIO {
     super.rampRollersVelocity = rampRollersVelocity.getValueAsDouble();
     super.rampRollersTempCelsius = rampRollersTemperature.getValueAsDouble();
     super.rampRollersAppliedVolts = rampRollersAppliedVolts.getValueAsDouble();
-    
+
     DogLog.log("Rollers/Endefector/StatorCurrentAmps", super.endefectorRollersStatorCurrent);
     DogLog.log("Rollers/Endefector/SupplyCurrentAmps", super.endefectorRollersSupplyCurrent);
     DogLog.log("Rollers/Endefector/Position", super.endefectorRollersPosition);
     DogLog.log("Rollers/Endefector/Velocity", super.endefectorRollersVelocity);
     DogLog.log("Rollers/Endefector/AppliedVoltage", super.endefectorRollersAppliedVolts);
     DogLog.log("Rollers/Endefector/TempCelcius", super.endefectorRollersTempCelsius);
-    
+
     DogLog.log("Rollers/Ramp/StatorCurrentAmps", super.rampRollersStatorCurrent);
     DogLog.log("Rollers/Ramp/SupplyCurrentAmps", super.rampRollersSupplyCurrent);
     DogLog.log("Rollers/Ramp/Position", super.rampRollersPosition);
@@ -200,18 +199,18 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/Ramp/TempCelcius", super.rampRollersTempCelsius);
 
     super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
-    super.isCoralIntakedInEndefector =
-    coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
+    super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
     super.isGroundAlgaeIntaked =
         algaeGroundIntakeDebouncer.calculate(
             super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps);
     super.isReefAlgaeIntaked =
-        algaeReefIntakeDebouncer.calculate(super.endefectorRollersStatorCurrent >=
-    algaeStallStatorCurrentAmps);
+        algaeReefIntakeDebouncer.calculate(
+            super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isCoralBranchScored = coralBranchScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isAlgaeScored =
-        algaeScoreDebouncer.calculate(!(super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps));
+        algaeScoreDebouncer.calculate(
+            !(super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps));
 
     DogLog.log("Rollers/CoralInRamp", super.isCoralInRamp);
     DogLog.log("Rollers/CoralIntakedInEndefector", super.isCoralIntakedInEndefector);

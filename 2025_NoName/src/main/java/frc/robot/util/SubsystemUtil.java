@@ -28,6 +28,10 @@ public class SubsystemUtil {
     return (ClimbConstants.voltage[state.getIndex()]);
   }
 
+  public static double climbStateToPosition(ClimbConstants.ClimbStates state) {
+    return (ClimbConstants.position[state.getIndex()]);
+  }
+
   public static double wristStateToSetpoint(WristConstants.WristStates state) {
     return (WristConstants.setpoints[state.getIndex()]);
   }

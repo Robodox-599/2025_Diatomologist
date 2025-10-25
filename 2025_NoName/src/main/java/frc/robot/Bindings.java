@@ -269,20 +269,20 @@ public class Bindings extends SubsystemBase {
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.PREPARE_CLIMB)
                 .alongWith(rumbleControllers(driver, operator)));
-    // // SET WANTED STATE TO CLIMB UP
-    operator
-        .start()
-        .whileTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.CLIMBING_UP)
-                .alongWith(rumbleControllers(driver, operator)));
-    // // SET WANTED STATE TO CLIMB DOWN
-    operator
-        .back()
-        .whileTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.CLIMBING_DOWN)
-                .alongWith(rumbleControllers(driver, operator)));
+    // // // SET WANTED STATE TO CLIMB UP
+    // operator
+    //     .start()
+    //     .whileTrue(
+    //         superstructure
+    //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_UP)
+    //             .alongWith(rumbleControllers(driver, operator)));
+    // // // SET WANTED STATE TO CLIMB DOWN
+    // operator
+    //     .back()
+    //     .whileTrue(
+    //         superstructure
+    //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_DOWN)
+    //             .alongWith(rumbleControllers(driver, operator)));
     operator
         .start()
         .onFalse(

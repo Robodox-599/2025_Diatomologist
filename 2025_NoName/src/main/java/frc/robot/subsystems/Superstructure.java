@@ -629,126 +629,124 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void applyStates() {
-    if (currentSuperState != previousSuperState) {
-      switch (currentSuperState) {
-        case INTAKING_CORAL_STATION:
-          intakeCoralStation();
-          break;
-        case INTAKING_ALGAE_GROUND:
-          intakeAlgaeGround();
-          break;
-        case INTAKING_ALGAE_LOLLIPOP:
-          intakeAlgaeLollipop();
-          break;
-        case POSITION_ALGAE_L2:
-          positionAlgaeL2();
-          break;
-        case INTAKING_ALGAE_L2:
-          intakeAlgaeL2();
-          break;
-        case POSITION_ALGAE_L3:
-          positionAlgaeL3();
-          break;
-        case INTAKING_ALGAE_L3:
-          intakeAlgaeL3();
-          break;
-        case POSITION_PREPARED:
-          prepare();
-          break;
-        case POSITION_PREPARED_AUTO:
-          prepareInAuto();
-          break;
-        case POSITION_CORAL_L1:
-          positionToCoralL1();
-          break;
-        case POSITION_CORAL_L2:
-          positionToCoralL2();
-          break;
-        case POSITION_CORAL_L3:
-          positionToCoralL3();
-          break;
-        case POSITION_CORAL_L4:
-          positionToCoralL4();
-          break;
-        case POSITION_CORAL_L4_AUTO:
-          positionToCoralL4Auto();
-          break;
-        case AUTO_ALIGN_LEFT_BRANCH_L2:
-          autoAlignToL2orL3Branch(true);
-          break;
-        case AUTO_ALIGN_LEFT_BRANCH_L3:
-          autoAlignToL2orL3Branch(true);
-          break;
-        case AUTO_ALIGN_LEFT_BRANCH_L4:
-          autoAlignToL4Branch(true);
-          break;
-        case AUTO_ALIGN_LEFT_BRANCH_L4_AUTO:
-          autoAlignToL4BranchAuto(true);
-          break;
-        case AUTO_ALIGN_LEFT_TROUGH:
-          autoAlignToTrough(1);
-          break;
-        case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
-          autoAlignToTrough(2);
-          break;
-        case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
-          autoAlignToTrough(3);
-          break;
-        case AUTO_ALIGN_RIGHT_BRANCH_L2:
-          autoAlignToL2orL3Branch(false);
-          break;
-        case AUTO_ALIGN_RIGHT_BRANCH_L3:
-          autoAlignToL2orL3Branch(false);
-          break;
-        case AUTO_ALIGN_RIGHT_BRANCH_L4:
-          autoAlignToL4Branch(false);
-          break;
-        case AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO:
-          autoAlignToL4BranchAuto(false);
-          break;
-        case AUTO_ALIGN_RIGHT_TROUGH:
-          autoAlignToTrough(4);
-          break;
-        case AUTO_ALIGN_MIDDLE_ALGAE:
-          autoAlignToAlgaeReefFace(false);
-          break;
-        case POSITION_ALGAE_PROCESSOR:
-          positionToAlgaeProcessor();
-          break;
-        case POSITION_ALGAE_BARGE:
-          positionToAlgaeBarge();
-          break;
-        case PREPARE_CLIMB:
-          prepareClimb();
-          break;
-        case READY_TO_CLIMB:
-          readyToClimb();
-          break;
-        case CLIMBING_UP:
-          climbingUp();
-          break;
-        case CLIMBING_DOWN:
-          climbingDown();
-          break;
-        case SCORING_CORAL_TROUGH:
-          scoreCoralInTrough();
-          break;
-        case SCORING_CORAL_L2_L3:
-          scoreCoralOnL2L3();
-          break;
-        case SCORING_CORAL_L4:
-          scoreCoralOnL4();
-          break;
-        case SCORING_ALGAE:
-          scoreAlgae();
-          break;
-        case STOPPED:
-          stop();
-          break;
-        default:
-          stop();
-          break;
-      }
+    switch (currentSuperState) {
+      case INTAKING_CORAL_STATION:
+        intakeCoralStation();
+        break;
+      case INTAKING_ALGAE_GROUND:
+        intakeAlgaeGround();
+        break;
+      case INTAKING_ALGAE_LOLLIPOP:
+        intakeAlgaeLollipop();
+        break;
+      case POSITION_ALGAE_L2:
+        positionAlgaeL2();
+        break;
+      case INTAKING_ALGAE_L2:
+        intakeAlgaeL2();
+        break;
+      case POSITION_ALGAE_L3:
+        positionAlgaeL3();
+        break;
+      case INTAKING_ALGAE_L3:
+        intakeAlgaeL3();
+        break;
+      case POSITION_PREPARED:
+        prepare();
+        break;
+      case POSITION_PREPARED_AUTO:
+        prepareInAuto();
+        break;
+      case POSITION_CORAL_L1:
+        positionToCoralL1();
+        break;
+      case POSITION_CORAL_L2:
+        positionToCoralL2();
+        break;
+      case POSITION_CORAL_L3:
+        positionToCoralL3();
+        break;
+      case POSITION_CORAL_L4:
+        positionToCoralL4();
+        break;
+      case POSITION_CORAL_L4_AUTO:
+        positionToCoralL4Auto();
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L2:
+        autoAlignToL2orL3Branch(true);
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L3:
+        autoAlignToL2orL3Branch(true);
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L4:
+        autoAlignToL4Branch(true);
+        break;
+      case AUTO_ALIGN_LEFT_BRANCH_L4_AUTO:
+        autoAlignToL4BranchAuto(true);
+        break;
+      case AUTO_ALIGN_LEFT_TROUGH:
+        autoAlignToTrough(1);
+        break;
+      case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
+        autoAlignToTrough(2);
+        break;
+      case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
+        autoAlignToTrough(3);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L2:
+        autoAlignToL2orL3Branch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L3:
+        autoAlignToL2orL3Branch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L4:
+        autoAlignToL4Branch(false);
+        break;
+      case AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO:
+        autoAlignToL4BranchAuto(false);
+        break;
+      case AUTO_ALIGN_RIGHT_TROUGH:
+        autoAlignToTrough(4);
+        break;
+      case AUTO_ALIGN_MIDDLE_ALGAE:
+        autoAlignToAlgaeReefFace(false);
+        break;
+      case POSITION_ALGAE_PROCESSOR:
+        positionToAlgaeProcessor();
+        break;
+      case POSITION_ALGAE_BARGE:
+        positionToAlgaeBarge();
+        break;
+      case PREPARE_CLIMB:
+        prepareClimb();
+        break;
+      case READY_TO_CLIMB:
+        readyToClimb();
+        break;
+      case CLIMBING_UP:
+        climbingUp();
+        break;
+      case CLIMBING_DOWN:
+        climbingDown();
+        break;
+      case SCORING_CORAL_TROUGH:
+        scoreCoralInTrough();
+        break;
+      case SCORING_CORAL_L2_L3:
+        scoreCoralOnL2L3();
+        break;
+      case SCORING_CORAL_L4:
+        scoreCoralOnL4();
+        break;
+      case SCORING_ALGAE:
+        scoreAlgae();
+        break;
+      case STOPPED:
+        stop();
+        break;
+      default:
+        stop();
+        break;
     }
   }
 

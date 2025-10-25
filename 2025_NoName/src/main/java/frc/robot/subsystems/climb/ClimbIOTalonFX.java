@@ -26,7 +26,7 @@ public class ClimbIOTalonFX extends ClimbIO {
 
   private final TalonFX climbMotor;
   private final TalonFX rollersMotor;
-  private final TalonSRX solenoid = new TalonSRX(31);
+  private final TalonSRX solenoid;
 
   private final CANcoder cancoder;
 
@@ -59,6 +59,7 @@ public class ClimbIOTalonFX extends ClimbIO {
   public ClimbIOTalonFX() {
     climbMotor = new TalonFX(ClimbConstants.climbMotorID, ClimbConstants.climbMotorCANbus);
     rollersMotor = new TalonFX(ClimbConstants.rollersMotorID, ClimbConstants.rollersMotorCANbus);
+    solenoid = new TalonSRX(ClimbConstants.solenoidID);
 
     cancoder = new CANcoder(ClimbConstants.cancoderID, ClimbConstants.cancoderCANbus);
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();

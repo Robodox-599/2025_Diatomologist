@@ -8,6 +8,7 @@ public class ClimbConstants {
   public static final String rollersMotorCANbus = "rio";
   public static final int cancoderID = 27;
   public static final String cancoderCANbus = "rio";
+  public static final int solenoidID = 31;
   public static final double climbMOI = 0.15;
   public static final double rollersMOI = 0.04;
   public static final double gearRatio = 5.4;

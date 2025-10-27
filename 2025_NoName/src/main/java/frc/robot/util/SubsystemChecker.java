@@ -25,7 +25,7 @@ public class SubsystemChecker {
 
   private final double maximumElevatorSwingThroughHeight =
       SubsystemUtil.elevatorStateToHeightInches(
-              ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)
+              ElevatorConstants.ElevatorStates.POSITION_CORAL_STATION)
           + ElevatorConstants
               .positionToleranceInches; // max height of elevator where endefector can safely swing
   // through (8.2)

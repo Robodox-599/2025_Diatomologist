@@ -15,6 +15,7 @@ public class LEDs {
   }
 
   public enum CurrentState {
+    POSITION_CORAL_STATION,
     INTAKING_CORAL_STATION,
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
@@ -44,6 +45,9 @@ public class LEDs {
 
   public void applyStates() {
     switch (currentState) {
+      case POSITION_CORAL_STATION:
+        io.LEDsPositionCoralStation();
+        break;
       case INTAKING_CORAL_STATION:
         io.LEDsIntakingCoralStation();
         break;

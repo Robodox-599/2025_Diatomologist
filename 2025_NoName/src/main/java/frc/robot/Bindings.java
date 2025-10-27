@@ -71,6 +71,7 @@ public class Bindings extends SubsystemBase {
 
     /* KEEP FOR COMPETITION BOT  */
     // // SET WANTED STATE TO A LOGIC STATE
+
     driver
         .rightBumper()
         .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));

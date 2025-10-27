@@ -144,10 +144,8 @@ public class RollersIOTalonFX extends RollersIO {
                 if (!endefectorBeamBreak.get()) { // if coral in endefector
                   setEndefectorHoldCoralPosition();
                 }
-                rampRollersMotor.set(rampRollersVelocitySetpoint);
               } else if (falling) { // no coral -> coral
                 setRampHoldCoralPosition();
-                rampHoldCoral();
               }
             });
 

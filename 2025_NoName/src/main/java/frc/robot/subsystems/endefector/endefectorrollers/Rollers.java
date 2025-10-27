@@ -2,7 +2,9 @@ package frc.robot.subsystems.endefector.endefectorrollers;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.elevator.ElevatorConstants.ElevatorStates;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
+import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristStates;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
@@ -11,6 +13,10 @@ public class Rollers {
   private final SubsystemChecker subsystemChecker;
   private WantedState wantedState = WantedState.STOPPED;
   private CurrentState currentState = CurrentState.STOPPED;
+  private RampRollersWantedState rampRollersWantedState =
+      RampRollersWantedState.INTAKING_CORAL_STATION_PASSIVE;
+  private RampRollersCurrentState rampRollersCurrentState =
+      RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
   private CurrentState previousState = CurrentState.STOPPED;
 
   public Rollers(RollersIO io, SubsystemChecker subsystemChecker) {
@@ -44,10 +50,23 @@ public class Rollers {
     STOPPED,
   }
 
+  public enum RampRollersWantedState {
+    INTAKING_CORAL_STATION_PASSIVE,
+    INTAKING_CORAL_STATION_ACTIVE,
+  }
+
+  public enum RampRollersCurrentState {
+    INTAKING_CORAL_STATION_PASSIVE,
+    HOLD_CORAL,
+    INTAKING_CORAL_STATION_ACTIVE,
+  }
+
   public void updateInputs() {
     Tracer.traceFunc("UpdateIO", io::updateInputs);
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
+    handleRampRollersStateTransitions();
+    applyRampRollersStates();
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
     DogLog.log("Rollers/IsCoralEnsured", isCoralEnsured());
@@ -112,7 +131,7 @@ public class Rollers {
     switch (currentState) {
       case INTAKING_CORAL_STATION:
         setEndefectorVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION);
-        setRampVelocity(RollersConstants.rampRollersVelocitySetpoint);
+        rampRollersWantedState = RampRollersWantedState.INTAKING_CORAL_STATION_ACTIVE;
         break;
       case INTAKING_ALGAE:
         setEndefectorVelocity(EndefectorRollerStates.INTAKING_ALGAE);
@@ -140,6 +159,43 @@ public class Rollers {
         break;
       default:
         stop();
+        break;
+    }
+  }
+
+  private void handleRampRollersStateTransitions() {
+    switch (rampRollersWantedState) {
+      default:
+      case INTAKING_CORAL_STATION_PASSIVE:
+        if (isCoralInTransition()) {
+          rampRollersCurrentState = RampRollersCurrentState.HOLD_CORAL;
+        } else {
+          rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
+        }
+      case INTAKING_CORAL_STATION_ACTIVE:
+        if (!isCoralInTransition() && isCoralIntakedInEndefector()) {
+          rampRollersWantedState = RampRollersWantedState.INTAKING_CORAL_STATION_PASSIVE;
+          rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
+        } else if (!subsystemChecker.isAtWristPosition(WristStates.POSITION_CORAL_STATION)
+            || subsystemChecker.isAtElevatorHeight(ElevatorStates.POSITION_CORAL_STATION)) {
+          rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
+        } else {
+          rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_ACTIVE;
+        }
+    }
+  }
+
+  private void applyRampRollersStates() {
+    switch (rampRollersCurrentState) {
+      default:
+      case INTAKING_CORAL_STATION_PASSIVE:
+        setRampVelocity(0.3);
+        break;
+      case HOLD_CORAL:
+        io.rampHoldCoral();
+        break;
+      case INTAKING_CORAL_STATION_ACTIVE:
+        setRampVelocity(0.5);
         break;
     }
   }

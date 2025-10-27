@@ -21,7 +21,7 @@ public class Wrist {
   }
 
   public enum WantedState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF_L2,
@@ -37,7 +37,7 @@ public class Wrist {
   }
 
   public enum CurrentState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF_L2,
@@ -66,10 +66,10 @@ public class Wrist {
   private void handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
-      case INTAKING_CORAL_STATION:
+      case POSITION_CORAL_STATION:
         if (subsystemChecker.isAtElevatorHeight(
-            ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)) {
-          currentState = CurrentState.INTAKING_CORAL_STATION;
+            ElevatorConstants.ElevatorStates.POSITION_CORAL_STATION)) {
+          currentState = CurrentState.POSITION_CORAL_STATION;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
         }
@@ -155,8 +155,8 @@ public class Wrist {
 
   private void applyStates() {
     switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setAngle(WristStates.INTAKING_CORAL_STATION);
+      case POSITION_CORAL_STATION:
+        setAngle(WristStates.POSITION_CORAL_STATION);
         break;
       case INTAKING_ALGAE_GROUND:
         setAngle(WristStates.INTAKING_ALGAE_GROUND);

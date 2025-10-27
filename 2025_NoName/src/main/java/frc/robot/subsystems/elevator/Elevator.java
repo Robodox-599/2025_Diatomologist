@@ -15,7 +15,7 @@ public class Elevator {
   private CurrentState previousState = CurrentState.STOPPED;
 
   public enum WantedState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
     POSITION_ALGAE_L2,
@@ -33,7 +33,7 @@ public class Elevator {
   }
 
   public enum CurrentState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
     POSITION_ALGAE_L2,
@@ -74,8 +74,8 @@ public class Elevator {
       }
     }
     switch (wantedState) {
-      case INTAKING_CORAL_STATION:
-        currentState = CurrentState.INTAKING_CORAL_STATION;
+      case POSITION_CORAL_STATION:
+        currentState = CurrentState.POSITION_CORAL_STATION;
         break;
       case INTAKING_ALGAE_GROUND:
         currentState = CurrentState.INTAKING_ALGAE_GROUND;
@@ -131,8 +131,8 @@ public class Elevator {
 
   private void applyStates() {
     switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setHeight(ElevatorStates.INTAKING_CORAL_STATION);
+      case POSITION_CORAL_STATION:
+        setHeight(ElevatorStates.POSITION_CORAL_STATION);
         break;
       case INTAKING_ALGAE_GROUND:
         setHeight(ElevatorStates.INTAKING_ALGAE_GROUND);

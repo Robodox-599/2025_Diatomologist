@@ -43,17 +43,17 @@ public class LEDsIOReal extends LEDsIO {
   }
 
   @Override
+  public void LEDsPositionCoralStation() {
+    candleReal.setControl(
+        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kEnsuringCoral).withFrameRate(6));
+  }
+
+  @Override
   public void LEDsIntakingCoralStation() {
     candleReal.setControl(
         new StrobeAnimation(0, LEDsConstants.MAX_LEDS)
             .withColor(kIntakingCoralStation)
             .withFrameRate(6));
-  }
-
-  @Override
-  public void LEDsEnsuringCoral() {
-    candleReal.setControl(
-        new StrobeAnimation(0, LEDsConstants.MAX_LEDS).withColor(kEnsuringCoral).withFrameRate(6));
   }
 
   @Override

@@ -2,13 +2,13 @@ package frc.robot.subsystems.climb;
 
 public class ClimbConstants {
   // motor information
-  public static final int climbMotorID = 26;
+  public static final int climbMotorID = 18;
   public static final String climbMotorCANbus = "rio";
-  public static final int rollersMotorID = 25;
+  public static final int rollersMotorID = 19;
   public static final String rollersMotorCANbus = "rio";
-  public static final int cancoderID = 27;
+  public static final int cancoderID = 20;
   public static final String cancoderCANbus = "rio";
-  public static final int solenoidID = 31;
+  public static final int solenoidID = 21;
   public static final double climbMOI = 0.15;
   public static final double rollersMOI = 0.04;
   public static final double gearRatio = 5.4;

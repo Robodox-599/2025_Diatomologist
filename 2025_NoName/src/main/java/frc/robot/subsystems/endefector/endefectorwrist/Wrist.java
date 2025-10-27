@@ -105,12 +105,12 @@ public class Wrist {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_TROUGH:
-        if (subsystemChecker.isSafeDistanceFromReef(true)) {
-          currentState = CurrentState.POSITION_TROUGH;
-        } else {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
-        // currentState = CurrentState.POSITION_TROUGH;
+        // if (subsystemChecker.isSafeDistanceFromReef(true)) {
+        //   currentState = CurrentState.POSITION_TROUGH;
+        // } else {
+        //   currentState = CurrentState.POSITION_PREPARED;
+        // }
+        currentState = CurrentState.POSITION_TROUGH;
         break;
       case POSITION_BRANCH_L2:
         if (subsystemChecker.isSafeDistanceFromReef(false)) {

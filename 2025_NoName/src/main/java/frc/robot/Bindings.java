@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
+import frc.robot.util.AutoAlignPoseGenerator;
 import java.util.Set;
 
 public class Bindings extends SubsystemBase {
@@ -22,13 +23,6 @@ public class Bindings extends SubsystemBase {
   /* OPERATOR */
   public enum BranchAutoAlignSide {
     LEFT,
-    RIGHT,
-  }
-
-  public enum TroughAutoAlignSide {
-    LEFT,
-    MIDDLE_LEFT,
-    MIDDLE_RIGHT,
     RIGHT,
   }
 
@@ -53,7 +47,6 @@ public class Bindings extends SubsystemBase {
 
   private final Superstructure superstructure;
   private BranchAutoAlignSide branchAutoAlignSide = BranchAutoAlignSide.LEFT;
-  private TroughAutoAlignSide troughAutoAlignSide = TroughAutoAlignSide.LEFT;
   private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
   private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
   private GamePieceState gamePieceState = GamePieceState.CORAL;
@@ -235,24 +228,12 @@ public class Bindings extends SubsystemBase {
     operator
         .povLeft()
         .onTrue(
-            setAutoAlignSideCommand(TroughAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
-    // // SET AUTO ALIGN TO MIDDLE LEFT
-    operator
-        .povUp()
-        .onTrue(
-            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE_LEFT)
-                .alongWith(rumbleOperator(operator)));
-    // // SET AUTO ALIGN TO MIDDLE RIGHT
-    operator
-        .povDown()
-        .onTrue(
-            setAutoAlignSideCommand(TroughAutoAlignSide.MIDDLE_RIGHT)
-                .alongWith(rumbleOperator(operator)));
+            setAutoAlignSideCommand(BranchAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
     // // SET AUTO ALIGN TO RIGHT
     operator
         .povRight()
         .onTrue(
-            setAutoAlignSideCommand(TroughAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
+            setAutoAlignSideCommand(BranchAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
     // // SET GAME PIECE STATE TO CORAL
     operator
         .rightTrigger()
@@ -329,35 +310,24 @@ public class Bindings extends SubsystemBase {
 
   public void logBindings() {
     DogLog.log("Bindings/BranchAutoAlignSide", branchAutoAlignSide);
-    DogLog.log("Bindings/TroughAutoAlignSide", troughAutoAlignSide);
     DogLog.log("Bindings/CoralScoreLevel", coralScoreLevel);
     DogLog.log("Bindings/AlgaeLevel", algaeLevel);
     DogLog.log("Bindings/GamePieceState", gamePieceState);
     DogLog.log("Bindings/AutomationLevel", automationLevel);
   }
 
-  public Command setAutoAlignSideCommand(TroughAutoAlignSide side) {
+  public Command setAutoAlignSideCommand(BranchAutoAlignSide side) {
     return Commands.runOnce(() -> setAutoAlignSide(side));
   }
 
-  public void setAutoAlignSide(TroughAutoAlignSide side) {
+  public void setAutoAlignSide(BranchAutoAlignSide side) {
     switch (side) {
       default:
       case LEFT:
         branchAutoAlignSide = BranchAutoAlignSide.LEFT;
-        troughAutoAlignSide = TroughAutoAlignSide.LEFT;
-        break;
-      case MIDDLE_LEFT:
-        branchAutoAlignSide = BranchAutoAlignSide.LEFT;
-        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE_LEFT;
-        break;
-      case MIDDLE_RIGHT:
-        branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
-        troughAutoAlignSide = TroughAutoAlignSide.MIDDLE_RIGHT;
         break;
       case RIGHT:
         branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
-        troughAutoAlignSide = TroughAutoAlignSide.RIGHT;
         break;
     }
   }
@@ -389,31 +359,27 @@ public class Bindings extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoAlignCoralState() {
+    int nearestFace = AutoAlignPoseGenerator.getNearestReefFaceIndex();
+    boolean flip = (nearestFace == 2 || nearestFace == 3 || nearestFace == 4);
+
     if (superstructure.isCoralEnsured()) {
       if (automationLevel == AutomationLevel.AUTO_ACTION) {
         switch (coralScoreLevel) {
+          default:
           case POSITION_CORAL_L1:
-            switch (troughAutoAlignSide) {
-              default:
-              case LEFT:
-                return WantedSuperState.AUTO_SCORE_L1_LEFT;
-              case MIDDLE_LEFT:
-                return WantedSuperState.AUTO_SCORE_L1_MIDDLE_LEFT;
-              case MIDDLE_RIGHT:
-                return WantedSuperState.AUTO_SCORE_L1_MIDDLE_RIGHT;
-              case RIGHT:
-                return WantedSuperState.AUTO_SCORE_L1_RIGHT;
-            }
+            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
+                ? WantedSuperState.AUTO_SCORE_L1_LEFT
+                : WantedSuperState.AUTO_SCORE_L1_RIGHT;
           case POSITION_CORAL_L2:
-            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
                 ? WantedSuperState.AUTO_SCORE_L2_LEFT
                 : WantedSuperState.AUTO_SCORE_L2_RIGHT;
           case POSITION_CORAL_L3:
-            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
                 ? WantedSuperState.AUTO_SCORE_L3_LEFT
                 : WantedSuperState.AUTO_SCORE_L3_RIGHT;
           case POSITION_CORAL_L4:
-            return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
                 ? WantedSuperState.AUTO_SCORE_L4_LEFT
                 : WantedSuperState.AUTO_SCORE_L4_RIGHT;
         }
@@ -422,27 +388,19 @@ public class Bindings extends SubsystemBase {
     switch (coralScoreLevel) {
       default:
       case POSITION_CORAL_L1:
-        switch (troughAutoAlignSide) {
-          default:
-          case LEFT:
-            return WantedSuperState.AUTO_ALIGN_LEFT_TROUGH;
-          case MIDDLE_LEFT:
-            return WantedSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
-          case MIDDLE_RIGHT:
-            return WantedSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
-          case RIGHT:
-            return WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
-        }
+        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
+            ? WantedSuperState.AUTO_ALIGN_LEFT_TROUGH
+            : WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
       case POSITION_CORAL_L2:
-        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
             ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
             : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
       case POSITION_CORAL_L3:
-        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
             ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
             : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
       case POSITION_CORAL_L4:
-        return (branchAutoAlignSide == BranchAutoAlignSide.LEFT)
+        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
             ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
             : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
     }

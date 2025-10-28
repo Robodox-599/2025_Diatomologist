@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -20,26 +21,38 @@ public class CalculateOptimalScoringLevel {
 
     boolean isRPMode = coralLevelTable.getEntry("RPMode").getBoolean(false);
 
+    int totalL4Coral = getTotalL4Coral();
+    int totalL3Coral = getTotalL3Coral();
+    int totalL2Coral = getTotalL2Coral();
+
+    DogLog.log("CalculateOptimalScoringLevel/NearestFaceIndex", nearestFaceIndex);
+    DogLog.log("CalculateOptimalScoringLevel/Branch", branch);
+    DogLog.log("CalculateOptimalScoringLevel/isRPMode", isRPMode);
+    DogLog.log("CalculateOptimalScoringLevel/Branch/L2", isL2CoralScored);
+    DogLog.log("CalculateOptimalScoringLevel/Total/L2", totalL2Coral);
+    DogLog.log("CalculateOptimalScoringLevel/Branch/L3", isL3CoralScored);
+    DogLog.log("CalculateOptimalScoringLevel/Total/L3", totalL3Coral);
+    DogLog.log("CalculateOptimalScoringLevel/Branch/L4", isL4CoralScored);
+    DogLog.log("CalculateOptimalScoringLevel/Total/L4", totalL4Coral);
+
     if (isRPMode) {
-      if (getTotalL4Coral() < 6) {
+      if (totalL4Coral < 6) {
         return 4;
-      } else if (getTotalL3Coral() < 6) {
+      } else if (totalL3Coral < 6) {
         return 3;
-      } else if (getTotalL2Coral() < 6) {
+      } else if (totalL2Coral < 6) {
         return 2;
-      } else {
-        return 1;
       }
+    }
+
+    if (!isL4CoralScored) {
+      return 4;
+    } else if (!isL3CoralScored) {
+      return 3;
+    } else if (!isL2CoralScored) {
+      return 2;
     } else {
-      if (!isL4CoralScored) {
-        return 4;
-      } else if (!isL3CoralScored) {
-        return 3;
-      } else if (!isL2CoralScored) {
-        return 2;
-      } else {
-        return 1;
-      }
+      return 1;
     }
   }
 

@@ -3,7 +3,6 @@ package frc.robot.autos;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Superstructure;
@@ -207,7 +206,8 @@ public class AutoRoutines {
 
     HPtoEBack.recentlyDone()
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO));
+            superstructureCommands.setWantedSuperStateCommand(
+                WantedSuperState.AUTO_SCORE_L4_LEFT_AUTO));
 
     return routine;
   }
@@ -336,8 +336,7 @@ public class AutoRoutines {
         .and(
             () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
         .onTrue(
-            superstructureCommands.setWantedSuperStateCommand(
-                WantedSuperState.POSITION_CORAL_L4));
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
 
     MIDtoG.done()
         .onTrue(
@@ -404,8 +403,9 @@ public class AutoRoutines {
   // superstructureCommands.setDesiredChoreoTrajectory(trajectory));
   //   }
 
-//   private Command autoScore(boolean scoreLeft) {
-//     return superstructureCommands.setWantedSuperStateCommand(
-//         scoreLeft ? WantedSuperState.AUTO_SCORE_L4_LEFT : WantedSuperState.AUTO_SCORE_L4_RIGHT);
-//   }
+  //   private Command autoScore(boolean scoreLeft) {
+  //     return superstructureCommands.setWantedSuperStateCommand(
+  //         scoreLeft ? WantedSuperState.AUTO_SCORE_L4_LEFT :
+  // WantedSuperState.AUTO_SCORE_L4_RIGHT);
+  //   }
 }

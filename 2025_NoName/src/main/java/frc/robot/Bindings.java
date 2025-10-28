@@ -115,13 +115,29 @@ public class Bindings extends SubsystemBase {
     // LEVEL IS MANUAL)
     driver
         .povUp()
-        .or(driver.povDown())
-        .whileTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L1_LEFT)
+                .alongWith(rumbleControllers(driver, operator)));
+
+    driver
+        .povDown()
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L1_RIGHT)
+                .alongWith(rumbleControllers(driver, operator)));
+    driver
+        .a()
+        .whileTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE)
+                .alongWith(rumbleControllers(driver, operator)));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povUp().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povDown().onFalse(superstructure.setTeleopDriveStateCommand());
+    driver.a().onFalse(superstructure.setTeleopDriveStateCommand());
     // // // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
     // driver
     //     .povUp()

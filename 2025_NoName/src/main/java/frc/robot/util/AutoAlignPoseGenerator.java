@@ -60,8 +60,9 @@ public class AutoAlignPoseGenerator {
   public static Pose2d getNearestTroughPosition(Pose2d robotPose, boolean useLeftBranch) {
     Pose2d branchPose = getNearestBranchPosition(robotPose, useLeftBranch);
     Pose2d targetPose =
-        branchPose.transformBy(
-            new Transform2d(L1_REEF_FACE_OFFSET, 0, new Rotation2d(Math.PI / 3)));
+        branchPose
+            .transformBy(new Transform2d(L1_REEF_FACE_OFFSET, 0, new Rotation2d(0)))
+            .rotateBy(new Rotation2d(Math.PI / 3));
     DogLog.log("AutoAlignPoseGenerator/TargetPose", targetPose);
     return targetPose;
     // todo: fix rotation

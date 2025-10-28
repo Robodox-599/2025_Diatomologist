@@ -1,6 +1,5 @@
 package frc.robot;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -10,47 +9,49 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.WantedSuperState;
 import frc.robot.util.AutoAlignPoseGenerator;
+import frc.robot.util.CalculateOptimalScoringLevel;
 import java.util.Set;
 
 public class Bindings extends SubsystemBase {
 
   /* DRIVER */
-  public enum AutomationLevel {
-    AUTO_ALIGN,
-    AUTO_ACTION,
-  }
+  // public enum AutomationLevel {
+  //   MANUAL,
+  //   AUTO_ACTION,
+  // }
 
-  /* OPERATOR */
-  public enum BranchAutoAlignSide {
-    LEFT,
-    RIGHT,
-  }
+  // /* OPERATOR */
+  // public enum BranchAutoAlignSide {
+  //   LEFT,
+  //   RIGHT,
+  // }
 
-  public enum CoralScoreLevel {
-    POSITION_CORAL_L1,
-    POSITION_CORAL_L2,
-    POSITION_CORAL_L3,
-    POSITION_CORAL_L4,
-  }
+  // public enum CoralScoreLevel {
+  //   POSITION_CORAL_L1,
+  //   POSITION_CORAL_L2,
+  //   POSITION_CORAL_L3,
+  //   POSITION_CORAL_L4,
+  // }
 
-  public enum AlgaeLevel {
-    POSITION_ALGAE_BARGE,
-    INTAKING_ALGAE_L3,
-    INTAKING_ALGAE_L2,
-    POSITION_ALGAE_PROCESSOR,
-  }
+  // public enum AlgaeLevel {
+  //   POSITION_ALGAE_BARGE,
+  //   INTAKING_ALGAE_L3,
+  //   INTAKING_ALGAE_L2,
+  //   POSITION_ALGAE_PROCESSOR,
+  // }
 
-  public enum GamePieceState {
-    CORAL,
-    ALGAE,
-  }
+  // public enum GamePieceState {
+  //   CORAL,
+  //   ALGAE,
+  // }
 
   private final Superstructure superstructure;
-  private BranchAutoAlignSide branchAutoAlignSide = BranchAutoAlignSide.LEFT;
-  private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
-  private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
-  private GamePieceState gamePieceState = GamePieceState.CORAL;
-  private AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
+
+  // private BranchAutoAlignSide branchAutoAlignSide = BranchAutoAlignSide.LEFT;
+  // private CoralScoreLevel coralScoreLevel = CoralScoreLevel.POSITION_CORAL_L4;
+  // private AlgaeLevel algaeLevel = AlgaeLevel.POSITION_ALGAE_PROCESSOR;
+  // private GamePieceState gamePieceState = GamePieceState.CORAL;
+  // private AutomationLevel automationLevel = AutomationLevel.AUTO_ACTION;
 
   public Bindings(
       CommandXboxController driver, CommandXboxController operator, Superstructure superstructure) {
@@ -74,7 +75,7 @@ public class Bindings extends SubsystemBase {
 
     driver
         .rightBumper()
-        .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .onTrue(setIntakingOrPrepareCommand().alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO INTAKING ALGAE LOLLIPOP
     driver
         .leftBumper()
@@ -103,186 +104,198 @@ public class Bindings extends SubsystemBase {
             superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_ALGAE_PROCESSOR));
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
+        .povLeft()
+        .whileTrue(
+            setAutoAlignCoralStateCommand(true).alongWith(rumbleControllers(driver, operator)));
+    driver
         .povRight()
-        .whileTrue(setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .whileTrue(
+            setAutoAlignCoralStateCommand(false).alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
     driver
-        .povLeft()
+        .povUp()
+        .or(driver.povDown())
         .whileTrue(setAutoAlignAlgaeStateCommand().alongWith(rumbleControllers(driver, operator)));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructure.setTeleopDriveStateCommand());
-    // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
-    driver
-        .povUp()
-        .onTrue(
-            setAutomationLevelCommand(AutomationLevel.AUTO_ACTION)
-                .alongWith(rumbleControllers(driver, operator)));
-    // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
-    driver
-        .povDown()
-        .onTrue(
-            setAutomationLevelCommand(AutomationLevel.AUTO_ALIGN)
-                .alongWith(rumbleControllers(driver, operator)));
+    driver.povUp().onFalse(superstructure.setTeleopDriveStateCommand());
+    driver.povDown().onFalse(superstructure.setTeleopDriveStateCommand());
+    // // // SET AUTOMATION LEVEL TO AUTO SCORE (AUTO ALIGN, RAISE, AND SCORE)
+    // driver
+    //     .povUp()
+    //     .onTrue(
+    //         setAutomationLevelCommand(AutomationLevel.AUTO_ACTION)
+    //             .alongWith(rumbleControllers(driver, operator)));
+    // // SET AUTOMATION LEVEL TO MANUAL (ONLY AUTO ALIGN)
+    // driver
+    //     .povDown()
+    //     .onTrue(
+    //         setAutomationLevelCommand(AutomationLevel.MANUAL)
+    //             .alongWith(rumbleControllers(driver, operator)));
 
-    //                                OPERATOR BINDS
-    // // QUEUE CORAL L1 OR QUEUE ALGAE L2
-    operator
-        .a()
-        .onTrue(
-            Commands.either(
-                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
-                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
-    // operator
-    //     .x()
-    //     .and(operator.leftTrigger())
-    //     .onTrue(
-    //         Commands.either(
+    //   //                                OPERATOR BINDS
+    //   // // QUEUE CORAL L1 OR QUEUE ALGAE L2
+    //   operator
+    //       .a()
+    //       .onTrue(
+    //           Commands.either(
+    //                   setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
+    //                   setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_PROCESSOR),
+    //                   this::isGamePieceStateCoral)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO L1 OR SET WANTED STATE TO ALGAE L2
+    //   // operator
+    //   //     .x()
+    //   //     .and(operator.leftTrigger())
+    //   //     .onTrue(
+    //   //         Commands.either(
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
+    //   //                 this::isGamePieceStateCoral)
+    //   //             .alongWith(rumbleOperator(operator)));
+    //   // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
+    //   operator
+    //       .x()
+    //       .onTrue(
+    //           Commands.either(
+    //                   setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
+    //                   setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
+    //                   this::isGamePieceStateCoral)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
+    //   // operator
+    //   //     .a()
+    //   //     .and(operator.leftTrigger())
+    //   //     .onTrue(
+    //   //         Commands.either(
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
+    //   //                 superstructure.setWantedSuperStateCommand(
+    //   //                     WantedSuperState.POSITION_ALGAE_PROCESSOR),
+    //   //                 this::isGamePieceStateCoral)
+    //   //             .alongWith(rumbleOperator(operator)));
+    //   // // QUEUE CORAL L3 OR QUEUE ALGAE L3
+    //   operator
+    //       .b()
+    //       .onTrue(
+    //           Commands.either(
+    //                   setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L3),
+    //                   setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L3),
+    //                   this::isGamePieceStateCoral)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO L3 OR SET WANTED STATE TO ALGAE L3
+    //   // operator
+    //   //     .b()
+    //   //     .and(operator.leftTrigger())
+    //   //     .onTrue(
+    //   //         Commands.either(
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
+    //   //                 this::isGamePieceStateCoral)
+    //   //             .alongWith(rumbleOperator(operator)));
+    //   // // QUEUE CORAL L4 OR QUEUE ALGAE BARGE
+    //   operator
+    //       .y()
+    //       .onTrue(
+    //           Commands.either(
+    //                   setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L4),
+    //                   setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_BARGE),
+    //                   this::isGamePieceStateCoral)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO L4 OR SET WANTED STATE TO ALGAE BARGE
+    //   // operator
+    //   //     .y()
+    //   //     .and(operator.leftTrigger())
+    //   //     .onTrue(
+    //   //         Commands.either(
+    //   //
+    //   // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
+    //   //                 superstructure.setWantedSuperStateCommand(
+    //   //                     WantedSuperState.POSITION_ALGAE_BARGE),
+    //   //                 this::isGamePieceStateCoral)
+    //   //             .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO CORAL STATION INTAKE
+    //   operator
+    //       .leftBumper()
+    //       .onTrue(
+    //           superstructure
+    //               .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO PREPARE
+    //   operator
+    //       .rightBumper()
+    //       .onTrue(
+    //           superstructure
+    //               .setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED)
+    //               .alongWith(rumbleOperator(operator)));
+    //   // // SET AUTO ALIGN TO LEFT
+    //   operator
+    //       .povLeft()
+    //       .onTrue(
     //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L1),
+    // setAutoAlignSideCommand(BranchAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
+    //   // // SET AUTO ALIGN TO RIGHT
+    //   operator
+    //       .povRight()
+    //       .onTrue(
     //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L2),
-    //                 this::isGamePieceStateCoral)
-    //             .alongWith(rumbleOperator(operator)));
-    // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
-    operator
-        .x()
-        .onTrue(
-            Commands.either(
-                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),
-                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L2),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO L2 OR SET WANTED STATE TO ALGAE PROCESSOR
-    // operator
-    //     .a()
-    //     .and(operator.leftTrigger())
-    //     .onTrue(
-    //         Commands.either(
+    // setAutoAlignSideCommand(BranchAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
+    //   // // SET GAME PIECE STATE TO CORAL
+    //   operator
+    //       .rightTrigger()
     //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L2),
-    //                 superstructure.setWantedSuperStateCommand(
-    //                     WantedSuperState.POSITION_ALGAE_PROCESSOR),
-    //                 this::isGamePieceStateCoral)
-    //             .alongWith(rumbleOperator(operator)));
-    // // QUEUE CORAL L3 OR QUEUE ALGAE L3
-    operator
-        .b()
-        .onTrue(
-            Commands.either(
-                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L3),
-                    setAlgaeLevelCommand(AlgaeLevel.INTAKING_ALGAE_L3),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO L3 OR SET WANTED STATE TO ALGAE L3
-    // operator
-    //     .b()
-    //     .and(operator.leftTrigger())
-    //     .onTrue(
-    //         Commands.either(
+    // .onTrue(setGamePieceStateCommand(GamePieceState.CORAL).alongWith(rumbleOperator(operator)));
+    //   // // SET GAME PIECE STATE TO ALGAE
+    //   operator
+    //       .leftTrigger()
     //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L3),
-    //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.INTAKING_ALGAE_L3),
-    //                 this::isGamePieceStateCoral)
-    //             .alongWith(rumbleOperator(operator)));
-    // // QUEUE CORAL L4 OR QUEUE ALGAE BARGE
-    operator
-        .y()
-        .onTrue(
-            Commands.either(
-                    setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L4),
-                    setAlgaeLevelCommand(AlgaeLevel.POSITION_ALGAE_BARGE),
-                    this::isGamePieceStateCoral)
-                .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO L4 OR SET WANTED STATE TO ALGAE BARGE
-    // operator
-    //     .y()
-    //     .and(operator.leftTrigger())
-    //     .onTrue(
-    //         Commands.either(
-    //
-    // superstructure.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4),
-    //                 superstructure.setWantedSuperStateCommand(
-    //                     WantedSuperState.POSITION_ALGAE_BARGE),
-    //                 this::isGamePieceStateCoral)
-    //             .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO CORAL STATION INTAKE
-    operator
-        .leftBumper()
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION)
-                .alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO PREPARE
-    operator
-        .rightBumper()
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.POSITION_PREPARED)
-                .alongWith(rumbleOperator(operator)));
-    // // SET AUTO ALIGN TO LEFT
-    operator
-        .povLeft()
-        .onTrue(
-            setAutoAlignSideCommand(BranchAutoAlignSide.LEFT).alongWith(rumbleOperator(operator)));
-    // // SET AUTO ALIGN TO RIGHT
-    operator
-        .povRight()
-        .onTrue(
-            setAutoAlignSideCommand(BranchAutoAlignSide.RIGHT).alongWith(rumbleOperator(operator)));
-    // // SET GAME PIECE STATE TO CORAL
-    operator
-        .rightTrigger()
-        .onTrue(setGamePieceStateCommand(GamePieceState.CORAL).alongWith(rumbleOperator(operator)));
-    // // SET GAME PIECE STATE TO ALGAE
-    operator
-        .leftTrigger()
-        .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
-    // // SET WANTED STATE TO PREPARE CLIMB
-    operator
-        .leftStick()
-        .and(operator.rightStick())
-        .onTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.PREPARE_CLIMB)
-                .alongWith(rumbleControllers(driver, operator)));
-    // // // SET WANTED STATE TO CLIMB UP
-    // operator
-    //     .start()
-    //     .whileTrue(
-    //         superstructure
-    //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_UP)
-    //             .alongWith(rumbleControllers(driver, operator)));
-    // // // SET WANTED STATE TO CLIMB DOWN
-    // operator
-    //     .back()
-    //     .whileTrue(
-    //         superstructure
-    //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_DOWN)
-    //             .alongWith(rumbleControllers(driver, operator)));
-    operator
-        .start()
-        .onFalse(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
-                .alongWith(rumbleControllers(driver, operator)));
-    operator
-        .back()
-        .onFalse(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
-                .alongWith(rumbleControllers(driver, operator)));
+    // .onTrue(setGamePieceStateCommand(GamePieceState.ALGAE).alongWith(rumbleOperator(operator)));
+    //   // // SET WANTED STATE TO PREPARE CLIMB
+    //   operator
+    //       .leftStick()
+    //       .and(operator.rightStick())
+    //       .onTrue(
+    //           superstructure
+    //               .setWantedSuperStateCommand(WantedSuperState.PREPARE_CLIMB)
+    //               .alongWith(rumbleControllers(driver, operator)));
+    //   // // // SET WANTED STATE TO CLIMB UP
+    //   // operator
+    //   //     .start()
+    //   //     .whileTrue(
+    //   //         superstructure
+    //   //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_UP)
+    //   //             .alongWith(rumbleControllers(driver, operator)));
+    //   // // // SET WANTED STATE TO CLIMB DOWN
+    //   // operator
+    //   //     .back()
+    //   //     .whileTrue(
+    //   //         superstructure
+    //   //             .setWantedSuperStateCommand(WantedSuperState.CLIMBING_DOWN)
+    //   //             .alongWith(rumbleControllers(driver, operator)));
+    //   operator
+    //       .start()
+    //       .onFalse(
+    //           superstructure
+    //               .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
+    //               .alongWith(rumbleControllers(driver, operator)));
+    //   operator
+    //       .back()
+    //       .onFalse(
+    //           superstructure
+    //               .setWantedSuperStateCommand(WantedSuperState.HOLD_CLIMB)
+    //               .alongWith(rumbleControllers(driver, operator)));
   }
 
-  @Override
-  public void periodic() {
-    logBindings();
-  }
+  // @Override
+  // public void periodic() {
+  //   logBindings();
+  // }
 
   public Command rumbleControllers(CommandXboxController driver, CommandXboxController operator) {
     return new StartEndCommand(
@@ -309,101 +322,102 @@ public class Bindings extends SubsystemBase {
         .withTimeout(0.2);
   }
 
-  public void logBindings() {
-    DogLog.log("Bindings/BranchAutoAlignSide", branchAutoAlignSide);
-    DogLog.log("Bindings/CoralScoreLevel", coralScoreLevel);
-    DogLog.log("Bindings/AlgaeLevel", algaeLevel);
-    DogLog.log("Bindings/GamePieceState", gamePieceState);
-    DogLog.log("Bindings/AutomationLevel", automationLevel);
-  }
+  // public void logBindings() {
+  // DogLog.log("Bindings/BranchAutoAlignSide", branchAutoAlignSide);
+  // DogLog.log("Bindings/CoralScoreLevel", coralScoreLevel);
+  // DogLog.log("Bindings/AlgaeLevel", algaeLevel);
+  // DogLog.log("Bindings/GamePieceState", gamePieceState);
+  // DogLog.log("Bindings/AutomationLevel", automationLevel);
+  // }
 
-  public Command setAutoAlignSideCommand(BranchAutoAlignSide side) {
-    return Commands.runOnce(() -> setAutoAlignSide(side));
-  }
+  // public Command setAutoAlignSideCommand(BranchAutoAlignSide side) {
+  //   return Commands.runOnce(() -> setAutoAlignSide(side));
+  // }
 
-  public void setAutoAlignSide(BranchAutoAlignSide side) {
-    switch (side) {
-      default:
-      case LEFT:
-        branchAutoAlignSide = BranchAutoAlignSide.LEFT;
-        break;
-      case RIGHT:
-        branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
-        break;
-    }
-  }
+  // public void setAutoAlignSide(BranchAutoAlignSide side) {
+  //   switch (side) {
+  //     default:
+  //     case LEFT:
+  //       branchAutoAlignSide = BranchAutoAlignSide.LEFT;
+  //       break;
+  //     case RIGHT:
+  //       branchAutoAlignSide = BranchAutoAlignSide.RIGHT;
+  //       break;
+  //   }
+  // }
 
-  public Command setCoralScoreLevelCommand(CoralScoreLevel level) {
-    return Commands.runOnce(() -> this.coralScoreLevel = level);
-  }
+  // public Command setCoralScoreLevelCommand(CoralScoreLevel level) {
+  //   return Commands.runOnce(() -> this.coralScoreLevel = level);
+  // }
 
-  public Command setAlgaeLevelCommand(AlgaeLevel level) {
-    return Commands.runOnce(() -> this.algaeLevel = level);
-  }
+  // public Command setAlgaeLevelCommand(AlgaeLevel level) {
+  //   return Commands.runOnce(() -> this.algaeLevel = level);
+  // }
 
-  public Command setGamePieceStateCommand(GamePieceState state) {
-    return Commands.runOnce(() -> this.gamePieceState = state);
-  }
+  // public Command setGamePieceStateCommand(GamePieceState state) {
+  //   return Commands.runOnce(() -> this.gamePieceState = state);
+  // }
 
-  public Command setAutomationLevelCommand(AutomationLevel level) {
-    return Commands.runOnce(() -> this.automationLevel = level);
-  }
+  // public Command setAutomationLevelCommand(AutomationLevel level) {
+  //   return Commands.runOnce(() -> this.automationLevel = level);
+  // }
 
-  public boolean isGamePieceStateCoral() {
-    return gamePieceState == GamePieceState.CORAL;
-  }
+  // public boolean isGamePieceStateCoral() {
+  //   return gamePieceState == GamePieceState.CORAL;
+  // }
 
-  public Command setAutoAlignCoralStateCommand() {
+  public Command setAutoAlignCoralStateCommand(boolean isLeftBranch) {
     return Commands.defer(
-        () -> superstructure.setWantedSuperStateCommand(returnAutoAlignCoralState()),
+        () -> superstructure.setWantedSuperStateCommand(returnAutoAlignCoralState(isLeftBranch)),
         Set.of(superstructure));
   }
 
-  public WantedSuperState returnAutoAlignCoralState() {
+  public WantedSuperState returnAutoAlignCoralState(boolean isLeftBranch) {
     int nearestFace = AutoAlignPoseGenerator.getNearestReefFaceIndex();
     boolean flip = (nearestFace == 2 || nearestFace == 3 || nearestFace == 4);
 
+    int optimalLevel = CalculateOptimalScoringLevel.calculateOptimalScoringLevel(isLeftBranch);
+
     if (superstructure.isCoralEnsured()) {
-      if (automationLevel == AutomationLevel.AUTO_ACTION) {
-        switch (coralScoreLevel) {
-          default:
-          case POSITION_CORAL_L1:
-            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-                ? WantedSuperState.AUTO_SCORE_L1_LEFT
-                : WantedSuperState.AUTO_SCORE_L1_RIGHT;
-          case POSITION_CORAL_L2:
-            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-                ? WantedSuperState.AUTO_SCORE_L2_LEFT
-                : WantedSuperState.AUTO_SCORE_L2_RIGHT;
-          case POSITION_CORAL_L3:
-            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-                ? WantedSuperState.AUTO_SCORE_L3_LEFT
-                : WantedSuperState.AUTO_SCORE_L3_RIGHT;
-          case POSITION_CORAL_L4:
-            return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-                ? WantedSuperState.AUTO_SCORE_L4_LEFT
-                : WantedSuperState.AUTO_SCORE_L4_RIGHT;
-        }
+      switch (optimalLevel) {
+        default:
+        case 1:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_SCORE_L1_LEFT
+              : WantedSuperState.AUTO_SCORE_L1_RIGHT;
+        case 2:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_SCORE_L2_LEFT
+              : WantedSuperState.AUTO_SCORE_L2_RIGHT;
+        case 3:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_SCORE_L3_LEFT
+              : WantedSuperState.AUTO_SCORE_L3_RIGHT;
+        case 4:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_SCORE_L4_LEFT
+              : WantedSuperState.AUTO_SCORE_L4_RIGHT;
       }
-    }
-    switch (coralScoreLevel) {
-      default:
-      case POSITION_CORAL_L1:
-        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-            ? WantedSuperState.AUTO_ALIGN_LEFT_TROUGH
-            : WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
-      case POSITION_CORAL_L2:
-        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
-            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
-      case POSITION_CORAL_L3:
-        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
-            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
-      case POSITION_CORAL_L4:
-        return ((branchAutoAlignSide == BranchAutoAlignSide.LEFT) ^ flip)
-            ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
-            : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
+    } else {
+      switch (optimalLevel) {
+        default:
+        case 1:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_ALIGN_LEFT_TROUGH
+              : WantedSuperState.AUTO_ALIGN_RIGHT_TROUGH;
+        case 2:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
+              : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
+        case 3:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
+              : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
+        case 4:
+          return (isLeftBranch ^ flip)
+              ? WantedSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
+              : WantedSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
+      }
     }
   }
 
@@ -414,57 +428,67 @@ public class Bindings extends SubsystemBase {
   }
 
   public WantedSuperState returnAutoAlignAlgaeState() {
-    if (automationLevel == AutomationLevel.AUTO_ACTION) {
-      return WantedSuperState.AUTO_INTAKE_ALGAE;
-    } else {
-      return WantedSuperState.AUTO_ALIGN_MIDDLE_ALGAE;
-    }
+    return WantedSuperState.AUTO_INTAKE_ALGAE;
   }
 
-  public Command setLogicStateCommand() {
-    // return this.runOnce(() -> setWantedSuperState(returnLogicState()));
+  public Command setIntakingOrPrepareCommand() {
     return Commands.defer(
-        () -> superstructure.setWantedSuperStateCommand(returnLogicState()),
+        () -> superstructure.setWantedSuperStateCommand(returnIntakingOrPrepareState()),
         Set.of(superstructure));
   }
 
-  public WantedSuperState returnLogicState() {
-    WantedSuperState wantedSuperState = superstructure.getWantedSuperState();
-    if (!superstructure.isAlgaeScored()) {
-      if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
-        return WantedSuperState.POSITION_ALGAE_BARGE;
-      } else {
-        return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-      }
-    }
-    switch (gamePieceState) {
-      default:
-      case CORAL:
-        switch (coralScoreLevel) {
-          default:
-          case POSITION_CORAL_L1:
-            return WantedSuperState.POSITION_CORAL_L1;
-          case POSITION_CORAL_L2:
-            return WantedSuperState.POSITION_CORAL_L2;
-          case POSITION_CORAL_L3:
-            return WantedSuperState.POSITION_CORAL_L3;
-          case POSITION_CORAL_L4:
-            return WantedSuperState.POSITION_CORAL_L4;
-        }
-      case ALGAE:
-        switch (algaeLevel) {
-          default:
-          case POSITION_ALGAE_BARGE:
-            return WantedSuperState.POSITION_ALGAE_BARGE;
-          case INTAKING_ALGAE_L3:
-            return WantedSuperState.INTAKING_ALGAE_L3;
-          case INTAKING_ALGAE_L2:
-            return WantedSuperState.INTAKING_ALGAE_L2;
-          case POSITION_ALGAE_PROCESSOR:
-            return WantedSuperState.POSITION_ALGAE_PROCESSOR;
-        }
+  public WantedSuperState returnIntakingOrPrepareState() {
+    if (superstructure.getWantedSuperState() == WantedSuperState.POSITION_PREPARED) {
+      return WantedSuperState.INTAKING_CORAL_STATION;
+    } else {
+      return WantedSuperState.POSITION_PREPARED;
     }
   }
+
+  // public Command setLogicStateCommand() {
+  //   // return this.runOnce(() -> setWantedSuperState(returnLogicState()));
+  //   return Commands.defer(
+  //       () -> superstructure.setWantedSuperStateCommand(returnLogicState()),
+  //       Set.of(superstructure));
+  // }
+
+  // public WantedSuperState returnLogicState() {
+  //   WantedSuperState wantedSuperState = superstructure.getWantedSuperState();
+  //   if (!superstructure.isAlgaeScored()) {
+  //     if (wantedSuperState == WantedSuperState.POSITION_ALGAE_PROCESSOR) {
+  //       return WantedSuperState.POSITION_ALGAE_BARGE;
+  //     } else {
+  //       return WantedSuperState.POSITION_ALGAE_PROCESSOR;
+  //     }
+  //   }
+  //   switch (gamePieceState) {
+  //     default:
+  //     case CORAL:
+  //       switch (coralScoreLevel) {
+  //         default:
+  //         case POSITION_CORAL_L1:
+  //           return WantedSuperState.POSITION_CORAL_L1;
+  //         case POSITION_CORAL_L2:
+  //           return WantedSuperState.POSITION_CORAL_L2;
+  //         case POSITION_CORAL_L3:
+  //           return WantedSuperState.POSITION_CORAL_L3;
+  //         case POSITION_CORAL_L4:
+  //           return WantedSuperState.POSITION_CORAL_L4;
+  //       }
+  //     case ALGAE:
+  //       switch (algaeLevel) {
+  //         default:
+  //         case POSITION_ALGAE_BARGE:
+  //           return WantedSuperState.POSITION_ALGAE_BARGE;
+  //         case INTAKING_ALGAE_L3:
+  //           return WantedSuperState.INTAKING_ALGAE_L3;
+  //         case INTAKING_ALGAE_L2:
+  //           return WantedSuperState.INTAKING_ALGAE_L2;
+  //         case POSITION_ALGAE_PROCESSOR:
+  //           return WantedSuperState.POSITION_ALGAE_PROCESSOR;
+  //       }
+  //   }
+  // }
 
   public Command setGamePieceScoreStateCommand() {
     return Commands.defer(

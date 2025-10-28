@@ -17,6 +17,7 @@ import frc.robot.subsystems.endefector.endefectorwrist.WristConstants.WristState
 import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.vision4.Vision4;
 import frc.robot.util.AutoAlignPoseGenerator;
+import frc.robot.util.CalculateOptimalScoringLevel;
 import frc.robot.util.SubsystemChecker;
 import frc.robot.util.Tracer;
 
@@ -298,6 +299,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L1_LEFT:
         if (rollers.isCoralTroughScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
+            CalculateOptimalScoringLevel.addCoral(1, true);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -318,6 +322,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L1_RIGHT:
         if (rollers.isCoralTroughScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
+            CalculateOptimalScoringLevel.addCoral(1, false);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -338,6 +345,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L2_LEFT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
+            CalculateOptimalScoringLevel.addCoral(2, true);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -358,6 +368,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L2_RIGHT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
+            CalculateOptimalScoringLevel.addCoral(2, false);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -378,6 +391,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L3_LEFT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
+            CalculateOptimalScoringLevel.addCoral(3, true);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -398,6 +414,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L3_RIGHT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
+            CalculateOptimalScoringLevel.addCoral(3, false);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -418,6 +437,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L4_LEFT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
+            CalculateOptimalScoringLevel.addCoral(4, true);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -438,6 +460,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L4_RIGHT:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
+            CalculateOptimalScoringLevel.addCoral(4, false);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -458,6 +483,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L4_LEFT_AUTO:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
+            CalculateOptimalScoringLevel.addCoral(4, true);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
@@ -478,6 +506,9 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L4_RIGHT_AUTO:
         if (rollers.isCoralBranchScored()) {
+          if (currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
+            CalculateOptimalScoringLevel.addCoral(4, false);
+          }
           currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
           wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()

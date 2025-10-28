@@ -52,7 +52,7 @@ public class WristConstants {
 
   // wrist state stuff
   public static enum WristStates {
-    INTAKING_CORAL_STATION(0),
+    POSITION_CORAL_STATION(0),
     INTAKING_ALGAE_GROUND(1),
     INTAKING_ALGAE_LOLLIPOP(2),
     INTAKING_ALGAE_REEF(3),

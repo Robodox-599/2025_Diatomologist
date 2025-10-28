@@ -21,7 +21,7 @@ public class Wrist {
   }
 
   public enum WantedState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF_L2,
@@ -37,7 +37,7 @@ public class Wrist {
   }
 
   public enum CurrentState {
-    INTAKING_CORAL_STATION,
+    POSITION_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF_L2,
@@ -60,18 +60,16 @@ public class Wrist {
     DogLog.log("Wrist/WantedState", wantedState);
     SubsystemUtil.elevatorStateToHeightTicks(ElevatorStates.INTAKING_ALGAE_LOLLIPOP);
 
-    subsystemChecker.setWristPosition(getPosition());
-
     io.isCoralInEndefector = subsystemChecker.isCoralInEndefector();
   }
 
   private void handleStateTransitions() {
     previousState = currentState;
     switch (wantedState) {
-      case INTAKING_CORAL_STATION:
-        if (subsystemChecker.isAtHeightElevator(
-            ElevatorConstants.ElevatorStates.INTAKING_CORAL_STATION)) {
-          currentState = CurrentState.INTAKING_CORAL_STATION;
+      case POSITION_CORAL_STATION:
+        if (subsystemChecker.isAtElevatorHeight(
+            ElevatorConstants.ElevatorStates.POSITION_CORAL_STATION)) {
+          currentState = CurrentState.POSITION_CORAL_STATION;
         } else {
           currentState = CurrentState.POSITION_PREPARED;
         }
@@ -80,7 +78,7 @@ public class Wrist {
         currentState = CurrentState.INTAKING_ALGAE_GROUND;
         break;
       case INTAKING_ALGAE_LOLLIPOP:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.INTAKING_ALGAE_LOLLIPOP)) {
           currentState = CurrentState.INTAKING_ALGAE_LOLLIPOP;
         } else {
@@ -88,7 +86,7 @@ public class Wrist {
         }
         break;
       case INTAKING_ALGAE_REEF_L2:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_L2)) {
           currentState = CurrentState.INTAKING_ALGAE_REEF_L2;
         } else {
@@ -96,7 +94,7 @@ public class Wrist {
         }
         break;
       case INTAKING_ALGAE_REEF_L3:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_L3)) {
           currentState = CurrentState.INTAKING_ALGAE_REEF_L3;
         } else {
@@ -107,12 +105,12 @@ public class Wrist {
         currentState = CurrentState.POSITION_PREPARED;
         break;
       case POSITION_TROUGH:
-        if (subsystemChecker.isSafeDistanceFromReef(true)) {
-          currentState = CurrentState.POSITION_TROUGH;
-        } else {
-          currentState = CurrentState.POSITION_PREPARED;
-        }
-        // currentState = CurrentState.POSITION_TROUGH;
+        // if (subsystemChecker.isSafeDistanceFromReef(true)) {
+        //   currentState = CurrentState.POSITION_TROUGH;
+        // } else {
+        //   currentState = CurrentState.POSITION_PREPARED;
+        // }
+        currentState = CurrentState.POSITION_TROUGH;
         break;
       case POSITION_BRANCH_L2:
         if (subsystemChecker.isSafeDistanceFromReef(false)) {
@@ -131,7 +129,7 @@ public class Wrist {
         // currentState = CurrentState.POSITION_BRANCH_L3;
         break;
       case POSITION_BRANCH_L4:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_CORAL_L4)) {
           currentState = CurrentState.POSITION_BRANCH_L4;
         } else {
@@ -139,7 +137,7 @@ public class Wrist {
         }
         break;
       case SCORING_ALGAE_BARGE:
-        if (subsystemChecker.isAtHeightElevator(
+        if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_ALGAE_BARGE)) {
           currentState = CurrentState.SCORING_ALGAE_BARGE;
         } else {
@@ -157,8 +155,8 @@ public class Wrist {
 
   private void applyStates() {
     switch (currentState) {
-      case INTAKING_CORAL_STATION:
-        setAngle(WristStates.INTAKING_CORAL_STATION);
+      case POSITION_CORAL_STATION:
+        setAngle(WristStates.POSITION_CORAL_STATION);
         break;
       case INTAKING_ALGAE_GROUND:
         setAngle(WristStates.INTAKING_ALGAE_GROUND);

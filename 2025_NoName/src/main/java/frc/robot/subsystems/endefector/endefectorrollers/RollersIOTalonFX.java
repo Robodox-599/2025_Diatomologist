@@ -17,14 +17,17 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.AsynchronousInterrupt;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.EndefectorRollerStates;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SubsystemUtil;
 
 public class RollersIOTalonFX extends RollersIO {
-  private final TalonFX rollersMotor;
-  TalonFXConfiguration rollersConfig;
+  private final TalonFX endefectorRollersMotor;
+  private final TalonFX rampRollersMotor;
+  TalonFXConfiguration endefectorRollersConfig;
+  TalonFXConfiguration rampRollersConfig;
   Debouncer rampCoralDebouncer = new Debouncer(rampCoralDebounce);
   Debouncer coralIntakeDebouncer = new Debouncer(coralIntakeDebounce);
   Debouncer algaeGroundIntakeDebouncer = new Debouncer(algaeGroundIntakeDebounce);
@@ -33,36 +36,63 @@ public class RollersIOTalonFX extends RollersIO {
   Debouncer coralBranchScoreDebouncer = new Debouncer(coralBranchScoreDebounce);
   Debouncer algaeScoreDebouncer = new Debouncer(algaeScoreDebounce);
   private DigitalInput rampBeamBreak;
+  private DigitalInput transitionBeamBreak;
   private DigitalInput endefectorBeamBreak;
+  private AsynchronousInterrupt transitionBeamBreakInterrupt;
 
-  private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<Voltage> appliedVolts;
-  private final StatusSignal<Current> statorCurrent;
-  private final StatusSignal<Current> supplyCurrent;
-  private final StatusSignal<Temperature> temperature;
-  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> endefectorRollersVelocity;
+  private final StatusSignal<Voltage> endefectorRollersAppliedVolts;
+  private final StatusSignal<Current> endefectorRollersStatorCurrent;
+  private final StatusSignal<Current> endefectorRollersSupplyCurrent;
+  private final StatusSignal<Temperature> endefectorRollersTemperature;
+  private final StatusSignal<Angle> endefectorRollersPosition;
 
-  private double desiredVelocity;
+  private final StatusSignal<AngularVelocity> rampRollersVelocity;
+  private final StatusSignal<Voltage> rampRollersAppliedVolts;
+  private final StatusSignal<Current> rampRollersStatorCurrent;
+  private final StatusSignal<Current> rampRollersSupplyCurrent;
+  private final StatusSignal<Temperature> rampRollersTemperature;
+  private final StatusSignal<Angle> rampRollersPosition;
 
   public RollersIOTalonFX() {
-    rollersMotor = new TalonFX(rollersMotorID, rollersMotorCANBus);
+    endefectorRollersMotor = new TalonFX(endefectorRollersMotorID, endefectorRollersMotorCANBus);
+    rampRollersMotor = new TalonFX(rampRollersMotorID, rampRollersMotorCANBus);
     rampBeamBreak = new DigitalInput(RollersConstants.rampBeamBreakPort);
+    transitionBeamBreak = new DigitalInput(RollersConstants.transitionBeamBreakPort);
     endefectorBeamBreak = new DigitalInput(RollersConstants.endefectorBeamBreakPort);
 
-    rollersConfig = new TalonFXConfiguration();
+    endefectorRollersConfig = new TalonFXConfiguration();
+    rampRollersConfig = new TalonFXConfiguration();
 
-    rollersMotor.setNeutralMode(NeutralModeValue.Brake);
+    endefectorRollersMotor.setNeutralMode(NeutralModeValue.Brake);
+    rampRollersMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    rollersConfig.Slot0.kP = realP;
-    rollersConfig.Slot0.kI = realI;
-    rollersConfig.Slot0.kD = realD;
-    rollersConfig.Slot0.kS = realkS;
-    rollersConfig.Slot0.kV = realkV;
+    endefectorRollersConfig.Slot0.kP = realP;
+    endefectorRollersConfig.Slot0.kI = realI;
+    endefectorRollersConfig.Slot0.kD = realD;
+    endefectorRollersConfig.Slot0.kS = realkS;
+    endefectorRollersConfig.Slot0.kV = realEndefectorkV;
 
-    rollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
-    rollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
-    rollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
-    rollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
+    endefectorRollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
+    endefectorRollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
+    endefectorRollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
+    endefectorRollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
+
+    rampRollersConfig.Slot0.kP = realP;
+    rampRollersConfig.Slot0.kI = realI;
+    rampRollersConfig.Slot0.kD = realD;
+    rampRollersConfig.Slot0.kS = realkS;
+    rampRollersConfig.Slot0.kV = realRampkV;
+
+    rampRollersConfig.CurrentLimits.SupplyCurrentLimitEnable = EnableCurrentLimit;
+    rampRollersConfig.CurrentLimits.SupplyCurrentLimit = ContinousCurrentLimit;
+    rampRollersConfig.CurrentLimits.SupplyCurrentLowerLimit = PeakCurrentLimit;
+    rampRollersConfig.CurrentLimits.SupplyCurrentLowerTime = PeakCurrentDuration;
+
+    PhoenixUtil.tryUntilOk(
+        10, () -> endefectorRollersMotor.getConfigurator().apply(endefectorRollersConfig, 1));
+    PhoenixUtil.tryUntilOk(
+        10, () -> rampRollersMotor.getConfigurator().apply(rampRollersConfig, 1));
 
     rampCoralDebouncer.setDebounceType(DebounceType.kRising);
     coralIntakeDebouncer.setDebounceType(DebounceType.kRising);
@@ -73,51 +103,112 @@ public class RollersIOTalonFX extends RollersIO {
     algaeReefIntakeDebouncer.setDebounceType(DebounceType.kRising);
     algaeScoreDebouncer.setDebounceType(DebounceType.kFalling);
 
-    PhoenixUtil.tryUntilOk(10, () -> rollersMotor.getConfigurator().apply(rollersConfig, 1));
-    position = rollersMotor.getPosition();
-    velocity = rollersMotor.getVelocity();
-    appliedVolts = rollersMotor.getMotorVoltage();
-    statorCurrent = rollersMotor.getStatorCurrent();
-    temperature = rollersMotor.getDeviceTemp();
-    supplyCurrent = rollersMotor.getSupplyCurrent();
+    endefectorRollersPosition = endefectorRollersMotor.getPosition();
+    endefectorRollersVelocity = endefectorRollersMotor.getVelocity();
+    endefectorRollersAppliedVolts = endefectorRollersMotor.getMotorVoltage();
+    endefectorRollersStatorCurrent = endefectorRollersMotor.getStatorCurrent();
+    endefectorRollersTemperature = endefectorRollersMotor.getDeviceTemp();
+    endefectorRollersSupplyCurrent = endefectorRollersMotor.getSupplyCurrent();
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, position, velocity, temperature, supplyCurrent, statorCurrent, appliedVolts);
+        50.0,
+        endefectorRollersPosition,
+        endefectorRollersVelocity,
+        endefectorRollersTemperature,
+        endefectorRollersSupplyCurrent,
+        endefectorRollersStatorCurrent,
+        endefectorRollersAppliedVolts);
 
-    rollersMotor.optimizeBusUtilization();
+    rampRollersPosition = rampRollersMotor.getPosition();
+    rampRollersVelocity = rampRollersMotor.getVelocity();
+    rampRollersAppliedVolts = rampRollersMotor.getMotorVoltage();
+    rampRollersStatorCurrent = rampRollersMotor.getStatorCurrent();
+    rampRollersTemperature = rampRollersMotor.getDeviceTemp();
+    rampRollersSupplyCurrent = rampRollersMotor.getSupplyCurrent();
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        rampRollersPosition,
+        rampRollersVelocity,
+        rampRollersTemperature,
+        rampRollersSupplyCurrent,
+        rampRollersStatorCurrent,
+        rampRollersAppliedVolts);
+
+    endefectorRollersMotor.optimizeBusUtilization();
+    rampRollersMotor.optimizeBusUtilization();
+
+    transitionBeamBreakInterrupt =
+        new AsynchronousInterrupt(
+            transitionBeamBreak,
+            (rising, falling) -> {
+              if (rising) { // coral -> no coral
+                if (!endefectorBeamBreak.get()) { // if coral in endefector
+                  setEndefectorHoldCoralPosition();
+                }
+              } else if (falling) { // no coral -> coral
+                setRampHoldCoralPosition();
+              }
+            });
+
+    transitionBeamBreakInterrupt.enable();
   }
 
   @Override
   public void updateInputs() {
     BaseStatusSignal.refreshAll(
-        position, velocity, temperature, statorCurrent, supplyCurrent, appliedVolts);
-    super.appliedVolts = appliedVolts.getValueAsDouble();
-    super.statorCurrentAmps = statorCurrent.getValueAsDouble();
-    super.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+        endefectorRollersPosition,
+        endefectorRollersVelocity,
+        endefectorRollersTemperature,
+        endefectorRollersSupplyCurrent,
+        endefectorRollersStatorCurrent,
+        endefectorRollersAppliedVolts);
+    BaseStatusSignal.refreshAll(
+        rampRollersPosition,
+        rampRollersVelocity,
+        rampRollersTemperature,
+        rampRollersSupplyCurrent,
+        rampRollersStatorCurrent,
+        rampRollersAppliedVolts);
+    super.endefectorRollersPosition = endefectorRollersPosition.getValueAsDouble();
+    super.endefectorRollersStatorCurrent = endefectorRollersStatorCurrent.getValueAsDouble();
+    super.endefectorRollersSupplyCurrent = endefectorRollersSupplyCurrent.getValueAsDouble();
+    super.endefectorRollersVelocity = endefectorRollersVelocity.getValueAsDouble();
+    super.endefectorRollersTempCelsius = endefectorRollersTemperature.getValueAsDouble();
+    super.endefectorRollersAppliedVolts = endefectorRollersAppliedVolts.getValueAsDouble();
 
-    super.position = position.getValueAsDouble();
-    super.velocity = velocity.getValueAsDouble();
-    super.tempCelsius = temperature.getValueAsDouble();
-    super.desiredVelocity = desiredVelocity;
+    super.rampRollersPosition = rampRollersPosition.getValueAsDouble();
+    super.rampRollersStatorCurrent = rampRollersStatorCurrent.getValueAsDouble();
+    super.rampRollersSupplyCurrent = rampRollersSupplyCurrent.getValueAsDouble();
+    super.rampRollersVelocity = rampRollersVelocity.getValueAsDouble();
+    super.rampRollersTempCelsius = rampRollersTemperature.getValueAsDouble();
+    super.rampRollersAppliedVolts = rampRollersAppliedVolts.getValueAsDouble();
+
+    DogLog.log("Rollers/Endefector/StatorCurrentAmps", super.endefectorRollersStatorCurrent);
+    DogLog.log("Rollers/Endefector/SupplyCurrentAmps", super.endefectorRollersSupplyCurrent);
+    DogLog.log("Rollers/Endefector/Position", super.endefectorRollersPosition);
+    DogLog.log("Rollers/Endefector/Velocity", super.endefectorRollersVelocity);
+    DogLog.log("Rollers/Endefector/AppliedVoltage", super.endefectorRollersAppliedVolts);
+    DogLog.log("Rollers/Endefector/TempCelcius", super.endefectorRollersTempCelsius);
+
+    DogLog.log("Rollers/Ramp/StatorCurrentAmps", super.rampRollersStatorCurrent);
+    DogLog.log("Rollers/Ramp/SupplyCurrentAmps", super.rampRollersSupplyCurrent);
+    DogLog.log("Rollers/Ramp/Position", super.rampRollersPosition);
+    DogLog.log("Rollers/Ramp/Velocity", super.rampRollersVelocity);
+    DogLog.log("Rollers/Ramp/AppliedVoltage", super.rampRollersAppliedVolts);
+    DogLog.log("Rollers/Ramp/TempCelcius", super.rampRollersTempCelsius);
 
     super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
     super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
     super.isGroundAlgaeIntaked =
         algaeGroundIntakeDebouncer.calculate(
-            super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
+            super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps);
     super.isReefAlgaeIntaked =
-        algaeReefIntakeDebouncer.calculate(super.statorCurrentAmps >= algaeStallStatorCurrentAmps);
+        algaeReefIntakeDebouncer.calculate(
+            super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps);
     super.isCoralTroughScored = coralTroughScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isCoralBranchScored = coralBranchScoreDebouncer.calculate(endefectorBeamBreak.get());
     super.isAlgaeScored =
-        algaeScoreDebouncer.calculate(!(super.statorCurrentAmps >= algaeStallStatorCurrentAmps));
-
-    DogLog.log("Rollers/StatorCurrentAmps", super.statorCurrentAmps);
-    DogLog.log("Rollers/SupplyCurrentAmps", super.supplyCurrentAmps);
-
-    DogLog.log("Rollers/Position", super.position);
-    DogLog.log("Rollers/Velocity", super.velocity);
-    DogLog.log("Rollers/AppliedVoltage", super.appliedVolts);
-    DogLog.log("Rollers/TempCelcius", super.tempCelsius);
+        algaeScoreDebouncer.calculate(
+            !(super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps));
 
     DogLog.log("Rollers/CoralInRamp", super.isCoralInRamp);
     DogLog.log("Rollers/CoralIntakedInEndefector", super.isCoralIntakedInEndefector);
@@ -127,39 +218,58 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/CoralBranchScored", super.isCoralBranchScored);
     DogLog.log("Rollers/AlgaeScored", super.isAlgaeScored);
 
-    DogLog.log("Rollers/holdCoralPosition", super.holdCoralPosition);
+    DogLog.log("Rollers/Endefector/endefectorHoldCoralPosition", super.endefectorHoldCoralPosition);
+    DogLog.log("Rollers/Ramp/rampHoldCoralPosition", super.rampHoldCoralPosition);
 
     DogLog.log("Rollers/RampBeamBreak", rampBeamBreak.get());
     DogLog.log("Rollers/EndefectorBeamBreak", endefectorBeamBreak.get());
+    DogLog.log("Rollers/TransitionBeamBreak", transitionBeamBreak.get());
   }
 
   @Override
   public void stop() {
-    setVelocity(EndefectorRollerStates.STOPPED);
+    setEndefectorVelocity(EndefectorRollerStates.STOPPED);
+    setRampVelocity(0.0);
   }
 
   @Override
-  public void setVelocity(EndefectorRollerStates state) {
-    rollersMotor.set(SubsystemUtil.rollersStateToVelocity(state));
+  public void setEndefectorVelocity(EndefectorRollerStates state) {
+    endefectorRollersMotor.set(SubsystemUtil.endefectorRollersStateToVelocity(state));
+  }
+
+  @Override
+  public void setRampVelocity(double speed) {
+    rampRollersMotor.set(speed);
   }
 
   @Override
   public void holdAlgae() {
-    rollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
+    endefectorRollersMotor.setControl(new DutyCycleOut(rollersDutyCycleOutHoldAlgae));
   }
 
   @Override
-  public void setHoldCoralPosition() {
-    super.holdCoralPosition = rollersMotor.getPosition().getValueAsDouble();
+  public void setRampHoldCoralPosition() {
+    super.rampHoldCoralPosition = rampRollersMotor.getPosition().getValueAsDouble();
   }
 
   @Override
-  public void holdCoral() {
-    rollersMotor.setControl(new PositionDutyCycle(super.holdCoralPosition));
+  public void setEndefectorHoldCoralPosition() {
+    super.endefectorHoldCoralPosition = endefectorRollersMotor.getPosition().getValueAsDouble();
+  }
+
+  @Override
+  public void rampHoldCoral() {
+    rampRollersMotor.setControl(new PositionDutyCycle(super.rampHoldCoralPosition));
+  }
+
+  @Override
+  public void endefectorHoldCoral() {
+    endefectorRollersMotor.setControl(new PositionDutyCycle(super.endefectorHoldCoralPosition));
   }
 
   @Override
   public void resetRollersPosition() {
-    rollersMotor.setPosition(0.0);
+    endefectorRollersMotor.setPosition(0.0);
+    rampRollersMotor.setPosition(0.0);
   }
 }

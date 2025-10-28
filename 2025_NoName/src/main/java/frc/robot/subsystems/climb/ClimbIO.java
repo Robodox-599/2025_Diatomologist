@@ -8,18 +8,14 @@ public abstract class ClimbIO {
   protected double rollersStatorCurrent = 0.0;
 
   protected double climbTempCelsius = 0.0;
-  protected double climbPositionDegrees = 0.0;
+  protected double climbPosition = 0.0;
   protected double climbVelocity = 0.0;
   protected double climbAppliedVolts = 0.0;
   protected double climbCurrentAmps = 0.0;
   protected double targetPositionDegrees = 0.0;
 
-  protected boolean isFlapsReleased = false;
   protected boolean isRampReleased = false;
-
-  protected boolean isClimbDeployed = false;
   protected boolean isCageDetected = false;
-  protected boolean isClimbed = false;
 
   protected boolean atSetpoint = false;
 
@@ -29,9 +25,7 @@ public abstract class ClimbIO {
 
   public void stallRollers() {}
 
-  public void releaseRampServos() {}
-
-  public void releaseFlapServos() {}
+  public void releaseRamp() {}
 
   public void stop() {}
 

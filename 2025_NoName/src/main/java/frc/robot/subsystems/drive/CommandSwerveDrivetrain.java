@@ -268,9 +268,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/WantedState", wantedState);
     DogLog.log("RobotPose", getState().Pose);
     updateDistancesAndSetpoints();
-
-    subsystemChecker.setRobotPose(getState().Pose);
-    subsystemChecker.setChassisSpeeds(getChassisSpeeds());
   }
 
   public void setWantedState(WantedState wantedState) {
@@ -455,11 +452,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     Translation2d translationToTarget =
         targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
     double linearDistance = translationToTarget.getNorm();
+    Rotation2d targetRotation = targetPoseForDriveToPoint.getRotation();
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+      translationToTarget =
+          translationToTarget.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+      targetRotation = targetRotation.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+    }
 
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
     boolean atDriveToPointAngularSetpoint =
-        driveAtAngle.HeadingController.getPositionError() < DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE;
+        MathUtil.isNear(
+            getState().Pose.getRotation().getRadians(),
+            targetRotation.getRadians(),
+            DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
     atDriveToPointSetpoints = atDriveToPointTranslationSetpoint && atDriveToPointAngularSetpoint;
     driveToPointXError = translationToTarget.getX();
     driveToPointYError = translationToTarget.getY();

@@ -6,7 +6,7 @@ public final class ElevatorConstants {
   /* CHANGE LATER */
 
   public static enum ElevatorStates {
-    INTAKING_CORAL_STATION(0),
+    POSITION_CORAL_STATION(0),
     INTAKING_ALGAE_GROUND(1),
     INTAKING_ALGAE_LOLLIPOP(2),
     POSITION_ALGAE_L2(3),

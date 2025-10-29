@@ -35,7 +35,7 @@ public class RollersIOTalonFX extends RollersIO {
   Debouncer coralTroughScoreDebouncer = new Debouncer(coralTroughScoreDebounce);
   Debouncer coralBranchScoreDebouncer = new Debouncer(coralBranchScoreDebounce);
   Debouncer algaeScoreDebouncer = new Debouncer(algaeScoreDebounce);
-  private DigitalInput rampBeamBreak;
+  // private DigitalInput rampBeamBreak;
   private DigitalInput transitionBeamBreak;
   private DigitalInput endefectorBeamBreak;
   private AsynchronousInterrupt transitionBeamBreakInterrupt;
@@ -57,7 +57,7 @@ public class RollersIOTalonFX extends RollersIO {
   public RollersIOTalonFX() {
     endefectorRollersMotor = new TalonFX(endefectorRollersMotorID, endefectorRollersMotorCANBus);
     rampRollersMotor = new TalonFX(rampRollersMotorID, rampRollersMotorCANBus);
-    rampBeamBreak = new DigitalInput(RollersConstants.rampBeamBreakPort);
+    // rampBeamBreak = new DigitalInput(RollersConstants.rampBeamBreakPort);
     transitionBeamBreak = new DigitalInput(RollersConstants.transitionBeamBreakPort);
     endefectorBeamBreak = new DigitalInput(RollersConstants.endefectorBeamBreakPort);
 
@@ -142,14 +142,17 @@ public class RollersIOTalonFX extends RollersIO {
             (rising, falling) -> {
               if (rising) { // coral -> no coral
                 if (!endefectorBeamBreak.get()) { // if coral in endefector
-                  setEndefectorHoldCoralPosition();
+                  super.endefectorHoldCoralPosition =
+                      endefectorRollersMotor.getPosition().getValueAsDouble();
                 }
               } else if (falling) { // no coral -> coral
-                setRampHoldCoralPosition();
+                super.rampHoldCoralPosition = rampRollersMotor.getPosition().getValueAsDouble();
               }
             });
 
     transitionBeamBreakInterrupt.enable();
+
+    transitionBeamBreakInterrupt.setInterruptEdges(true, true);
   }
 
   @Override
@@ -196,7 +199,8 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/Ramp/AppliedVoltage", super.rampRollersAppliedVolts);
     DogLog.log("Rollers/Ramp/TempCelcius", super.rampRollersTempCelsius);
 
-    super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
+    // super.isCoralInRamp = rampCoralDebouncer.calculate(!rampBeamBreak.get());
+    super.isCoralInTransition = !transitionBeamBreak.get();
     super.isCoralIntakedInEndefector = coralIntakeDebouncer.calculate(!endefectorBeamBreak.get());
     super.isGroundAlgaeIntaked =
         algaeGroundIntakeDebouncer.calculate(
@@ -210,7 +214,7 @@ public class RollersIOTalonFX extends RollersIO {
         algaeScoreDebouncer.calculate(
             !(super.endefectorRollersStatorCurrent >= algaeStallStatorCurrentAmps));
 
-    DogLog.log("Rollers/CoralInRamp", super.isCoralInRamp);
+    DogLog.log("Rollers/CoralInTransition", super.isCoralInTransition);
     DogLog.log("Rollers/CoralIntakedInEndefector", super.isCoralIntakedInEndefector);
     DogLog.log("Rollers/GroundAlgaeIntaked", super.isGroundAlgaeIntaked);
     DogLog.log("Rollers/ReefAlgaeIntaked", super.isReefAlgaeIntaked);
@@ -221,7 +225,7 @@ public class RollersIOTalonFX extends RollersIO {
     DogLog.log("Rollers/Endefector/endefectorHoldCoralPosition", super.endefectorHoldCoralPosition);
     DogLog.log("Rollers/Ramp/rampHoldCoralPosition", super.rampHoldCoralPosition);
 
-    DogLog.log("Rollers/RampBeamBreak", rampBeamBreak.get());
+    // DogLog.log("Rollers/RampBeamBreak", rampBeamBreak.get());
     DogLog.log("Rollers/EndefectorBeamBreak", endefectorBeamBreak.get());
     DogLog.log("Rollers/TransitionBeamBreak", transitionBeamBreak.get());
   }

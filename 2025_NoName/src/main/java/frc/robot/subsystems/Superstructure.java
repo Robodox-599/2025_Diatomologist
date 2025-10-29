@@ -681,7 +681,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
     wrist.setWantedState(Wrist.WantedState.POSITION_CORAL_STATION);
-    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_STATION);
+    leds.setCurrentState(LEDs.CurrentState.INTAKING_CORAL_STATION);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 

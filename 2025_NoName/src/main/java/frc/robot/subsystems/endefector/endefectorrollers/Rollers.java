@@ -38,8 +38,6 @@ public class Rollers {
 
   public enum CurrentState {
     INTAKING_CORAL_STATION,
-    ENSURING_CORAL_FORWARDS,
-    ENSURING_CORAL_BACKWARDS,
     INTAKING_ALGAE,
     HOLD_CORAL,
     HOLD_ALGAE,
@@ -59,6 +57,7 @@ public class Rollers {
     INTAKING_CORAL_STATION_PASSIVE,
     HOLD_CORAL,
     INTAKING_CORAL_STATION_ACTIVE,
+    STOPPED,
   }
 
   public void updateInputs() {
@@ -69,6 +68,8 @@ public class Rollers {
     applyRampRollersStates();
     DogLog.log("Rollers/CurrentState", currentState);
     DogLog.log("Rollers/WantedState", wantedState);
+    DogLog.log("Rollers/RampRollersWantedState", rampRollersWantedState);
+    DogLog.log("Rollers/RampRollersCurrentState", rampRollersCurrentState);
     DogLog.log("Rollers/IsCoralEnsured", isCoralEnsured());
 
     if (DriverStation.isDisabled()
@@ -80,6 +81,10 @@ public class Rollers {
   }
 
   private void handleStateTransitions() {
+    if (currentState == CurrentState.INTAKING_CORAL_STATION
+        && wantedState != WantedState.INTAKING_CORAL_STATION) {
+      rampRollersWantedState = RampRollersWantedState.INTAKING_CORAL_STATION_PASSIVE;
+    }
     previousState = currentState;
     switch (wantedState) {
       case INTAKING_CORAL_STATION:
@@ -172,16 +177,18 @@ public class Rollers {
         } else {
           rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
         }
+        break;
       case INTAKING_CORAL_STATION_ACTIVE:
         if (!isCoralInTransition() && isCoralIntakedInEndefector()) {
           rampRollersWantedState = RampRollersWantedState.INTAKING_CORAL_STATION_PASSIVE;
           rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
-        } else if (!subsystemChecker.isAtWristPosition(WristStates.POSITION_CORAL_STATION)
-            || subsystemChecker.isAtElevatorHeight(ElevatorStates.POSITION_CORAL_STATION)) {
-          rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
-        } else {
+        } else if (subsystemChecker.isAtWristPosition(WristStates.POSITION_CORAL_STATION)
+            && subsystemChecker.isAtElevatorHeight(ElevatorStates.POSITION_CORAL_STATION)) {
           rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_ACTIVE;
+        } else {
+          rampRollersCurrentState = RampRollersCurrentState.STOPPED;
         }
+        break;
     }
   }
 
@@ -189,13 +196,16 @@ public class Rollers {
     switch (rampRollersCurrentState) {
       default:
       case INTAKING_CORAL_STATION_PASSIVE:
-        setRampVelocity(0.3);
+        setRampVelocity(RollersConstants.rampRollersVelocitySetpoint);
         break;
       case HOLD_CORAL:
         io.rampHoldCoral();
         break;
       case INTAKING_CORAL_STATION_ACTIVE:
-        setRampVelocity(0.5);
+        setRampVelocity(RollersConstants.rampRollersVelocitySetpoint);
+        break;
+      case STOPPED:
+        io.setRampVelocity(0);
         break;
     }
   }

@@ -28,7 +28,7 @@ public class RollersConstants {
   }
 
   public static final double[] endefectorRollersVelocities = {
-    0.4, // intaking coral station
+    0.3, // intaking coral station
     0.25, // ensuring coral forwards
     -0.1, // ensuring coral backwards
     -0.6, // intaking algae
@@ -43,7 +43,7 @@ public class RollersConstants {
   public static final int endefectorRollersMotorID = 16;
   public static final String endefectorRollersMotorCANBus = "rio";
 
-  public static final int rampRollersMotorID = 28;
+  public static final int rampRollersMotorID = 23;
   public static final String rampRollersMotorCANBus = "rio";
 
   public static final boolean EnableCurrentLimit = true;
@@ -72,12 +72,12 @@ public class RollersConstants {
   public static final double rollersDutyCycleOutHoldAlgae = -0.1;
   public static final double algaeStallStatorCurrentAmps = 20;
   public static final double rampRollersVelocitySetpoint =
-      SubsystemUtil.endefectorRollersStateToVelocity(EndefectorRollerStates.INTAKING_CORAL_STATION)
-          * (rampGearRatio / endefectorGearRatio); // account for gear ratio
+      -SubsystemUtil.endefectorRollersStateToVelocity(
+          EndefectorRollerStates.INTAKING_CORAL_STATION);
 
-  public static final int rampBeamBreakPort = 1;
-  public static final int transitionBeamBreakPort = 3;
-  public static final int endefectorBeamBreakPort = 2;
+  // public static final int rampBeamBreakPort = 1;
+  public static final int transitionBeamBreakPort = 1;
+  public static final int endefectorBeamBreakPort = 0;
 
   public static final double rampCoralDebounce = 0.1;
   public static final double coralIntakeDebounce = 0.05;

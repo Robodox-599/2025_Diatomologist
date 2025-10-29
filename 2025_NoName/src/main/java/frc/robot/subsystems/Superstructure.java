@@ -157,6 +157,7 @@ public class Superstructure extends SubsystemBase {
     Tracer.traceFunc("ClimbPeriodic", climb::updateInputs);
     Tracer.traceFunc("HandleStateTransitions", this::handleStateTransitions);
     Tracer.traceFunc("ApplyStates", this::applyStates);
+    CalculateOptimalScoringLevel.calculateOptimalScoringLevel(true);
 
     DogLog.log("Superstructure/CurrentSuperState", currentSuperState);
     DogLog.log("Superstructure/WantedSuperState", wantedSuperState);
@@ -712,7 +713,7 @@ public class Superstructure extends SubsystemBase {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
     wrist.setWantedState(Wrist.WantedState.POSITION_CORAL_STATION);
-    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_STATION);
+    leds.setCurrentState(LEDs.CurrentState.INTAKING_CORAL_STATION);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 

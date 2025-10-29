@@ -196,7 +196,7 @@ public class Rollers {
     switch (rampRollersCurrentState) {
       default:
       case INTAKING_CORAL_STATION_PASSIVE:
-        setRampVelocity(RollersConstants.rampRollersVelocitySetpoint);
+        setRampVelocity(RollersConstants.rampRollersVelocitySetpoint * 0.5);
         break;
       case HOLD_CORAL:
         io.rampHoldCoral();

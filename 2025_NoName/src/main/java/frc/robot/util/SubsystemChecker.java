@@ -195,8 +195,8 @@ public class SubsystemChecker {
   public boolean isSpeedsSettled() {
     ChassisSpeeds speeds = getChassisSpeeds();
     boolean isSpeedsSettled =
-        Math.abs(speeds.vxMetersPerSecond) < 0.01
-            && Math.abs(speeds.vyMetersPerSecond) < 0.01
+        Math.abs(speeds.vxMetersPerSecond) < 0.03
+            && Math.abs(speeds.vyMetersPerSecond) < 0.03
             && Math.abs(speeds.omegaRadiansPerSecond) < 0.01;
     DogLog.log("isSpeedsSettled", isSpeedsSettled);
     return isSpeedsSettled;

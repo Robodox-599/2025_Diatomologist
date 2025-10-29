@@ -129,7 +129,7 @@ public class Bindings extends SubsystemBase {
     //                                OPERATOR BINDS
     // // QUEUE CORAL L1 OR QUEUE ALGAE L2
     operator
-        .a()
+        .x()
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L1),
@@ -150,7 +150,7 @@ public class Bindings extends SubsystemBase {
     //             .alongWith(rumbleOperator(operator)));
     // // QUEUE CORAL L2 OR QUEUE ALGAE PROCESSOR
     operator
-        .x()
+        .a()
         .onTrue(
             Commands.either(
                     setCoralScoreLevelCommand(CoralScoreLevel.POSITION_CORAL_L2),

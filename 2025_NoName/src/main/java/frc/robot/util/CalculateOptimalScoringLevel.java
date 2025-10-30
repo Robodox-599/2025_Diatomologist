@@ -11,6 +11,10 @@ public class CalculateOptimalScoringLevel {
   private static final NetworkTable coralLevelTable =
       inst.getTable("/SmartDashboard/CoralPosition");
 
+  public static boolean calculateIfOptimalScoringBranchIsLeft() {
+    return calculateOptimalScoringLevel(true) >= calculateOptimalScoringLevel(false);
+  }
+
   public static int calculateOptimalScoringLevel(boolean isLeftBranch) {
     int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();
 
@@ -36,11 +40,11 @@ public class CalculateOptimalScoringLevel {
     DogLog.log("CalculateOptimalScoringLevel/Total/L4", totalL4Coral);
 
     if (isRPMode) {
-      if (totalL4Coral < 6) {
+      if (totalL4Coral < 6 && !isL4CoralScored) {
         return 4;
-      } else if (totalL3Coral < 6) {
+      } else if (totalL3Coral < 6 && !isL3CoralScored) {
         return 3;
-      } else if (totalL2Coral < 6) {
+      } else if (totalL2Coral < 6 && !isL2CoralScored) {
         return 2;
       }
     }

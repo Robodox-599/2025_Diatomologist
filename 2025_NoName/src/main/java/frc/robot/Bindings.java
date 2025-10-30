@@ -75,7 +75,8 @@ public class Bindings extends SubsystemBase {
 
     driver
         .rightBumper()
-        .onTrue(setIntakingOrPrepareCommand().alongWith(rumbleControllers(driver, operator)));
+        .onTrue(superstructure
+        .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION).alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO INTAKING ALGAE LOLLIPOP
     driver
         .leftBumper()
@@ -106,11 +107,12 @@ public class Bindings extends SubsystemBase {
     driver
         .povLeft()
         .whileTrue(
-            setAutoAlignCoralStateCommand(true).alongWith(rumbleControllers(driver, operator)));
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE)
+                .alongWith(rumbleControllers(driver, operator)));
     driver
         .povRight()
-        .whileTrue(
-            setAutoAlignCoralStateCommand(false).alongWith(rumbleControllers(driver, operator)));
+        .whileTrue(setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
     driver
@@ -126,12 +128,12 @@ public class Bindings extends SubsystemBase {
             superstructure
                 .setWantedSuperStateCommand(WantedSuperState.AUTO_SCORE_L1_RIGHT)
                 .alongWith(rumbleControllers(driver, operator)));
-    driver
-        .a()
-        .whileTrue(
-            superstructure
-                .setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE)
-                .alongWith(rumbleControllers(driver, operator)));
+    // driver
+    //     .a()
+    //     .whileTrue(
+    //         superstructure
+    //             .setWantedSuperStateCommand(WantedSuperState.AUTO_INTAKE_ALGAE)
+    //             .alongWith(rumbleControllers(driver, operator)));
     // SET TELEOP DRIVE STATE WHEN AUTO ALIGN IS RELEASED
     driver.povLeft().onFalse(superstructure.setTeleopDriveStateCommand());
     driver.povRight().onFalse(superstructure.setTeleopDriveStateCommand());
@@ -382,16 +384,17 @@ public class Bindings extends SubsystemBase {
   //   return gamePieceState == GamePieceState.CORAL;
   // }
 
-  public Command setAutoAlignCoralStateCommand(boolean isLeftBranch) {
+  public Command setAutoAlignCoralStateCommand() {
     return Commands.defer(
-        () -> superstructure.setWantedSuperStateCommand(returnAutoAlignCoralState(isLeftBranch)),
+        () -> superstructure.setWantedSuperStateCommand(returnAutoAlignCoralState()),
         Set.of(superstructure));
   }
 
-  public WantedSuperState returnAutoAlignCoralState(boolean isLeftBranch) {
+  public WantedSuperState returnAutoAlignCoralState() {
     int nearestFace = AutoAlignPoseGenerator.getNearestReefFaceIndex();
     boolean flip = (nearestFace == 2 || nearestFace == 3 || nearestFace == 4);
 
+    boolean isLeftBranch = CalculateOptimalScoringLevel.calculateIfOptimalScoringBranchIsLeft();
     int optimalLevel = CalculateOptimalScoringLevel.calculateOptimalScoringLevel(isLeftBranch);
 
     if (superstructure.isCoralEnsured()) {

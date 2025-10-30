@@ -44,7 +44,7 @@ public class AutoRoutines {
             Commands.sequence(
                 LEFTtoIBack.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.POSITION_PREPARED_AUTO),
+                    WantedSuperState.INTAKING_CORAL_STATION),
                 LEFTtoIBack.cmd()));
 
     LEFTtoIBack.done()
@@ -138,7 +138,7 @@ public class AutoRoutines {
             Commands.sequence(
                 RIGHTtoFBack.resetOdometry(),
                 superstructureCommands.setWantedSuperStateCommand(
-                    WantedSuperState.POSITION_PREPARED_AUTO),
+                    WantedSuperState.INTAKING_CORAL_STATION),
                 RIGHTtoFBack.cmd()));
 
     RIGHTtoFBack.done()

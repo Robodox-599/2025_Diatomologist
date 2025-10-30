@@ -33,8 +33,8 @@ public class RollersConstants {
     -0.1, // ensuring coral backwards
     -0.6, // intaking algae
     0.0, // holding coral
-    -0.6, // scoring coral trough
-    -0.6, // scoring coral l2 or l3
+    -0.8, // scoring coral trough
+    -0.8, // scoring coral l2 or l3
     1.0, // scoring coral l4
     0.3, // scoring algae
     0.0, // stopped

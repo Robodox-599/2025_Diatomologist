@@ -174,7 +174,10 @@ public class Rollers {
       case INTAKING_CORAL_STATION_PASSIVE:
         if (isCoralInTransition()) {
           rampRollersCurrentState = RampRollersCurrentState.HOLD_CORAL;
-        } else {
+        } else if (isCoralIntakedInEndefector()) {
+          rampRollersCurrentState = RampRollersCurrentState.STOPPED;
+        }
+        else {
           rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
         }
         break;

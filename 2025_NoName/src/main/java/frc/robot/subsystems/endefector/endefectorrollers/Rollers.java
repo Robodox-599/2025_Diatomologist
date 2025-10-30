@@ -176,8 +176,7 @@ public class Rollers {
           rampRollersCurrentState = RampRollersCurrentState.HOLD_CORAL;
         } else if (isCoralIntakedInEndefector()) {
           rampRollersCurrentState = RampRollersCurrentState.STOPPED;
-        }
-        else {
+        } else {
           rampRollersCurrentState = RampRollersCurrentState.INTAKING_CORAL_STATION_PASSIVE;
         }
         break;

@@ -536,6 +536,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return atDriveToPointSetpoints;
   }
 
+  public boolean isSpeedsSlowEnough() {
+    ChassisSpeeds speeds = getChassisSpeeds();
+       return Math.abs(speeds.vxMetersPerSecond) < 1
+            && Math.abs(speeds.vyMetersPerSecond) < 1
+            && Math.abs(speeds.omegaRadiansPerSecond) < 0.3;
+  }
+
   public boolean isYErrorWithinTolerance() {
     return Math.abs(driveToPointYError) < DRIVE_TO_POINT_Y_ERROR_TOLERANCE;
   }

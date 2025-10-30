@@ -4,6 +4,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -72,9 +73,13 @@ public class Bindings extends SubsystemBase {
     /* KEEP FOR COMPETITION BOT  */
     // // SET WANTED STATE TO A LOGIC STATE
 
+    driver.a().onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
     driver
         .rightBumper()
-        .onTrue(setLogicStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .onTrue(
+            superstructure
+                .setWantedSuperStateCommand(WantedSuperState.INTAKING_CORAL_STATION)
+                .alongWith(rumbleControllers(driver, operator)));
     // // SET WANTED STATE TO INTAKING ALGAE LOLLIPOP
     driver
         .leftBumper()
@@ -104,7 +109,9 @@ public class Bindings extends SubsystemBase {
     // SET WANTED STATE TO AUTO SCORE CORAL (OR AUTO ALIGN ONLY IF AUTOMATION LEVEL IS MANUAL)
     driver
         .povRight()
-        .whileTrue(setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator)));
+        .whileTrue(
+            new RepeatCommand(
+                setAutoAlignCoralStateCommand().alongWith(rumbleControllers(driver, operator))));
     // // SET WANTED STATE TO AUTO INTAKE ALGAE FROM THE REEF (OR AUTO ALIGN ONLY IF AUTOMATION
     // LEVEL IS MANUAL)
     driver
@@ -363,8 +370,8 @@ public class Bindings extends SubsystemBase {
     int nearestFace = AutoAlignPoseGenerator.getNearestReefFaceIndex();
     boolean flip = (nearestFace == 2 || nearestFace == 3 || nearestFace == 4);
 
-    if (superstructure.isCoralEnsured()) {
-      if (automationLevel == AutomationLevel.AUTO_ACTION) {
+    if (automationLevel == AutomationLevel.AUTO_ACTION) {
+      if (superstructure.isCoralEnsured()) {
         switch (coralScoreLevel) {
           default:
           case POSITION_CORAL_L1:
@@ -384,6 +391,8 @@ public class Bindings extends SubsystemBase {
                 ? WantedSuperState.AUTO_SCORE_L4_LEFT
                 : WantedSuperState.AUTO_SCORE_L4_RIGHT;
         }
+      } else {
+        return WantedSuperState.INTAKING_CORAL_STATION;
       }
     }
     switch (coralScoreLevel) {

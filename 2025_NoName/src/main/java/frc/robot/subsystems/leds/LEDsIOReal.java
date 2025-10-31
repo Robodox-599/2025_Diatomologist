@@ -30,7 +30,7 @@ public class LEDsIOReal extends LEDsIO {
     cfg.CANdleFeatures.StatusLedWhenActive = StatusLedWhenActiveValue.Enabled;
 
     cfg.LED.LossOfSignalBehavior = LossOfSignalBehaviorValue.DisableLEDs;
-    cfg.LED.StripType = StripTypeValue.RGB;
+    cfg.LED.StripType = StripTypeValue.GRB;
     cfg.LED.BrightnessScalar = 0.5;
 
     candleReal.getConfigurator().apply(cfg);

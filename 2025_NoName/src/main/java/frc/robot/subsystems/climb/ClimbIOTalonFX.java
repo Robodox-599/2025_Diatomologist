@@ -41,7 +41,7 @@ public class ClimbIOTalonFX extends ClimbIO {
   Debouncer deployDebouncer = new Debouncer(0.1);
   Debouncer cageDetectDebouncer = new Debouncer(0.1);
   Debouncer climbDebouncer = new Debouncer(0.1);
-  Debouncer flapDeployDebouncer = new Debouncer(0.75);
+  // Debouncer flapDeployDebouncer = new Debouncer(0.75);
   Debouncer rampDeployDebouncer = new Debouncer(0.75);
 
   private final StatusSignal<Angle> climbPosition;

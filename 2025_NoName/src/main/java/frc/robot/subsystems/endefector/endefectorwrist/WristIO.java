@@ -11,6 +11,7 @@ public abstract class WristIO {
   protected double targetPosition = 0.0;
   protected double currentPosition = 0.0;
   protected boolean atSetpoint = false;
+  protected boolean isJammed = false;
 
   protected boolean isCoralInEndefector = false;
 

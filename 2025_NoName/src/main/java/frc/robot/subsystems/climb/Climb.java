@@ -128,9 +128,9 @@ public class Climb extends SubsystemBase {
   }
 
   public boolean isClimbed() {
-    return io.isCageDetected
-        && io.isRampReleased
-        && io.climbPosition <= getClimbPosition(ClimbStates.CLIMBING);
+    return
+    // io.isCageDetected &&
+    io.isRampReleased && io.climbPosition <= getClimbPosition(ClimbStates.CLIMBING);
   }
 
   public void setClimbVoltage(ClimbStates state) {

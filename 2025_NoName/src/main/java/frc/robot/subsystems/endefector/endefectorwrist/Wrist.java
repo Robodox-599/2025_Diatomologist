@@ -22,6 +22,7 @@ public class Wrist {
 
   public enum WantedState {
     POSITION_CORAL_STATION,
+    UNJAMMING_CORAL_STATION,
     INTAKING_ALGAE_LOLLIPOP,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_REEF_L2,
@@ -69,6 +70,19 @@ public class Wrist {
       case POSITION_CORAL_STATION:
         if (subsystemChecker.isAtElevatorHeight(
             ElevatorConstants.ElevatorStates.POSITION_CORAL_STATION)) {
+          if (io.isJammed) {
+            wantedState = WantedState.UNJAMMING_CORAL_STATION;
+            currentState = CurrentState.POSITION_PREPARED;
+          } else {
+            currentState = CurrentState.POSITION_CORAL_STATION;
+          }
+        } else {
+          currentState = CurrentState.POSITION_PREPARED;
+        }
+        break;
+      case UNJAMMING_CORAL_STATION:
+        if (isAtSetpoint(WristStates.POSITION_PREPARED)) {
+          wantedState = WantedState.POSITION_CORAL_STATION;
           currentState = CurrentState.POSITION_CORAL_STATION;
         } else {
           currentState = CurrentState.POSITION_PREPARED;

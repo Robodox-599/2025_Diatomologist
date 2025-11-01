@@ -332,6 +332,12 @@ public class AutoRoutines {
                     WantedSuperState.POSITION_PREPARED),
                 MIDtoG.cmd()));
 
+    MIDtoG.active()
+        .and(
+            () -> (drivetrain.isWithinL4RaiseDistance() && superstructureCommands.isCoralEnsured()))
+        .onTrue(
+            superstructureCommands.setWantedSuperStateCommand(WantedSuperState.POSITION_CORAL_L4));
+
     MIDtoG.done()
         .onTrue(
             superstructureCommands.setWantedSuperStateCommand(

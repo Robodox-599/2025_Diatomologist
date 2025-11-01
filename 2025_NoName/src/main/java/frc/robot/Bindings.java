@@ -454,13 +454,13 @@ public class Bindings extends SubsystemBase {
         switch (coralScoreLevel) {
           default:
           case POSITION_CORAL_L1:
-            return WantedSuperState.POSITION_CORAL_L1_ACTIVE;
+            return WantedSuperState.POSITION_CORAL_L1;
           case POSITION_CORAL_L2:
-            return WantedSuperState.POSITION_CORAL_L2_ACTIVE;
+            return WantedSuperState.POSITION_CORAL_L2;
           case POSITION_CORAL_L3:
-            return WantedSuperState.POSITION_CORAL_L3_ACTIVE;
+            return WantedSuperState.POSITION_CORAL_L3;
           case POSITION_CORAL_L4:
-            return WantedSuperState.POSITION_CORAL_L4_ACTIVE;
+            return WantedSuperState.POSITION_CORAL_L4;
         }
       case ALGAE:
         switch (algaeLevel) {

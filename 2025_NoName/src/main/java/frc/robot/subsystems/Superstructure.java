@@ -37,6 +37,7 @@ public class Superstructure extends SubsystemBase {
   private WantedSuperState wantedSuperState = WantedSuperState.STOPPED;
 
   public enum CurrentSuperState {
+    POSITION_CORAL_STATION,
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
@@ -46,39 +47,37 @@ public class Superstructure extends SubsystemBase {
     INTAKING_ALGAE_L3,
     POSITION_PREPARED,
     POSITION_PREPARED_AUTO,
-    POSITION_CORAL_L1,
-    POSITION_CORAL_L2,
-    POSITION_CORAL_L3,
-    POSITION_CORAL_L4,
-    POSITION_CORAL_L4_AUTO,
+    POSITION_CORAL_L1_PASSIVE,
+    POSITION_CORAL_L2_PASSIVE,
+    POSITION_CORAL_L3_PASSIVE,
+    POSITION_CORAL_L4_PASSIVE,
+    POSITION_CORAL_L1_ACTIVE,
+    POSITION_CORAL_L2_ACTIVE,
+    POSITION_CORAL_L3_ACTIVE,
+    POSITION_CORAL_L4_ACTIVE,
     AUTO_ALIGN_LEFT_TROUGH,
     AUTO_ALIGN_LEFT_BRANCH_L2,
     AUTO_ALIGN_LEFT_BRANCH_L3,
     AUTO_ALIGN_LEFT_BRANCH_L4,
-    AUTO_ALIGN_LEFT_BRANCH_L4_AUTO,
-    AUTO_ALIGN_MIDDLE_LEFT_TROUGH,
-    AUTO_ALIGN_MIDDLE_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_BRANCH_L2,
     AUTO_ALIGN_RIGHT_BRANCH_L3,
     AUTO_ALIGN_RIGHT_BRANCH_L4,
-    AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO,
     AUTO_ALIGN_MIDDLE_ALGAE,
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     PREPARE_CLIMB,
-    READY_TO_CLIMB,
     SCORING_CORAL_TROUGH,
     SCORING_CORAL_L2_L3,
     SCORING_CORAL_L4,
     SCORING_ALGAE,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     HOLD_CLIMB,
     STOPPED,
   }
 
   public enum WantedSuperState {
+    POSITION_CORAL_STATION,
     INTAKING_CORAL_STATION,
     INTAKING_ALGAE_GROUND,
     INTAKING_ALGAE_LOLLIPOP,
@@ -89,25 +88,20 @@ public class Superstructure extends SubsystemBase {
     AUTO_INTAKE_ALGAE,
     POSITION_PREPARED,
     POSITION_PREPARED_AUTO,
-    POSITION_CORAL_L1,
-    POSITION_CORAL_L2,
-    POSITION_CORAL_L3,
-    POSITION_CORAL_L4,
-    POSITION_CORAL_L4_AUTO,
+    POSITION_CORAL_L1_ACTIVE,
+    POSITION_CORAL_L2_ACTIVE,
+    POSITION_CORAL_L3_ACTIVE,
+    POSITION_CORAL_L4_ACTIVE,
     AUTO_ALIGN_LEFT_TROUGH,
     AUTO_ALIGN_LEFT_BRANCH_L2,
     AUTO_ALIGN_LEFT_BRANCH_L3,
     AUTO_ALIGN_LEFT_BRANCH_L4,
-    AUTO_ALIGN_MIDDLE_LEFT_TROUGH,
-    AUTO_ALIGN_MIDDLE_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_TROUGH,
     AUTO_ALIGN_RIGHT_BRANCH_L2,
     AUTO_ALIGN_RIGHT_BRANCH_L3,
     AUTO_ALIGN_RIGHT_BRANCH_L4,
     AUTO_ALIGN_MIDDLE_ALGAE,
     AUTO_SCORE_L1_LEFT,
-    AUTO_SCORE_L1_MIDDLE_LEFT,
-    AUTO_SCORE_L1_MIDDLE_RIGHT,
     AUTO_SCORE_L1_RIGHT,
     AUTO_SCORE_L2_LEFT,
     AUTO_SCORE_L2_RIGHT,
@@ -120,11 +114,9 @@ public class Superstructure extends SubsystemBase {
     POSITION_ALGAE_PROCESSOR,
     POSITION_ALGAE_BARGE,
     PREPARE_CLIMB,
-    READY_TO_CLIMB,
     SCORING_CORAL,
     SCORING_ALGAE,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     HOLD_CLIMB,
     STOPPED,
     NO_STATE,
@@ -177,6 +169,9 @@ public class Superstructure extends SubsystemBase {
   private void handleStateTransitions() {
     previousSuperState = currentSuperState;
     switch (wantedSuperState) {
+      case POSITION_CORAL_STATION:
+        currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+        break;
       case INTAKING_CORAL_STATION:
         if (rollers.isCoralEnsured()) {
           currentSuperState = CurrentSuperState.POSITION_PREPARED;
@@ -259,20 +254,17 @@ public class Superstructure extends SubsystemBase {
       case POSITION_PREPARED_AUTO:
         currentSuperState = CurrentSuperState.POSITION_PREPARED_AUTO;
         break;
-      case POSITION_CORAL_L1:
-        currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
+      case POSITION_CORAL_L1_ACTIVE:
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L1_ACTIVE;
         break;
-      case POSITION_CORAL_L2:
-        currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
+      case POSITION_CORAL_L2_ACTIVE:
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L2_ACTIVE;
         break;
-      case POSITION_CORAL_L3:
-        currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
+      case POSITION_CORAL_L3_ACTIVE:
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L3_ACTIVE;
         break;
-      case POSITION_CORAL_L4:
-        currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
-        break;
-      case POSITION_CORAL_L4_AUTO:
-        currentSuperState = CurrentSuperState.POSITION_CORAL_L4_AUTO;
+      case POSITION_CORAL_L4_ACTIVE:
+        currentSuperState = CurrentSuperState.POSITION_CORAL_L4_ACTIVE;
         break;
       case AUTO_ALIGN_LEFT_TROUGH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH;
@@ -285,12 +277,6 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_ALIGN_LEFT_BRANCH_L4:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4;
-        break;
-      case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
-        currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
-        break;
-      case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
-        currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
         break;
       case AUTO_ALIGN_RIGHT_TROUGH:
         currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH;
@@ -309,200 +295,216 @@ public class Superstructure extends SubsystemBase {
         break;
       case AUTO_SCORE_L1_LEFT:
         if (rollers.isCoralTroughScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L1_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreTroughCoral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L1_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_TROUGH;
         }
         break;
-      case AUTO_SCORE_L1_MIDDLE_LEFT:
-        if (rollers.isCoralTroughScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
-            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
-            && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
-                || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreTroughCoral()
-            && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
-        } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_LEFT_TROUGH;
-        }
-        break;
-      case AUTO_SCORE_L1_MIDDLE_RIGHT:
-        if (rollers.isCoralTroughScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
-        } else if (drivetrain.isAtDriveToPointSetpoints()
-            && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
-            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
-            && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
-                || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
-          currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-        } else if (drivetrain.isReadyToRaiseAutoScoreTroughCoral()
-            && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
-        } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_MIDDLE_RIGHT_TROUGH;
-        }
-        break;
       case AUTO_SCORE_L1_RIGHT:
         if (rollers.isCoralTroughScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_TROUGH)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L1)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L1_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L1_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreTroughCoral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L1;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L1_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L1_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_TROUGH;
         }
         break;
       case AUTO_SCORE_L2_LEFT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L2_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL2L3Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L2
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L2_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L2;
         }
         break;
       case AUTO_SCORE_L2_RIGHT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L2)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L2)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L2_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L2_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL2L3Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L2;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L2_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L2_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L2;
         }
         break;
       case AUTO_SCORE_L3_LEFT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L3_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL2L3Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L3
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L3_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L3;
         }
         break;
       case AUTO_SCORE_L3_RIGHT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L3)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L3)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L3_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L3_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL2L3Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L3;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L3_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L3_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L3;
         }
         break;
       case AUTO_SCORE_L4_LEFT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL4Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4;
         }
         break;
       case AUTO_SCORE_L4_RIGHT:
         if (rollers.isCoralBranchScored()) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
             && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL4Coral()
             && rollers.isCoralEnsured()
+            // && drivetrain.isSpeedsSlowEnough()
             && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L4;
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_PASSIVE;
         } else {
           currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
         }
@@ -513,18 +515,25 @@ public class Superstructure extends SubsystemBase {
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
-            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4_AUTO)
+            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL4Coral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4_AUTO
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_AUTO;
+            // && drivetrain.isSpeedsSlowEnough()
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_PASSIVE;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4_AUTO;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_LEFT_BRANCH_L4;
         }
         break;
       case AUTO_SCORE_L4_RIGHT_AUTO:
@@ -533,18 +542,25 @@ public class Superstructure extends SubsystemBase {
           wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
         } else if (drivetrain.isAtDriveToPointSetpoints()
             && wrist.isAtSetpoint(WristStates.POSITION_BRANCH_L4)
-            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4_AUTO)
+            && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
             && subsystemChecker.isSpeedsSettled()
-            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
           currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
+        } else if (drivetrain.isAtDriveToPointSetpoints()
+            // && elevator.isAtSetpoint(ElevatorStates.POSITION_CORAL_L4)
+            && subsystemChecker.isSpeedsSettled()
+            && (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_ACTIVE;
         } else if (drivetrain.isReadyToRaiseAutoScoreL4Coral()
             && rollers.isCoralEnsured()
-            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO
-                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_AUTO)) {
-          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_AUTO;
+            // && drivetrain.isSpeedsSlowEnough()
+            && (currentSuperState == CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4
+                || currentSuperState == CurrentSuperState.POSITION_CORAL_L4_PASSIVE)) {
+          currentSuperState = CurrentSuperState.POSITION_CORAL_L4_PASSIVE;
         } else {
-          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO;
+          currentSuperState = CurrentSuperState.AUTO_ALIGN_RIGHT_BRANCH_L4;
         }
         break;
       case POSITION_ALGAE_PROCESSOR:
@@ -573,22 +589,22 @@ public class Superstructure extends SubsystemBase {
       case SCORING_CORAL:
         if (rollers.isCoralTroughScored()
             && currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else if (rollers.isCoralBranchScored()
             && (currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3
                 || currentSuperState == CurrentSuperState.SCORING_CORAL_L4)) {
-          currentSuperState = CurrentSuperState.INTAKING_CORAL_STATION;
-          wantedSuperState = WantedSuperState.INTAKING_CORAL_STATION;
+          currentSuperState = CurrentSuperState.POSITION_CORAL_STATION;
+          wantedSuperState = WantedSuperState.POSITION_CORAL_STATION;
         } else {
-          if (currentSuperState == CurrentSuperState.POSITION_CORAL_L1
+          if (currentSuperState == CurrentSuperState.POSITION_CORAL_L1_ACTIVE
               || currentSuperState == CurrentSuperState.SCORING_CORAL_TROUGH) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_TROUGH;
-          } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L2
-              || currentSuperState == CurrentSuperState.POSITION_CORAL_L3
+          } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L2_ACTIVE
+              || currentSuperState == CurrentSuperState.POSITION_CORAL_L3_ACTIVE
               || currentSuperState == CurrentSuperState.SCORING_CORAL_L2_L3) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_L2_L3;
-          } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L4
+          } else if (currentSuperState == CurrentSuperState.POSITION_CORAL_L4_ACTIVE
               || currentSuperState == CurrentSuperState.SCORING_CORAL_L4) {
             currentSuperState = CurrentSuperState.SCORING_CORAL_L4;
           } else {
@@ -601,20 +617,14 @@ public class Superstructure extends SubsystemBase {
         break;
       case PREPARE_CLIMB:
         if (climb.isClimbReady()) {
-          wantedSuperState = WantedSuperState.READY_TO_CLIMB;
-          currentSuperState = CurrentSuperState.READY_TO_CLIMB;
+          wantedSuperState = WantedSuperState.CLIMBING;
+          currentSuperState = CurrentSuperState.CLIMBING;
         } else {
           currentSuperState = CurrentSuperState.PREPARE_CLIMB;
         }
         break;
-      case READY_TO_CLIMB:
-        currentSuperState = CurrentSuperState.READY_TO_CLIMB;
-        break;
-      case CLIMBING_UP:
-        currentSuperState = CurrentSuperState.CLIMBING_UP;
-        break;
-      case CLIMBING_DOWN:
-        currentSuperState = CurrentSuperState.CLIMBING_DOWN;
+      case CLIMBING:
+        currentSuperState = CurrentSuperState.CLIMBING;
         break;
       case HOLD_CLIMB:
         currentSuperState = CurrentSuperState.HOLD_CLIMB;
@@ -629,131 +639,134 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void applyStates() {
-    switch (currentSuperState) {
-      case INTAKING_CORAL_STATION:
-        intakeCoralStation();
-        break;
-      case INTAKING_ALGAE_GROUND:
-        intakeAlgaeGround();
-        break;
-      case INTAKING_ALGAE_LOLLIPOP:
-        intakeAlgaeLollipop();
-        break;
-      case POSITION_ALGAE_L2:
-        positionAlgaeL2();
-        break;
-      case INTAKING_ALGAE_L2:
-        intakeAlgaeL2();
-        break;
-      case POSITION_ALGAE_L3:
-        positionAlgaeL3();
-        break;
-      case INTAKING_ALGAE_L3:
-        intakeAlgaeL3();
-        break;
-      case POSITION_PREPARED:
-        prepare();
-        break;
-      case POSITION_PREPARED_AUTO:
-        prepareInAuto();
-        break;
-      case POSITION_CORAL_L1:
-        positionToCoralL1();
-        break;
-      case POSITION_CORAL_L2:
-        positionToCoralL2();
-        break;
-      case POSITION_CORAL_L3:
-        positionToCoralL3();
-        break;
-      case POSITION_CORAL_L4:
-        positionToCoralL4();
-        break;
-      case POSITION_CORAL_L4_AUTO:
-        positionToCoralL4Auto();
-        break;
-      case AUTO_ALIGN_LEFT_BRANCH_L2:
-        autoAlignToL2orL3Branch(true);
-        break;
-      case AUTO_ALIGN_LEFT_BRANCH_L3:
-        autoAlignToL2orL3Branch(true);
-        break;
-      case AUTO_ALIGN_LEFT_BRANCH_L4:
-        autoAlignToL4Branch(true);
-        break;
-      case AUTO_ALIGN_LEFT_BRANCH_L4_AUTO:
-        autoAlignToL4BranchAuto(true);
-        break;
-      case AUTO_ALIGN_LEFT_TROUGH:
-        autoAlignToTrough(1);
-        break;
-      case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
-        autoAlignToTrough(2);
-        break;
-      case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
-        autoAlignToTrough(3);
-        break;
-      case AUTO_ALIGN_RIGHT_BRANCH_L2:
-        autoAlignToL2orL3Branch(false);
-        break;
-      case AUTO_ALIGN_RIGHT_BRANCH_L3:
-        autoAlignToL2orL3Branch(false);
-        break;
-      case AUTO_ALIGN_RIGHT_BRANCH_L4:
-        autoAlignToL4Branch(false);
-        break;
-      case AUTO_ALIGN_RIGHT_BRANCH_L4_AUTO:
-        autoAlignToL4BranchAuto(false);
-        break;
-      case AUTO_ALIGN_RIGHT_TROUGH:
-        autoAlignToTrough(4);
-        break;
-      case AUTO_ALIGN_MIDDLE_ALGAE:
-        autoAlignToAlgaeReefFace(false);
-        break;
-      case POSITION_ALGAE_PROCESSOR:
-        positionToAlgaeProcessor();
-        break;
-      case POSITION_ALGAE_BARGE:
-        positionToAlgaeBarge();
-        break;
-      case PREPARE_CLIMB:
-        prepareClimb();
-        break;
-      case READY_TO_CLIMB:
-        readyToClimb();
-        break;
-      case CLIMBING_UP:
-        climbingUp();
-        break;
-      case CLIMBING_DOWN:
-        climbingDown();
-        break;
-      case SCORING_CORAL_TROUGH:
-        scoreCoralInTrough();
-        break;
-      case SCORING_CORAL_L2_L3:
-        scoreCoralOnL2L3();
-        break;
-      case SCORING_CORAL_L4:
-        scoreCoralOnL4();
-        break;
-      case SCORING_ALGAE:
-        scoreAlgae();
-        break;
-      case STOPPED:
-        stop();
-        break;
-      default:
-        stop();
-        break;
+    if (currentSuperState != previousSuperState) {
+      switch (currentSuperState) {
+        case POSITION_CORAL_STATION:
+          positionCoralStation();
+          break;
+        case INTAKING_CORAL_STATION:
+          intakeCoralStation();
+          break;
+        case INTAKING_ALGAE_GROUND:
+          intakeAlgaeGround();
+          break;
+        case INTAKING_ALGAE_LOLLIPOP:
+          intakeAlgaeLollipop();
+          break;
+        case POSITION_ALGAE_L2:
+          positionAlgaeL2();
+          break;
+        case INTAKING_ALGAE_L2:
+          intakeAlgaeL2();
+          break;
+        case POSITION_ALGAE_L3:
+          positionAlgaeL3();
+          break;
+        case INTAKING_ALGAE_L3:
+          intakeAlgaeL3();
+          break;
+        case POSITION_PREPARED:
+          prepare();
+          break;
+        case POSITION_PREPARED_AUTO:
+          prepareInAuto();
+          break;
+        case POSITION_CORAL_L1_PASSIVE:
+          positionToCoralL1Passive();
+          break;
+        case POSITION_CORAL_L1_ACTIVE:
+          positionToCoralL1Active();
+          break;
+        case POSITION_CORAL_L2_PASSIVE:
+          positionToCoralL2Passive();
+          break;
+        case POSITION_CORAL_L2_ACTIVE:
+          positionToCoralL2Active();
+          break;
+        case POSITION_CORAL_L3_PASSIVE:
+          positionToCoralL3Passive();
+          break;
+        case POSITION_CORAL_L3_ACTIVE:
+          positionToCoralL3Active();
+          break;
+        case POSITION_CORAL_L4_PASSIVE:
+          positionToCoralL4Passive();
+          break;
+        case POSITION_CORAL_L4_ACTIVE:
+          positionToCoralL4Active();
+          break;
+        case AUTO_ALIGN_LEFT_BRANCH_L2:
+          autoAlignToL2orL3Branch(true);
+          break;
+        case AUTO_ALIGN_LEFT_BRANCH_L3:
+          autoAlignToL2orL3Branch(true);
+          break;
+        case AUTO_ALIGN_LEFT_BRANCH_L4:
+          autoAlignToL4Branch(true);
+          break;
+        case AUTO_ALIGN_LEFT_TROUGH:
+          autoAlignToTrough(true);
+          break;
+        case AUTO_ALIGN_RIGHT_BRANCH_L2:
+          autoAlignToL2orL3Branch(false);
+          break;
+        case AUTO_ALIGN_RIGHT_BRANCH_L3:
+          autoAlignToL2orL3Branch(false);
+          break;
+        case AUTO_ALIGN_RIGHT_BRANCH_L4:
+          autoAlignToL4Branch(false);
+          break;
+        case AUTO_ALIGN_RIGHT_TROUGH:
+          autoAlignToTrough(false);
+          break;
+        case AUTO_ALIGN_MIDDLE_ALGAE:
+          autoAlignToAlgaeReefFace(false);
+          break;
+        case POSITION_ALGAE_PROCESSOR:
+          positionToAlgaeProcessor();
+          break;
+        case POSITION_ALGAE_BARGE:
+          positionToAlgaeBarge();
+          break;
+        case PREPARE_CLIMB:
+          prepareClimb();
+          break;
+        case CLIMBING:
+          climbing();
+          break;
+        case SCORING_CORAL_TROUGH:
+          scoreCoralInTrough();
+          break;
+        case SCORING_CORAL_L2_L3:
+          scoreCoralOnL2L3();
+          break;
+        case SCORING_CORAL_L4:
+          scoreCoralOnL4();
+          break;
+        case SCORING_ALGAE:
+          scoreAlgae();
+          break;
+        case STOPPED:
+          stop();
+          break;
+        default:
+          stop();
+          break;
+      }
     }
   }
 
+  private void positionCoralStation() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
+    rollers.setWantedState(Rollers.WantedState.STOPPED);
+    wrist.setWantedState(Wrist.WantedState.POSITION_CORAL_STATION);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_STATION);
+  }
+
   private void intakeCoralStation() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.INTAKING_CORAL_STATION);
-    wrist.setWantedState(Wrist.WantedState.INTAKING_CORAL_STATION);
+    wrist.setWantedState(Wrist.WantedState.POSITION_CORAL_STATION);
     leds.setCurrentState(LEDs.CurrentState.INTAKING_CORAL_STATION);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
@@ -821,14 +834,46 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void prepareInAuto() {
-    elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED);
+    elevator.setWantedState(Elevator.WantedState.POSITION_PREPARED_AUTO);
     rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     leds.setCurrentState(LEDs.CurrentState.POSITION_PREPARED);
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  private void positionToCoralL1() {
+  private void positionToCoralL1Passive() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L1);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void positionToCoralL2Passive() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L2);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void positionToCoralL3Passive() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L3);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void positionToCoralL4Passive() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
+    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
+    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
+    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
+    // climb.setWantedState(Climb.WantedState.STOWED);
+  }
+
+  private void positionToCoralL1Active() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L1);
     rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_TROUGH);
@@ -836,7 +881,7 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  private void positionToCoralL2() {
+  private void positionToCoralL2Active() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L2);
     rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L2);
@@ -844,7 +889,7 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  private void positionToCoralL3() {
+  private void positionToCoralL3Active() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L3);
     rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L3);
@@ -852,16 +897,8 @@ public class Superstructure extends SubsystemBase {
     // climb.setWantedState(Climb.WantedState.STOWED);
   }
 
-  private void positionToCoralL4() {
+  private void positionToCoralL4Active() {
     elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4);
-    rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
-    wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L4);
-    leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
-    // climb.setWantedState(Climb.WantedState.STOWED);
-  }
-
-  private void positionToCoralL4Auto() {
-    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_L4_AUTO);
     rollers.setWantedState(Rollers.WantedState.HOLD_CORAL);
     wrist.setWantedState(Wrist.WantedState.POSITION_BRANCH_L4);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CORAL_L4);
@@ -907,25 +944,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   /**
-   * Automatically drives to a branch
-   *
-   * @param useLeftBranch true if the target branch is the left branch, false if it is the right
-   *     branch
-   */
-  private void autoAlignToL4BranchAuto(boolean useLeftBranch) {
-    drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestBranchPosition(drivetrain.getPose(), useLeftBranch));
-  }
-
-  /**
    * Automatically drives to a trough
    *
    * @param useLeftBranch true if the target branch is the left branch, false if it is the right
    *     branch
    */
-  private void autoAlignToTrough(int troughIndex) {
+  private void autoAlignToTrough(boolean useLeftBranch) {
     drivetrain.setTargetPoseForDriveToPoint(
-        AutoAlignPoseGenerator.getNearestTroughPosition(drivetrain.getPose(), troughIndex));
+        AutoAlignPoseGenerator.getNearestTroughPosition(drivetrain.getPose(), useLeftBranch));
   }
 
   /**
@@ -960,34 +986,18 @@ public class Superstructure extends SubsystemBase {
   }
 
   private void prepareClimb() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
     climb.setWantedState(Climb.WantedState.PREPARE_CLIMB);
     leds.setCurrentState(LEDs.CurrentState.POSITION_CLIMB_PREPARED);
   }
 
-  private void readyToClimb() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
+  private void climbing() {
+    elevator.setWantedState(Elevator.WantedState.POSITION_CORAL_STATION);
     rollers.setWantedState(Rollers.WantedState.STOPPED);
     wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.READY_TO_CLIMB);
-    leds.setCurrentState(LEDs.CurrentState.CLIMBING);
-  }
-
-  private void climbingUp() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.CLIMBING_UP);
-    leds.setCurrentState(LEDs.CurrentState.CLIMBING);
-  }
-
-  private void climbingDown() {
-    elevator.setWantedState(Elevator.WantedState.INTAKING_CORAL_STATION);
-    rollers.setWantedState(Rollers.WantedState.STOPPED);
-    wrist.setWantedState(Wrist.WantedState.POSITION_PREPARED);
-    climb.setWantedState(Climb.WantedState.CLIMBING_DOWN);
+    climb.setWantedState(Climb.WantedState.CLIMBING);
     leds.setCurrentState(LEDs.CurrentState.CLIMBING);
   }
 
@@ -1018,12 +1028,6 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_LEFT_TROUGH:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case AUTO_ALIGN_MIDDLE_LEFT_TROUGH:
-        wantedSuperState = WantedSuperState.POSITION_PREPARED;
-        break;
-      case AUTO_ALIGN_MIDDLE_RIGHT_TROUGH:
-        wantedSuperState = WantedSuperState.POSITION_PREPARED;
-        break;
       case AUTO_ALIGN_RIGHT_TROUGH:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
@@ -1039,16 +1043,28 @@ public class Superstructure extends SubsystemBase {
       case AUTO_ALIGN_MIDDLE_ALGAE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case POSITION_CORAL_L1:
+      case POSITION_CORAL_L1_PASSIVE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case POSITION_CORAL_L2:
+      case POSITION_CORAL_L2_PASSIVE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case POSITION_CORAL_L3:
+      case POSITION_CORAL_L3_PASSIVE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
-      case POSITION_CORAL_L4:
+      case POSITION_CORAL_L4_PASSIVE:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case POSITION_CORAL_L1_ACTIVE:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case POSITION_CORAL_L2_ACTIVE:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case POSITION_CORAL_L3_ACTIVE:
+        wantedSuperState = WantedSuperState.POSITION_PREPARED;
+        break;
+      case POSITION_CORAL_L4_ACTIVE:
         wantedSuperState = WantedSuperState.POSITION_PREPARED;
         break;
       case POSITION_ALGAE_L2:

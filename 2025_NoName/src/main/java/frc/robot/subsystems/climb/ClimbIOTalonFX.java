@@ -1,14 +1,17 @@
 package frc.robot.subsystems.climb;
 
-import static frc.robot.subsystems.endefector.endefectorrollers.RollersConstants.gearRatio;
-
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
@@ -16,26 +19,29 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Servo;
+import frc.robot.subsystems.climb.ClimbConstants.*;
 import frc.robot.util.PhoenixUtil;
 
 public class ClimbIOTalonFX extends ClimbIO {
 
   private final TalonFX climbMotor;
   private final TalonFX rollersMotor;
+  private final TalonSRX solenoid;
+
+  private final CANcoder cancoder;
+
   // private final BangBangController bangBangController;
   // private final DigitalInput cageLimitSwitch;
-  private final DigitalInput deployLimitSwitch;
+  // private final DigitalInput deployLimitSwitch;
   // private final DigitalInput climbLimitSwitch;
-  private final Servo flapServo1;
-  private final Servo flapServo2;
-  private final Servo rampServo1;
-  private final Servo rampServo2;
+  // private final Servo flapServo1;
+  // private final Servo flapServo2;
+  // private final Servo rampServo1;
+  // private final Servo rampServo2;
   Debouncer deployDebouncer = new Debouncer(0.1);
   Debouncer cageDetectDebouncer = new Debouncer(0.1);
   Debouncer climbDebouncer = new Debouncer(0.1);
-  Debouncer flapDeployDebouncer = new Debouncer(0.75);
+  // Debouncer flapDeployDebouncer = new Debouncer(0.75);
   Debouncer rampDeployDebouncer = new Debouncer(0.75);
 
   private final StatusSignal<Angle> climbPosition;
@@ -53,16 +59,20 @@ public class ClimbIOTalonFX extends ClimbIO {
   public ClimbIOTalonFX() {
     climbMotor = new TalonFX(ClimbConstants.climbMotorID, ClimbConstants.climbMotorCANbus);
     rollersMotor = new TalonFX(ClimbConstants.rollersMotorID, ClimbConstants.rollersMotorCANbus);
+    solenoid = new TalonSRX(ClimbConstants.solenoidID);
+
+    cancoder = new CANcoder(ClimbConstants.cancoderID, ClimbConstants.cancoderCANbus);
+    CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
     // bangBangController = new BangBangController();
 
     // cageLimitSwitch = new DigitalInput(ClimbConstants.rollersLimitSwitchDioPort);
-    deployLimitSwitch = new DigitalInput(ClimbConstants.deployLimitSwitchDioPort);
+    // deployLimitSwitch = new DigitalInput(ClimbConstants.deployLimitSwitchDioPort);
     // climbLimitSwitch = new DigitalInput(ClimbConstants.climbLimitSwitchDioPort);
 
-    rampServo1 = new Servo(ClimbConstants.rampServoPWMPort1);
-    rampServo2 = new Servo(ClimbConstants.rampServoPWMPort2);
-    flapServo1 = new Servo(ClimbConstants.flapServoPWMPort1);
-    flapServo2 = new Servo(ClimbConstants.flapServoPWMPort2);
+    // rampServo1 = new Servo(ClimbConstants.rampServoPWMPort1);
+    // rampServo2 = new Servo(ClimbConstants.rampServoPWMPort2);
+    // flapServo1 = new Servo(ClimbConstants.flapServoPWMPort1);
+    // flapServo2 = new Servo(ClimbConstants.flapServoPWMPort2);
 
     TalonFXConfiguration climbConfig = new TalonFXConfiguration();
     TalonFXConfiguration rollersConfig = new TalonFXConfiguration();
@@ -77,7 +87,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     climbConfig.CurrentLimits.StatorCurrentLimit = 120;
     climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    climbConfig.Feedback.RotorToSensorRatio = gearRatio;
+    // climbConfig.Feedback.RotorToSensorRatio = gearRatio;
     climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     rollersConfig.CurrentLimits.SupplyCurrentLimit = 40;
     rollersConfig.CurrentLimits.StatorCurrentLimit = 60;
@@ -87,13 +97,15 @@ public class ClimbIOTalonFX extends ClimbIO {
 
     // bangBangController.setTolerance(3);
 
+    cancoderConfig.MagnetSensor.MagnetOffset = ClimbConstants.cancoderOffset;
+    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.4;
+
     PhoenixUtil.tryUntilOk(5, () -> climbMotor.getConfigurator().apply(climbConfig, 0.25));
     PhoenixUtil.tryUntilOk(5, () -> rollersMotor.getConfigurator().apply(rollersConfig, 0.25));
-    PhoenixUtil.tryUntilOk(5, () -> climbMotor.setPosition(0.0, 0.25));
-    climbMotor.optimizeBusUtilization();
-    rollersMotor.optimizeBusUtilization();
+    PhoenixUtil.tryUntilOk(5, () -> cancoder.getConfigurator().apply(cancoderConfig, 0.25));
 
-    climbPosition = climbMotor.getPosition();
+    climbPosition = cancoder.getAbsolutePosition();
     climbVelocity = climbMotor.getVelocity();
     climbAppliedVolts = climbMotor.getMotorVoltage();
     climbCurrent = climbMotor.getStatorCurrent();
@@ -118,7 +130,8 @@ public class ClimbIOTalonFX extends ClimbIO {
         rollersCurrent,
         rollersAppliedVolts);
 
-    // zeroEncoder();
+    climbMotor.optimizeBusUtilization();
+    rollersMotor.optimizeBusUtilization();
   }
 
   @Override
@@ -137,7 +150,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     super.climbAppliedVolts = climbAppliedVolts.getValueAsDouble();
     super.climbCurrentAmps = climbCurrent.getValueAsDouble();
     super.climbVelocity = climbVelocity.getValueAsDouble();
-    super.climbPositionDegrees = climbPosition.getValueAsDouble();
+    super.climbPosition = climbPosition.getValueAsDouble();
     super.climbTempCelsius = climbTemperature.getValueAsDouble();
     super.rollersAppliedVolts = rollersAppliedVolts.getValueAsDouble();
     super.rollersCurrentAmps = rollersCurrent.getValueAsDouble();
@@ -145,12 +158,7 @@ public class ClimbIOTalonFX extends ClimbIO {
     super.rollersTempCelsius = rollersTemperature.getValueAsDouble();
     super.rollersStatorCurrent = rollersStatorCurrent.getValueAsDouble();
 
-    super.isFlapsReleased =
-        flapDeployDebouncer.calculate(flapServo1.getAngle() > 170 && flapServo2.getAngle() > 170);
-    super.isRampReleased =
-        rampDeployDebouncer.calculate(rampServo1.getAngle() > 125 && rampServo2.getAngle() < 25);
-
-    super.isClimbDeployed = deployDebouncer.calculate(!deployLimitSwitch.get());
+    // super.isClimbDeployed = deployDebouncer.calculate(!deployLimitSwitch.get());
     super.isCageDetected = cageDetectDebouncer.calculate(super.rollersStatorCurrent >= 20);
     // super.isClimbed = climbDebouncer.calculate(climbLimitSwitch.get());
 
@@ -159,19 +167,15 @@ public class ClimbIOTalonFX extends ClimbIO {
     //     positionError < ClimbConstants.positionToleranceInches
     //         && velocityError < ClimbConstants.velocityToleranceInchesPerSec;
 
-    DogLog.log("Climb/IsClimbDeployed", super.isClimbDeployed);
     DogLog.log("Climb/IsCageDetected", super.isCageDetected);
-    DogLog.log("Climb/IsClimbed", super.isClimbed);
-
-    DogLog.log("Climb/isFlapsReleased", super.isFlapsReleased);
     DogLog.log("Climb/isRampReleased", super.isRampReleased);
 
     DogLog.log("Climb/StatorCurrentAmps", super.climbCurrentAmps);
     DogLog.log("Climb/AppliedVoltage", super.climbAppliedVolts);
     DogLog.log("Climb/Velocity", super.climbVelocity);
     DogLog.log("Climb/Temperature", super.climbTempCelsius);
-    DogLog.log("Climb/CurrentPosition", super.climbPositionDegrees);
-    DogLog.log("Climb/TargetPositon", super.targetPositionDegrees);
+    DogLog.log("Climb/Position", super.climbPosition);
+    // DogLog.log("Climb/TargetPositon", super.targetPositionDegrees);
     DogLog.log("Climb/Rollers/StatorCurrentAmps", super.rollersCurrentAmps);
     DogLog.log("Climb/Rollers/AppliedVoltage", super.rollersAppliedVolts);
     DogLog.log("Climb/Rollers/Velocity", super.rollersVelocity);
@@ -193,16 +197,16 @@ public class ClimbIOTalonFX extends ClimbIO {
     climbMotor.setControl(new VoltageOut(voltage));
   }
 
-  @Override
-  public void releaseFlapServos() {
-    flapServo1.setAngle(180);
-    flapServo2.setAngle(180);
-  }
+  // @Override
+  // public void releaseFlapServos() {
+  //   flapServo1.setAngle(180);
+  //   flapServo2.setAngle(180);
+  // }
 
   @Override
-  public void releaseRampServos() {
-    rampServo1.setAngle(135);
-    rampServo2.setAngle(15);
+  public void releaseRamp() {
+    solenoid.set(TalonSRXControlMode.PercentOutput, 1.0);
+    super.isRampReleased = true;
   }
 
   // @Override

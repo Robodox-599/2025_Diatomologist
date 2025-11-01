@@ -19,12 +19,17 @@ public class SubsystemUtil {
     return ElevatorConstants.heights[state.getIndex()];
   }
 
-  public static double rollersStateToVelocity(RollersConstants.EndefectorRollerStates state) {
-    return RollersConstants.rollersVelocities[state.getIndex()];
+  public static double endefectorRollersStateToVelocity(
+      RollersConstants.EndefectorRollerStates state) {
+    return RollersConstants.endefectorRollersVelocities[state.getIndex()];
   }
 
   public static double climbStateToVoltage(ClimbConstants.ClimbStates state) {
     return (ClimbConstants.voltage[state.getIndex()]);
+  }
+
+  public static double climbStateToPosition(ClimbConstants.ClimbStates state) {
+    return (ClimbConstants.position[state.getIndex()]);
   }
 
   public static double wristStateToSetpoint(WristConstants.WristStates state) {

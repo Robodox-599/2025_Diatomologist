@@ -1,8 +1,6 @@
 package frc.robot.subsystems.climb;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climb.ClimbConstants.ClimbStates;
 import frc.robot.util.SubsystemUtil;
@@ -18,21 +16,17 @@ public class Climb extends SubsystemBase {
 
   public enum WantedState {
     PREPARE_CLIMB,
-    READY_TO_CLIMB,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     STOWED,
     STOPPED;
   }
 
   public enum CurrentState {
-    RELEASE_FLAP,
     RELEASE_RAMP,
     DEPLOY_CLIMB,
     INTAKE_CAGE,
     READY_TO_CLIMB,
-    CLIMBING_UP,
-    CLIMBING_DOWN,
+    CLIMBING,
     STOWED,
     STOPPED;
   }
@@ -48,16 +42,11 @@ public class Climb extends SubsystemBase {
   private CurrentState handleStateTransitions() {
     switch (wantedState) {
       case PREPARE_CLIMB:
-        if (!io.isFlapsReleased) {
-          currentState = CurrentState.RELEASE_FLAP;
-        } else if (!io.isClimbDeployed && io.isFlapsReleased) {
-          currentState = CurrentState.DEPLOY_CLIMB;
-        } else if (!io.isRampReleased && io.isClimbDeployed && io.isFlapsReleased) {
+        if (!io.isRampReleased) {
           currentState = CurrentState.RELEASE_RAMP;
-        } else if (io.isRampReleased
-            && io.isClimbDeployed
-            && io.isFlapsReleased
-            && !io.isCageDetected) {
+        } else if (io.isRampReleased && !isClimbDeployed()) {
+          currentState = CurrentState.DEPLOY_CLIMB;
+        } else if (io.isRampReleased && isClimbDeployed() && !io.isCageDetected) {
           currentState = CurrentState.INTAKE_CAGE;
         } else if (isClimbReady()) {
           currentState = CurrentState.READY_TO_CLIMB;
@@ -65,14 +54,12 @@ public class Climb extends SubsystemBase {
           currentState = CurrentState.STOPPED;
         }
         break;
-      case READY_TO_CLIMB:
-        currentState = CurrentState.READY_TO_CLIMB;
-        break;
-      case CLIMBING_UP:
-        currentState = CurrentState.CLIMBING_UP;
-        break;
-      case CLIMBING_DOWN:
-        currentState = CurrentState.CLIMBING_DOWN;
+      case CLIMBING:
+        if (isClimbed()) {
+          currentState = CurrentState.STOPPED;
+        } else {
+          currentState = CurrentState.CLIMBING;
+        }
         break;
       case STOWED:
         currentState = CurrentState.STOWED;
@@ -89,15 +76,10 @@ public class Climb extends SubsystemBase {
 
   private void applyStates() {
     switch (currentState) {
-      case RELEASE_FLAP:
-        setClimbVoltage(ClimbStates.STOPPED);
-        setRollersVelocity(0);
-        releaseFlapServos();
-        break;
       case RELEASE_RAMP:
         setClimbVoltage(ClimbStates.STOPPED);
         setRollersVelocity(0);
-        releaseRampServos();
+        releaseRamp();
         break;
       case DEPLOY_CLIMB:
         setClimbVoltage(ClimbStates.DEPLOYING_CLIMB);
@@ -111,12 +93,8 @@ public class Climb extends SubsystemBase {
         setClimbVoltage(ClimbStates.STOPPED);
         holdCage();
         break;
-      case CLIMBING_UP:
-        setClimbVoltage(ClimbStates.CLIMBING_UP);
-        holdCage();
-        break;
-      case CLIMBING_DOWN:
-        setClimbVoltage(ClimbStates.CLIMBING_DOWN);
+      case CLIMBING:
+        setClimbVoltage(ClimbStates.CLIMBING);
         holdCage();
         break;
       case STOWED:
@@ -129,20 +107,38 @@ public class Climb extends SubsystemBase {
     }
   }
 
-  public void releaseFlapServos() {
-    io.releaseFlapServos();
-  }
+  // public void releaseFlapServos() {
+  //   io.releaseFlapServos();
+  // }
 
-  public void releaseRampServos() {
-    io.releaseRampServos();
+  // public void releaseRampServos() {
+  //   io.releaseRampServos();
+  // }
+
+  public void releaseRamp() {
+    io.releaseRamp();
   }
 
   public boolean isClimbReady() {
-    return io.isClimbDeployed && io.isRampReleased && io.isFlapsReleased && io.isCageDetected;
+    return isClimbDeployed() && io.isRampReleased && io.isCageDetected;
+  }
+
+  public boolean isClimbDeployed() {
+    return io.climbPosition >= getClimbPosition(ClimbStates.DEPLOYING_CLIMB);
+  }
+
+  public boolean isClimbed() {
+    return
+    // io.isCageDetected &&
+    io.isRampReleased && io.climbPosition <= getClimbPosition(ClimbStates.CLIMBING);
   }
 
   public void setClimbVoltage(ClimbStates state) {
     io.setClimbVoltage(SubsystemUtil.climbStateToVoltage(state));
+  }
+
+  public double getClimbPosition(ClimbStates state) {
+    return SubsystemUtil.climbStateToPosition(state);
   }
 
   public void setRollersVelocity(double velocity) {
@@ -153,23 +149,8 @@ public class Climb extends SubsystemBase {
     io.stallRollers();
   }
 
-  public void releaseRampServo() {
-    io.releaseRampServos();
-  }
-
-  public void zeroEncoder() {
-    io.zeroEncoder();
-  }
-
-  public boolean isAtTargetPosition() {
-    return io.atSetpoint;
-  }
-
-  public Command stop() {
-    return Commands.run(
-        () -> {
-          io.setClimbVoltage(0);
-        });
+  public void stop() {
+    io.stop();
   }
 
   public void setWantedState(WantedState wantedState) {

@@ -66,6 +66,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public static final double DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE = 0.015; // 1 cm
   public static final double DRIVE_TO_POINT_STATIC_FRICTION_CONSTANT = 0.02;
   private final double DRIVE_TO_POINT_Y_ERROR_TOLERANCE = 0.02; // 2 cm
+  private final double DRIVE_TO_POINT_LIGHT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(10);
   private final double DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE = Units.degreesToRadians(2);
   private static boolean withinAlgaeRaiseDistance = false;
   private static boolean withinTroughRaiseDistance = false;
@@ -75,6 +76,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static boolean withinReefZone = false;
   private static double driveToPointXError;
   private static double driveToPointYError;
+  private static double driveToPointAngularError;
 
   private final PIDController choreoXController = new PIDController(5, 0, 0);
   private final PIDController choreoYController = new PIDController(5, 0, 0);
@@ -84,7 +86,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private Pose2d targetPoseForDriveToPoint = new Pose2d();
 
   private final PIDController driveToPointController =
-      new PIDController(3.6, 0.0, 0.1); // P: 3.0/3.6, D: 0.1
+      new PIDController(2.5, 0.0, 0.0); // P: 3.0/3.6, D: 0.1
   private final SwerveRequest.FieldCentricFacingAngle driveAtAngle =
       new SwerveRequest.FieldCentricFacingAngle()
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
@@ -201,7 +203,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.driver = driver;
     this.subsystemChecker = subsystemChecker;
 
-    driveAtAngle.HeadingController = new PhoenixPIDController(5, 0, 0);
+    driveAtAngle.HeadingController = new PhoenixPIDController(7, 0, 0);
     driveAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
     choreoThetaPID.enableContinuousInput(-Math.PI, Math.PI);
@@ -268,9 +270,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DogLog.log("Drive/WantedState", wantedState);
     DogLog.log("RobotPose", getState().Pose);
     updateDistancesAndSetpoints();
-
-    subsystemChecker.setRobotPose(getState().Pose);
-    subsystemChecker.setChassisSpeeds(getChassisSpeeds());
   }
 
   public void setWantedState(WantedState wantedState) {
@@ -455,18 +454,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     Translation2d translationToTarget =
         targetPoseForDriveToPoint.getTranslation().minus(getState().Pose.getTranslation());
     double linearDistance = translationToTarget.getNorm();
+    Rotation2d targetRotation = targetPoseForDriveToPoint.getRotation();
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+      translationToTarget =
+          translationToTarget.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+      targetRotation = targetRotation.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+    }
 
     boolean atDriveToPointTranslationSetpoint =
         MathUtil.isNear(0.0, linearDistance, DRIVE_TO_POINT_TRANSLATION_ERROR_TOLERANCE);
     boolean atDriveToPointAngularSetpoint =
-        driveAtAngle.HeadingController.getPositionError() < DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE;
+        MathUtil.isNear(
+            getState().Pose.getRotation().getRadians(),
+            targetRotation.getRadians(),
+            DRIVE_TO_POINT_ANGULAR_ERROR_TOLERANCE);
     atDriveToPointSetpoints = atDriveToPointTranslationSetpoint && atDriveToPointAngularSetpoint;
     driveToPointXError = translationToTarget.getX();
     driveToPointYError = translationToTarget.getY();
+    driveToPointAngularError =
+        Math.abs(targetRotation.minus(getState().Pose.getRotation()).getRadians());
 
     DogLog.log("Drive/DriveToPose/LinearDistance", linearDistance);
     DogLog.log("Drive/DriveToPose/xError", driveToPointXError);
     DogLog.log("Drive/DriveToPose/yError", driveToPointYError);
+    DogLog.log("Drive/DriveToPose/AngularError", driveToPointAngularError);
     DogLog.log(
         "Drive/DriveToPose/AtDriveToPointTranslationSetpoint", atDriveToPointTranslationSetpoint);
     DogLog.log("Drive/DriveToPose/AtDriveToPointAngularSetpoint", atDriveToPointAngularSetpoint);
@@ -529,6 +540,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public boolean isAtDriveToPointSetpoints() {
     return atDriveToPointSetpoints;
   }
+
+  // public boolean isSpeedsSlowEnough() {
+  //   ChassisSpeeds speeds = getChassisSpeeds();
+  //   return Math.abs(speeds.vxMetersPerSecond) < 1
+  //       && Math.abs(speeds.vyMetersPerSecond) < 1
+  //       && Math.abs(speeds.omegaRadiansPerSecond) < 0.3;
+  // }
 
   public boolean isYErrorWithinTolerance() {
     return Math.abs(driveToPointYError) < DRIVE_TO_POINT_Y_ERROR_TOLERANCE;

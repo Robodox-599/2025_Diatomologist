@@ -1,7 +1,6 @@
 package frc.robot.subsystems.leds;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDs {
   private final LEDsIO io;
@@ -15,6 +14,7 @@ public class LEDs {
   }
 
   public enum CurrentState {
+    POSITION_CORAL_STATION,
     INTAKING_CORAL_STATION,
     ENSURING_CORAL,
     INTAKING_ALGAE_GROUND,
@@ -35,15 +35,20 @@ public class LEDs {
   }
 
   public void updateInputs() {
-    if (DriverStation.isDisabled()) {
-      currentState = CurrentState.STOPPED;
-    }
+    // if (DriverStation.isDisabled()) {
+    //   currentState = CurrentState.STOPPED;
+    //   applyStates();
+    // }
+    // applyStates();
     // Tracer.traceFunc("UpdateIO", io::updateInputs);
     DogLog.log("LEDs/CurrentState", currentState);
   }
 
   public void applyStates() {
     switch (currentState) {
+      case POSITION_CORAL_STATION:
+        io.LEDsPositionCoralStation();
+        break;
       case INTAKING_CORAL_STATION:
         io.LEDsIntakingCoralStation();
         break;

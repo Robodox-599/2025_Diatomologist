@@ -52,7 +52,7 @@ public class WristConstants {
 
   // wrist state stuff
   public static enum WristStates {
-    INTAKING_CORAL_STATION(0),
+    POSITION_CORAL_STATION(0),
     INTAKING_ALGAE_GROUND(1),
     INTAKING_ALGAE_LOLLIPOP(2),
     INTAKING_ALGAE_REEF(3),
@@ -75,12 +75,12 @@ public class WristConstants {
   }
 
   public static final double[] setpoints = {
-    -0.314, // INTAKING CORAL STATION
+    -0.335, // INTAKING CORAL STATION
     -0.1, // INTAKING ALGAE GROUND
     -0.2, // INTAKING ALGAE LOLLIPOP
     -0.15, // INTAKING ALGAE REEF
     -0.226, // POSITION PREPARED
-    0.0, // POSITION TROUGH
+    0.11, // POSITION TROUGH
     0.11, // POSITION BRANCH L2
     0.11, // POSITION BRANCH L3
     -0.15, // POSITION BRANCH L4

@@ -33,6 +33,7 @@ public class WristIOTalonFX extends WristIO {
   private MotionMagicVoltage m_request;
   private int slot = 0;
   private Debouncer wristAtSetpointDebouncer = new Debouncer(0.5);
+  private Debouncer jamDebouncer = new Debouncer(0.5);
 
   private final CANcoder cancoder;
 
@@ -53,8 +54,11 @@ public class WristIOTalonFX extends WristIO {
     cancoder = new CANcoder(cancoderID, wristMotorCANBus);
     CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
 
+    jamDebouncer.setDebounceType(Debouncer.DebounceType.kRising);
+
     wristConfig.MotionMagic.MotionMagicCruiseVelocity = maxWristVelocityWithCoral;
     wristConfig.MotionMagic.MotionMagicAcceleration = maxWristAccelerationWithCoral;
+    wristConfig.MotionMagic.MotionMagicJerk = maxWristAccelerationWithCoral * 3;
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;
@@ -117,8 +121,12 @@ public class WristIOTalonFX extends WristIO {
     super.currentPosition = position.getValueAsDouble();
     super.tempCelsius = temperature.getValueAsDouble();
     super.atSetpoint =
-        wristAtSetpointDebouncer.calculate(
-            Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance);
+        Math.abs(super.currentPosition - super.targetPosition) < wristPositionTolerance;
+    super.isJammed =
+        jamDebouncer.calculate(
+            !atSetpoint
+                && targetPosition
+                    == SubsystemUtil.wristStateToSetpoint(WristStates.POSITION_CORAL_STATION));
     // super.acceleration = acceleration.getValueAsDouble();
 
     DogLog.log("Wrist/AppliedVoltage", super.appliedVolts);
@@ -130,6 +138,8 @@ public class WristIOTalonFX extends WristIO {
     DogLog.log("Wrist/WristAtSetpoint", super.atSetpoint);
     DogLog.log("Wrist/AbsolutePosition", absolutePosition.getValueAsDouble());
     DogLog.log("Wrist/TargetPosition", targetPosition);
+
+    DogLog.log("Wrist/isJammed", super.isJammed);
   }
 
   @Override

@@ -5,6 +5,8 @@ public abstract class LEDsIO {
 
   public void updateInputs() {}
 
+  public void LEDsPositionCoralStation() {}
+
   public void LEDsIntakingCoralStation() {}
 
   public void LEDsEnsuringCoral() {}

@@ -58,7 +58,7 @@ public class WristIOTalonFX extends WristIO {
 
     wristConfig.MotionMagic.MotionMagicCruiseVelocity = maxWristVelocityWithCoral;
     wristConfig.MotionMagic.MotionMagicAcceleration = maxWristAccelerationWithCoral;
-    wristConfig.MotionMagic.MotionMagicJerk = maxWristAccelerationWithCoral * 2;
+    wristConfig.MotionMagic.MotionMagicJerk = maxWristAccelerationWithCoral * 3;
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;

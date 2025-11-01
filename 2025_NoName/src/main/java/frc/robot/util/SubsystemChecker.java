@@ -25,18 +25,17 @@ public class SubsystemChecker {
 
   private final double maximumElevatorSwingThroughHeight =
       SubsystemUtil.elevatorStateToHeightInches(
-              ElevatorConstants.ElevatorStates.POSITION_CORAL_STATION)
-          + ElevatorConstants
-              .positionToleranceInches; // max height of elevator where endefector can safely swing
+          ElevatorConstants.ElevatorStates
+              .POSITION_CORAL_STATION); // max height of elevator where endefector can safely swing
   // through (8.2)
   private final double minimumElevatorSwingAboveHeight =
       28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =
       7.0; // min height of elevator where endefector can safely swing below
   private final double endefectorBehindElevatorPosition =
-      SubsystemUtil.wristStateToSetpoint(WristConstants.WristStates.POSITION_PREPARED)
-          - WristConstants
-              .wristPositionTolerance; // any wrist position less than this is behind the elevator
+      SubsystemUtil.wristStateToSetpoint(
+          WristConstants.WristStates
+              .POSITION_PREPARED); // any wrist position less than this is behind the elevator
   private final double endefectorBeyondHorizontalPosition = 0.05;
   private final double endefectorOutsideBumpersPosition =
       -0.10 - WristConstants.wristPositionTolerance;
@@ -65,7 +64,8 @@ public class SubsystemChecker {
     // would make the limit dynamic based on wrist position
     // } else
     double elevatorSoftLowerLimit;
-    if (wrist.getPosition() < endefectorBehindElevatorPosition
+    if (wrist.getPosition()
+            < endefectorBehindElevatorPosition - WristConstants.wristPositionTolerance
         && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
       elevatorSoftLowerLimit = minimumElevatorSwingAboveHeight;
     } else {
@@ -77,8 +77,10 @@ public class SubsystemChecker {
 
   public double calculateElevatorSoftUpperLimit() {
     double elevatorSoftUpperLimit;
-    if (wrist.getPosition() < endefectorBehindElevatorPosition
-        && elevator.getHeightInches() < maximumElevatorSwingThroughHeight) {
+    if (wrist.getPosition()
+            < endefectorBehindElevatorPosition - WristConstants.wristPositionTolerance
+        && elevator.getHeightInches()
+            < maximumElevatorSwingThroughHeight + ElevatorConstants.positionToleranceInches) {
       elevatorSoftUpperLimit = maximumElevatorSwingThroughHeight;
     } else {
       elevatorSoftUpperLimit = ElevatorConstants.elevatorHardUpperLimit;
@@ -88,7 +90,8 @@ public class SubsystemChecker {
   }
 
   public boolean isEndefectorUnderElevator() {
-    if ((elevator.getHeightInches() < maximumElevatorSwingThroughHeight)) {
+    if ((elevator.getHeightInches()
+        < maximumElevatorSwingThroughHeight + ElevatorConstants.positionToleranceInches)) {
       DogLog.log("SubsystemChecker/isEndefectorUnderElevator", true);
       return true;
     }
@@ -195,8 +198,8 @@ public class SubsystemChecker {
   public boolean isSpeedsSettled() {
     ChassisSpeeds speeds = getChassisSpeeds();
     boolean isSpeedsSettled =
-        Math.abs(speeds.vxMetersPerSecond) < 0.03
-            && Math.abs(speeds.vyMetersPerSecond) < 0.03
+        Math.abs(speeds.vxMetersPerSecond) < 0.01
+            && Math.abs(speeds.vyMetersPerSecond) < 0.01
             && Math.abs(speeds.omegaRadiansPerSecond) < 0.01;
     DogLog.log("isSpeedsSettled", isSpeedsSettled);
     return isSpeedsSettled;

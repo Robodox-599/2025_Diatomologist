@@ -458,7 +458,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
       translationToTarget =
           translationToTarget.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
-      targetRotation = targetRotation.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
+      // targetRotation = targetRotation.rotateBy(kRedAlliancePerspectiveRotation.unaryMinus());
     }
 
     boolean atDriveToPointTranslationSetpoint =

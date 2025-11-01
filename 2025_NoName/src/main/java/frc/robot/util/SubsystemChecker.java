@@ -32,11 +32,14 @@ public class SubsystemChecker {
       28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =
       7.0; // min height of elevator where endefector can safely swing below
+  private final double minimumElevatorSwingInfrontHeight = SubsystemUtil.elevatorStateToHeightInches(ElevatorStates.POSITION_CORAL_L1);
   private final double endefectorBehindElevatorPosition =
       SubsystemUtil.wristStateToSetpoint(
           WristConstants.WristStates
               .POSITION_PREPARED); // any wrist position less than this is behind the elevator
-  private final double endefectorBeyondHorizontalPosition = 0.05;
+  private final double endefectorBeyondVerticalPosition = SubsystemUtil.wristStateToSetpoint(
+    WristConstants.WristStates
+        .POSITION_PREPARED);
   private final double endefectorOutsideBumpersPosition =
       -0.10 - WristConstants.wristPositionTolerance;
 
@@ -64,10 +67,13 @@ public class SubsystemChecker {
     // would make the limit dynamic based on wrist position
     // } else
     double elevatorSoftLowerLimit;
-    if (wrist.getPosition()
-            < endefectorBehindElevatorPosition - WristConstants.wristPositionTolerance
-        && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
-      elevatorSoftLowerLimit = minimumElevatorSwingAboveHeight;
+    // if (wrist.getPosition()
+    //         < endefectorBehindElevatorPosition - WristConstants.wristPositionTolerance
+    //     && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
+    //   elevatorSoftLowerLimit = minimumElevatorSwingAboveHeight;
+    // } else 
+    if (wrist.getPosition() > endefectorBeyondVerticalPosition + WristConstants.wristPositionTolerance) {
+      elevatorSoftLowerLimit = minimumElevatorSwingInfrontHeight;
     } else {
       elevatorSoftLowerLimit = ElevatorConstants.elevatorHardLowerLimit;
     }

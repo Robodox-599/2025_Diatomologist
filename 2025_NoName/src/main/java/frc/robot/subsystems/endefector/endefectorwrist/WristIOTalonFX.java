@@ -6,7 +6,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -30,7 +30,7 @@ public class WristIOTalonFX extends WristIO {
 
   private final TalonFX wristMotor;
   TalonFXConfiguration wristConfig;
-  private MotionMagicVoltage m_request;
+  private DynamicMotionMagicVoltage m_request;
   private int slot = 0;
   private Debouncer wristAtSetpointDebouncer = new Debouncer(0.5);
   private Debouncer jamDebouncer = new Debouncer(0.5);
@@ -56,9 +56,9 @@ public class WristIOTalonFX extends WristIO {
 
     jamDebouncer.setDebounceType(Debouncer.DebounceType.kRising);
 
-    wristConfig.MotionMagic.MotionMagicCruiseVelocity = maxWristVelocityWithCoral;
-    wristConfig.MotionMagic.MotionMagicAcceleration = maxWristAccelerationWithCoral;
-    wristConfig.MotionMagic.MotionMagicJerk = maxWristAccelerationWithCoral * 3;
+    // wristConfig.MotionMagic.MotionMagicCruiseVelocity = maxWristVelocityWithCoral;
+    // wristConfig.MotionMagic.MotionMagicAcceleration = maxWristAccelerationWithCoral;
+    // wristConfig.MotionMagic.MotionMagicJerk = maxWristAccelerationWithCoral * 3;
 
     wristConfig.Slot0.kP = realkP;
     wristConfig.Slot0.kI = realkI;
@@ -165,7 +165,44 @@ public class WristIOTalonFX extends WristIO {
 
     slot = super.isCoralInEndefector ? 1 : 0;
 
-    m_request = new MotionMagicVoltage(position).withSlot(slot).withEnableFOC(true);
+    if (state == WristStates.POSITION_TROUGH
+        || state == WristStates.POSITION_BRANCH_L2
+        || state == WristStates.POSITION_BRANCH_L3
+        || state == WristStates.POSITION_BRANCH_L4) { // if trying to score coral
+      if (super.isCoralInEndefector) {
+        m_request =
+            new DynamicMotionMagicVoltage(
+                    position,
+                    maxWristVelocityWithCoral,
+                    maxWristAccelerationWithCoral,
+                    maxWristAccelerationWithCoral * 3)
+                .withSlot(slot)
+                .withEnableFOC(true);
+      } else {
+        m_request =
+            new DynamicMotionMagicVoltage(
+                    position,
+                    maxWristVelocityNoCoral,
+                    maxWristAccelerationNoCoral,
+                    maxWristAccelerationNoCoral * 3)
+                .withSlot(slot)
+                .withEnableFOC(true);
+      }
+    } else {
+      if (super.isCoralInEndefector) {
+        m_request =
+            new DynamicMotionMagicVoltage(
+                    position, maxWristVelocityWithCoral, maxWristAccelerationWithCoral, 0)
+                .withSlot(slot)
+                .withEnableFOC(true); // unlimited jerk
+      } else {
+        m_request =
+            new DynamicMotionMagicVoltage(
+                    position, maxWristVelocityNoCoral, maxWristAccelerationNoCoral, 0)
+                .withSlot(slot)
+                .withEnableFOC(true); // unlimited jerk
+      }
+    }
     wristMotor.setControl(m_request);
   }
 }

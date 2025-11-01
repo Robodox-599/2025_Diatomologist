@@ -32,14 +32,14 @@ public class SubsystemChecker {
       28.0; // min height of elevator where endefector can safely swing behind
   private final double minimumElevatorSwingBelowHeight =
       7.0; // min height of elevator where endefector can safely swing below
-  private final double minimumElevatorSwingInfrontHeight = SubsystemUtil.elevatorStateToHeightInches(ElevatorStates.POSITION_CORAL_L1);
+  private final double minimumElevatorSwingInfrontHeight =
+      SubsystemUtil.elevatorStateToHeightInches(ElevatorStates.POSITION_CORAL_L1);
   private final double endefectorBehindElevatorPosition =
       SubsystemUtil.wristStateToSetpoint(
           WristConstants.WristStates
               .POSITION_PREPARED); // any wrist position less than this is behind the elevator
-  private final double endefectorBeyondVerticalPosition = SubsystemUtil.wristStateToSetpoint(
-    WristConstants.WristStates
-        .POSITION_PREPARED);
+  private final double endefectorBeyondVerticalPosition =
+      SubsystemUtil.wristStateToSetpoint(WristConstants.WristStates.POSITION_PREPARED);
   private final double endefectorOutsideBumpersPosition =
       -0.10 - WristConstants.wristPositionTolerance;
 
@@ -71,8 +71,9 @@ public class SubsystemChecker {
     //         < endefectorBehindElevatorPosition - WristConstants.wristPositionTolerance
     //     && elevator.getHeightInches() > minimumElevatorSwingAboveHeight) {
     //   elevatorSoftLowerLimit = minimumElevatorSwingAboveHeight;
-    // } else 
-    if (wrist.getPosition() > endefectorBeyondVerticalPosition + WristConstants.wristPositionTolerance) {
+    // } else
+    if (wrist.getPosition()
+        > endefectorBeyondVerticalPosition + WristConstants.wristPositionTolerance) {
       elevatorSoftLowerLimit = minimumElevatorSwingInfrontHeight;
     } else {
       elevatorSoftLowerLimit = ElevatorConstants.elevatorHardLowerLimit;
@@ -95,24 +96,24 @@ public class SubsystemChecker {
     return elevatorSoftUpperLimit;
   }
 
-  public boolean isEndefectorUnderElevator() {
-    if ((elevator.getHeightInches()
-        < maximumElevatorSwingThroughHeight + ElevatorConstants.positionToleranceInches)) {
-      DogLog.log("SubsystemChecker/isEndefectorUnderElevator", true);
-      return true;
-    }
-    DogLog.log("SubsystemChecker/isEndefectorUnderElevator", false);
-    return false;
-  }
+  // public boolean isEndefectorUnderElevator() {
+  //   if ((elevator.getHeightInches()
+  //       < maximumElevatorSwingThroughHeight + ElevatorConstants.positionToleranceInches)) {
+  //     DogLog.log("SubsystemChecker/isEndefectorUnderElevator", true);
+  //     return true;
+  //   }
+  //   DogLog.log("SubsystemChecker/isEndefectorUnderElevator", false);
+  //   return false;
+  // }
 
-  public boolean isEndefectorBeyondBumpers() {
-    if (wrist.getPosition() > endefectorOutsideBumpersPosition) {
-      DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", true);
-      return true;
-    }
-    DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", false);
-    return false;
-  }
+  // public boolean isEndefectorBeyondBumpers() {
+  //   if (wrist.getPosition() > endefectorOutsideBumpersPosition) {
+  //     DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", true);
+  //     return true;
+  //   }
+  //   DogLog.log("SubsystemChecker/isEndefectorBeyondBumpers", false);
+  //   return false;
+  // }
 
   public boolean isSafeDistanceFromReef(boolean isTrough) {
     int nearestFaceIndex = AutoAlignPoseGenerator.getNearestReefFaceIndex();

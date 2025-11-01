@@ -46,9 +46,9 @@ public class WristConstants {
 
   public static final double cancoderOffset = -0.14892578125;
 
-  // setpoints
+  // setpoint limits
   public static final double wristMinAngle = -0.35;
-  public static final double wristMaxAngle = 0.1;
+  public static final double wristMaxAngle = 0.3;
 
   // wrist state stuff
   public static enum WristStates {

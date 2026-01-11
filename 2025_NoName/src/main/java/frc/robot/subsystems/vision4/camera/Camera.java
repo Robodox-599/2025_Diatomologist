@@ -13,13 +13,17 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.FieldConstants;
 import frc.robot.util.SubsystemChecker;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.estimation.TargetModel;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Camera {
@@ -27,14 +31,10 @@ public class Camera {
 
   private final PhotonPoseEstimator poseEstimator =
       new PhotonPoseEstimator(
-          FieldConstants.AprilTags.aprilTagFieldLayout,
-          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          null);
+          FieldConstants.AprilTags.aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_RIO, null);
   private final CameraIO io;
   private final VisionConsumer consumer;
   private final SubsystemChecker subsystemChecker;
-
-  public static final double distanceFactor = 3.0;
 
   public Camera(CameraIOReal io, VisionConsumer consumer, SubsystemChecker subsystemChecker) {
     this.io = io;
@@ -57,17 +57,21 @@ public class Camera {
 
   public void updateInputs() {
     io.updateInputs();
-    if (io.result.hasTargets()
-        && (io.result.targets.size() > 1
-            || (io.result.targets.get(0).getPoseAmbiguity() < CameraErrorConstants.maxAmbiguity))) {
-      Optional<EstimatedRobotPose> optionalEstPose = poseEstimator.update(io.result);
-      if (optionalEstPose.isPresent()) {
-        Pose3d estimatedPose = optionalEstPose.get().estimatedPose;
-        if (isPoseValid(estimatedPose)) {
-          Matrix<N3, N1> stdDevs = findVisionMeasurementStdDevs(optionalEstPose.get());
-          DogLog.log("Vision/Camera/" + io.getName() + "/StdDevs", stdDevs);
-          DogLog.log("Vision/Camera/" + io.getName() + "/EstimatedPose", estimatedPose.toPose2d());
-          consumer.accept(estimatedPose.toPose2d(), io.result.getTimestampSeconds(), stdDevs);
+
+    if (io.result.hasTargets()) {
+      if (io.result.targets.size() > 1
+          || io.result.targets.get(0).getPoseAmbiguity() < CameraErrorConstants.maxAmbiguity) {
+        PhotonPipelineResult result = pruneTags(io.result);
+        Optional<EstimatedRobotPose> optionalEstPose = poseEstimator.update(result);
+        if (optionalEstPose.isPresent()) {
+          Pose3d estimatedPose = optionalEstPose.get().estimatedPose;
+          if (isPoseValid(estimatedPose)) {
+            Matrix<N3, N1> stdDevs = findVisionMeasurementStdDevs(optionalEstPose.get());
+            DogLog.log("Vision/Camera/" + io.getName() + "/StdDevs", stdDevs);
+            DogLog.log(
+                "Vision/Camera/" + io.getName() + "/EstimatedPose", estimatedPose.toPose2d());
+            consumer.accept(estimatedPose.toPose2d(), result.getTimestampSeconds(), stdDevs);
+          }
         }
       }
     }
@@ -77,36 +81,31 @@ public class Camera {
     Matrix<N3, N1> estStdDevs = CameraErrorConstants.SINGLE_TAG_STD_DEVS;
 
     int numTags = 0;
-    double avgDistance = 0;
+    double sumDistance = 0;
     for (PhotonTrackedTarget target : estimation.targetsUsed) {
-      Optional<Pose3d> tagPose =
-          FieldConstants.AprilTags.aprilTagFieldLayout.getTagPose(target.getFiducialId());
-      if (tagPose.isEmpty()) {
-        continue;
-      }
       numTags++;
-      avgDistance +=
-          tagPose
-              .get()
-              .toPose2d()
-              .getTranslation()
-              .getDistance(estimation.estimatedPose.toPose2d().getTranslation());
+      Transform3d t3d = target.getBestCameraToTarget();
+      sumDistance += Math.hypot(t3d.getX(), t3d.getY());
     }
 
     if (numTags == 0) {
       return estStdDevs;
     }
 
-    avgDistance /= numTags;
+    double avgDistance = sumDistance / numTags;
 
     if (numTags > 1) {
       estStdDevs = CameraErrorConstants.MULTI_TAG_STD_DEVS;
+    } else {
+      estStdDevs =
+          VecBuilder.fill(
+              CameraErrorConstants.SINGLE_TAG_STD_DEVS.get(0, 0),
+              CameraErrorConstants.SINGLE_TAG_STD_DEVS.get(1, 0),
+              Double.MAX_VALUE);
     }
 
     if (numTags == 1 && avgDistance > CameraErrorConstants.SINGLE_TAG_MAX_DISTANCE_METERS) {
       estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-    } else if (numTags == 1) {
-      estStdDevs = VecBuilder.fill(CameraErrorConstants.SINGLE_TAG_STD_DEVS.get(0, 0), CameraErrorConstants.SINGLE_TAG_STD_DEVS.get(1, 0), Double.MAX_VALUE);
     } else {
       estStdDevs = estStdDevs.times(1 + ((avgDistance * avgDistance) / 30));
     }
@@ -124,5 +123,36 @@ public class Camera {
         || Math.abs(pose.getTranslation().getZ()) > CameraErrorConstants.maxZError
         || pose.getRotation().getY() > CameraErrorConstants.maxAngleError
         || pose.getRotation().getX() > CameraErrorConstants.maxAngleError);
+  }
+
+  private PhotonPipelineResult pruneTags(PhotonPipelineResult result) {
+    ArrayList<PhotonTrackedTarget> newTargets = new ArrayList<>();
+    boolean isBlueAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+
+    if (isBlueAlliance) {
+      for (var target : result.targets) {
+        if (target.fiducialId == 18
+            || target.fiducialId == 21
+            || target.fiducialId == 24
+            || target.fiducialId == 25
+            || target.fiducialId == 26
+            || target.fiducialId == 27) {
+          newTargets.add(target);
+        }
+      }
+    } else {
+      for (var target : result.targets) {
+        if (target.fiducialId == 2
+            || target.fiducialId == 5
+            || target.fiducialId == 8
+            || target.fiducialId == 9
+            || target.fiducialId == 10
+            || target.fiducialId == 11) {
+          newTargets.add(target);
+        }
+      }
+    }
+    result.targets = newTargets;
+    return result;
   }
 }

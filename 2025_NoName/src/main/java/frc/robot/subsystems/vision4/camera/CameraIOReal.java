@@ -1,9 +1,7 @@
 package frc.robot.subsystems.vision4.camera;
 
 import frc.robot.subsystems.vision4.camera.Camera.CameraConstants;
-import java.util.List;
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 public class CameraIOReal extends CameraIO {
 
@@ -17,11 +15,8 @@ public class CameraIOReal extends CameraIO {
 
   @Override
   public void updateInputs() {
-    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-
-    if (results.size() > 0) {
-      super.result = results.get(results.size() - 1);
-    }
+    super.result = camera.getLatestResult();
+    result.hasTargets();
   }
 
   @Override
